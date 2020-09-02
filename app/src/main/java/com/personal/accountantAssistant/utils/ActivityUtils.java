@@ -14,6 +14,12 @@ import java.util.Objects;
 public class ActivityUtils {
 
     public static void startActivity(final Context packageContext,
+                                     final Class<?> activityClass) {
+        final Intent intent = new Intent(packageContext, activityClass);
+        packageContext.startActivity(intent);
+    }
+
+    public static void startActivity(final Context packageContext,
                                      final Class<?> activityClass,
                                      final PaymentsType paymentsType) {
         final Intent intent = new Intent(packageContext, activityClass);
@@ -63,7 +69,11 @@ public class ActivityUtils {
     }
 
     public static void refreshBy(final Context context) {
-        final Activity activity = (Activity) context;
+        final Activity activity = parse(context);
         Objects.requireNonNull(activity).recreate();
+    }
+
+    public static Activity parse(final Context context) {
+        return (Activity) context;
     }
 }

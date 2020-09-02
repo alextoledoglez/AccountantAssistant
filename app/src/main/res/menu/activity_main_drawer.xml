@@ -19,7 +19,11 @@
         <!--<item
             android:id="@+id/nav_tickets"
             android:icon="@drawable/tickets_black"
-            android:title="@string/menu_tickets" />-->
+            android:title="@string/menu_tickets" />
+        <item
+            android:id="@+id/nav_remittances"
+            android:icon="@drawable/tickets_black"
+            android:title="@string/menu_remittances" />-->
     </group>
 
     <!-- <item android:title="Communicate">

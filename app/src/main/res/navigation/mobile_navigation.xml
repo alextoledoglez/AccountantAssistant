@@ -27,5 +27,12 @@
         android:id="@+id/nav_tickets"
         android:name="com.personal.accountantAssistant.ui.tickets.TicketsFragment"
         android:label="@string/menu_tickets"
-        tools:layout="@layout/fragment_tickets" />-->
+        tools:layout="@layout/fragment_tickets" />
+
+    <fragment
+        android:id="@+id/nav_remittances"
+        android:name="com.personal.accountantAssistant.ui.payments.RemittancesFragment"
+        android:label="@string/menu_remittances"
+        tools:layout="@layout/fragment_remittances" />-->
+
 </navigation>

@@ -52,9 +52,9 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.home.PeriodCalendarActivity"
+            android:name=".ui.payments.CheckoutActivity"
             android:configChanges="orientation"
-            android:label="Calendar period"
+            android:label="Checkout activity"
             android:screenOrientation="portrait" />
 
         <meta-data
