@@ -155,6 +155,18 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 .collect(toList());
     }
 
+    public boolean anyActivePaymentsRecordsBy(final PaymentsType paymentsType) {
+        return getPaymentsRecordsBy(paymentsType)
+                .stream()
+                .anyMatch(Payments::isActive);
+    }
+
+    public boolean allActivePaymentsRecordsBy(final PaymentsType paymentsType) {
+        return getPaymentsRecordsBy(paymentsType)
+                .stream()
+                .allMatch(Payments::isActive);
+    }
+
     public List<Bills> getBillsRecords() {
         return getPaymentsRecordsBy(PaymentsType.BILL)
                 .stream()

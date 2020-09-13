@@ -1,5 +1,7 @@
 package com.personal.accountantAssistant.ui.payments;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,12 +49,22 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 .reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum);
     }
 
-    private List<Payments> getFilteredPaymentsRecords() {
+    public List<Payments> getFilteredPaymentsRecords() {
         return databaseManager
                 .getPaymentsRecords()
                 .stream()
                 .filter(it -> it.getType().equals(paymentsType))
                 .collect(Collectors.toList());
+    }
+
+    public void setAllPaymentsRecordsActiveFrom(final boolean isActive) {
+        getFilteredPaymentsRecords()
+                .forEach(payments -> {
+                    payments.setActive(isActive);
+                    final Activity activity = ActivityUtils.parse(context);
+                    DataBaseUtils.saveDataFromWithoutFinish(activity, payments);
+                    notifyDataSetChanged();
+                });
     }
 
     private int getLayoutToInflate() {
@@ -133,6 +145,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         TextView date;
         TextView value;
 
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch active;
         ImageButton deleteItem;
 

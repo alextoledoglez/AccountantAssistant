@@ -76,4 +76,8 @@ public class ActivityUtils {
     public static Activity parse(final Context context) {
         return (Activity) context;
     }
+
+    public static Context parse(final Activity activity) {
+        return activity.getApplicationContext();
+    }
 }
