@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -25,24 +27,27 @@ import com.personal.accountantAssistant.utils.ParserUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.ViewHolderData> {
+import static java.util.stream.Collectors.toList;
+
+public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.ViewHolderData> implements Filterable {
 
     private Context context;
     private Double totalPrice;
     private DatabaseManager databaseManager;
     private PaymentsType paymentsType;
+    private List<Payments> paymentsList;
 
     public PaymentsListAdapter(final Context context,
                                final PaymentsType paymentsType) {
         this.context = context;
         this.paymentsType = paymentsType;
         this.databaseManager = new DatabaseManager(context);
-        this.totalPrice = getFilteredPaymentsRecords()
+        this.paymentsList = getFilteredPaymentsRecords();
+        this.totalPrice = paymentsList
                 .stream()
                 .filter(Payments::isActive)
                 .map(Payments::getTotalValue)
@@ -54,17 +59,16 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 .getPaymentsRecords()
                 .stream()
                 .filter(it -> it.getType().equals(paymentsType))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public void setAllPaymentsRecordsActiveFrom(final boolean isActive) {
-        getFilteredPaymentsRecords()
-                .forEach(payments -> {
-                    payments.setActive(isActive);
-                    final Activity activity = ActivityUtils.parse(context);
-                    DataBaseUtils.saveDataFromWithoutFinish(activity, payments);
-                    notifyDataSetChanged();
-                });
+        paymentsList.forEach(payments -> {
+            payments.setActive(isActive);
+            final Activity activity = ActivityUtils.parse(context);
+            DataBaseUtils.saveDataFromWithoutFinish(activity, payments);
+            notifyDataSetChanged();
+        });
     }
 
     private int getLayoutToInflate() {
@@ -87,7 +91,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     public void onBindViewHolder(@NonNull PaymentsListAdapter.ViewHolderData holder,
                                  int position) {
 
-        final Payments payment = getFilteredPaymentsRecords().get(position);
+        final Payments payment = paymentsList.get(position);
 
         if (!ParserUtils.isNullObject(payment)) {
 
@@ -136,7 +140,34 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     @Override
     public int getItemCount() {
-        return getFilteredPaymentsRecords().size();
+        return paymentsList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                final String charSequenceFilterStr = charSequence.toString();
+                if (charSequenceFilterStr.isEmpty()) {
+                    paymentsList = getFilteredPaymentsRecords();
+                } else {
+                    paymentsList = paymentsList
+                            .stream()
+                            .filter(it -> it.getName().toLowerCase().contains(charSequenceFilterStr.toLowerCase()))
+                            .collect(toList());
+                }
+                final FilterResults filterResults = new FilterResults();
+                filterResults.values = paymentsList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                paymentsList = (List<Payments>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     static class ViewHolderData extends RecyclerView.ViewHolder {
@@ -172,7 +203,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     public Double getTotalPriceUntil(final Date lastPeriodDate) {
-        final Double total = getFilteredPaymentsRecords()
+        final Double total = paymentsList
                 .stream()
                 .filter(it -> it.isActive() && DateUtils.isInRange(it.getDate(), lastPeriodDate))
                 .map(Payments::getTotalValue)

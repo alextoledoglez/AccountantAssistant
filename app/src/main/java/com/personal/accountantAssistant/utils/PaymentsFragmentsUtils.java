@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -65,6 +66,23 @@ public class PaymentsFragmentsUtils {
             updateRecyclerView();
         });
 
+        //Search View
+        final SearchView searchView = headerCardTitlesBar.findViewById(R.id.title_search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String queryStr) {
+                getRecyclerViewAdapter().getFilter().filter(queryStr);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getRecyclerViewAdapter().getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        //Recycler View
         if (PaymentsType.isBuy(paymentsType)) {
             recyclerView = viewRoot.findViewById(R.id.buy_list);
         }
@@ -102,5 +120,9 @@ public class PaymentsFragmentsUtils {
         headerCardSwitch.setChecked(DataBaseUtils.allActivePaymentsRecordsBy(activity, paymentsType));
 
         recyclerView.setAdapter(paymentsListAdapter);
+    }
+
+    private PaymentsListAdapter getRecyclerViewAdapter() {
+        return (PaymentsListAdapter) recyclerView.getAdapter();
     }
 }
