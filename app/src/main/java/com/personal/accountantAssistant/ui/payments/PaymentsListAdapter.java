@@ -25,6 +25,7 @@ import com.personal.accountantAssistant.utils.MenuHelper;
 import com.personal.accountantAssistant.utils.NumberUtils;
 import com.personal.accountantAssistant.utils.ParserUtils;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 .getPaymentsRecords()
                 .stream()
                 .filter(it -> it.getType().equals(paymentsType))
+                .sorted(Comparator.comparing(Payments::getDate))
                 .collect(toList());
     }
 
