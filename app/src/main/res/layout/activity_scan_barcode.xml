@@ -34,7 +34,7 @@
         <EditText
             android:id="@+id/bar_code_scan_number"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="224dp"
             android:autofillHints="TODO"
             android:ems="10"
             android:foregroundGravity="clip_horizontal|center|clip_vertical"

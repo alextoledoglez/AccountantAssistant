@@ -81,14 +81,14 @@ public class PaymentsDetailsActivity extends AppCompatActivity {
             DataBaseUtils.saveDataFrom(PaymentsDetailsActivity.this, payment);
         });
 
-        final Button barCodeScanButton = findViewById(R.id.bar_code_scan_button);
+/*        final Button barCodeScanButton = findViewById(R.id.bar_code_scan_button);
         barCodeScanButton.setOnClickListener(v -> {
             //final int REQUEST_CODE = 0;
             final Intent barcodeScanIntent = new Intent(PaymentsDetailsActivity.this, BarcodeScanActivity.class);
             startActivity(barcodeScanIntent);
             //startActivityForResult(barcodeScanIntent, REQUEST_CODE);
             //TODO something
-        });
+        });*/
     }
 
     private int getActionBarTitleFrom(final String paymentType) {

@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.barcode;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -13,6 +14,8 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.personal.accountantAssistant.R;
+import com.personal.accountantAssistant.utils.Constants;
+import com.personal.accountantAssistant.utils.ParserUtils;
 import com.personal.accountantAssistant.utils.PermissionsUtils;
 
 import java.io.IOException;
@@ -50,7 +53,8 @@ public class BarcodeScanActivity extends AppCompatActivity {
 
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
+        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
+                .setBarcodeFormats(Barcode.PRODUCT).build();
 
         cameraSource = new CameraSource.Builder(context, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
@@ -96,22 +100,13 @@ public class BarcodeScanActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("MissingPermission")
     private void cameraSourceStartFrom(final SurfaceHolder surfaceHolder) {
-/*        try {
-
-            if (!PermissionsUtils.isCameraPermissionGranted(context)) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
+        try {
+            if (!PermissionsUtils.isCameraPermissionGranted(context)) return;
             this.cameraSource.start(surfaceHolder);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }
