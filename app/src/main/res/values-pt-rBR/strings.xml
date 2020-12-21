@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Accountant assistant</string>
+    <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
+    <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
+    <string name="nav_header_title">accountant.assistant@gmail.com</string>
+    <string name="nav_header_subtitle">v1.0.0</string>
+    <string name="nav_header_desc">Cabeçalho de navegação</string>
+    <string name="action_settings">Configurações</string>
+    <string name="import_all">Importar</string>
+    <string name="export_all">Exportar</string>
+    <string name="import_export">Importar / Exportar</string>
+    <string name="delete_all">Apagar tudo</string>
+    <string name="restore_default">Restaurar padrão</string>
+
+    <string name="menu_home">Início</string>
+    <string name="money_to_expense">Dinheiro para gastar</string>
+    <string name="period_to_expense">Período para despesa</string>
+
+    <string name="available">Acessível</string>
+    <string name="expenses">Despesas</string>
+    <string name="total">Total</string>
+    <string name="gain">Ganho</string>
+    <string name="missing">Faltando</string>
+    <string name="daily">Diária</string>
+
+    <string name="menu_summary">Resumo</string>
+    <string name="menu_buys">Compras</string>
+    <string name="menu_bills">Contas</string>
+    <string name="menu_tickets">Ingressos</string>
+    <string name="menu_remittances">Remessas</string>
+
+    <string name="menu_share">Compartilhar</string>
+    <string name="menu_send">Enviar</string>
+    <string name="calculate">Calcular</string>
+    <string name="add_action">Adicionar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Salvar</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Excluir</string>
+    <string name="food_product">Produto Alimentar</string>
+    <string name="one_unity">1u</string>
+    <string name="price_default_value">00.00</string>
+    <string name="total_to_pay">Total a pagar</string>
+    <string name="default_total_value">00.00</string>
+    <string name="bill">Conta</string>
+    <string name="one_time">1x</string>
+    <string name="separator">-</string>
+    <string name="name">Nome:</string>
+    <string name="quantity">Quantidade:</string>
+    <string name="price">Preço:</string>
+    <string name="active">Ativo:</string>
+    <string name="date">Data:</string>
+    <string name="value">Valor:</string>
+    <string name="error_saving_your_data">Erro ao tentar salvar seus dados</string>
+    <string name="error_deleting_records">Erro ao tentar excluir registro (s).</string>
+    <string name="successfully_deleted_record">Registro excluído com sucesso</string>
+    <string name="record_successfully_save">Registro salvo com sucesso</string>
+    <string name="ok">OK</string>
+    <string name="select_quantity">Selecione uma quantidade</string>
+    <string name="excel_data_imported">Dados importados em uma planilha do Excel</string>
+    <string name="excel_data_exported">Dados exportados em uma planilha do Excel</string>
+    <string name="bills_details">Detalhes de contas</string>
+    <string name="buys_details">Detalhes de compras</string>
+    <string name="delete_record_title">Apagar registro</string>
+    <string name="delete_record_message">Tem certeza que deseja excluir o registro atual?\n\nVocê vai perder o recorde atual!</string>
+    <string name="delete_all_records_title">Apagar todos os registros</string>
+    <string name="delete_all_records_message">Tem certeza de que deseja excluir todos os registros?\n\nVocê vai perder todos os registros atuais!</string>
+    <string name="restore_default_records_title">Restaurar registros padrão</string>
+    <string name="restore_default_records_message">Tem certeza de que deseja restaurar os registros padrão?\n\nVocê vai perder todos os registros atuais!</string>
+    <string name="import_export_title">Importar / Exportar</string>
+    <string name="import_export_message">Escolha uma opção para prosseguir:</string>
+    <string name="barcode_scan_action">Leitura de código de barras</string>
+    <string name="fail_bar_code_detector">Não foi possível configurar o detector!</string>
+    <string name="none_barcode_found">Nenhum código de barras encontrado</string>
+    <string name="bar_code_number">Número do código de barras</string>
+    <string name="barcode_scanner">Leitor de códigos de barra</string>
+    <string name="exit">Saída</string>
+    <string name="permission_camera_rationale">O acesso à câmera é necessário para detecção</string>
+    <string name="no_camera_permission">Este aplicativo não pode ser executado porque não tem permissão de câmera. O aplicativo será encerrado agora.</string>
+    <string name="low_storage_error">Dependências do detector facial não podem ser baixadas devido ao baixo armazenamento do dispositivo</string>
+    <string name="title_activity_main">Amostra de leitor de código de barras</string>
+    <string name="barcode_header">Clique em "Ler código de barras" para ler um código de barras</string>
+    <string name="read_barcode">Leia o código de barras</string>
+    <string name="auto_focus">Auto-foco</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Código de barras lido com sucesso</string>
+    <string name="barcode_failure">Nenhum código de barras capturado</string>
+    <string name="barcode_error">"Erro ao ler código de barras: %1$s"</string>
+    <string name="payment_complete_message">Pagamento completo</string>
+    <string name="payment_failed_message">Pagamento falhou</string>
+
+    <string name="search_view_hint_message">Digite um item para pesquisar</string>
+</resources>
