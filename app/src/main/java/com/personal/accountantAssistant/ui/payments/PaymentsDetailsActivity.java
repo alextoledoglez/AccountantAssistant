@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.payments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -29,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class PaymentsDetailsActivity extends AppCompatActivity {
 
     @Override
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);

@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PaymentsFragmentsUtils {
 
-    private Context context;
-    private Activity activity;
-    private PaymentsType paymentsType;
+    private final Context context;
+    private final Activity activity;
+    private final PaymentsType paymentsType;
 
     private ImageView headerCardImage;
     private TextView headerCardSubTitle;
@@ -104,7 +104,6 @@ public class PaymentsFragmentsUtils {
             MenuHelper.initializeBillsOptions();
         }
 
-        final PaymentsListAdapter paymentsListAdapter = new PaymentsListAdapter(context, paymentsType);
         final boolean anyActivePayments = DataBaseUtils.anyActivePaymentsRecordsBy(activity, paymentsType);
 
         headerCardImage.setImageResource(anyActivePayments ?
@@ -116,10 +115,20 @@ public class PaymentsFragmentsUtils {
                 context.getColor(R.color.colorAccent) :
                 context.getColor(R.color.colorPrimary));
 
+        final boolean isNullAdapter = ParserUtils.isNullObject(recyclerView.getAdapter());
+
+        final PaymentsListAdapter paymentsListAdapter = isNullAdapter ?
+                new PaymentsListAdapter(context, paymentsType) :
+                getRecyclerViewAdapter();
+
         headerCardSubTitle.setText(String.valueOf(paymentsListAdapter.getTotalPrice()));
         headerCardSwitch.setChecked(DataBaseUtils.allActivePaymentsRecordsBy(activity, paymentsType));
 
-        recyclerView.setAdapter(paymentsListAdapter);
+        if (isNullAdapter) {
+            recyclerView.setAdapter(paymentsListAdapter);
+        } else {
+            getRecyclerViewAdapter().notifyDataSetChanged();
+        }
     }
 
     private PaymentsListAdapter getRecyclerViewAdapter() {

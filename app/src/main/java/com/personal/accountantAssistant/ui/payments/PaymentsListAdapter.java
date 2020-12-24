@@ -36,11 +36,11 @@ import static java.util.stream.Collectors.toList;
 
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.ViewHolderData> implements Filterable {
 
-    private Context context;
-    private Double totalPrice;
-    private DatabaseManager databaseManager;
-    private PaymentsType paymentsType;
+    private final Context context;
+    private final Double totalPrice;
     private List<Payments> paymentsList;
+    private final PaymentsType paymentsType;
+    private final DatabaseManager databaseManager;
 
     public PaymentsListAdapter(final Context context,
                                final PaymentsType paymentsType) {

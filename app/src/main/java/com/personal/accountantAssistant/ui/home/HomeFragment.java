@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -172,6 +173,7 @@ public class HomeFragment extends Fragment {
         setCardViewStyle(cardView, cardVisibility, cardTextSizeResource, fontColorResource, backgroundColorResource);
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void fillDashBoardCard(final View root,
                                    final int idResource,
                                    final String cardTextValue) {
