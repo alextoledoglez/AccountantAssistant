@@ -22,7 +22,6 @@ public class BuysFragment extends Fragment {
         final View viewRoot = inflater.inflate(R.layout.fragment_buys, container, Boolean.FALSE);
         paymentsFragmentsUtils = new PaymentsFragmentsUtils(getContext(), requireActivity(), PaymentsType.BUY);
         paymentsFragmentsUtils.initializeVisualComponentsFrom(viewRoot);
-        paymentsFragmentsUtils.updateRecyclerView();
         return viewRoot;
     }
 

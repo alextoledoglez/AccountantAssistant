@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Switch;
@@ -13,8 +14,6 @@ import android.widget.TextView;
 import com.personal.accountantAssistant.R;
 import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
-
-import java.util.Objects;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,12 +24,12 @@ public class PaymentsFragmentsUtils {
     private final Activity activity;
     private final PaymentsType paymentsType;
 
-    private ImageView headerCardImage;
-    private TextView headerCardSubTitle;
+    private ImageView titleImageView;
+    private TextView subTitleTextView;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch headerCardSwitch;
-
+    private Switch checker;
     private RecyclerView recyclerView;
+    private PaymentsListAdapter adapter;
 
     public PaymentsFragmentsUtils(final Context context,
                                   final Activity activity,
@@ -52,33 +51,38 @@ public class PaymentsFragmentsUtils {
         headerCardTitle.setVisibility(View.GONE);
 
         //Image
-        headerCardImage = headerCardTitlesBar.findViewById(R.id.title_image);
+        titleImageView = headerCardTitlesBar.findViewById(R.id.title_image);
 
         //Subtitle
-        headerCardSubTitle = headerCardTitlesBar.findViewById(R.id.titles_bar_subtitle);
-        headerCardSubTitle.setText(String.valueOf(Constants.DEFAULT_VALUE));
+        subTitleTextView = headerCardTitlesBar.findViewById(R.id.titles_bar_subtitle);
+        subTitleTextView.setText(String.valueOf(Constants.DEFAULT_VALUE));
 
         //Switch
-        headerCardSwitch = headerCardTitlesBar.findViewById(R.id.title_switch);
-        headerCardSwitch.setOnClickListener(view -> {
-            Objects.requireNonNull((PaymentsListAdapter) recyclerView.getAdapter())
-                    .setAllPaymentsRecordsActiveFrom(headerCardSwitch.isChecked());
-            updateRecyclerView();
-        });
+        checker = headerCardTitlesBar.findViewById(R.id.title_switch);
+        checker.setOnClickListener(view -> adapter.setAllPaymentsRecordsActiveFrom(checker.isChecked()));
 
         //Search View
         final SearchView searchView = headerCardTitlesBar.findViewById(R.id.title_search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String queryStr) {
-                getRecyclerViewAdapter().getFilter().filter(queryStr);
+                recyclerViewAdapterFilterBy(queryStr);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                getRecyclerViewAdapter().getFilter().filter(newText);
+                recyclerViewAdapterFilterBy(newText);
                 return false;
+            }
+        });
+
+        adapter = new PaymentsListAdapter(context, paymentsType);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                updateRecyclerView();
             }
         });
 
@@ -90,8 +94,8 @@ public class PaymentsFragmentsUtils {
         if (PaymentsType.isBill(paymentsType)) {
             recyclerView = viewRoot.findViewById(R.id.bills_list);
         }
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
     }
 
     public void updateRecyclerView() {
@@ -104,34 +108,33 @@ public class PaymentsFragmentsUtils {
             MenuHelper.initializeBillsOptions();
         }
 
-        final boolean anyActivePayments = DataBaseUtils.anyActivePaymentsRecordsBy(activity, paymentsType);
-
-        headerCardImage.setImageResource(anyActivePayments ?
+        //adapter = new PaymentsListAdapter(context, paymentsType);
+        final boolean anyActive = DataBaseUtils.anyActivePaymentsRecordsBy(activity, paymentsType);
+        titleImageView.setImageResource(anyActive ?
                 R.drawable.ic_red_money :
                 R.drawable.ic_menu_green_money);
-
-        headerCardSubTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-        headerCardSubTitle.setTextColor(anyActivePayments ?
+        subTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+        subTitleTextView.setTextColor(anyActive ?
                 context.getColor(R.color.colorAccent) :
                 context.getColor(R.color.colorPrimary));
-
-        final boolean isNullAdapter = ParserUtils.isNullObject(recyclerView.getAdapter());
-
-        final PaymentsListAdapter paymentsListAdapter = isNullAdapter ?
-                new PaymentsListAdapter(context, paymentsType) :
-                getRecyclerViewAdapter();
-
-        headerCardSubTitle.setText(String.valueOf(paymentsListAdapter.getTotalPrice()));
-        headerCardSwitch.setChecked(DataBaseUtils.allActivePaymentsRecordsBy(activity, paymentsType));
-
-        if (isNullAdapter) {
-            recyclerView.setAdapter(paymentsListAdapter);
+/*
+        if (ParserUtils.isNullObject(paymentsListAdapter)) {
+            //paymentsListAdapter = new PaymentsListAdapter(context, paymentsType);
+            //recyclerView.setAdapter(paymentsListAdapter);
         } else {
-            getRecyclerViewAdapter().notifyDataSetChanged();
+            paymentsListAdapter.notifyDataSetChanged();
         }
+*/
+        subTitleTextView.setText(String.valueOf(adapter.getTotalPrice()));
+        checker.setChecked(DataBaseUtils.allActivePaymentsRecordsBy(activity, paymentsType));
     }
 
-    private PaymentsListAdapter getRecyclerViewAdapter() {
-        return (PaymentsListAdapter) recyclerView.getAdapter();
+    private void recyclerViewAdapterFilterBy(final String queryStr) {
+        if (ParserUtils.isNotNullObject(adapter)) {
+            final Filter paymentsFilter = adapter.getFilter();
+            if (ParserUtils.isNotNullObject(paymentsFilter)) {
+                paymentsFilter.filter(queryStr);
+            }
+        }
     }
 }

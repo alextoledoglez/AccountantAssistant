@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.payments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +46,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         this.context = context;
         this.paymentsType = paymentsType;
         this.databaseManager = new DatabaseManager(context);
-        this.paymentsList = getFilteredPaymentsRecords();
+        initializePaymentsRecords();
         this.totalPrice = paymentsList
                 .stream()
                 .filter(Payments::isActive)
@@ -55,8 +54,8 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 .reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum);
     }
 
-    public List<Payments> getFilteredPaymentsRecords() {
-        return databaseManager
+    public void initializePaymentsRecords() {
+        paymentsList = databaseManager
                 .getPaymentsRecords()
                 .stream()
                 .filter(it -> it.getType().equals(paymentsType))
@@ -65,12 +64,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     public void setAllPaymentsRecordsActiveFrom(final boolean isActive) {
-        paymentsList.forEach(payments -> {
-            payments.setActive(isActive);
-            final Activity activity = ActivityUtils.parse(context);
-            DataBaseUtils.saveDataFromWithoutFinish(activity, payments);
-            notifyDataSetChanged();
-        });
+        paymentsList.forEach(payment -> setActiveRowFrom(isActive, payment));
     }
 
     private int getLayoutToInflate() {
@@ -86,11 +80,11 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         final View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(getLayoutToInflate(), null, Boolean.FALSE);
-        return new PaymentsListAdapter.ViewHolderData(view, paymentsType);
+        return new ViewHolderData(view, paymentsType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PaymentsListAdapter.ViewHolderData holder,
+    public void onBindViewHolder(@NonNull PaymentsListAdapter.ViewHolderData viewHolderData,
                                  int position) {
 
         final Payments payment = paymentsList.get(position);
@@ -105,39 +99,39 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
             if (PaymentsType.isBill(paymentsType) && payment.isBill()) {
                 //INITIALIZE
                 MenuHelper.initializeBillsOptions();
-                holder.date.setText(DateUtils.toString(payment.getDate()));
+                viewHolderData.date.setText(DateUtils.toString(payment.getDate()));
             }
 
             //DETAILS
-            holder.name.setText(payment.getName());
-            holder.value.setText(toFormattedValue(payment));
+            viewHolderData.name.setText(payment.getName());
+            viewHolderData.value.setText(toFormattedValue(payment));
 
             //ACTIONS
-            holder.active.setChecked(payment.isActive());
-            holder.active.setOnClickListener(view -> setActiveRowFrom(holder, payment));
-            holder.deleteItem.setOnClickListener(view -> DataBaseUtils.deleteRecord(context, payment));
-            holder.itemView.setOnClickListener(view -> ActivityUtils.startDetailsActivity(context, payment));
-            setRowForegroundFrom(holder);
+            viewHolderData.active.setChecked(payment.isActive());
+            viewHolderData.active.setOnClickListener(view -> setActiveRowFrom(viewHolderData.active.isChecked(), payment));
+            viewHolderData.deleteItem.setOnClickListener(view -> DataBaseUtils.deleteRecord(context, payment));
+            viewHolderData.itemView.setOnClickListener(view -> ActivityUtils.startDetailsActivity(context, payment));
+            setRowForegroundFrom(viewHolderData);
         }
     }
 
-    private void setActiveRowFrom(@NonNull PaymentsListAdapter.ViewHolderData holder,
-                                  final Payments payment) {
-        payment.setActive(holder.active.isChecked());
-        if (DataBaseUtils.isNotDefault(databaseManager.updatePaymentsRecordFrom(payment))) {
-            ActivityUtils.refreshBy(context);
+    private void setActiveRowFrom(final boolean isActive, final Payments payment) {
+        payment.setActive(isActive);
+        final long updateRecord = databaseManager.updatePaymentsRecordFrom(payment);
+        if (DataBaseUtils.isNotDefault(updateRecord)) {
+            notifyDataSetChanged();
         }
     }
 
-    private void setRowForegroundFrom(@NonNull PaymentsListAdapter.ViewHolderData holder) {
-        final int color = holder.active.isChecked() ?
+    private void setRowForegroundFrom(@NonNull PaymentsListAdapter.ViewHolderData viewHolderData) {
+        final int color = viewHolderData.active.isChecked() ?
                 context.getColor(R.color.defaultFontColor) :
                 context.getColor(R.color.disableForegroundColor);
-        holder.name.setTextColor(color);
+        viewHolderData.name.setTextColor(color);
         if (PaymentsType.isBill(paymentsType)) {
-            holder.date.setTextColor(color);
+            viewHolderData.date.setTextColor(color);
         }
-        holder.value.setTextColor(color);
+        viewHolderData.value.setTextColor(color);
     }
 
     @Override
@@ -152,7 +146,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
             protected FilterResults performFiltering(CharSequence charSequence) {
                 final String charSequenceFilterStr = charSequence.toString();
                 if (charSequenceFilterStr.isEmpty()) {
-                    paymentsList = getFilteredPaymentsRecords();
+                    initializePaymentsRecords();
                 } else {
                     paymentsList = paymentsList
                             .stream()

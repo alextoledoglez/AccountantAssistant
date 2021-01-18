@@ -13,7 +13,7 @@ import static spark.Spark.staticFiles;
 
 public class StripeServer {
 
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     static int calculateOrderAmount(Object[] items) {
         // Replace this constant with a calculation of the order's amount

@@ -81,8 +81,9 @@ public class DataBaseUtils {
     }
 
     public static void saveDataFromWithoutFinish(final Activity activity,
-                                                 final Object entity) {
-        saveDataFrom(activity, entity, ActionUtils.NONE_ACTION_TO_DO);
+                                                 final Object entity,
+                                                 final Action onSuccess) {
+        saveDataFrom(activity, entity, onSuccess);
     }
 
     public static boolean anyActivePaymentsRecordsBy(final Activity activity,

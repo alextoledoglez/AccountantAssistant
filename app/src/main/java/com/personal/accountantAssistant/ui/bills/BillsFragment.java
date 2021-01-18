@@ -21,7 +21,6 @@ public class BillsFragment extends Fragment {
         final View viewRoot = inflater.inflate(R.layout.fragment_bills, container, Boolean.FALSE);
         paymentsFragmentsUtils = new PaymentsFragmentsUtils(getContext(), requireActivity(), PaymentsType.BILL);
         paymentsFragmentsUtils.initializeVisualComponentsFrom(viewRoot);
-        paymentsFragmentsUtils.updateRecyclerView();
         return viewRoot;
     }
 
