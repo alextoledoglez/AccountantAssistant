@@ -303,7 +303,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     }
 
     public long insertOrUpdatePayment(final Payments payment) {
-        if (DataBaseUtils.isNotDefault(payment.getId())) {
+        if (DataBaseUtils.isNotDefaultRecord(payment.getId())) {
             return updatePaymentsRecordFrom(payment);
         } else {
             return insertPaymentRecordFrom(payment);

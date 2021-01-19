@@ -66,7 +66,9 @@ public class CalendarsUtils {
 
         if (!ParserUtils.isNullObject(contentResolver) && payments.isBill()) {
 
-            final Uri uri = addEventFrom(contentResolver, payments);
+            final Uri uri = PermissionsUtils.isCalendarWritePermissionGranted(context) ?
+                    addEventFrom(contentResolver, payments) :
+                    null;
 
             if (!ParserUtils.isNullObject(uri)) {
                 final String eventID = uri.getLastPathSegment();
@@ -137,9 +139,11 @@ public class CalendarsUtils {
 
     public static void deleteCalendarEventsFrom(final Context context,
                                                 final Payments payments) {
-        final ContentResolver contentResolver = context.getContentResolver();
-        if (alreadyExistCalendarEventFor(contentResolver, payments)) {
-            contentResolver.delete(CalendarContract.Events.CONTENT_URI, getSelectionFields(), toSelectionArgs(payments));
+        if (PermissionsUtils.isCalendarWritePermissionGranted(context)) {
+            final ContentResolver contentResolver = context.getContentResolver();
+            if (alreadyExistCalendarEventFor(contentResolver, payments)) {
+                contentResolver.delete(CalendarContract.Events.CONTENT_URI, getSelectionFields(), toSelectionArgs(payments));
+            }
         }
     }
 

@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import com.personal.accountantAssistant.R;
 import com.personal.accountantAssistant.db.LocalStorage;
-import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 import com.personal.accountantAssistant.utils.DatePickerDialogUtils;
 import com.personal.accountantAssistant.utils.DateUtils;
 import com.personal.accountantAssistant.utils.EditableTextsUtils;
 import com.personal.accountantAssistant.utils.MenuHelper;
 import com.personal.accountantAssistant.utils.NumberUtils;
+import com.personal.accountantAssistant.utils.PaymentsFragmentsUtils;
 import com.savvi.rangedatepicker.CalendarPickerView;
 
 import java.util.Date;
@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment {
         availableMoneyEditText.setText(String.valueOf(LocalStorage.getAvailableMoney()));
         EditableTextsUtils.initializeListeners(activity, availableMoneyEditText, () -> {
             LocalStorage.setAvailableMoney(Float.parseFloat(EditableTextsUtils.getEditTextValue()));
-            calculateExpenses(context, rootView);
+            calculateExpenses(context, activity, rootView);
         });
 
         //Period
@@ -58,16 +58,17 @@ public class HomeFragment extends Fragment {
         DatePickerDialogUtils.initializeCalendarPickerView(calendarPickerView,
                 () -> periodCardSubTitle.setText(DateUtils.toPeriodStr(LocalStorage.getFirstDate(), LocalStorage.getLastDate())),
                 () -> {
-                    calculateExpenses(context, rootView);
+                    calculateExpenses(context, activity, rootView);
                     EditableTextsUtils.hideSoftInputFromWindow(activity, availableMoneyEditText);
                 });
 
-        calculateExpenses(context, rootView);
+        calculateExpenses(context, activity, rootView);
 
         return rootView;
     }
 
     private void calculateExpenses(final Context context,
+                                   final Activity activity,
                                    final View rootView) {
 
         final double availableMoney = LocalStorage.getAvailableMoney();
@@ -80,12 +81,12 @@ public class HomeFragment extends Fragment {
 
         final Date lastPeriodDate = LocalStorage.getLastDate();
 
-        final PaymentsListAdapter buysListAdapter = new PaymentsListAdapter(context, PaymentsType.BUY);
-        final Double buysExpenses = buysListAdapter.getTotalPriceUntil(lastPeriodDate);
+        final PaymentsFragmentsUtils buysUtils = new PaymentsFragmentsUtils(context, activity, PaymentsType.BUY);
+        final Double buysExpenses = buysUtils.getTotalPriceUntil(lastPeriodDate);
         fillDashBoardCard(rootView, R.id.buy_card, String.valueOf(buysExpenses));
 
-        final PaymentsListAdapter billsListAdapter = new PaymentsListAdapter(context, PaymentsType.BILL);
-        final Double billsExpenses = billsListAdapter.getTotalPriceUntil(lastPeriodDate);
+        final PaymentsFragmentsUtils billsUtils = new PaymentsFragmentsUtils(context, activity, PaymentsType.BILL);
+        final Double billsExpenses = billsUtils.getTotalPriceUntil(lastPeriodDate);
         fillDashBoardCard(rootView, R.id.bill_card, String.valueOf(billsExpenses));
 
         final double totalExpenses = NumberUtils.roundTo(dailyExpenses + buysExpenses + billsExpenses);

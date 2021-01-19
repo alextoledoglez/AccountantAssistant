@@ -12,8 +12,12 @@ import io.reactivex.functions.Action;
 
 public class DataBaseUtils {
 
-    public static boolean isNotDefault(final long idOrRecord) {
-        return idOrRecord > Constants.DEFAULT_UID;
+    public static boolean isNotDefaultRecord(final long idOrRecord) {
+        return !isDefaultRecord(idOrRecord);
+    }
+
+    public static boolean isDefaultRecord(final long idOrRecord) {
+        return idOrRecord <= Constants.DEFAULT_UID;
     }
 
     private static DatabaseManager newDatabaseManagerFrom(final Activity activity) {
@@ -34,7 +38,7 @@ public class DataBaseUtils {
             recordSaved = databaseManager.insertOrUpdatePayment(payment);
         }
 
-        if (isNotDefault(recordSaved)) {
+        if (isNotDefaultRecord(recordSaved)) {
             CalendarsUtils.createCalendarEventFrom(context, payment);
             ActionUtils.runAction(onSuccess);
         } else {
@@ -55,7 +59,7 @@ public class DataBaseUtils {
             recordDeleted = databaseManager.deletePaymentsRecordFrom(payment);
         }
 
-        if (isNotDefault(recordDeleted)) {
+        if (isNotDefaultRecord(recordDeleted)) {
             CalendarsUtils.deleteCalendarEventsFrom(context, payment);
             ToastUtils.showLongText(context, R.string.successfully_deleted_record);
             ActionUtils.runAction(onSuccess);

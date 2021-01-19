@@ -47,10 +47,10 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         this.context = context;
         this.paymentsType = paymentsType;
         this.databaseManager = new DatabaseManager(context);
-        initializePayments();
+        loadPayments();
     }
 
-    public void initializePayments() {
+    public void loadPayments() {
         payments = databaseManager
                 .getPaymentsRecords()
                 .stream()
@@ -117,7 +117,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     private void setActiveRowFrom(final boolean isActive, final Payments payment) {
         payment.setActive(isActive);
         final long updateRecord = databaseManager.updatePaymentsRecordFrom(payment);
-        if (DataBaseUtils.isNotDefault(updateRecord)) {
+        if (DataBaseUtils.isNotDefaultRecord(updateRecord)) {
             notifyDataSetChanged();
         }
     }
@@ -159,7 +159,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
             protected FilterResults performFiltering(CharSequence charSequence) {
                 final String filterStr = charSequence.toString();
                 if (filterStr.isEmpty()) {
-                    initializePayments();
+                    loadPayments();
                 } else {
                     payments = payments
                             .stream()
@@ -239,28 +239,25 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     public void notifyItemAddedOrChanged(final Payments payment) {
 
-        int paymentId = payment.getId();
+        loadPayments();
 
-        if (paymentId <= 0) {
-            initializePayments();
-        }
-
-        final Payments updatedPayment = payments.stream()
+        final Payments loadedPayment = payments.stream()
                 .filter(it -> it.equalsTo(payment))
                 .findFirst().orElse(payment);
-        paymentId = updatedPayment.getId();
 
-        if (paymentId <= 0) {
-            payments.add(payment);
+        int loadedPaymentId = loadedPayment.getId();
+
+        if (DataBaseUtils.isDefaultRecord(loadedPaymentId)) {
+            payments.add(loadedPayment);
             int position = (getItemCount() - 1);
             notifyItemInserted(position);
         } else {
             int paymentsSize = getItemCount();
             for (int position = 0; position < paymentsSize; position++) {
                 final Payments item = payments.get(position);
-                if (paymentId == item.getId()) {
-                    payments.set(position, payment);
-                    notifyItemChanged(position, payment);
+                if (loadedPaymentId == item.getId()) {
+                    payments.set(position, loadedPayment);
+                    notifyItemChanged(position, loadedPayment);
                     break;
                 }
             }

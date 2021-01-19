@@ -17,8 +17,11 @@ import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter;
 import com.personal.accountantAssistant.ui.payments.entities.Payments;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 
+import java.util.Date;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.functions.Action;
 
 public class PaymentsFragmentsUtils {
 
@@ -43,6 +46,17 @@ public class PaymentsFragmentsUtils {
 
     public Context getContext() {
         return context;
+    }
+
+    public void initializeAdapter(final Action onChangeAction) {
+        adapter = new PaymentsListAdapter(context, paymentsType);
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                ActionUtils.runAction(onChangeAction);
+            }
+        });
     }
 
     public void initializeVisualComponentsFrom(final View viewRoot) {
@@ -79,14 +93,7 @@ public class PaymentsFragmentsUtils {
             }
         });
 
-        adapter = new PaymentsListAdapter(context, paymentsType);
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                updateRecyclerView();
-            }
-        });
+        initializeAdapter(this::updateRecyclerView);
 
         //Recycler View
         if (PaymentsType.isBuy(paymentsType)) {
@@ -99,6 +106,13 @@ public class PaymentsFragmentsUtils {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         updateRecyclerView();
+    }
+
+    public Double getTotalPriceUntil(final Date lastPeriodDate) {
+        if (ParserUtils.isNullObject(adapter)) {
+            initializeAdapter(ActionUtils.NONE_ACTION_TO_DO);
+        }
+        return adapter.getTotalPriceUntil(lastPeriodDate);
     }
 
     public void updateRecyclerView() {

@@ -131,11 +131,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean deleteAllBuysRecords() {
-        return (DataBaseUtils.isNotDefault(databaseManager.deleteAllBuysRecord()));
+        return (DataBaseUtils.isNotDefaultRecord(databaseManager.deleteAllBuysRecord()));
     }
 
     private boolean deleteAllBillsRecords() {
-        return (DataBaseUtils.isNotDefault(databaseManager.deleteAllBillsRecord()));
+        return (DataBaseUtils.isNotDefaultRecord(databaseManager.deleteAllBillsRecord()));
     }
 
     private void deleteAllBuys() {

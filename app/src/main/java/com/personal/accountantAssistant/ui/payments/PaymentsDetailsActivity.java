@@ -120,7 +120,6 @@ public class PaymentsDetailsActivity extends AppCompatActivity {
         }
 
         if (PaymentsType.isBill(paymentType)) {
-
             return R.string.bills_details;
         }
 

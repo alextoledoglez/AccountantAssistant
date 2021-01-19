@@ -17,7 +17,7 @@ public class Constants {
     public final static String STR_DEFAULT_MONETARY_VALUE = "00.00";
     private final static String STR_DEFAULT_VALUE = Constants.STR_DEFAULT_MONETARY_VALUE;
 
-    public final static int DEFAULT_UID = -1;
+    public final static int DEFAULT_UID = 0;
     public final static int DETAIL_REQUEST_CODE = 123;
     public final static Date DEFAULT_DATE_VALUE = new Date();
     public final static boolean DEFAULT_ACTIVE_STATUS = Boolean.FALSE;
