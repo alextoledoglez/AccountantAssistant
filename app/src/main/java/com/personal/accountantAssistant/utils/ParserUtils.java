@@ -57,7 +57,7 @@ public class ParserUtils {
 
     public static Payments toPayments(final Object entity) {
         Payments payments = null;
-        if (!isNullObject(entity)) {
+        if (isNotNullObject(entity)) {
             if (ParserUtils.isBuyInstance(entity)) {
                 payments = new Payments((Buys) entity);
             } else if (ParserUtils.isBillInstance(entity)) {

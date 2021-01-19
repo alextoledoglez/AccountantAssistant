@@ -4,6 +4,7 @@ import com.personal.accountantAssistant.ui.bills.entities.Bills;
 import com.personal.accountantAssistant.ui.buys.entities.Buys;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import androidx.room.ColumnInfo;
@@ -11,7 +12,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Payments {
+public class Payments implements Serializable {
 
     @PrimaryKey
     private int id;
@@ -150,5 +151,12 @@ public class Payments {
 
     public boolean isBuy() {
         return PaymentsType.isBuy(this.getType());
+    }
+
+    public boolean equalsTo(final Payments payment) {
+        return this.getType().equals(payment.getType()) &&
+                this.getName().equals(payment.getName()) &&
+                this.getQuantity() == payment.getQuantity() &&
+                this.getUnitaryValue() == payment.getUnitaryValue();
     }
 }

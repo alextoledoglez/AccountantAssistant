@@ -11,28 +11,6 @@ import io.reactivex.functions.Action;
 
 public class DialogUtils {
 
-    public static void showOptionsDialog(final Context context,
-                                         final Object entity) {
-        final String[] options = {
-                context.getString(R.string.edit),
-                context.getString(R.string.delete)
-        };
-
-        new AlertDialog
-                .Builder(context)
-                .setItems(options, (dialogInterface, which) -> {
-                    final boolean isEditOption = (which == 0);
-                    final boolean isDeleteOption = (which == 1);
-                    if (isEditOption) {
-                        ActivityUtils.startDetailsActivity(context, entity);
-                    } else if (isDeleteOption) {
-                        DataBaseUtils.deleteDataFrom(context, entity);
-                    }
-                })
-                .setOnDismissListener(dialogInterface -> ActivityUtils.refreshBy(context))
-                .show();
-    }
-
     public static void confirmationDialog(final Context context,
                                           final int titleId,
                                           final int messageId,

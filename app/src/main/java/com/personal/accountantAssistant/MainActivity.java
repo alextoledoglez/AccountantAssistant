@@ -1,13 +1,14 @@
 package com.personal.accountantAssistant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 import com.personal.accountantAssistant.db.DatabaseManager;
-import com.personal.accountantAssistant.ui.payments.PaymentsDetailsActivity;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 import com.personal.accountantAssistant.utils.ActionUtils;
 import com.personal.accountantAssistant.utils.ActivityUtils;
@@ -15,12 +16,12 @@ import com.personal.accountantAssistant.utils.DataBaseUtils;
 import com.personal.accountantAssistant.utils.DialogUtils;
 import com.personal.accountantAssistant.utils.ImportExportUtils;
 import com.personal.accountantAssistant.utils.MenuHelper;
-
-import java.util.Objects;
+import com.personal.accountantAssistant.utils.ParserUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    @SuppressLint("NonConstantResourceId")
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.add_payment:
@@ -93,12 +95,23 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment primaryNavigationFragment = getSupportFragmentManager().getPrimaryNavigationFragment();
+        if (ParserUtils.isNotNullObject(primaryNavigationFragment)) {
+            for (Fragment fragment : primaryNavigationFragment.getChildFragmentManager().getFragments()) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
     private void addBuys() {
-        ActivityUtils.startActivity(context, PaymentsDetailsActivity.class, PaymentsType.BUY);
+        ActivityUtils.startPaymentDetailsActivity(context, PaymentsType.BUY);
     }
 
     private void addBills() {
-        ActivityUtils.startActivity(context, PaymentsDetailsActivity.class, PaymentsType.BILL);
+        ActivityUtils.startPaymentDetailsActivity(context, PaymentsType.BILL);
     }
 
     private void importBuys() {
@@ -152,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshRecyclerView() {
-        Objects.requireNonNull(MainActivity.this).recreate();
+        ActivityUtils.refreshBy(getContext());
     }
 
     private void addMenuItemClickListener() {

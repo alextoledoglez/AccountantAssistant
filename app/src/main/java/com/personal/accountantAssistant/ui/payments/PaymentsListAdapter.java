@@ -1,7 +1,9 @@
 package com.personal.accountantAssistant.ui.payments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +38,7 @@ import static java.util.stream.Collectors.toList;
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.ViewHolderData> implements Filterable {
 
     private final Context context;
-    private final Double totalPrice;
-    private List<Payments> paymentsList;
+    private List<Payments> payments;
     private final PaymentsType paymentsType;
     private final DatabaseManager databaseManager;
 
@@ -46,16 +47,11 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         this.context = context;
         this.paymentsType = paymentsType;
         this.databaseManager = new DatabaseManager(context);
-        initializePaymentsRecords();
-        this.totalPrice = paymentsList
-                .stream()
-                .filter(Payments::isActive)
-                .map(Payments::getTotalValue)
-                .reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum);
+        initializePayments();
     }
 
-    public void initializePaymentsRecords() {
-        paymentsList = databaseManager
+    public void initializePayments() {
+        payments = databaseManager
                 .getPaymentsRecords()
                 .stream()
                 .filter(it -> it.getType().equals(paymentsType))
@@ -64,7 +60,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     public void setAllPaymentsRecordsActiveFrom(final boolean isActive) {
-        paymentsList.forEach(payment -> setActiveRowFrom(isActive, payment));
+        payments.forEach(payment -> setActiveRowFrom(isActive, payment));
     }
 
     private int getLayoutToInflate() {
@@ -87,7 +83,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     public void onBindViewHolder(@NonNull PaymentsListAdapter.ViewHolderData viewHolderData,
                                  int position) {
 
-        final Payments payment = paymentsList.get(position);
+        final Payments payment = payments.get(position);
 
         if (!ParserUtils.isNullObject(payment)) {
 
@@ -108,9 +104,12 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
             //ACTIONS
             viewHolderData.active.setChecked(payment.isActive());
-            viewHolderData.active.setOnClickListener(view -> setActiveRowFrom(viewHolderData.active.isChecked(), payment));
-            viewHolderData.deleteItem.setOnClickListener(view -> DataBaseUtils.deleteRecord(context, payment));
-            viewHolderData.itemView.setOnClickListener(view -> ActivityUtils.startDetailsActivity(context, payment));
+            viewHolderData.active.setOnClickListener(view -> {
+                final boolean isChecked = viewHolderData.active.isChecked();
+                setActiveRowFrom(isChecked, payment);
+            });
+            viewHolderData.itemView.setOnClickListener(view -> editRecordFrom(payment));
+            viewHolderData.deleteItem.setOnClickListener(view -> deleteRecordFrom(payment));
             setRowForegroundFrom(viewHolderData);
         }
     }
@@ -121,6 +120,20 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         if (DataBaseUtils.isNotDefault(updateRecord)) {
             notifyDataSetChanged();
         }
+    }
+
+    private void editRecordFrom(final Payments payment) {
+        final Activity activity = ActivityUtils.parse(context);
+        final Intent activityIntent = new Intent(context, PaymentsDetailsActivity.class);
+        activityIntent.putExtra(Constants.ENTITY, payment);
+        activity.startActivityForResult(activityIntent, Constants.DETAIL_REQUEST_CODE);
+    }
+
+    private void deleteRecordFrom(final Payments payment) {
+        DataBaseUtils.deleteRecord(context, payment, () -> {
+            payments.remove(payment);
+            notifyDataSetChanged();
+        });
     }
 
     private void setRowForegroundFrom(@NonNull PaymentsListAdapter.ViewHolderData viewHolderData) {
@@ -136,7 +149,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     @Override
     public int getItemCount() {
-        return paymentsList.size();
+        return payments.size();
     }
 
     @Override
@@ -144,23 +157,23 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                final String charSequenceFilterStr = charSequence.toString();
-                if (charSequenceFilterStr.isEmpty()) {
-                    initializePaymentsRecords();
+                final String filterStr = charSequence.toString();
+                if (filterStr.isEmpty()) {
+                    initializePayments();
                 } else {
-                    paymentsList = paymentsList
+                    payments = payments
                             .stream()
-                            .filter(it -> it.getName().toLowerCase().contains(charSequenceFilterStr.toLowerCase()))
+                            .filter(it -> it.getName().toLowerCase().contains(filterStr.toLowerCase()))
                             .collect(toList());
                 }
                 final FilterResults filterResults = new FilterResults();
-                filterResults.values = paymentsList;
+                filterResults.values = payments;
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                paymentsList = (List<Payments>) filterResults.values;
+                payments = (List<Payments>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -195,16 +208,21 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     public Double getTotalPrice() {
+        final double totalPrice = payments
+                .stream()
+                .filter(Payments::isActive)
+                .map(Payments::getTotalValue)
+                .reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum);
         return NumberUtils.roundTo(totalPrice);
     }
 
     public Double getTotalPriceUntil(final Date lastPeriodDate) {
-        final Double total = paymentsList
+        final Double totalPrice = payments
                 .stream()
                 .filter(it -> it.isActive() && DateUtils.isInRange(it.getDate(), lastPeriodDate))
                 .map(Payments::getTotalValue)
                 .reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum);
-        return NumberUtils.roundTo(total);
+        return NumberUtils.roundTo(totalPrice);
     }
 
     private String toFormattedValue(final Payments payment) {
@@ -217,6 +235,38 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 payment.getUnitaryValue() +
                 Constants.EQUAL_OPERATOR +
                 NumberUtils.roundTo(payment.getTotalValue());
+    }
+
+    public void notifyItemAddedOrChanged(final Payments payment) {
+
+        int paymentId = payment.getId();
+
+        if (paymentId <= 0) {
+            initializePayments();
+        }
+
+        final Payments updatedPayment = payments.stream()
+                .filter(it -> it.equalsTo(payment))
+                .findFirst().orElse(payment);
+        paymentId = updatedPayment.getId();
+
+        if (paymentId <= 0) {
+            payments.add(payment);
+            int position = (getItemCount() - 1);
+            notifyItemInserted(position);
+        } else {
+            int paymentsSize = getItemCount();
+            for (int position = 0; position < paymentsSize; position++) {
+                final Payments item = payments.get(position);
+                if (paymentId == item.getId()) {
+                    payments.set(position, payment);
+                    notifyItemChanged(position, payment);
+                    break;
+                }
+            }
+        }
+
+        notifyDataSetChanged();
     }
 }
 

@@ -1,6 +1,8 @@
 package com.personal.accountantAssistant.ui.payments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -12,9 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.personal.accountantAssistant.R;
-import com.personal.accountantAssistant.ui.barcode.BarcodeScanActivity;
 import com.personal.accountantAssistant.ui.payments.entities.Payments;
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 import com.personal.accountantAssistant.utils.Constants;
 import com.personal.accountantAssistant.utils.DataBaseUtils;
@@ -22,6 +22,7 @@ import com.personal.accountantAssistant.utils.DatePickerDialogUtils;
 import com.personal.accountantAssistant.utils.DateUtils;
 import com.personal.accountantAssistant.utils.NumberPickerDialogUtils;
 import com.personal.accountantAssistant.utils.ParserUtils;
+import com.personal.accountantAssistant.utils.ToastUtils;
 
 import java.util.Objects;
 
@@ -32,8 +33,20 @@ public class PaymentsDetailsActivity extends AppCompatActivity {
     @Override
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+
+        final Payments payment;
+        final Intent intent = getIntent();
+        final Context context = PaymentsDetailsActivity.this;
+        final Activity activity = PaymentsDetailsActivity.this;
+
+        if (ParserUtils.isNotNullObject(intent)) {
+            final Object entity = intent.getSerializableExtra(Constants.ENTITY);
+            payment = ParserUtils.toPayments(entity);
+        } else {
+            payment = null;
+        }
+
         setContentView(R.layout.activity_payments_details);
 
         final EditText nameEditText = findViewById(R.id.payment_name);
@@ -46,41 +59,48 @@ public class PaymentsDetailsActivity extends AppCompatActivity {
         final EditText valueEditText = findViewById(R.id.payment_value);
         final Switch activeSwitch = findViewById(R.id.payment_active);
 
-        final Intent intent = getIntent();
-        final int idValue = intent.getIntExtra(Constants.UID, Constants.DEFAULT_UID);
-        final String productValue = intent.getStringExtra(PaymentsEnum.NAME.name());
-        final int quantityValue = intent.getIntExtra(PaymentsEnum.QUANTITY.name(), Constants.DEFAULT_QUANTITY_VALUE);
-        final String defaultDateText = intent.getStringExtra(PaymentsEnum.DATE.name());
-        final double priceValue = intent.getDoubleExtra(PaymentsEnum.UNITARY_VALUE.name(), Constants.DEFAULT_VALUE);
-        final String paymentType = intent.getStringExtra(PaymentsEnum.TYPE.name());
-        final boolean activeValue = intent.getBooleanExtra(PaymentsEnum.ACTIVE.name(), Constants.DEFAULT_ACTIVE_STATUS);
+        if (ParserUtils.isNotNullObject(payment)) {
 
-        Objects.requireNonNull(getSupportActionBar())
-                .setTitle(getActionBarTitleFrom(paymentType));
+            final String paymentType = payment.getType().name();
+            Objects.requireNonNull(getSupportActionBar())
+                    .setTitle(getActionBarTitleFrom(paymentType));
 
-        nameEditText.setText(productValue);
-        NumberPickerDialogUtils.initializeFrom(PaymentsDetailsActivity.this, quantityEditText, quantityValue);
+            nameEditText.setText(payment.getName());
+            NumberPickerDialogUtils.initializeFrom(context, quantityEditText, payment.getQuantity());
 
-        dateTextView.setVisibility(getDateFieldVisibilityFrom(paymentType));
-        dateEditText.setVisibility(getDateFieldVisibilityFrom(paymentType));
-        DatePickerDialogUtils.setDatePickerDialogFrom(PaymentsDetailsActivity.this, dateEditText, defaultDateText);
+            dateTextView.setVisibility(getDateFieldVisibilityFrom(paymentType));
+            dateEditText.setVisibility(getDateFieldVisibilityFrom(paymentType));
+            final String dateStr = DateUtils.toString(payment.getDate());
+            DatePickerDialogUtils.setDatePickerDialogFrom(context, dateEditText, dateStr);
 
-        valueEditText.setText(String.valueOf(priceValue));
-        activeSwitch.setChecked(activeValue);
+            valueEditText.setText(String.valueOf(payment.getUnitaryValue()));
+            activeSwitch.setChecked(payment.isActive());
+        }
 
         final Button cancelBtn = findViewById(R.id.cancel_button);
         cancelBtn.setOnClickListener(view -> finish());
 
         final Button saveBtn = findViewById(R.id.save_button);
         saveBtn.setOnClickListener(view -> {
-            final Payments payment = new Payments(idValue,
-                    String.valueOf(nameEditText.getText()),
-                    Integer.parseInt(String.valueOf(quantityEditText.getText())),
-                    DateUtils.toDate(String.valueOf(dateEditText.getText())),
-                    Double.parseDouble(String.valueOf(valueEditText.getText())),
-                    PaymentsType.valueOf(paymentType),
-                    activeSwitch.isChecked());
-            DataBaseUtils.saveDataFrom(PaymentsDetailsActivity.this, payment);
+
+            if (ParserUtils.isNotNullObject(payment)) {
+                payment.setId(payment.getId());
+                payment.setName(String.valueOf(nameEditText.getText()));
+                payment.setQuantity(Integer.parseInt(String.valueOf(quantityEditText.getText())));
+                payment.setDate(DateUtils.toDate(String.valueOf(dateEditText.getText())));
+                payment.setUnitaryValue(Double.parseDouble(String.valueOf(valueEditText.getText())));
+                payment.setType(PaymentsType.valueOf(payment.getType().name()));
+                payment.setActive(activeSwitch.isChecked());
+            }
+
+            DataBaseUtils.saveDataFrom(activity, payment, () -> {
+                final Intent resultIntent = new Intent();
+                resultIntent.putExtra(Constants.ENTITY, payment);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+                ToastUtils.showLongText(activity, R.string.record_successfully_save);
+            });
+
         });
 
 /*        final Button barCodeScanButton = findViewById(R.id.bar_code_scan_button);

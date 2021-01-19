@@ -30,7 +30,7 @@ public class DataBaseUtils {
         final Context context = ActivityUtils.parse(activity);
         final DatabaseManager databaseManager = new DatabaseManager(context);
 
-        if (!ParserUtils.isNullObject(payment)) {
+        if (ParserUtils.isNotNullObject(payment)) {
             recordSaved = databaseManager.insertOrUpdatePayment(payment);
         }
 
@@ -44,7 +44,8 @@ public class DataBaseUtils {
     }
 
     static void deleteDataFrom(final Context context,
-                               final Object entity) {
+                               final Object entity,
+                               final Action onSuccess) {
 
         long recordDeleted = Constants.DEFAULT_UID;
         final Payments payment = ParserUtils.toPayments(entity);
@@ -57,27 +58,19 @@ public class DataBaseUtils {
         if (isNotDefault(recordDeleted)) {
             CalendarsUtils.deleteCalendarEventsFrom(context, payment);
             ToastUtils.showLongText(context, R.string.successfully_deleted_record);
-            ActivityUtils.refreshBy(context);
+            ActionUtils.runAction(onSuccess);
         } else {
             ToastUtils.showLongText(context, R.string.error_deleting_records);
         }
     }
 
     public static void deleteRecord(final Context context,
-                                    final Object entity) {
+                                    final Object entity,
+                                    final Action onSuccess) {
         DialogUtils.confirmationDialog(context,
                 R.string.delete_record_title,
                 R.string.delete_record_message,
-                () -> deleteDataFrom(context, entity));
-    }
-
-    public static void saveDataFrom(final Activity activity,
-                                    final Object entity) {
-        saveDataFrom(activity, entity, () -> {
-            final Context context = ActivityUtils.parse(activity);
-            ToastUtils.showLongText(context, R.string.record_successfully_save);
-            activity.finish();
-        });
+                () -> deleteDataFrom(context, entity, onSuccess));
     }
 
     public static void saveDataFromWithoutFinish(final Activity activity,
@@ -88,13 +81,11 @@ public class DataBaseUtils {
 
     public static boolean anyActivePaymentsRecordsBy(final Activity activity,
                                                      final PaymentsType paymentsType) {
-        return newDatabaseManagerFrom(activity)
-                .anyActivePaymentsRecordsBy(paymentsType);
+        return newDatabaseManagerFrom(activity).anyActivePaymentsRecordsBy(paymentsType);
     }
 
     public static boolean allActivePaymentsRecordsBy(final Activity activity,
                                                      final PaymentsType paymentsType) {
-        return newDatabaseManagerFrom(activity)
-                .allActivePaymentsRecordsBy(paymentsType);
+        return newDatabaseManagerFrom(activity).allActivePaymentsRecordsBy(paymentsType);
     }
 }

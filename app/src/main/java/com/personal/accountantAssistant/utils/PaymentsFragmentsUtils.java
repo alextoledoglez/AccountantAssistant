@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.utils;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Filter;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.personal.accountantAssistant.R;
 import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter;
+import com.personal.accountantAssistant.ui.payments.entities.Payments;
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -96,6 +98,7 @@ public class PaymentsFragmentsUtils {
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        updateRecyclerView();
     }
 
     public void updateRecyclerView() {
@@ -108,7 +111,6 @@ public class PaymentsFragmentsUtils {
             MenuHelper.initializeBillsOptions();
         }
 
-        //adapter = new PaymentsListAdapter(context, paymentsType);
         final boolean anyActive = DataBaseUtils.anyActivePaymentsRecordsBy(activity, paymentsType);
         titleImageView.setImageResource(anyActive ?
                 R.drawable.ic_red_money :
@@ -117,14 +119,7 @@ public class PaymentsFragmentsUtils {
         subTitleTextView.setTextColor(anyActive ?
                 context.getColor(R.color.colorAccent) :
                 context.getColor(R.color.colorPrimary));
-/*
-        if (ParserUtils.isNullObject(paymentsListAdapter)) {
-            //paymentsListAdapter = new PaymentsListAdapter(context, paymentsType);
-            //recyclerView.setAdapter(paymentsListAdapter);
-        } else {
-            paymentsListAdapter.notifyDataSetChanged();
-        }
-*/
+
         subTitleTextView.setText(String.valueOf(adapter.getTotalPrice()));
         checker.setChecked(DataBaseUtils.allActivePaymentsRecordsBy(activity, paymentsType));
     }
@@ -134,6 +129,18 @@ public class PaymentsFragmentsUtils {
             final Filter paymentsFilter = adapter.getFilter();
             if (ParserUtils.isNotNullObject(paymentsFilter)) {
                 paymentsFilter.filter(queryStr);
+            }
+        }
+    }
+
+    public void onDetailsActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Constants.DETAIL_REQUEST_CODE) {
+            if (ParserUtils.isNotNullObject(resultData)) {
+                final Object entity = resultData.getSerializableExtra(Constants.ENTITY);
+                final Payments payment = ParserUtils.toPayments(entity);
+                if (ParserUtils.isNotNullObject(payment)) {
+                    adapter.notifyItemAddedOrChanged(payment);
+                }
             }
         }
     }
