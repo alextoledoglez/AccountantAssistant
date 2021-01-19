@@ -22,6 +22,7 @@ import com.personal.accountantAssistant.utils.CalculatorUtils;
 import com.personal.accountantAssistant.utils.Constants;
 import com.personal.accountantAssistant.utils.DataBaseUtils;
 import com.personal.accountantAssistant.utils.DateUtils;
+import com.personal.accountantAssistant.utils.EditableTextsUtils;
 import com.personal.accountantAssistant.utils.MenuHelper;
 import com.personal.accountantAssistant.utils.NumberUtils;
 import com.personal.accountantAssistant.utils.ParserUtils;
@@ -163,7 +164,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 } else {
                     payments = payments
                             .stream()
-                            .filter(it -> it.getName().toLowerCase().contains(filterStr.toLowerCase()))
+                            .filter(it -> EditableTextsUtils.contains(it.getName(), filterStr))
                             .collect(toList());
                 }
                 final FilterResults filterResults = new FilterResults();

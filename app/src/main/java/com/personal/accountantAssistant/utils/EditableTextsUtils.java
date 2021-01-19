@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.personal.accountantAssistant.MainActivity;
 
+import java.text.Normalizer;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -85,5 +86,26 @@ public class EditableTextsUtils {
 
     public static String getEditTextValue() {
         return editTextValue.get();
+    }
+
+    /**
+     * Normalizing string, so it will be possible to search.
+     */
+    public static String toNormalizedString(final String strValue) {
+        final String regexTarget = "[^\\p{ASCII}]";
+        return Normalizer
+                .normalize(strValue, Normalizer.Form.NFD)
+                .replaceAll(regexTarget, Constants.EMPTY_STR);
+    }
+
+    public static boolean contains(final String currentStr,
+                                   final String filterStr) {
+        final String normalizedCurrentStr = EditableTextsUtils
+                .toNormalizedString(currentStr)
+                .toLowerCase();
+        final String normalizedFilterName = EditableTextsUtils
+                .toNormalizedString(filterStr)
+                .toLowerCase();
+        return normalizedCurrentStr.contains(normalizedFilterName);
     }
 }
