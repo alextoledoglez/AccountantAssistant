@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment {
                 .getColor(R.color.colorPrimaryMedium);
         final int badColorResource = Objects
                 .requireNonNull(context)
-                .getColor(R.color.colorAccent);
+                .getColor(R.color.colorRed);
         return getColorResourceFrom(idResource, cardTextValue, goodColorResource, badColorResource);
     }
 
@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment {
                 .getColor(R.color.colorPrimary);
         final int badColorResource = Objects
                 .requireNonNull(context)
-                .getColor(R.color.colorAccent);
+                .getColor(R.color.colorRed);
         return getColorResourceFrom(idResource, cardTextValue, goodColorResource, badColorResource);
     }
 

@@ -131,7 +131,7 @@ public class PaymentsFragmentsUtils {
                 R.drawable.ic_menu_green_money);
         subTitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         subTitleTextView.setTextColor(anyActive ?
-                context.getColor(R.color.colorAccent) :
+                context.getColor(R.color.colorRed) :
                 context.getColor(R.color.colorPrimary));
 
         subTitleTextView.setText(String.valueOf(adapter.getTotalPrice()));

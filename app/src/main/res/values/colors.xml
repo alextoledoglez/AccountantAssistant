@@ -2,19 +2,15 @@
 <resources>
 
     //Base colors
-    <!--<color name="colorPrimary">#36BC9B</color>
-    <color name="colorPrimaryLight">#36BC9B</color>
-    <color name="colorPrimaryDark">#008577</color>-->
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryLight">#A5D6A7</color>
     <color name="colorPrimaryMedium">#81C784</color>
-    <!--<color name="colorPrimaryMedium">#66BB6A</color>-->
     <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorAccent">#D81B60</color>
 
     //Utils color
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorRed">#D81B60</color>
 
     <color name="defaultFontColor">#424242</color>
     <color name="defaultBackgroundColor">#F5F5F5</color>
@@ -27,8 +23,8 @@
     <color name="calendar_selected_range_bg">@color/colorPrimaryLight</color>
     <color name="dateTimeRangePickerStateToday">@color/colorPrimaryDark</color>
     //HighLighted calendar dates colors
-    <color name="calendar_unavailable_bg">@color/colorAccent</color>
-    <color name="calendar_range_middle_unavailable_bg">@color/colorAccent</color>
+    <color name="calendar_unavailable_bg">@color/colorRed</color>
+    <color name="calendar_range_middle_unavailable_bg">@color/colorRed</color>
     //Deactivated calendar dates colors
     <color name="calendar_range_middle_deactivated_bg">@color/disableForegroundColor</color>
 </resources>

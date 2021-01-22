@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/ten_margin"
-                    android:theme="@style/CustomSwitch" />
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 <ImageButton
                     android:id="@+id/delete_action"
