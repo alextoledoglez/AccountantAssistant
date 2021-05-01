@@ -56,9 +56,7 @@ class HomeFragment : Fragment() {
         return rootView
     }
 
-    private fun calculateExpenses(context: Context?,
-                                  activity: Activity?,
-                                  rootView: View) {
+    private fun calculateExpenses(context: Context?, activity: Activity?, rootView: View) {
         val availableMoney = localStorage?.getAvailableMoney()?.toDouble()
         fillDashBoardCard(rootView, R.id.available_card, availableMoney.toString())
         var periodDays = DateUtils.getDaysBetween(localStorage?.getFirstDate(), localStorage?.getLastDate())
@@ -72,7 +70,9 @@ class HomeFragment : Fragment() {
         val billsUtils = PaymentsFragmentsUtils(context, activity, PaymentsType.BILL)
         val billsExpenses = billsUtils.getTotalPriceUntil(lastPeriodDate)
         fillDashBoardCard(rootView, R.id.bill_card, billsExpenses.toString())
-        val totalExpenses = NumberUtils.roundTo(dailyExpenses + buysExpenses + billsExpenses)
+
+        val value = buysExpenses?.let { buy -> billsExpenses?.let { bill -> buy.plus(bill).plus(dailyExpenses) } }
+        val totalExpenses = NumberUtils.roundTo(value)
         fillDashBoardCard(rootView, R.id.total_card, totalExpenses.toString())
         val neededExpenses = NumberUtils.roundTo(availableMoney?.minus(totalExpenses))
         fillDashBoardCard(rootView, R.id.needed_card, neededExpenses.toString())

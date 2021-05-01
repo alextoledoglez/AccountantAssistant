@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
-import com.personal.accountantAssistant.utils.ParserUtils
 import java.util.*
 
 class LocalStorage(val context: Context) {
@@ -33,11 +32,7 @@ class LocalStorage(val context: Context) {
 
     fun getFirstDate(): Date {
         val dateStr = getDefaultSharedPreferences().getString(FIRST_STR_DATE, Constants.EMPTY_STR)
-        return if (ParserUtils.isNotNullAndNotEmpty(dateStr)) {
-            DateUtils.toDate(dateStr)
-        } else {
-            Date()
-        }
+        return dateStr?.let { DateUtils.toDate(it) } ?: run { Date() }
     }
 
     private fun setLastStrDate(lastDate: Date) {
@@ -46,9 +41,7 @@ class LocalStorage(val context: Context) {
 
     fun getLastDate(): Date {
         val dateStr = getDefaultSharedPreferences().getString(LAST_STR_DATE, Constants.EMPTY_STR)
-        return if (ParserUtils.isNotNullAndNotEmpty(dateStr)) {
-            DateUtils.toDate(dateStr)
-        } else {
+        return dateStr?.let { DateUtils.toDate(it) } ?: run {
             val nextMonth = Calendar.getInstance()
             nextMonth.add(Calendar.MONTH, 1)
             nextMonth.time
@@ -61,7 +54,7 @@ class LocalStorage(val context: Context) {
         setLastStrDate(lastDate)
     }
 
-    fun getPeriodDates(): List<Date>? {
+    fun getPeriodDates(): List<Date> {
         val dates: MutableList<Date> = ArrayList()
         dates.add(getFirstDate())
         dates.add(getLastDate())

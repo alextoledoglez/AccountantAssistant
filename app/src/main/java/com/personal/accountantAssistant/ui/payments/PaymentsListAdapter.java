@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static java.util.stream.Collectors.toList;
@@ -43,6 +45,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     private final PaymentsType paymentsType;
     private final DatabaseManager databaseManager;
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public PaymentsListAdapter(final Context context,
                                final PaymentsType paymentsType) {
         this.context = context;
@@ -81,6 +84,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     @Override
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public void onBindViewHolder(@NonNull PaymentsListAdapter.ViewHolderData viewHolderData,
                                  int position) {
 
@@ -130,6 +134,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         activity.startActivityForResult(activityIntent, Constants.DETAIL_REQUEST_CODE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     private void deleteRecordFrom(final Payments payment) {
         DataBaseUtils.deleteRecord(context, payment, () -> {
             payments.remove(payment);
@@ -246,7 +251,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 .filter(it -> it.equalsTo(payment))
                 .findFirst().orElse(payment);
 
-        int loadedPaymentId = loadedPayment.getId();
+        long loadedPaymentId = loadedPayment.getId();
 
         if (DataBaseUtils.isDefaultRecord(loadedPaymentId)) {
             payments.add(loadedPayment);
