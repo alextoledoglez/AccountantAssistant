@@ -74,22 +74,22 @@ object ImportExportUtils {
         DatabaseManager(context)
                 .getPaymentsRecords()
                 .stream()
-                .filter { it: Payments -> type == it.type }
+                .filter { type == it.type }
                 .forEach { payment: Payments ->
                     val currentRowIndex = rowIndex.get()
-                    addCell(sheet, 0, currentRowIndex, payment.name)
+                    addCell(sheet, 0, currentRowIndex, payment.name.toString())
                     addCell(sheet, 1, currentRowIndex, payment.quantity.toString())
                     addCell(sheet, 2, currentRowIndex, getConditionalDateValueFrom(payment))
                     addCell(sheet, 3, currentRowIndex, payment.unitaryValue.toString())
                     addCell(sheet, 4, currentRowIndex, payment.totalValue.toString())
-                    addCell(sheet, 5, currentRowIndex, payment.type.name)
+                    addCell(sheet, 5, currentRowIndex, payment.type?.name.toString())
                     addCell(sheet, 6, currentRowIndex, payment.isActive.toString())
                     rowIndex.getAndIncrement()
                 }
     }
 
     private fun getConditionalDateValueFrom(payment: Payments): String {
-        return if (payment.isBill) payment.date.toString() else Constants.DASH_SEPARATOR
+        return if (payment.isBill == true) payment.date.toString() else Constants.DASH_SEPARATOR
     }
 
     private fun setHeaderCell(sheet: WritableSheet) {

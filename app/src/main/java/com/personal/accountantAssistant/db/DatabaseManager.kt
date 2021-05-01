@@ -158,14 +158,14 @@ class DatabaseManager : SQLiteOpenHelper {
     fun getBillsRecords(): List<Bills?>? {
         return getPaymentsRecordsBy(PaymentsType.BILL)
                 .stream()
-                .map { payments: Payments? -> Bills(payments) }
+                .map { payments: Payments? -> payments?.let { Bills(it) } }
                 .collect(Collectors.toList())
     }
 
     fun getBuysRecords(): List<Buys?>? {
         return getPaymentsRecordsBy(PaymentsType.BUY)
                 .stream()
-                .map { payments: Payments? -> Buys(payments) }
+                .map { payments: Payments? -> payments?.let { Buys(it) } }
                 .collect(Collectors.toList())
     }
 
@@ -205,7 +205,7 @@ class DatabaseManager : SQLiteOpenHelper {
     private fun updateQuery(table: String,
                             contentValues: ContentValues,
                             whereClause: String,
-                            whereArgs: Array<String>?): Long {
+                            whereArgs: Array<String?>?): Long {
         val sqLiteDatabase = this.writableDatabase
         val id = sqLiteDatabase.update(table,
                 contentValues,
@@ -217,15 +217,15 @@ class DatabaseManager : SQLiteOpenHelper {
 
     private fun paymentsUpdateQuery(contentValues: ContentValues,
                                     whereClause: String,
-                                    whereArgs: Array<String>?): Long {
+                                    whereArgs: Array<String?>?): Long {
         return updateQuery(PAYMENTS_TABLE,
                 contentValues,
                 whereClause,
                 whereArgs)
     }
 
-    private fun toWhereArgs(payment: Payments?): Array<String>? {
-        return payment?.let { arrayOf(it.id.toString(), it.type.name) }
+    private fun toWhereArgs(payment: Payments?): Array<String?>? {
+        return payment?.let { arrayOf(it.id.toString(), it.type?.name) }
     }
 
     fun updatePaymentsRecordFrom(payment: Payments?): Long {
@@ -233,16 +233,16 @@ class DatabaseManager : SQLiteOpenHelper {
     }
 
     fun updateBuyRecordFrom(buy: Buys?): Long {
-        return updatePaymentsRecordFrom(Payments(buy))
+        return updatePaymentsRecordFrom(buy?.let { Payments(it) })
     }
 
     fun updateBillRecordFrom(bill: Bills?): Long {
-        return updatePaymentsRecordFrom(Payments(bill))
+        return updatePaymentsRecordFrom(bill?.let { Payments(it) })
     }
 
     private fun deleteQuery(table: String,
                             whereClause: String?,
-                            whereArgs: Array<String>?): Long {
+                            whereArgs: Array<String?>?): Long {
         val sqLiteDatabase = this.writableDatabase
         val id = sqLiteDatabase.delete(table,
                 whereClause,
@@ -252,7 +252,7 @@ class DatabaseManager : SQLiteOpenHelper {
     }
 
     private fun paymentDeleteQuery(whereClause: String?,
-                                   whereArgs: Array<String>?): Long {
+                                   whereArgs: Array<String?>?): Long {
         return deleteQuery(PAYMENTS_TABLE,
                 whereClause,
                 whereArgs)

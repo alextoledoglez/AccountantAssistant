@@ -1,7 +1,6 @@
-package com.personal.accountantAssistant.ui.buys.enums;
+package com.personal.accountantAssistant.ui.buys.enums
 
-public enum BuysEnum {
-
+enum class BuysEnum(var value: String) {
     RICE("ARROZ"),
     BEAN("FEIJÃO"),
     SUGAR("AÇÚCAR"),
@@ -29,14 +28,4 @@ public enum BuysEnum {
     BEER("CERVEJA"),
     ICE_CREAM("SORVETE"),
     SODA("REFRIGERANTE");
-
-    String value;
-
-    BuysEnum(final String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

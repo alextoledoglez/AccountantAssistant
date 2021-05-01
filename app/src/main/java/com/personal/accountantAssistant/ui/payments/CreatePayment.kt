@@ -1,12 +1,8 @@
-package com.personal.accountantAssistant.ui.payments;
+package com.personal.accountantAssistant.ui.payments
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
 
-public class CreatePayment {
+class CreatePayment {
     @SerializedName("items")
-    Object[] items;
-
-    public Object[] getItems() {
-        return items;
-    }
+    lateinit var items: Array<Any>
 }

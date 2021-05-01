@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.Switch
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
@@ -26,6 +28,7 @@ import com.personal.accountantAssistant.utils.ParserUtils.toPayments
 import io.reactivex.functions.Action
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.P)
 class PaymentsFragmentsUtils(val context: Context?,
                              private val activity: Activity?,
                              private val paymentsType: PaymentsType) {
@@ -36,8 +39,9 @@ class PaymentsFragmentsUtils(val context: Context?,
     private var checker: Switch? = null
     private var recyclerView: RecyclerView? = null
     private var adapter: PaymentsListAdapter? = null
+
     private fun initializeAdapter(onChangeAction: Action?) {
-        adapter = PaymentsListAdapter(context, paymentsType)
+        adapter = context?.let { PaymentsListAdapter(it, paymentsType) }
         adapter?.registerAdapterDataObserver(object : AdapterDataObserver() {
             override fun onChanged() {
                 super.onChanged()

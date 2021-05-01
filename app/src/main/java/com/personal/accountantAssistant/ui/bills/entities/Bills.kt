@@ -1,105 +1,49 @@
-package com.personal.accountantAssistant.ui.bills.entities;
+package com.personal.accountantAssistant.ui.bills.entities
 
-import com.personal.accountantAssistant.ui.payments.entities.Payments;
-import com.personal.accountantAssistant.utils.Constants;
+import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.utils.Constants
+import java.util.*
 
-import java.util.Date;
+class Bills {
+    var uid = 0
+    var bill: String? = null
+    var quantity = 0
+    var date: Date? = null
+    var value = 0.0
+    var totalValue = 0.0
+        private set
+    var isActive = false
 
-public class Bills {
-
-    private int id;
-    private String bill;
-    private int quantity;
-    private Date date;
-    private double value;
-    private double totalValue;
-    private boolean active;
-
-    public Bills() {
+    constructor(bill: String?) {
+        this.bill = bill
+        quantity = Constants.DEFAULT_QUANTITY_VALUE
+        date = Constants.DEFAULT_DATE_VALUE
+        value = Constants.DEFAULT_VALUE
+        totalValue = Constants.DEFAULT_VALUE
+        isActive = Constants.DEFAULT_ACTIVE_STATUS
     }
 
-    public Bills(String bill) {
-        this.bill = bill;
-        this.quantity = Constants.DEFAULT_QUANTITY_VALUE;
-        this.date = Constants.DEFAULT_DATE_VALUE;
-        this.value = Constants.DEFAULT_VALUE;
-        this.totalValue = Constants.DEFAULT_VALUE;
-        this.active = Constants.DEFAULT_ACTIVE_STATUS;
+    constructor(id: Int,
+                bill: String?,
+                quantity: Int,
+                date: Date?,
+                value: Double,
+                active: Boolean) {
+        uid = id
+        this.bill = bill
+        this.quantity = quantity
+        this.date = date
+        this.value = value
+        isActive = active
     }
 
-    public Bills(int id,
-                 String bill,
-                 int quantity,
-                 Date date,
-                 double value,
-                 boolean active) {
-        this.id = id;
-        this.bill = bill;
-        this.quantity = quantity;
-        this.date = date;
-        this.value = value;
-        this.active = active;
-    }
-
-    public Bills(final Payments payments) {
-        this.id = payments.getId();
-        this.bill = payments.getName();
-        this.quantity = payments.getQuantity();
-        this.date = payments.getDate();
-        this.value = payments.getUnitaryValue();
-        this.totalValue = payments.getTotalValue();
-        this.active = payments.isActive();
-    }
-
-    public void setUid(int uid) {
-        this.id = uid;
-    }
-
-    public int getUid() {
-        return id;
-    }
-
-    public String getBill() {
-        return bill;
-    }
-
-    public void setBill(String bill) {
-        this.bill = bill;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public double getTotalValue() {
-        return totalValue;
+    constructor(payments: Payments) {
+        uid = payments.id
+        bill = payments.name
+        quantity = payments.quantity
+        date = payments.date
+        value = payments.unitaryValue
+        totalValue = payments.totalValue
+        isActive = payments.isActive
     }
 }

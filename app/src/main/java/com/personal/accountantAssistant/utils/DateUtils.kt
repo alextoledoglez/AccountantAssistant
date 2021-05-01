@@ -103,7 +103,7 @@ object DateUtils {
     }
 
     @JvmStatic
-    fun isInRange(compareDate: Date, lastRangeDate: Date): Boolean {
+    fun isInRange(compareDate: Date?, lastRangeDate: Date?): Boolean {
         val localCompareDate = toLocalDate(compareDate)
         val localLastRangeDate = toLocalDate(lastRangeDate)
         return localCompareDate?.isBefore(localLastRangeDate) == true ||

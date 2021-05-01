@@ -1,28 +1,29 @@
-package com.personal.accountantAssistant.ui.payments.enums;
+package com.personal.accountantAssistant.ui.payments.enums
 
-import com.personal.accountantAssistant.utils.ParserUtils;
+import com.personal.accountantAssistant.utils.ParserUtils.isNullObject
 
-public enum PaymentsType {
-    BUY,
-    BILL;
+enum class PaymentsType {
+    BUY, BILL;
 
-    public static boolean isBuy(final String name) {
-        return !ParserUtils.isNullObject(name) &&
-                BUY.name().equals(name);
-    }
+    companion object {
+        fun isBuy(name: String): Boolean {
+            return !isNullObject(name) && BUY.name == name
+        }
 
-    public static boolean isBuy(final PaymentsType paymentsType) {
-        return !ParserUtils.isNullObject(paymentsType) &&
-                isBuy(paymentsType.name());
-    }
+        @JvmStatic
+        fun isBuy(paymentsType: PaymentsType): Boolean {
+            return !isNullObject(paymentsType) &&
+                    isBuy(paymentsType.name)
+        }
 
-    public static boolean isBill(final String name) {
-        return !ParserUtils.isNullObject(name) &&
-                BILL.name().equals(name);
-    }
+        fun isBill(name: String): Boolean {
+            return !isNullObject(name) && BILL.name == name
+        }
 
-    public static boolean isBill(final PaymentsType paymentsType) {
-        return !ParserUtils.isNullObject(paymentsType) &&
-                isBill(paymentsType.name());
+        @JvmStatic
+        fun isBill(paymentsType: PaymentsType): Boolean {
+            return !isNullObject(paymentsType) &&
+                    isBill(paymentsType.name)
+        }
     }
 }

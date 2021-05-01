@@ -1,7 +1,6 @@
-package com.personal.accountantAssistant.ui.payments.enums;
+package com.personal.accountantAssistant.ui.payments.enums
 
-public enum PaymentsEnum {
-
+enum class PaymentsEnum(var value: String) {
     NAME("NAME"),
     QUANTITY("QUANTITY"),
     DATE("DATE"),
@@ -9,14 +8,4 @@ public enum PaymentsEnum {
     TOTAL_VALUE("TOTAL VALUE"),
     TYPE("TYPE"),
     ACTIVE("ACTIVE");
-
-    String value;
-
-    PaymentsEnum(final String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

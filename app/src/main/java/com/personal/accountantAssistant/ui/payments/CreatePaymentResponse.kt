@@ -1,9 +1,3 @@
-package com.personal.accountantAssistant.ui.payments;
+package com.personal.accountantAssistant.ui.payments
 
-public class CreatePaymentResponse {
-    private String clientSecret;
-
-    public CreatePaymentResponse(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-}
+class CreatePaymentResponse(private val clientSecret: String)

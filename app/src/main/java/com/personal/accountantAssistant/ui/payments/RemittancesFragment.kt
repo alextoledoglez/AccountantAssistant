@@ -1,26 +1,20 @@
-package com.personal.accountantAssistant.ui.payments;
+package com.personal.accountantAssistant.ui.payments
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.utils.ActivityUtils.startActivity
+import com.personal.accountantAssistant.utils.MenuHelper.initializeHomeOptions
 
-import com.personal.accountantAssistant.R;
-import com.personal.accountantAssistant.utils.ActivityUtils;
-import com.personal.accountantAssistant.utils.MenuHelper;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-public class RemittancesFragment extends Fragment {
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        Context context = getContext();
-        MenuHelper.initializeHomeOptions();
-        ActivityUtils.startActivity(context, CheckoutActivity.class);
-        return inflater.inflate(R.layout.fragment_remittances, container, Boolean.FALSE);
+class RemittancesFragment : Fragment() {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        initializeHomeOptions()
+        context?.let { startActivity(it, CheckoutActivity::class.java) }
+        return inflater.inflate(R.layout.fragment_remittances, container, false)
     }
 }

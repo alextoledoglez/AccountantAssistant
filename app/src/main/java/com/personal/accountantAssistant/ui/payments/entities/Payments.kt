@@ -1,162 +1,100 @@
-package com.personal.accountantAssistant.ui.payments.entities;
+package com.personal.accountantAssistant.ui.payments.entities
 
-import com.personal.accountantAssistant.ui.bills.entities.Bills;
-import com.personal.accountantAssistant.ui.buys.entities.Buys;
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsType;
-
-import java.io.Serializable;
-import java.util.Date;
-
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.personal.accountantAssistant.ui.bills.entities.Bills
+import com.personal.accountantAssistant.ui.buys.entities.Buys
+import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
+import java.io.Serializable
+import java.util.*
 
 @Entity
-public class Payments implements Serializable {
-
+class Payments : Serializable {
     @PrimaryKey
-    private int id;
+    var id = 0
 
     @ColumnInfo(name = "name")
-    private String name;
+    var name: String? = null
 
     @ColumnInfo(name = "quantity")
-    private int quantity;
+    var quantity = 0
 
     @ColumnInfo(name = "date")
-    private Date date;
+    var date: Date? = null
 
     @ColumnInfo(name = "unitary_value")
-    private double unitaryValue;
+    var unitaryValue = 0.0
 
     @ColumnInfo(name = "total_value")
-    private double totalValue;
+    var totalValue = 0.0
 
     @ColumnInfo(name = "type")
-    private PaymentsType type;
+    var type: PaymentsType? = null
 
     @ColumnInfo(name = "active")
-    private boolean active;
+    var isActive = false
 
-    public Payments() {
+    constructor()
+    constructor(id: Int,
+                name: String?,
+                quantity: Int,
+                date: Date?,
+                unitaryValue: Double,
+                type: PaymentsType?,
+                active: Boolean) {
+        this.id = id
+        this.name = name
+        this.quantity = quantity
+        this.date = date
+        this.unitaryValue = unitaryValue
+        totalValue = getTotalValue()
+        this.type = type
+        isActive = active
     }
 
-    public Payments(final int id,
-                    final String name,
-                    final int quantity,
-                    final Date date,
-                    final double unitaryValue,
-                    final PaymentsType type,
-                    final boolean active) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.date = date;
-        this.unitaryValue = unitaryValue;
-        this.totalValue = getTotalValue();
-        this.type = type;
-        this.active = active;
+    constructor(bill: Bills) {
+        id = bill.uid
+        name = bill.bill
+        quantity = bill.quantity
+        date = bill.date
+        unitaryValue = bill.value
+        totalValue = getTotalValue()
+        type = PaymentsType.BILL
+        isActive = bill.isActive
     }
 
-    public Payments(final Bills bill) {
-        this.id = bill.getUid();
-        this.name = bill.getBill();
-        this.quantity = bill.getQuantity();
-        this.date = bill.getDate();
-        this.unitaryValue = bill.getValue();
-        this.totalValue = getTotalValue();
-        this.type = PaymentsType.BILL;
-        this.active = bill.isActive();
+    constructor(buy: Buys) {
+        id = buy.uid
+        name = buy.product
+        quantity = buy.quantity
+        date = Date()
+        unitaryValue = buy.price
+        totalValue = getTotalValue()
+        type = PaymentsType.BUY
+        isActive = buy.isActive
     }
 
-    public Payments(final Buys buy) {
-        this.id = buy.getUid();
-        this.name = buy.getProduct();
-        this.quantity = buy.getQuantity();
-        this.date = new Date();
-        this.unitaryValue = buy.getPrice();
-        this.totalValue = getTotalValue();
-        this.type = PaymentsType.BUY;
-        this.active = buy.isActive();
+    @JvmName("getTotalValue1")
+    fun getTotalValue(): Double {
+        totalValue = unitaryValue * quantity
+        return totalValue
     }
 
-    public int getId() {
-        return id;
+    @JvmName("setTotalValue1")
+    fun setTotalValue(totalValue: Double) {
+        this.totalValue = totalValue
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    val isBill: Boolean?
+        get() = type?.let { PaymentsType.isBill(it) }
+    val isBuy: Boolean?
+        get() = type?.let { PaymentsType.isBuy(it) }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public double getUnitaryValue() {
-        return unitaryValue;
-    }
-
-    public void setUnitaryValue(double unitaryValue) {
-        this.unitaryValue = unitaryValue;
-    }
-
-    public double getTotalValue() {
-        totalValue = (unitaryValue * quantity);
-        return totalValue;
-    }
-
-    public void setTotalValue(double totalValue) {
-        this.totalValue = totalValue;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public PaymentsType getType() {
-        return type;
-    }
-
-    public void setType(PaymentsType type) {
-        this.type = type;
-    }
-
-    public boolean isBill() {
-        return PaymentsType.isBill(this.getType());
-    }
-
-    public boolean isBuy() {
-        return PaymentsType.isBuy(this.getType());
-    }
-
-    public boolean equalsTo(final Payments payment) {
-        return this.getType().equals(payment.getType()) &&
-                this.getName().equals(payment.getName()) &&
-                this.getQuantity() == payment.getQuantity() &&
-                this.getUnitaryValue() == payment.getUnitaryValue();
+    fun equalsTo(payment: Payments): Boolean {
+        return type == payment.type &&
+                name == payment.name &&
+                quantity == payment.quantity &&
+                unitaryValue == payment.unitaryValue
     }
 }

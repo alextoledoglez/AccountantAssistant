@@ -25,7 +25,7 @@ object CalendarsUtils {
             return String.format(selectionFormatStr, *PROJECTION)
         }
 
-    private fun toSelectionArgs(payments: Payments?): Array<String> {
+    private fun toSelectionArgs(payments: Payments?): Array<String?> {
         return payments?.let {
             arrayOf(
                     DEFAULT_CALENDAR_ID.toString(),

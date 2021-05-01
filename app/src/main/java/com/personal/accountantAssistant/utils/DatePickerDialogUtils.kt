@@ -23,19 +23,21 @@ object DatePickerDialogUtils {
         dateEditText.setText(defaultDateText)
         val defaultCalendar = Calendar.getInstance()
         defaultDateText?.let { DateUtils.toDate(it) }?.let { defaultCalendar.time = it }
-        val datePickerDialog = DatePickerDialog(context!!,
-                { _: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                    val newDate = Calendar.getInstance()
-                    newDate[year, monthOfYear] = dayOfMonth
-                    dateEditText.setText(DateUtils.toString(newDate.time))
-                },
-                defaultCalendar[Calendar.YEAR],
-                defaultCalendar[Calendar.MONTH],
-                defaultCalendar[Calendar.DAY_OF_MONTH])
-        dateEditText.setOnClickListener { datePickerDialog.show() }
+        val datePickerDialog = context?.let {
+            DatePickerDialog(it,
+                    { _: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+                        val newDate = Calendar.getInstance()
+                        newDate[year, monthOfYear] = dayOfMonth
+                        dateEditText.setText(DateUtils.toString(newDate.time))
+                    },
+                    defaultCalendar[Calendar.YEAR],
+                    defaultCalendar[Calendar.MONTH],
+                    defaultCalendar[Calendar.DAY_OF_MONTH])
+        }
+        dateEditText.setOnClickListener { datePickerDialog?.show() }
         dateEditText.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
             if (hasFocus) {
-                datePickerDialog.show()
+                datePickerDialog?.show()
             }
         }
     }
