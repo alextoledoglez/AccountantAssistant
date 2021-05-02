@@ -131,7 +131,8 @@ object CalendarsUtils {
     }
 
     private fun readCalendarEvent(contentResolver: ContentResolver, payments: Payments?) {
-        /*final Cursor cursor = getCalendarCursorFrom(contentResolver, payments);*/
+        //TODO
+        print(payments)
         contentResolver.query(CalendarContract.Events.CONTENT_URI, PROJECTION, null, null, null)?.apply {
             var strCalendarValues: StringBuilder? = null
             moveToFirst()

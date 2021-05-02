@@ -2,11 +2,13 @@ package com.personal.accountantAssistant.ui.barcode
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -19,10 +21,13 @@ import java.io.IOException
 import java.util.*
 
 class BarcodeScanActivity : AppCompatActivity() {
+
     private var context: Context? = null
     private var cameraPreviewSurface: SurfaceView? = null
     private var barcodeScanNumber: EditText? = null
     private var cameraSource: CameraSource? = null
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan_barcode)
@@ -34,9 +39,11 @@ class BarcodeScanActivity : AppCompatActivity() {
         barcodeScanButton.setOnClickListener(view -> finish());*/createCameraSource()
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun createCameraSource() {
         val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        context?.display?.getRealMetrics(displayMetrics)
         val barcodeDetector = BarcodeDetector.Builder(this@BarcodeScanActivity)
                 .setBarcodeFormats(Barcode.PRODUCT).build()
         cameraSource = CameraSource.Builder(this@BarcodeScanActivity, barcodeDetector)

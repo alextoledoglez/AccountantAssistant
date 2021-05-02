@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_bills /*,
                 R.id.nav_tickets,
                 R.id.nav_remittances*/)
-                .setDrawerLayout(drawer)
+                .setOpenableLayout(drawer)
                 .build()
         val navController = Navigation.findNavController(mainActivity, R.id.nav_host_fragment)
         mAppBarConfiguration?.let {

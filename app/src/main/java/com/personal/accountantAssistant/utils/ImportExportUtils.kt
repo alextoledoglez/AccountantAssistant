@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.utils
 
 import android.content.Context
 import android.os.Build
-import android.os.Environment
 import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.db.DatabaseManager
@@ -24,18 +23,18 @@ object ImportExportUtils {
     private const val TITLE_POINT_SIZE = 16
     fun xlsImport(context: Context?, type: PaymentsType?) {
         //TODO
+        print(type)
         ToastUtils.showShortText(context, R.string.excel_data_imported)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun xlsExport(context: Context, type: PaymentsType) {
-        val storageDirectory = Environment.getExternalStorageDirectory()
-        val directory = File(storageDirectory.absolutePath)
-        var directoryExist = directory.isDirectory
-        if (!directoryExist) {
-            directoryExist = directory.mkdirs()
+        val storageDirectory = context.getExternalFilesDir("")
+        val directory = storageDirectory?.absolutePath?.let { File(it) }
+        val directoryExist = directory?.isDirectory?.not().let {
+            directory?.mkdirs()
         }
-        if (directoryExist) {
+        directoryExist?.let {
             try {
                 val BUYS = "Buys"
                 val BILLS = "Bills"

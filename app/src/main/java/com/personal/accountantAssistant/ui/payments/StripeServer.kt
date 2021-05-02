@@ -25,7 +25,7 @@ object StripeServer {
         Stripe.apiKey = "sk_test_51HLwPeAlTtH8elLJ6wlHOsxm0THc1cXsnkrR2PwzkrhOupaL2kzSR6pmeKZ3TaxA7rfyYPXIzPh36mMWfbxVIE8d00ysKEpWMD"
         Spark.post("/create-payment-intent") { request: Request, response: Response ->
             response.type("application/json")
-            val postBody = gson.fromJson(request.body(), CreatePayment::class.java)
+            gson.fromJson(request.body(), CreatePayment::class.java)
             val createParams = PaymentIntentCreateParams.Builder()
                     .setCurrency("usd")
                     .setAmount(calculateOrderAmount().toLong())

@@ -36,8 +36,9 @@ import java.util.function.Consumer
 import java.util.stream.Collectors
 
 @RequiresApi(Build.VERSION_CODES.P)
-class PaymentsListAdapter @RequiresApi(api = Build.VERSION_CODES.P) constructor(private val context: Context,
-                                                                                private val paymentsType: PaymentsType) : RecyclerView.Adapter<ViewHolderData>(), Filterable {
+class PaymentsListAdapter constructor(private val context: Context, private val paymentsType: PaymentsType)
+    : RecyclerView.Adapter<ViewHolderData>(), Filterable {
+
     private var payments: MutableList<Payments>? = null
     private val databaseManager: DatabaseManager = DatabaseManager(context)
 
@@ -151,8 +152,9 @@ class PaymentsListAdapter @RequiresApi(api = Build.VERSION_CODES.P) constructor(
                 return filterResults
             }
 
-            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults) {
-                payments = filterResults.values as MutableList<Payments>
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
+                payments = filterResults?.values as MutableList<Payments>?
                 notifyDataSetChanged()
             }
         }
