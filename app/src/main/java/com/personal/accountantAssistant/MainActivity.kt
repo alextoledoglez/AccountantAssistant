@@ -15,7 +15,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
-import com.personal.accountantAssistant.db.DatabaseManager
+import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.*
 

@@ -14,7 +14,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.db.LocalStorage
+import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.*
 import com.savvi.rangedatepicker.CalendarPickerView

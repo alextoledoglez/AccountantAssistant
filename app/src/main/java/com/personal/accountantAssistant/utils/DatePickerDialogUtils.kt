@@ -7,8 +7,8 @@ import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.DatePicker
 import android.widget.EditText
-import com.personal.accountantAssistant.db.LocalStorage
-import com.personal.accountantAssistant.dto.CalendarPeriod
+import com.personal.accountantAssistant.data.LocalStorage
+import com.personal.accountantAssistant.data.dto.CalendarPeriod
 import com.personal.accountantAssistant.utils.ActionUtils.runAction
 import com.savvi.rangedatepicker.CalendarPickerView
 import com.savvi.rangedatepicker.CalendarPickerView.OnDateSelectedListener

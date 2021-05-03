@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.utils
 
-import com.personal.accountantAssistant.dto.CalendarValues
+import com.personal.accountantAssistant.data.dto.CalendarValues
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period

@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.db.DatabaseManager
+import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.ActionUtils.runAction
 import com.personal.accountantAssistant.utils.ActivityUtils.parse

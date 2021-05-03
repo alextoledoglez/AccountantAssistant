@@ -95,4 +95,7 @@
     <string name="payment_failed_message">Pagamento falhou</string>
 
     <string name="search_view_hint_message">Digite um item para pesquisar</string>
+    <string name="sign_in_title">Escolha uma conta para logar</string>
+    <string name="sign_in_action_text">Login</string>
+    <string name="sign_in_canceled">Login cancelado</string>
 </resources>

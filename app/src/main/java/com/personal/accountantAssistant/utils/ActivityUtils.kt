@@ -3,12 +3,22 @@ package com.personal.accountantAssistant.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.personal.accountantAssistant.MainActivity
 import com.personal.accountantAssistant.ui.payments.PaymentsDetailsActivity
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import java.util.*
 
 object ActivityUtils {
+
+    @JvmStatic
+    fun startMainActivity(packageContext: Context) {
+        Intent(packageContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            packageContext.startActivity(this)
+        }
+    }
+
     @JvmStatic
     fun startActivity(packageContext: Context,
                       activityClass: Class<*>?) {

@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.db.DatabaseManager
+import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType

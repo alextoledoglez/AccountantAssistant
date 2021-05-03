@@ -94,4 +94,7 @@
     <string name="payment_failed_message">Payment failed</string>
 
     <string name="search_view_hint_message">Type an item to search</string>
+    <string name="sign_in_title">Choose an account to login</string>
+    <string name="sign_in_action_text">Sign In</string>
+    <string name="sign_in_canceled">Sign In canceled</string>
 </resources>

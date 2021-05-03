@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.db
+package com.personal.accountantAssistant.data
 
 import android.annotation.SuppressLint
 import android.content.ContentValues

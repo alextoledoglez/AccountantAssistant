@@ -44,6 +44,9 @@ android {
 
 dependencies {
 
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     def appcompat_version = "1.2.0"
     def navigation_version = "2.3.5"
     def google_http_api_version = "1.26.0"

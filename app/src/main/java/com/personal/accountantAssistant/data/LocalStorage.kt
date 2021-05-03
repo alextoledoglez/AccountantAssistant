@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.db
+package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,6 +12,7 @@ class LocalStorage(val context: Context) {
         private const val AVAILABLE_MONEY = "AVAILABLE_MONEY"
         private const val FIRST_STR_DATE = "FIRST_STR_DATE"
         private const val LAST_STR_DATE = "LAST_STR_DATE"
+        private const val SIGNED_ACCOUNT_NAME = "SIGNED_ACCOUNT_NAME"
     }
 
     private fun getDefaultSharedPreferences(): SharedPreferences {
@@ -59,5 +60,13 @@ class LocalStorage(val context: Context) {
         dates.add(getFirstDate())
         dates.add(getLastDate())
         return dates
+    }
+
+    fun setSignedAccountName(accountName: String?) {
+        getDefaultSharedPreferences().edit().putString(SIGNED_ACCOUNT_NAME, accountName).apply()
+    }
+
+    fun getSignedAccountName(): String? {
+        return getDefaultSharedPreferences().getString(SIGNED_ACCOUNT_NAME, null)
     }
 }

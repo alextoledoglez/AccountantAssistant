@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.dto
+package com.personal.accountantAssistant.data.dto
 
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils

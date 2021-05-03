@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.db.DatabaseManager
+import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter.ViewHolderData
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
