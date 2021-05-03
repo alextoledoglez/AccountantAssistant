@@ -12,7 +12,6 @@ import android.text.InputType
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Switch
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -57,7 +56,7 @@ class PaymentsDetailsActivity : AppCompatActivity() {
         val dateEditText = findViewById<EditText>(R.id.payment_date)
         dateEditText.inputType = InputType.TYPE_NULL
         val valueEditText = findViewById<EditText>(R.id.payment_value)
-        val activeSwitch = findViewById<Switch>(R.id.payment_active)
+        val activeSwitch = findViewById<androidx.appcompat.widget.SwitchCompat>(R.id.payment_active)
         payment?.let { it ->
             val paymentType = it.type?.name
             supportActionBar?.setTitle(getActionBarTitleFrom(paymentType))

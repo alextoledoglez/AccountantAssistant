@@ -9,7 +9,6 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.SearchView
-import android.widget.Switch
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,7 +35,7 @@ class PaymentsFragmentsUtils(val context: Context?,
     private var subTitleTextView: TextView? = null
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private var checker: Switch? = null
+    private var checker: androidx.appcompat.widget.SwitchCompat? = null
     private var recyclerView: RecyclerView? = null
     private var adapter: PaymentsListAdapter? = null
 

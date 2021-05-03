@@ -113,7 +113,7 @@
                         android:text="@string/active"
                         android:textStyle="bold" />
 
-                    <Switch
+                    <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/payment_active"
                         android:layout_width="@dimen/switch_size"
                         android:layout_height="match_parent"

@@ -57,7 +57,7 @@
                 android:layout_weight="@dimen/end_layout_weight"
                 android:orientation="horizontal">
 
-                <Switch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/active_action"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
