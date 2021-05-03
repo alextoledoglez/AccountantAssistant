@@ -24,7 +24,11 @@ class DatabaseManager : SQLiteOpenHelper {
     companion object {
 
         private const val DB_VERSION = 1
-        private const val DB_NAME = "ACCOUNTANT_ASSISTANT"
+
+        const val DB_NAME = "ACCOUNTANT_ASSISTANT"
+        const val BUY_TABLE = "PRODUCTS_TABLE"
+        const val BILL_TABLE = "BILLS_TABLE"
+
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
         private const val UID_WHERE_CLAUSE = Constants.UID + WHERE_CLAUSE_PARAMETER
@@ -36,8 +40,6 @@ class DatabaseManager : SQLiteOpenHelper {
         private const val CREATE_TABLE_COMMAND = "CREATE TABLE"
         private const val SELECT_FROM_COMMAND = "SELECT * FROM"
         private const val PAYMENTS_TABLE = "PAYMENTS_TABLE"
-        const val BUY_TABLE = "PRODUCTS_TABLE"
-        const val BILL_TABLE = "BILLS_TABLE"
 
         private const val TEXT = "TEXT"
         private const val COMMA_SEPARATOR = ","

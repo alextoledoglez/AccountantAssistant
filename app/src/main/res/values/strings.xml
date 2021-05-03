@@ -59,6 +59,10 @@
     <string name="select_quantity">Select a quantity</string>
     <string name="excel_data_imported">Data Imported in a Excel Sheet</string>
     <string name="excel_data_exported">Data Exported in a Excel Sheet</string>
+    <string name="db_successfully_imported">DB successfully imported!</string>
+    <string name="db_successfully_exported">DB successfully exported!</string>
+    <string name="db_importing_failure">DB importing failure</string>
+    <string name="db_exporting_failure">DB exporting failure</string>
     <string name="bills_details">Bills details</string>
     <string name="buys_details">Buys details</string>
     <string name="delete_record_title">Delete record</string>

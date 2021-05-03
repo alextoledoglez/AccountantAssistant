@@ -60,6 +60,10 @@
     <string name="select_quantity">Selecione uma quantidade</string>
     <string name="excel_data_imported">Dados importados em uma planilha do Excel</string>
     <string name="excel_data_exported">Dados exportados em uma planilha do Excel</string>
+    <string name="db_successfully_imported">DB importado com sucesso!</string>
+    <string name="db_successfully_exported">DB exportado com sucesso!</string>
+    <string name="db_importing_failure">Falha na importação de DB</string>
+    <string name="db_exporting_failure">Falha ao exportar DB</string>
     <string name="bills_details">Detalhes de contas</string>
     <string name="buys_details">Detalhes de compras</string>
     <string name="delete_record_title">Apagar registro</string>

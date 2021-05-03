@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.utils
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.db.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.entities.Payments
@@ -13,14 +14,22 @@ import jxl.Workbook
 import jxl.WorkbookSettings
 import jxl.write.*
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.channels.FileChannel
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 object ImportExportUtils {
+
+    private const val DB_NAME = DatabaseManager.DB_NAME
+    private const val DB_BACKUP_FORMAT = "%s"
+    private const val FILE_DIRECTORY_TYPE = ""
     private const val FIRST_SHEET = 0
     private const val HEADER_ROW = 0
     private const val BODY_ROW = HEADER_ROW + 1
     private const val TITLE_POINT_SIZE = 16
+
     fun xlsImport(context: Context?, type: PaymentsType?) {
         //TODO
         print(type)
@@ -64,6 +73,60 @@ object ImportExportUtils {
         }
     }
 
+    fun importDBFrom(context: Context) {
+        try {
+            if (PermissionsUtils.haveStoragePermissionGranted(context)) {
+                val sourceDirectory: File? = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
+                if (sourceDirectory?.canWrite() == true) {
+                    val backupDB: File = context.getDatabasePath(DB_NAME)
+                    val backupDBPath: String =
+                            java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val currentDB = File(sourceDirectory, backupDBPath)
+                    val src: FileChannel = FileInputStream(currentDB).channel
+                    val dst: FileChannel = FileOutputStream(backupDB).channel
+                    dst.transferFrom(src, 0, src.size())
+                    src.close()
+                    dst.close()
+                    ToastUtils.showLongText(context, R.string.db_successfully_imported)
+                } else {
+                    ToastUtils.showLongText(context, R.string.db_importing_failure)
+                }
+            } else {
+                requestStoragePermissionsFrom(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun exportDBFrom(context: Context): File? {
+        try {
+            if (PermissionsUtils.haveStoragePermissionGranted(context)) {
+                val currentDB: File = context.getDatabasePath(DB_NAME)
+                val src: FileChannel = FileInputStream(currentDB).channel
+                val sourceDirectory: File? = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
+                if (sourceDirectory?.canWrite() == true) {
+                    val backupDBPath: String =
+                            java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val backupDB = File(sourceDirectory, backupDBPath)
+                    val dst: FileChannel = FileOutputStream(backupDB).channel
+                    dst.transferFrom(src, 0, src.size())
+                    src.close()
+                    dst.close()
+                    ToastUtils.showLongText(context, R.string.db_successfully_exported)
+                    return backupDB
+                } else {
+                    ToastUtils.showLongText(context, R.string.db_exporting_failure)
+                }
+            } else {
+                requestStoragePermissionsFrom(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     @RequiresApi(Build.VERSION_CODES.P)
     private fun fillSheetFrom(context: Context,
                               sheet: WritableSheet,
@@ -92,10 +155,8 @@ object ImportExportUtils {
     }
 
     private fun setHeaderCell(sheet: WritableSheet) {
-        var colIndex = 0
-        for (value in PaymentsEnum.values()) {
+        for ((colIndex, value) in PaymentsEnum.values().withIndex()) {
             addHeaderCell(sheet, colIndex, value.value)
-            colIndex++
         }
     }
 
@@ -128,5 +189,13 @@ object ImportExportUtils {
         } catch (e: WriteException) {
             e.printStackTrace()
         }
+    }
+
+    private fun requestStoragePermissionsFrom(context: Context) {
+        requestPermissions(
+                ActivityUtils.parse(context),
+                PermissionsUtils.STORAGE_PERMISSIONS,
+                PermissionsUtils.STORAGE_PERMISSION_CODE
+        )
     }
 }
