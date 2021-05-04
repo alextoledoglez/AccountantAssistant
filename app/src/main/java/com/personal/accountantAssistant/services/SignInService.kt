@@ -3,10 +3,13 @@ package com.personal.accountantAssistant.services
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
@@ -69,7 +72,7 @@ class SignInService(val context: Context) {
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
-    fun handleSignInResult(result: Intent) {
+    fun handleSignInResult(result: Intent, signInButton: SignInButton?, progressBar: ProgressBar?) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
                 .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
                     setAccountName(googleAccount.email)
@@ -85,6 +88,8 @@ class SignInService(val context: Context) {
                 }
                 .addOnFailureListener { exception: Exception? ->
                     Log.e(TAG, "Unable to sign in.", exception)
+                    signInButton?.visibility = View.VISIBLE
+                    progressBar?.visibility = View.GONE
                     cleanData()
                 }
     }

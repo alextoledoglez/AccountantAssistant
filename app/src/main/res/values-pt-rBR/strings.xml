@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Accountant assistant</string>
+    <string name="app_version">Versão: 1.0</string>
     <string name="navigation_drawer_open">Abrir gaveta de navegação</string>
     <string name="navigation_drawer_close">Fechar gaveta de navegação</string>
     <string name="nav_header_title">accountant.assistant@gmail.com</string>
@@ -95,7 +96,7 @@
     <string name="payment_failed_message">Pagamento falhou</string>
 
     <string name="search_view_hint_message">Digite um item para pesquisar</string>
-    <string name="sign_in_title">Escolha uma conta para logar</string>
     <string name="sign_in_action_text">Login</string>
     <string name="sign_in_canceled">Login cancelado</string>
+    <string name="sign_in_failed">Falha ao logar</string>
 </resources>

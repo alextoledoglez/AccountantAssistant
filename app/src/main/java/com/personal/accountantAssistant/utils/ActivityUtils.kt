@@ -14,7 +14,7 @@ object ActivityUtils {
     @JvmStatic
     fun startMainActivity(packageContext: Context) {
         Intent(packageContext, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
             packageContext.startActivity(this)
         }
     }
