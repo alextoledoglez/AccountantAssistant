@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="ThemeOverlay.AccountantAssistant.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/colorPrimary</item>
+        <item name="fullscreenTextColor">@color/colorPrimary</item>
+    </style>
+</resources>

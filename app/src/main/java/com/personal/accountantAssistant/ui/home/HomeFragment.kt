@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.ui.home
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.personal.accountantAssistant.R
@@ -25,6 +27,7 @@ class HomeFragment : Fragment() {
     private var activity: Activity? = null
     private var localStorage: LocalStorage? = null
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -56,6 +59,7 @@ class HomeFragment : Fragment() {
         return rootView
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun calculateExpenses(context: Context?, activity: Activity?, rootView: View) {
         val availableMoney = localStorage?.getAvailableMoney()?.toDouble()
         fillDashBoardCard(rootView, R.id.available_card, availableMoney.toString())

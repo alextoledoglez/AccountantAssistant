@@ -97,4 +97,8 @@
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>
 
+    <style name="Widget.AppTheme.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
 </resources>

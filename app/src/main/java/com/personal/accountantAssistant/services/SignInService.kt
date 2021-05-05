@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.gson.GsonFactory
@@ -18,6 +19,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.LocalStorage
+import com.personal.accountantAssistant.ui.login.LoginActivity
 import com.personal.accountantAssistant.utils.ActivityUtils
 import java.util.*
 
@@ -46,18 +48,29 @@ class SignInService(val context: Context) {
                 .requestScopes(Scope(DriveScopes.DRIVE_FILE))
     }
 
-    private fun getSignInClientIntent(signInOptions: GoogleSignInOptions?): Intent? {
+    private fun getSignInClient(signInOptions: GoogleSignInOptions?): GoogleSignInClient? {
         signInClient = signInOptions?.let { GoogleSignIn.getClient(context, it) }
-        return signInClient?.signInIntent
+        return signInClient
+    }
+
+    private fun getSignInClientIntent(signInOptions: GoogleSignInOptions?): Intent? {
+        return getSignInClient(signInOptions)?.signInIntent
+    }
+
+    /**
+     * Request sign in intent from a provided account.
+     */
+    fun getAccountNameSignInClient(): GoogleSignInClient? {
+        Log.d(TAG, "Requesting silent sign-in")
+        signInOptions = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
+        return getSignInClient(signInOptions)
     }
 
     /**
      * Request sign in intent from a provided account.
      */
     fun requestAccountNameSignIn(): Intent? {
-        Log.d(TAG, "Requesting silent sign-in")
-        signInOptions = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
-        return getSignInClientIntent(signInOptions)
+        return getAccountNameSignInClient()?.signInIntent
     }
 
     /**
@@ -72,7 +85,7 @@ class SignInService(val context: Context) {
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
-    fun handleSignInResult(result: Intent, signInButton: SignInButton?, progressBar: ProgressBar?) {
+    fun handleSignInResult(result: Intent, requestCode: Int, signInButton: SignInButton?, progressBar: ProgressBar?) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
                 .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
                     setAccountName(googleAccount.email)
@@ -84,18 +97,27 @@ class SignInService(val context: Context) {
                             .setApplicationName(context.getString(R.string.app_name))
                             .build()
                     //Once time you are sign in
+                    if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
+                        signInButton?.visibility = View.INVISIBLE
+                    }
                     ActivityUtils.startMainActivity(context)
                 }
                 .addOnFailureListener { exception: Exception? ->
                     Log.e(TAG, "Unable to sign in.", exception)
-                    signInButton?.visibility = View.VISIBLE
+                    if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
+                        signInButton?.visibility = View.VISIBLE
+                    }
                     progressBar?.visibility = View.GONE
                     cleanData()
                 }
     }
 
-    fun signOut() {
-        signInClient?.signOut()
+    fun signOutResult(): Task<Void>? {
+        return signInClient?.signOut()
+    }
+
+    fun signOut(): Task<Void>? {
+        return signOutResult()
                 ?.addOnSuccessListener {
                     Log.d(TAG, "Signed out")
                     cleanData()

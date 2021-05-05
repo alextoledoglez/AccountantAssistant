@@ -32,6 +32,6 @@
     <dimen name="landscape_card_margin">@dimen/card_margin</dimen>
     <dimen name="landscape_card_height">@dimen/small_card_height</dimen>
     <dimen name="landscape_card_width">272dp</dimen>
-    <dimen name="big_logo_size">150dp</dimen>
+    <dimen name="big_logo_size">100dp</dimen>
 
 </resources>

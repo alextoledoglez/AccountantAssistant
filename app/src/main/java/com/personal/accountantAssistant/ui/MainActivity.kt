@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant
+package com.personal.accountantAssistant.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,9 +15,11 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
+import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.*
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,6 +87,11 @@ class MainActivity : AppCompatActivity() {
                 fragment.onActivityResult(requestCode, resultCode, data)
             }
         }
+    }
+
+    override fun onBackPressed() {
+        finishAffinity()
+        exitProcess(0)
     }
 
     private fun addBuys() {

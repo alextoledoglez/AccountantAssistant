@@ -2,36 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:padding="@dimen/default_material_margin"
+    android:background="?attr/fullscreenBackgroundColor"
+    android:theme="@style/ThemeOverlay.AccountantAssistant.FullscreenContainer"
     tools:context=".ui.login.LoginActivity">
-
-    <TextView
-        android:id="@+id/text_view_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/big_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.10" />
 
     <ImageView
         android:id="@+id/image_view_logo"
         android:layout_width="@dimen/big_logo_size"
         android:layout_height="@dimen/big_logo_size"
         android:src="@mipmap/ic_launcher_round"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_version"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_title"
-        app:layout_constraintVertical_bias="0.10"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"
         tools:srcCompat="@mipmap/ic_launcher_round" />
 
@@ -41,31 +26,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminateTint="@color/colorWhite"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_view_logo"
-        app:layout_constraintVertical_bias="0.50" />
+        app:layout_constraintVertical_bias="0.7" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_version"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view_logo"
-        app:layout_constraintVertical_bias="0.80" />
-
-    <TextView
-        android:id="@+id/text_view_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_material_margin"
-        android:text="@string/app_version"
-        android:textColor="@color/colorWhite"
-        android:textSize="@dimen/medium_text_size"
+        android:layout_margin="@dimen/default_material_margin"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

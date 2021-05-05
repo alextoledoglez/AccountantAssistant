@@ -27,4 +27,5 @@
     <color name="calendar_range_middle_unavailable_bg">@color/colorRed</color>
     //Deactivated calendar dates colors
     <color name="calendar_range_middle_deactivated_bg">@color/disableForegroundColor</color>
+    <color name="colorOverlay">@color/colorPrimaryDark</color>
 </resources>

@@ -3,7 +3,7 @@ package com.personal.accountantAssistant.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.personal.accountantAssistant.MainActivity
+import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.payments.PaymentsDetailsActivity
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
@@ -22,8 +22,9 @@ object ActivityUtils {
     @JvmStatic
     fun startActivity(packageContext: Context,
                       activityClass: Class<*>?) {
-        val intent = Intent(packageContext, activityClass)
-        packageContext.startActivity(intent)
+        Intent(packageContext, activityClass).apply {
+            packageContext.startActivity(this)
+        }
     }
 
     fun startPaymentDetailsActivity(packageContext: Context,

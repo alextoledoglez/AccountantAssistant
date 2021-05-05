@@ -128,10 +128,12 @@ class DatabaseManager : SQLiteOpenHelper {
             onCreate(sqLiteDatabase)
             cursor = getOrCreateTable(sqLiteDatabase, SELECT_ALL_PAYMENTS_RECORDS_QUERY)
         }
-        cursor?.moveToFirst()?.apply {
-            payments.add(cursorToPayments(cursor))
-            while (cursor.moveToNext()) {
-                payments.add(cursorToPayments(cursor))
+        cursor?.let {
+            if (it.moveToFirst()) {
+                payments.add(cursorToPayments(it))
+            }
+            while (it.moveToNext()) {
+                payments.add(cursorToPayments(it))
             }
         }
         sqLiteDatabase.close()
