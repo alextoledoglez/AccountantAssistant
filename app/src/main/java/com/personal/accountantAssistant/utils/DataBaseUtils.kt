@@ -49,7 +49,7 @@ object DataBaseUtils {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun deleteDataFrom(context: Context?, entity: Any?, onSuccess: Action?) {
+    fun deleteDataFrom(context: Context?, entity: Any?, onSuccess: Action?) {
         val payment = ParserUtils.toPayments(entity)
         context?.let { ctx ->
             val databaseManager = DatabaseManager(ctx)
@@ -69,9 +69,8 @@ object DataBaseUtils {
     fun deleteRecord(context: Context, entity: Any?, onSuccess: Action?) {
         DialogUtils.confirmationDialog(context,
                 R.string.delete_record_title,
-                R.string.delete_record_message,
-                ParserUtils.toAction(deleteDataFrom(context, entity, onSuccess))
-        )
+                R.string.delete_record_message
+        ) { deleteDataFrom(context, entity, onSuccess) }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
