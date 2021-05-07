@@ -74,8 +74,4 @@ object ParserUtils {
     private fun isPaymentInstance(entity: Any): Boolean {
         return entity is Payments
     }
-
-    fun toAction(unit: Unit?): Action {
-        return { unit } as Action
-    }
 }

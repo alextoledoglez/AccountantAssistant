@@ -51,13 +51,10 @@ object MenuHelper {
         mainMenu?.getItem(itemIndex)?.isVisible = enabled
     }
 
-    fun conditionalMenuItemClickListener(buysUnit: Unit?,
-                                         billsUnit: Unit?) {
-        conditionalMenuItemClickListener(ParserUtils.toAction(buysUnit), ParserUtils.toAction(billsUnit))
-    }
-
-    fun conditionalMenuItemClickListener(buysAction: Action?,
-                                         billsAction: Action?) {
+    fun conditionalMenuItemClickListener(
+        buysAction: Action?,
+        billsAction: Action?
+    ) {
         if (isBuysViewSelected) {
             buysAction?.let { runAction(it) }
         } else if (isBillsViewSelected) {

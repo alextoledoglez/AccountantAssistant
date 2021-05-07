@@ -15,20 +15,11 @@ object ActionUtils {
         }
     }
 
-    fun conditionalActions(condition: Boolean,
-                           trueUnit: Unit?) {
-        conditionalActions(condition, ParserUtils.toAction(trueUnit), NONE_ACTION_TO_DO)
-    }
-
-    fun conditionalActions(condition: Boolean,
-                           trueUnit: Unit?,
-                           falseUnit: Unit?) {
-        conditionalActions(condition, ParserUtils.toAction(trueUnit), ParserUtils.toAction(falseUnit))
-    }
-
-    private fun conditionalActions(condition: Boolean,
-                                   trueAction: Action?,
-                                   falseAction: Action?) {
+    fun conditionalActions(
+        condition: Boolean,
+        trueAction: Action?,
+        falseAction: Action? = NONE_ACTION_TO_DO
+    ) {
         if (condition) {
             trueAction?.let { runAction(it) }
         } else {

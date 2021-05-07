@@ -23,7 +23,7 @@ import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var context: Context
+    private lateinit var mainContext: Context
     private lateinit var mainActivity: MainActivity
     private var databaseManager: DatabaseManager? = null
     private var mAppBarConfiguration: AppBarConfiguration? = null
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        context = applicationContext
+        mainContext = this@MainActivity
         mainActivity = this@MainActivity
         databaseManager = DatabaseManager(applicationContext)
 
@@ -41,13 +41,15 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        mAppBarConfiguration = AppBarConfiguration.Builder(R.id.nav_home,
-                R.id.nav_buys,
-                R.id.nav_bills /*,
+        mAppBarConfiguration = AppBarConfiguration.Builder(
+            R.id.nav_home,
+            R.id.nav_buys,
+            R.id.nav_bills /*,
                 R.id.nav_tickets,
-                R.id.nav_remittances*/)
-                .setOpenableLayout(drawer)
-                .build()
+                R.id.nav_remittances*/
+        )
+            .setOpenableLayout(drawer)
+            .build()
         val navController = Navigation.findNavController(mainActivity, R.id.nav_host_fragment)
         mAppBarConfiguration?.let {
             NavigationUI.setupActionBarWithNavController(mainActivity, navController, it)
@@ -95,29 +97,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addBuys() {
-        ActivityUtils.startPaymentDetailsActivity(context, PaymentsType.BUY)
+        ActivityUtils.startPaymentDetailsActivity(mainContext, PaymentsType.BUY)
     }
 
     private fun addBills() {
-        ActivityUtils.startPaymentDetailsActivity(context, PaymentsType.BILL)
+        ActivityUtils.startPaymentDetailsActivity(mainContext, PaymentsType.BILL)
     }
 
     private fun importBuys() {
-        ImportExportUtils.xlsImport(context, PaymentsType.BUY)
+        ImportExportUtils.xlsImport(mainContext, PaymentsType.BUY)
     }
 
     private fun importBills() {
-        ImportExportUtils.xlsImport(context, PaymentsType.BILL)
+        ImportExportUtils.xlsImport(mainContext, PaymentsType.BILL)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun exportBuys() {
-        ImportExportUtils.xlsExport(context, PaymentsType.BUY)
+        ImportExportUtils.xlsExport(mainContext, PaymentsType.BUY)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun exportBills() {
-        ImportExportUtils.xlsExport(context, PaymentsType.BILL)
+        ImportExportUtils.xlsExport(mainContext, PaymentsType.BILL)
     }
 
     private fun deleteAllBuysRecords(): Boolean? {
@@ -130,13 +132,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun deleteAllBuys() {
         deleteAllBuysRecords()?.let {
-            ActionUtils.conditionalActions(it, refreshRecyclerView())
+            ActionUtils.conditionalActions(it, { refreshRecyclerView() })
         }
     }
 
     private fun deleteAllBills() {
         deleteAllBillsRecords()?.let {
-            ActionUtils.conditionalActions(it, refreshRecyclerView())
+            ActionUtils.conditionalActions(it, { refreshRecyclerView() })
         }
     }
 
@@ -155,40 +157,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshRecyclerView() {
-        ActivityUtils.refreshBy(context)
+        ActivityUtils.refreshBy(mainContext)
     }
 
     private fun addMenuItemClickListener() {
-        MenuHelper.conditionalMenuItemClickListener(addBuys(), addBills())
+        MenuHelper.conditionalMenuItemClickListener({ addBuys() }, { addBills() })
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun importExportMenuItemClickListener() {
-        DialogUtils.showImportExportDialog(context, R.string.import_export_title, importMenuItemClickListener(), exportMenuItemClickListener())
+        DialogUtils.showImportExportDialog(
+            mainContext,
+            R.string.import_export_title,
+            { importMenuItemClickListener() },
+            { exportMenuItemClickListener() }
+        )
     }
 
     private fun importMenuItemClickListener() {
-        MenuHelper.conditionalMenuItemClickListener(importBuys(), importBills())
+        MenuHelper.conditionalMenuItemClickListener({ importBuys() }, { importBills() })
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun exportMenuItemClickListener() {
-        MenuHelper.conditionalMenuItemClickListener(exportBuys(), exportBills())
+        MenuHelper.conditionalMenuItemClickListener({ exportBuys() }, { exportBills() })
     }
 
     private fun deleteAllMenuItemClickListener() {
-        DialogUtils.confirmationDialog(context,
-                R.string.delete_all_records_title,
-                R.string.delete_all_records_message,
-                MenuHelper.conditionalMenuItemClickListener(deleteAllBuys(), deleteAllBills())
-        )
+        DialogUtils.confirmationDialog(
+            mainContext,
+            R.string.delete_all_records_title,
+            R.string.delete_all_records_message
+        ) { MenuHelper.conditionalMenuItemClickListener({ deleteAllBuys() }, { deleteAllBills() }) }
     }
 
     private fun restoreDefaultMenuItemClickListener() {
-        DialogUtils.confirmationDialog(context,
-                R.string.restore_default_records_title,
-                R.string.restore_default_records_message,
-                MenuHelper.conditionalMenuItemClickListener(restoreDefaultBuys(), restoreDefaultBills())
-        )
+        DialogUtils.confirmationDialog(
+            mainContext,
+            R.string.restore_default_records_title,
+            R.string.restore_default_records_message
+        ) {
+            MenuHelper.conditionalMenuItemClickListener(
+                { restoreDefaultBuys() },
+                { restoreDefaultBills() }
+            )
+        }
     }
 }
