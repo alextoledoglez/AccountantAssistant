@@ -1,96 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/defaultBackgroundColor"
-    android:clickable="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        style="@style/topLandscapeLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="horizontal">
-
-        <include
-            android:id="@+id/available_card"
-            style="@style/landscapeCardStyle"
-            layout="@layout/dashboard_editable_card" />
-
-        <include
-            android:id="@+id/needed_card"
-            style="@style/smallCardStyle"
-            layout="@layout/dashboard_card" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        style="@style/bottomLandscapeLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal|center_vertical"
-        android:orientation="horizontal">
-
-        <include
-            android:id="@+id/daily_card"
-            style="@style/smallCardStyle"
-            layout="@layout/dashboard_card" />
-
-        <include
-            android:id="@+id/buy_card"
-            style="@style/smallCardStyle"
-            layout="@layout/dashboard_card" />
-
-        <include
-            android:id="@+id/bill_card"
-            style="@style/smallCardStyle"
-            layout="@layout/dashboard_card" />
-
-        <include
-            android:id="@+id/total_card"
-            style="@style/smallCardStyle"
-            layout="@layout/dashboard_card" />
-
-    </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/period_card"
-        style="@style/cardMarginStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:ignore="PrivateResource">
+        android:background="@color/defaultBackgroundColor"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <LinearLayout
+            style="@style/topLandscapeLayoutStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/period_card_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/title_height"
-                android:text="@string/period_to_expense"
-                android:theme="@style/TitleTextView" />
+            <include
+                android:id="@+id/available_card"
+                style="@style/landscapeCardStyle"
+                layout="@layout/dashboard_editable_card" />
 
-            <com.savvi.rangedatepicker.CalendarPickerView
-                android:id="@+id/period_calendar_picker_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/five_margin"
-                android:clipToPadding="false"
-                android:scrollbarStyle="outsideOverlay"
-                app:tsquare_dividerColor="@color/disableForegroundColor"
-                app:tsquare_headerTextColor="@color/defaultFontColor"
-                app:tsquare_orientation_horizontal="false" />
+            <include
+                android:id="@+id/needed_card"
+                style="@style/smallCardStyle"
+                layout="@layout/dashboard_card" />
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+        <LinearLayout
+            style="@style/bottomLandscapeLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <include
+                android:id="@+id/daily_card"
+                style="@style/smallCardStyle"
+                layout="@layout/dashboard_card" />
+
+            <include
+                android:id="@+id/buy_card"
+                style="@style/smallCardStyle"
+                layout="@layout/dashboard_card" />
+
+            <include
+                android:id="@+id/bill_card"
+                style="@style/smallCardStyle"
+                layout="@layout/dashboard_card" />
+
+            <include
+                android:id="@+id/total_card"
+                style="@style/smallCardStyle"
+                layout="@layout/dashboard_card" />
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/period_card"
+            style="@style/cardMarginStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="PrivateResource">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/period_card_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/title_height"
+                    android:text="@string/period_to_expense"
+                    android:theme="@style/TitleTextView" />
+
+                <CalendarView
+                    android:id="@+id/period_calendar_picker_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/five_margin"
+                    android:clipToPadding="false"
+                    android:scrollbarStyle="outsideOverlay" />
+                <!-- <com.savvi.rangedatepicker.CalendarPickerView
+                     android:id="@+id/period_calendar_picker_view"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_margin="@dimen/five_margin"
+                     android:clipToPadding="false"
+                     android:scrollbarStyle="outsideOverlay"
+                     app:tsquare_dividerColor="@color/disableForegroundColor"
+                     app:tsquare_headerTextColor="@color/defaultFontColor"
+                     app:tsquare_orientation_horizontal="false" />-->
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</layout>

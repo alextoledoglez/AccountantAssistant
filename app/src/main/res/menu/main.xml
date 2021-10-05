@@ -5,12 +5,12 @@
         android:id="@+id/add_payment"
         android:icon="@drawable/add_white"
         android:title="@string/add_action"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/import_export"
         android:icon="@drawable/import_export_white"
         android:title="@string/import_export"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/delete_all"
         android:icon="@drawable/delete_white"

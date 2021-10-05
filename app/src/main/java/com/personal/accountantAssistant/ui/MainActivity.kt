@@ -17,6 +17,7 @@ import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.DatabaseManager
+import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.*
 import kotlin.system.exitProcess
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MainModuleInitializer.initialize()
         setContentView(R.layout.activity_main)
 
         mainContext = this@MainActivity

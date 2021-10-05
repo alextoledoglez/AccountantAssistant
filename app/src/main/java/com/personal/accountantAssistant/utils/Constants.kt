@@ -6,7 +6,6 @@ object Constants {
     const val UID = "ID"
     const val TIMES = "x"
     const val UNITY = "u"
-    const val EMPTY_STR = ""
     const val ENTITY = "ENTITY"
     const val DASH_SEPARATOR = "-"
     const val EQUAL_OPERATOR = " = "

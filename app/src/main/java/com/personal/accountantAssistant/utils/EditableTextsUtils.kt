@@ -11,16 +11,20 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
+import com.personal.accountantAssistant.core.extensions.EMPTY
 import com.personal.accountantAssistant.utils.ActionUtils.runAction
 import java.text.Normalizer
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 object EditableTextsUtils {
-    private const val EMPTY_VALUE = ""
-    var editTextValue = AtomicReference(EMPTY_VALUE)
-    fun initializeListeners(activity: Activity?, editText: EditText, actionWhenTextChange: () -> Unit) {
-        editTextValue = AtomicReference(EMPTY_VALUE)
+    var editTextValue = AtomicReference(String.EMPTY)
+    fun initializeListeners(
+        activity: Activity?,
+        editText: EditText,
+        actionWhenTextChange: () -> Unit
+    ) {
+        editTextValue = AtomicReference(String.EMPTY)
         editText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -35,8 +39,9 @@ object EditableTextsUtils {
         })
         editText.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_NEXT ||
-                    actionId == EditorInfo.IME_ACTION_GO ||
-                    actionId == EditorInfo.IME_ACTION_DONE) {
+                actionId == EditorInfo.IME_ACTION_GO ||
+                actionId == EditorInfo.IME_ACTION_DONE
+            ) {
                 activity?.let { hideSoftInputFromWindow(it, editText) }
             }
             java.lang.Boolean.TRUE
@@ -52,8 +57,12 @@ object EditableTextsUtils {
 
     private fun hideSoftInputFromWindow(view: View?, editText: EditText) {
         view?.let {
-            val inputMethodManager = it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            val inputMethodManager =
+                it.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(
+                it.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
             editText.clearFocus()
         }
     }
@@ -72,13 +81,13 @@ object EditableTextsUtils {
     private fun toNormalizedString(strValue: String?): String {
         val regexTarget = "[^\\p{ASCII}]"
         return Normalizer.normalize(strValue, Normalizer.Form.NFD)
-                .replace(regexTarget.toRegex(), Constants.EMPTY_STR)
+            .replace(regexTarget.toRegex(), String.EMPTY)
     }
 
     @JvmStatic
     fun contains(currentStr: String?, filterStr: String?): Boolean {
-        val normalizedCurrentStr = toNormalizedString(currentStr).toLowerCase(Locale.ROOT)
-        val normalizedFilterName = toNormalizedString(filterStr).toLowerCase(Locale.ROOT)
+        val normalizedCurrentStr = toNormalizedString(currentStr).lowercase(Locale.ROOT)
+        val normalizedFilterName = toNormalizedString(filterStr).lowercase(Locale.ROOT)
         return normalizedCurrentStr.contains(normalizedFilterName)
     }
 }

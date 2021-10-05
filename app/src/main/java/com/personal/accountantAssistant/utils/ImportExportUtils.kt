@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.core.extensions.EMPTY
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum
@@ -47,8 +48,8 @@ object ImportExportUtils {
             try {
                 val BUYS = "Buys"
                 val BILLS = "Bills"
-                var xlsFileName = Constants.EMPTY_STR
-                var sheetName = Constants.EMPTY_STR
+                var xlsFileName = String.EMPTY
+                var sheetName = String.EMPTY
                 if (PaymentsType.isBuy(type)) {
                     xlsFileName = BUYS
                     sheetName = BUYS
