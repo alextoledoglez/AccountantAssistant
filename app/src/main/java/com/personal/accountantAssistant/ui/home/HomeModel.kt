@@ -39,6 +39,7 @@ data class HomeModel(val context: Context) {
     private var backgroundColors: BackgroundColors? = null
 
     var imageResource: Int? = null
+    var hideImageView: Boolean? = false
 
     init {
         apply {
@@ -61,17 +62,16 @@ data class HomeModel(val context: Context) {
 
     private fun getDefaultBackgroundColor() = context.getColor(R.color.colorWhite)
 
-    private fun getColorResource(
-        isCondition: Boolean?, trueResource: Int?, falseResource: Int?
-    ) = if (isCondition == true) trueResource else falseResource
+    private fun getColorBy(isCondition: Boolean?, trueResource: Int?, falseResource: Int?) =
+        if (isCondition == true) trueResource else falseResource
 
-    private fun getNeededBackgroundColorBy(isMoreThanOrEqualToZero: Boolean?) = getColorResource(
+    private fun getNeededBackgroundColorBy(isMoreThanOrEqualToZero: Boolean?) = getColorBy(
         isMoreThanOrEqualToZero,
         backgroundColors?.okMedium,
         backgroundColors?.warning
     )
 
-    private fun getBackgroundColorBy(isMoreThanAvailableMoney: Boolean?) = getColorResource(
+    private fun getBackgroundColorBy(isMoreThanAvailableMoney: Boolean?) = getColorBy(
         isMoreThanAvailableMoney,
         backgroundColors?.warning,
         backgroundColors?.okMedium
@@ -82,6 +82,7 @@ data class HomeModel(val context: Context) {
         setTitleTextSize()
         cardTitle = title
         imageResource = null
+        hideImageView = true
         backgroundColor = getBackgroundColorBy(isMoreThanAvailableMoney)
     }
 
@@ -96,6 +97,7 @@ data class HomeModel(val context: Context) {
             warningImageResource
         else
             okImageResource
+        hideImageView = false
         backgroundColor = getDefaultBackgroundColor()
     }
 
@@ -118,6 +120,7 @@ data class HomeModel(val context: Context) {
             cardTitles.missing
         }
         imageResource = null
+        hideImageView = true
         backgroundColor = getNeededBackgroundColorBy(isMoreThanOrEqualToZero)
     }
 

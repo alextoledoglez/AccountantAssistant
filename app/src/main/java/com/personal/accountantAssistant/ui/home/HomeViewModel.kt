@@ -41,54 +41,47 @@ class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
 
     private fun isMoreThanOrEqualToZero(value: String) = (value.toDouble() >= 0)
 
-    private fun setCardTitleTextViewStyle(tvTitle: TextView) = model?.apply {
+    private fun setupCardImageView(cardImageView: ImageView) = cardImageView.apply {
+        model?.imageResource?.let { setImageResource(it) }
+        visibility = if (model?.hideImageView == true) View.GONE else View.VISIBLE
+    }
+
+    private fun setupCardTitleTextView(tvTitle: TextView) = model?.apply {
         tvTitle.text = cardTitle
         fontColor.let { tvTitle.setTextColor(it) }
         backgroundColor?.let { tvTitle.setBackgroundColor(it) }
         textSize?.let { tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, it.toFloat()) }
     }
 
-    private fun hideTitleCardViewImage(imageView: ImageView) {
-        imageView.visibility = View.GONE
+    private fun setupCardSubtitleTextView(value: String, tvSubtitle: TextView) = tvSubtitle.apply {
+        text = abs(value.toDouble()).toString()
+        model?.fontColor?.let { setTextColor(it) }
     }
 
     private fun fillDashBoardCard(root: View, idResource: Int, cardTextValue: String) {
 
         val cardView: CardView = root.findViewById(idResource)
+        val cardImageView = cardView.findViewById<ImageView>(R.id.card_image)
         val cardTitleTextView = cardView.findViewById<TextView>(R.id.card_title)
         val cardSubtitleTextView = cardView.findViewById<TextView>(R.id.card_sub_title)
-        val imageView = cardView.findViewById<ImageView>(R.id.card_image).also {
-            it.visibility = View.VISIBLE
-        }
 
         val isMoreThanOrEqualToZero = isMoreThanOrEqualToZero(cardTextValue)
         val isMoreThanAvailableMoney = isMoreThanAvailableMoney(cardTextValue)
         model?.initializeBy(idResource, isMoreThanOrEqualToZero, isMoreThanAvailableMoney)
 
         when (idResource) {
-            R.id.available_card -> {
-                model?.setupAvailableCardTitleBy(isMoreThanAvailableMoney)
-                hideTitleCardViewImage(imageView)
-            }
-            R.id.needed_card -> {
-                model?.setupNeededCardTitleBy(isMoreThanOrEqualToZero)
-                hideTitleCardViewImage(imageView)
-            }
-            R.id.total_card -> {
-                model?.setupTotalCardTitleBy(isMoreThanAvailableMoney)
-                hideTitleCardViewImage(imageView)
-            }
+            R.id.available_card -> model?.setupAvailableCardTitleBy(isMoreThanAvailableMoney)
+            R.id.needed_card -> model?.setupNeededCardTitleBy(isMoreThanOrEqualToZero)
+            R.id.total_card -> model?.setupTotalCardTitleBy(isMoreThanAvailableMoney)
             R.id.daily_card -> model?.setupDailyImageCardTitleBy(isMoreThanAvailableMoney)
             R.id.buy_card -> model?.setupBuysImageCardTitleBy(isMoreThanAvailableMoney)
             R.id.bill_card -> model?.setupBillsImageCardTitleBy(isMoreThanAvailableMoney)
         }
 
-        setCardTitleTextViewStyle(cardTitleTextView)
-        model?.imageResource?.let { imageView.setImageResource(it) }
-
+        setupCardImageView(cardImageView)
+        setupCardTitleTextView(cardTitleTextView)
         if (idResource != R.id.available_card) {
-            cardSubtitleTextView.text = abs(cardTextValue.toDouble()).toString()
-            model?.fontColor?.let { cardSubtitleTextView.setTextColor(it) }
+            setupCardSubtitleTextView(cardTextValue, cardSubtitleTextView)
         }
     }
 
