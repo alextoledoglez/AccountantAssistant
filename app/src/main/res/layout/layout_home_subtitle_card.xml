@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboard_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/five_margin"
+    android:orientation="vertical"
+    tools:ignore="PrivateResource">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/daily_card"
+            style="@style/smallCardStyle"
+            layout="@layout/layout_home_card"
+            android:layout_width="@dimen/small_card_width"
+            android:layout_height="@dimen/small_card_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/buy_card"
+            style="@style/smallCardStyle"
+            layout="@layout/layout_home_card"
+            android:layout_width="@dimen/zero"
+            android:layout_height="@dimen/small_card_height"
+            android:layout_marginHorizontal="@dimen/smallest_material_margin"
+            app:layout_constraintEnd_toStartOf="@id/bill_card"
+            app:layout_constraintStart_toEndOf="@id/daily_card"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/bill_card"
+            style="@style/smallCardStyle"
+            layout="@layout/layout_home_card"
+            android:layout_width="@dimen/small_card_width"
+            android:layout_height="@dimen/small_card_height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

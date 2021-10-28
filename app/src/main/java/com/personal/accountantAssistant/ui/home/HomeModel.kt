@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.core.extensions.EMPTY
 data class HomeModel(val context: Context) {
 
     data class CardTitles(val context: Context) {
-        val available = context.getString(R.string.available)
         val gain = context.getString(R.string.gain)
         val missing = context.getString(R.string.missing)
         val total = context.getString(R.string.total)
@@ -22,20 +21,31 @@ data class HomeModel(val context: Context) {
     }
 
     data class BackgroundColors(val context: Context) {
-        var warning = context.getColor(R.color.colorRed)
-        var okMedium = context.getColor(R.color.colorPrimaryMedium)
-        var okPrimary = context.getColor(R.color.colorPrimary)
+        var error = context.getColor(R.color.colorRed)
+        var success = context.getColor(R.color.colorPrimary)
+    }
+
+    data class TotalColors(val context: Context) {
+        var error = context.getColor(R.color.colorErrorLight)
+        var success = context.getColor(R.color.colorSuccessLight)
+    }
+
+    data class NeededColors(val context: Context) {
+        var error = context.getColor(R.color.colorError)
+        var success = context.getColor(R.color.colorSuccess)
     }
 
     var fontColor = getDefaultFontColor()
 
-    var cardTitle = String.EMPTY
-    private lateinit var cardTitles: CardTitles
+    var cardTitle: String? = String.EMPTY
+    lateinit var cardTitles: CardTitles
 
     var textSize: Int? = null
     private var textSizes = TextSizes(context)
 
     var backgroundColor: Int? = null
+    private var totalColors: TotalColors? = null
+    private var neededColors: NeededColors? = null
     private var backgroundColors: BackgroundColors? = null
 
     var imageResource: Int? = null
@@ -45,52 +55,41 @@ data class HomeModel(val context: Context) {
         apply {
             fontColor = getDefaultFontColor()
             cardTitles = CardTitles(context)
-            backgroundColor = getDefaultBackgroundColor()
+            totalColors = TotalColors(context)
+            neededColors = NeededColors(context)
             backgroundColors = BackgroundColors(context)
+            backgroundColor = getDefaultBackgroundColor()
         }
     }
 
     private fun getDefaultFontColor() = context.getColor(R.color.colorBlack)
 
-    private fun setDefaultFontColor() {
-        fontColor = getDefaultFontColor()
-    }
-
-    private fun setTitleTextSize() {
-        textSize = textSizes.big
-    }
-
     private fun getDefaultBackgroundColor() = context.getColor(R.color.colorWhite)
 
     private fun getColorBy(isCondition: Boolean?, trueResource: Int?, falseResource: Int?) =
-        if (isCondition == true) trueResource else falseResource
+            if (isCondition == true) trueResource else falseResource
 
-    private fun getNeededBackgroundColorBy(isMoreThanOrEqualToZero: Boolean?) = getColorBy(
-        isMoreThanOrEqualToZero,
-        backgroundColors?.okMedium,
-        backgroundColors?.warning
+    fun getTotalBackgroundColorBy(isMoreThanAvailableMoney: Boolean?) = getColorBy(
+            isMoreThanAvailableMoney,
+            totalColors?.error,
+            totalColors?.success
     )
 
-    private fun getBackgroundColorBy(isMoreThanAvailableMoney: Boolean?) = getColorBy(
-        isMoreThanAvailableMoney,
-        backgroundColors?.warning,
-        backgroundColors?.okMedium
+    fun getNeededBackgroundColorBy(isMoreThanOrEqualToZero: Boolean?) = getColorBy(
+            isMoreThanOrEqualToZero,
+            neededColors?.success,
+            neededColors?.error
     )
 
-    private fun setupCardTitlesBy(title: String, isMoreThanAvailableMoney: Boolean?) {
-        setDefaultFontColor()
-        setTitleTextSize()
-        cardTitle = title
-        imageResource = null
-        hideImageView = true
-        backgroundColor = getBackgroundColorBy(isMoreThanAvailableMoney)
-    }
+    private fun getFontColorBy(isMoreThanAvailableMoney: Boolean?) = (
+            if (isMoreThanAvailableMoney == true) backgroundColors?.error else backgroundColors?.success
+            ) ?: getDefaultFontColor()
 
     private fun setupImageCardTitleBy(
-        title: String,
-        isMoreThanAvailableMoney: Boolean?,
-        warningImageResource: Int,
-        okImageResource: Int
+            title: String,
+            isMoreThanAvailableMoney: Boolean?,
+            warningImageResource: Int,
+            okImageResource: Int
     ) {
         cardTitle = title
         imageResource = if (isMoreThanAvailableMoney == true)
@@ -103,60 +102,36 @@ data class HomeModel(val context: Context) {
 
     fun isMoreThanAvailableMoney(value: Double, available: Float): Boolean = value > available
 
-    fun setupAvailableCardTitleBy(isMoreThanAvailableMoney: Boolean?) {
-        setupCardTitlesBy(cardTitles.available, isMoreThanAvailableMoney)
-    }
-
-    fun setupTotalCardTitleBy(isMoreThanAvailableMoney: Boolean?) {
-        setupCardTitlesBy(cardTitles.total, isMoreThanAvailableMoney)
-    }
-
-    fun setupNeededCardTitleBy(isMoreThanOrEqualToZero: Boolean?) {
-        setDefaultFontColor()
-        setTitleTextSize()
-        cardTitle = if (isMoreThanOrEqualToZero == true) {
-            cardTitles.gain
-        } else {
-            cardTitles.missing
-        }
-        imageResource = null
-        hideImageView = true
-        backgroundColor = getNeededBackgroundColorBy(isMoreThanOrEqualToZero)
-    }
+    fun getNeededTitleBy(isMoreThanOrEqualToZero: Boolean?) = if (isMoreThanOrEqualToZero == true)
+        cardTitles.gain
+    else
+        cardTitles.missing
 
     fun setupDailyImageCardTitleBy(isMoreThanAvailableMoney: Boolean?) = setupImageCardTitleBy(
-        cardTitles.daily,
-        isMoreThanAvailableMoney,
-        R.drawable.ic_menu_red_daily,
-        R.drawable.ic_menu_green_daily
+            cardTitles.daily,
+            isMoreThanAvailableMoney,
+            R.drawable.ic_menu_red_daily,
+            R.drawable.ic_menu_green_daily
     )
 
     fun setupBuysImageCardTitleBy(isMoreThanAvailableMoney: Boolean?) = setupImageCardTitleBy(
-        cardTitles.buys,
-        isMoreThanAvailableMoney,
-        R.drawable.ic_menu_red_buys,
-        R.drawable.ic_menu_green_buys
+            cardTitles.buys,
+            isMoreThanAvailableMoney,
+            R.drawable.ic_menu_red_buys,
+            R.drawable.ic_menu_green_buys
     )
 
     fun setupBillsImageCardTitleBy(isMoreThanAvailableMoney: Boolean?) = setupImageCardTitleBy(
-        cardTitles.bills,
-        isMoreThanAvailableMoney,
-        R.drawable.ic_menu_red_bills,
-        R.drawable.ic_menu_green_bills
+            cardTitles.bills,
+            isMoreThanAvailableMoney,
+            R.drawable.ic_menu_red_bills,
+            R.drawable.ic_menu_green_bills
     )
 
-    fun initializeBy(
-        idResource: Int,
-        isMoreThanOrEqualToZero: Boolean,
-        isMoreThanAvailableMoney: Boolean?
-    ) {
+    fun initializeTheme(isMoreThanAvailableMoney: Boolean?) {
         cardTitle = String.EMPTY
         textSize = textSizes.normal
-        fontColor = (if (idResource == R.id.needed_card) {
-            if (isMoreThanOrEqualToZero) backgroundColors?.okPrimary else backgroundColors?.warning
-        } else
-            if (isMoreThanAvailableMoney == true) backgroundColors?.warning else backgroundColors?.okPrimary)
-            ?: getDefaultFontColor()
+        fontColor = getFontColorBy(isMoreThanAvailableMoney)
         backgroundColor = getDefaultBackgroundColor()
     }
 }

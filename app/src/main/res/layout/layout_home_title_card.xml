@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboard_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/five_margin"
+    android:orientation="vertical"
+    tools:ignore="PrivateResource">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_material_margin"
+            android:hint="@string/available"
+            app:hintTextAppearance="@style/HintTextAppearance">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCardSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/title_height"
+                android:layout_marginHorizontal="@dimen/default_material_margin"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:minHeight="@dimen/title_height"
+                android:textAlignment="center"
+                android:textSize="@dimen/card_subTitle_text_size"
+                android:theme="@style/FocusEditTextTheme" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbDateRangePicker"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/default_material_margin"
+            android:layout_marginVertical="@dimen/smallest_material_margin"
+            android:minHeight="@dimen/title_height"
+            android:text="@string/period_to_expense"
+            app:icon="@drawable/ic_today"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

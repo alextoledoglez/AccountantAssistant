@@ -24,6 +24,8 @@ object DateUtils {
         return date
     }
 
+    fun toDate(timeInMillis: Long?): Date? = toCalendar(timeInMillis)?.time
+
     @JvmStatic
     fun toString(date: Date?): String? {
         var strDate: String? = date.toString()
@@ -45,6 +47,10 @@ object DateUtils {
 
     fun toPeriodStr(firstDate: Date?, lastDate: Date?): String {
         return toString(firstDate) + Constants.DASH_SEPARATOR + toString(lastDate)
+    }
+
+    private fun toCalendar(timeInMillis: Long?): Calendar? = Calendar.getInstance().also { calendar ->
+        timeInMillis?.let { calendar.timeInMillis = it }
     }
 
     private fun toCalendar(date: Date?): Calendar {

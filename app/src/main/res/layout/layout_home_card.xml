@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivCardImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/five_margin"
+        android:layout_weight="1"
+        android:src="@drawable/ic_menu_buys"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvCardTitle"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_weight="1"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:text="@string/menu_buys"
+        android:textAlignment="gravity"
+        android:textSize="@dimen/card_title_text_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvCardSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginBottom="@dimen/five_margin"
+        android:layout_weight="1"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:text="@string/menu_buys"
+        android:textAlignment="gravity"
+        android:textSize="@dimen/card_subTitle_text_size"
+        android:textStyle="bold" />
+
+</LinearLayout>

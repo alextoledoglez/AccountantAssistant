@@ -1,12 +1,18 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
+        <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarFullscreenTheme">
+            @style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen
+        </item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
+        </item>
     </style>
 
     <style name="activityTransitionsAnimations" parent="@android:style/Animation.Activity">
@@ -26,11 +32,11 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="TitleTextView" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:textColor">@color/colorBlack</item>
-        <item name="android:background">@color/colorPrimaryMedium</item>
+        <item name="android:background">@color/colorPrimaryLight</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
 
@@ -44,55 +50,47 @@
     </style>
 
     <style name="cardMarginStyle">
-        <item name="android:layout_marginStart">@dimen/ten_margin</item>
-        <item name="android:layout_marginEnd">@dimen/ten_margin</item>
-        <item name="android:layout_marginTop">@dimen/five_margin</item>
-        <item name="android:layout_marginBottom">@dimen/five_margin</item>
+        <item name="android:layout_marginStart">@dimen/default_material_margin</item>
+        <item name="android:layout_marginEnd">@dimen/default_material_margin</item>
+        <item name="android:layout_marginTop">@dimen/half_material_margin</item>
+        <item name="android:layout_marginBottom">@dimen/half_material_margin</item>
     </style>
 
     <style name="smallCardStyle" parent="CardView">
-        <item name="android:layout_width">@dimen/small_card_width</item>
+        <item name="android:layout_width">@dimen/zero</item>
         <item name="android:layout_height">@dimen/small_card_height</item>
-        <item name="android:layout_marginEnd">@dimen/small_card_margin</item>
-        <item name="android:layout_marginTop">@dimen/small_card_margin</item>
-        <item name="android:layout_marginBottom">@dimen/small_card_margin</item>
+        <item name="android:layout_marginTop">@dimen/smallest_material_margin</item>
+        <item name="android:layout_marginBottom">@dimen/smallest_material_margin</item>
     </style>
 
-    <style name="rightTopCornerCardStyle" parent="CardView">
-        <item name="android:layout_width">@dimen/small_card_width</item>
-        <item name="android:layout_height">@dimen/small_card_height</item>
-        <item name="android:layout_marginTop">@dimen/card_margin</item>
-        <item name="android:layout_marginBottom">@dimen/card_margin</item>
-    </style>
-
-    <style name="rightBottomCornerCardStyle" parent="CardView">
-        <item name="android:layout_width">@dimen/small_card_width</item>
-        <item name="android:layout_height">@dimen/small_card_height</item>
-    </style>
-
-    <style name="landscapeCardStyle" parent="CardView">
+    <style name="bottomTopCardStyle" parent="CardView">
         <item name="android:layout_width">@dimen/landscape_card_width</item>
         <item name="android:layout_height">@dimen/landscape_card_height</item>
-        <item name="android:layout_marginEnd">@dimen/small_card_margin</item>
-        <item name="android:layout_marginTop">@dimen/small_card_margin</item>
-        <item name="android:layout_marginBottom">@dimen/small_card_margin</item>
+        <item name="android:layout_marginEnd">@dimen/default_material_margin</item>
+        <item name="android:layout_marginTop">@dimen/default_material_margin</item>
+        <item name="android:layout_marginBottom">@dimen/smallest_material_margin</item>
     </style>
 
-    <style name="topLandscapeLayoutStyle" parent="CardView">
+    <style name="homeBottomCardStyle" parent="CardView">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/landscape_card_height</item>
-        <item name="android:layout_marginTop">@dimen/ten_margin</item>
-        <item name="android:layout_marginStart">@dimen/ten_margin</item>
-        <item name="android:layout_marginEnd">@dimen/ten_margin</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/default_material_margin</item>
+        <item name="android:layout_marginTop">@dimen/smallest_material_margin</item>
+        <item name="android:layout_marginStart">@dimen/default_material_margin</item>
+        <item name="android:layout_marginBottom">@dimen/default_material_margin</item>
     </style>
 
-    <style name="bottomLandscapeLayoutStyle" parent="CardView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/landscape_card_height</item>
-        <item name="android:layout_marginTop">@dimen/five_margin</item>
-        <item name="android:layout_marginStart">@dimen/ten_margin</item>
-        <item name="android:layout_marginEnd">@dimen/ten_margin</item>
-        <item name="android:layout_marginBottom">@dimen/five_margin</item>
+    <style name="endCardStyle" parent="smallCardStyle">
+        <item name="android:layout_width">@dimen/small_card_width</item>
+        <item name="android:layout_height">@dimen/small_card_height</item>
+        <item name="android:layout_marginEnd">@dimen/default_material_margin</item>
+        <item name="android:layout_marginTop">@dimen/default_material_margin</item>
+    </style>
+
+    <style name="centerCardStyle" parent="smallCardStyle">
+        <item name="android:layout_width">@dimen/zero</item>
+        <item name="android:layout_height">@dimen/small_card_height</item>
+        <item name="android:layout_marginHorizontal">@dimen/smallest_material_margin</item>
     </style>
 
     <style name="FocusEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -103,6 +101,12 @@
 
     <style name="Widget.AppTheme.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="HintTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

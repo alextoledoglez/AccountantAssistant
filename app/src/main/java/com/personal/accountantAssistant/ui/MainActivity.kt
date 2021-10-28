@@ -17,6 +17,7 @@ import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.DatabaseManager
+import com.personal.accountantAssistant.databinding.ActivityMainBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.*
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainContext: Context
     private lateinit var mainActivity: MainActivity
+    private lateinit var binding: ActivityMainBinding
     private var databaseManager: DatabaseManager? = null
     private var mAppBarConfiguration: AppBarConfiguration? = null
 
@@ -33,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainModuleInitializer.initialize()
-        setContentView(R.layout.activity_main)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         mainContext = this@MainActivity
         mainActivity = this@MainActivity
@@ -44,14 +48,14 @@ class MainActivity : AppCompatActivity() {
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         mAppBarConfiguration = AppBarConfiguration.Builder(
-            R.id.nav_home,
-            R.id.nav_buys,
-            R.id.nav_bills /*,
+                R.id.nav_home,
+                R.id.nav_buys,
+                R.id.nav_bills /*,
                 R.id.nav_tickets,
                 R.id.nav_remittances*/
         )
-            .setOpenableLayout(drawer)
-            .build()
+                .setOpenableLayout(drawer)
+                .build()
         val navController = Navigation.findNavController(mainActivity, R.id.nav_host_fragment)
         mAppBarConfiguration?.let {
             NavigationUI.setupActionBarWithNavController(mainActivity, navController, it)
@@ -169,10 +173,10 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
     private fun importExportMenuItemClickListener() {
         DialogUtils.showImportExportDialog(
-            mainContext,
-            R.string.import_export_title,
-            { importMenuItemClickListener() },
-            { exportMenuItemClickListener() }
+                mainContext,
+                R.string.import_export_title,
+                { importMenuItemClickListener() },
+                { exportMenuItemClickListener() }
         )
     }
 
@@ -187,21 +191,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun deleteAllMenuItemClickListener() {
         DialogUtils.confirmationDialog(
-            mainContext,
-            R.string.delete_all_records_title,
-            R.string.delete_all_records_message
+                mainContext,
+                R.string.delete_all_records_title,
+                R.string.delete_all_records_message
         ) { MenuHelper.conditionalMenuItemClickListener({ deleteAllBuys() }, { deleteAllBills() }) }
     }
 
     private fun restoreDefaultMenuItemClickListener() {
         DialogUtils.confirmationDialog(
-            mainContext,
-            R.string.restore_default_records_title,
-            R.string.restore_default_records_message
+                mainContext,
+                R.string.restore_default_records_title,
+                R.string.restore_default_records_message
         ) {
             MenuHelper.conditionalMenuItemClickListener(
-                { restoreDefaultBuys() },
-                { restoreDefaultBills() }
+                    { restoreDefaultBuys() },
+                    { restoreDefaultBills() }
             )
         }
     }
