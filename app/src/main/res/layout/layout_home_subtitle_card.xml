@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <include
             android:id="@+id/daily_card"
@@ -22,6 +22,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/firstDivider"
+            android:layout_width="@dimen/separator_size"
+            android:layout_height="@dimen/zero"
+            android:layout_marginVertical="@dimen/half_material_margin"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buy_card"
+            app:layout_constraintStart_toEndOf="@+id/daily_card"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <include
             android:id="@+id/buy_card"
             style="@style/smallCardStyle"
@@ -29,8 +40,19 @@
             android:layout_width="@dimen/zero"
             android:layout_height="@dimen/small_card_height"
             android:layout_marginHorizontal="@dimen/smallest_material_margin"
-            app:layout_constraintEnd_toStartOf="@id/bill_card"
-            app:layout_constraintStart_toEndOf="@id/daily_card"
+            app:layout_constraintEnd_toStartOf="@id/secondDivider"
+            app:layout_constraintStart_toEndOf="@id/firstDivider"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/secondDivider"
+            android:layout_width="@dimen/separator_size"
+            android:layout_height="@dimen/zero"
+            android:layout_marginVertical="@dimen/half_material_margin"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bill_card"
+            app:layout_constraintStart_toEndOf="@+id/buy_card"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include

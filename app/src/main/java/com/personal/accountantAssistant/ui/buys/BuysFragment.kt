@@ -1,17 +1,22 @@
 package com.personal.accountantAssistant.ui.buys
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.PaymentsFragmentsUtils
 
 class BuysFragment : Fragment() {
     private var paymentsFragmentsUtils: PaymentsFragmentsUtils? = null
+
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -21,8 +26,14 @@ class BuysFragment : Fragment() {
         return viewRoot
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
         paymentsFragmentsUtils?.onDetailsActivityResult(requestCode, resultCode, resultData)
+    }
+
+
+    companion object {
+        fun newInstance() = BuysFragment()
     }
 }

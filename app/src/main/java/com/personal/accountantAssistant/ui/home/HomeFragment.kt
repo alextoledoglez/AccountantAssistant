@@ -55,4 +55,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpensesOn(rootView: View) = viewModel.calculateExpenses(context, activity, rootView)
+
+    companion object {
+        fun newInstance() = HomeFragment()
+    }
 }
