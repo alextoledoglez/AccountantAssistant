@@ -3,7 +3,7 @@ package com.personal.accountantAssistant.ui.payments.enums
 import com.personal.accountantAssistant.utils.ParserUtils.isNullObject
 
 enum class PaymentsType {
-    BUY, BILL;
+    BUY, BILL, NONE;
 
     companion object {
         fun isBuy(name: String): Boolean {

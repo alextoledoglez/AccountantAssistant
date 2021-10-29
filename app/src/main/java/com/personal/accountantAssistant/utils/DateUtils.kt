@@ -13,11 +13,11 @@ object DateUtils {
     private const val DD_MM_YYYY = "dd/MM/yyyy"
 
     @JvmStatic
-    fun toDate(strDate: String): Date? {
+    fun toDate(strDate: String?): Date? {
         var date: Date? = Date()
         val dateFormat = SimpleDateFormat(DD_MM_YYYY, Locale.getDefault())
         try {
-            date = dateFormat.parse(strDate)
+            date = strDate?.let { dateFormat.parse(it) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -49,9 +49,10 @@ object DateUtils {
         return toString(firstDate) + Constants.DASH_SEPARATOR + toString(lastDate)
     }
 
-    private fun toCalendar(timeInMillis: Long?): Calendar? = Calendar.getInstance().also { calendar ->
-        timeInMillis?.let { calendar.timeInMillis = it }
-    }
+    private fun toCalendar(timeInMillis: Long?): Calendar? =
+        Calendar.getInstance().also { calendar ->
+            timeInMillis?.let { calendar.timeInMillis = it }
+        }
 
     private fun toCalendar(date: Date?): Calendar {
         val calendarDate = Calendar.getInstance()
@@ -66,7 +67,11 @@ object DateUtils {
     private fun toLocalDate(calendar: Calendar?): LocalDate? {
         return calendar?.let {
             val calendarValues = CalendarValues(it)
-            LocalDate.of(calendarValues.getYear(), calendarValues.getMonth(), calendarValues.getDayOfMonth())
+            LocalDate.of(
+                calendarValues.getYear(),
+                calendarValues.getMonth(),
+                calendarValues.getDayOfMonth()
+            )
         }
     }
 
@@ -128,7 +133,7 @@ object DateUtils {
 
     val defaultPeriodDates: List<Date>
         get() = defaultPeriodCalendars
-                .stream()
-                .map { obj: Calendar -> obj.time }
-                .collect(Collectors.toList())
+            .stream()
+            .map { obj: Calendar -> obj.time }
+            .collect(Collectors.toList())
 }

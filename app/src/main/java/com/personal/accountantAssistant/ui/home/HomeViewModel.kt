@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.home
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.util.TypedValue
@@ -12,7 +11,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.BaseViewModel
+import com.personal.accountantAssistant.core.extensions.orZero
 import com.personal.accountantAssistant.core.extensions.toValue
+import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.dto.Expenses
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
@@ -20,11 +21,12 @@ import com.personal.accountantAssistant.utils.Constants.STR_DEFAULT_MONETARY_VAL
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.NumberUtils
-import com.personal.accountantAssistant.utils.PaymentsFragmentsUtils
 import java.util.*
 import kotlin.math.abs
 
-class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
+class HomeViewModel(
+    private val localStorage: LocalStorage?, private val databaseManager: DatabaseManager?
+) : BaseViewModel() {
 
     private var model: HomeModel? = null
 
@@ -46,7 +48,8 @@ class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
     private val _lastPeriodDate = MutableLiveData<Date?>(localStorage?.getLastDate())
     private val lastPeriodDate = _lastPeriodDate
 
-    private fun isMoreThanAvailableMoney(value: String): Boolean? = localStorage?.getAvailableMoney()
+    private fun isMoreThanAvailableMoney(value: String): Boolean? =
+        localStorage?.getAvailableMoney()
             ?.let { model?.isMoreThanAvailableMoney(value.toDouble(), it) }
 
     private fun isMoreThanOrEqualToZero(value: String) = (value.toDouble() >= 0)
@@ -95,7 +98,7 @@ class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun calculateExpenses(context: Context?, activity: Activity?, rootView: View) {
+    fun calculateExpenses(context: Context?, rootView: View) {
 
         model = context?.let { HomeModel(it) }
 
@@ -106,34 +109,36 @@ class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
         val dailyExpenses = NumberUtils.roundTo(availableMoney.value?.toDouble()?.div(days))
         fillDashBoardCard(rootView, R.id.daily_card, dailyExpenses.toString())
 
-        val buysUtils = PaymentsFragmentsUtils(context, activity, PaymentsType.BUY)
-        val buysExpenses = buysUtils.getTotalPriceUntil(localStorage?.getLastDate())
+        val buysExpenses = databaseManager?.getPaymentsTotalPriceUntil(
+            PaymentsType.BUY, localStorage?.getLastDate()
+        )
         fillDashBoardCard(rootView, R.id.buy_card, buysExpenses.toString())
 
-        val billsUtils = PaymentsFragmentsUtils(context, activity, PaymentsType.BILL)
-        val billsExpenses = billsUtils.getTotalPriceUntil(localStorage?.getLastDate())
+        val billsExpenses = databaseManager?.getPaymentsTotalPriceUntil(
+            PaymentsType.BILL, localStorage?.getLastDate()
+        )
         fillDashBoardCard(rootView, R.id.bill_card, billsExpenses.toString())
 
-        val value = buysExpenses?.let { buy ->
-            billsExpenses?.let { bill -> buy.plus(bill).plus(dailyExpenses) }
-        }
+        val value = buysExpenses?.plus(billsExpenses.orZero())?.plus(dailyExpenses)
 
         val total = NumberUtils.roundTo(value)
         val needed = NumberUtils.roundTo(availableMoney.value?.toFloat()?.minus(total))
         val isMoreThanAvailableMoney = isMoreThanAvailableMoney(value.toString())
         val isMoreThanOrEqualToZero = isMoreThanOrEqualToZero(needed.toString())
-        expensedMoney.postValue(Expenses(
+        expensedMoney.postValue(
+            Expenses(
                 total.toFloat(),
                 model?.cardTitles?.total,
                 model?.getTotalBackgroundColorBy(isMoreThanAvailableMoney),
                 needed.toFloat(),
                 model?.getNeededTitleBy(isMoreThanOrEqualToZero),
                 model?.getNeededBackgroundColorBy(isMoreThanOrEqualToZero)
-        ))
+            )
+        )
     }
 
     fun updateAvailableMoney(value: String? = null) = updateAvailableMoney(
-            value?.toValue(STR_DEFAULT_MONETARY_VALUE)?.toFloat()
+        value?.toValue(STR_DEFAULT_MONETARY_VALUE)?.toFloat()
     )
 
     fun setAvailableMoney() = _availableMoney.postValue(getAvailableMoneyStr())
@@ -154,7 +159,8 @@ class HomeViewModel(private val localStorage: LocalStorage?) : BaseViewModel() {
         localStorage?.setPeriodDates(firstDate, lastDate)
     }
 
-    fun getSelectedPeriod() = androidx.core.util.Pair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)
+    fun getSelectedPeriod() =
+        androidx.core.util.Pair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)
 
     fun getAvailableMoneyStr() = localStorage?.getAvailableMoneyStr().orEmpty()
 

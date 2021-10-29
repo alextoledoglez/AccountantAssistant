@@ -17,8 +17,8 @@ class LocalStorage(val context: Context) {
     }
 
     private fun getDefaultSharedPreferences(): SharedPreferences = context.getSharedPreferences(
-            "${context.packageName}_preferences",
-            Context.MODE_PRIVATE
+        "${context.packageName}_preferences",
+        Context.MODE_PRIVATE
     )
 
     fun setAvailableMoney(availableMoneyValue: Float) {
@@ -26,27 +26,27 @@ class LocalStorage(val context: Context) {
     }
 
     fun getAvailableMoney(): Float = getDefaultSharedPreferences().getFloat(
-            AVAILABLE_MONEY,
-            Constants.STR_DEFAULT_MONETARY_VALUE.toFloat()
+        AVAILABLE_MONEY,
+        Constants.STR_DEFAULT_MONETARY_VALUE.toFloat()
     )
 
     fun getAvailableMoneyStr(): String = getAvailableMoney().toString()
 
     private fun setFirstStrDate(firstDate: Date?) {
         getDefaultSharedPreferences().edit()
-                .putString(FIRST_STR_DATE, DateUtils.toString(firstDate)).apply()
+            .putString(FIRST_STR_DATE, DateUtils.toString(firstDate)).apply()
     }
 
     fun getFirstDate(): Date = getDefaultSharedPreferences().getString(FIRST_STR_DATE, String.EMPTY)
-            ?.let { DateUtils.toDate(it) } ?: run { Date() }
+        ?.let { DateUtils.toDate(it) } ?: run { Date() }
 
     private fun setLastStrDate(lastDate: Date?) {
         getDefaultSharedPreferences().edit().putString(LAST_STR_DATE, DateUtils.toString(lastDate))
-                .apply()
+            .apply()
     }
 
     fun getLastDate(): Date = getDefaultSharedPreferences().getString(LAST_STR_DATE, String.EMPTY)
-            ?.let { DateUtils.toDate(it) } ?: run {
+        ?.let { DateUtils.toDate(it) } ?: run {
         val nextMonth = Calendar.getInstance()
         nextMonth.add(Calendar.MONTH, 1)
         nextMonth.time

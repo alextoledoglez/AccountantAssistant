@@ -12,23 +12,24 @@
     tools:context=".ui.home.HomeFragment">
 
     <include
-        android:id="@+id/dashboard_card"
-        style="@style/bottomTopCardStyle"
-        layout="@layout/layout_home_subtitle_card"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/available_card"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <include
         android:id="@+id/lytChartCardView"
         style="@style/cardMarginStyle"
         layout="@layout/layout_home_chart_card_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero"
-        app:layout_constraintBottom_toTopOf="@id/available_card"
+        app:layout_constraintBottom_toTopOf="@+id/dashboard_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_card" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/dashboard_card"
+        style="@style/bottomTopCardStyle"
+        layout="@layout/layout_home_subtitle_card"
+        app:layout_constraintBottom_toTopOf="@id/available_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/available_card"
+        app:layout_constraintTop_toBottomOf="@id/lytChartCardView" />
 
     <include
         android:id="@+id/available_card"
@@ -37,6 +38,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lytChartCardView" />
+        app:layout_constraintTop_toBottomOf="@id/dashboard_card" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

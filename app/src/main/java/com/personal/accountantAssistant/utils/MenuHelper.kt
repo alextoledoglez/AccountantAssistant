@@ -10,34 +10,34 @@ object MenuHelper {
     private const val import_export_option = 1
     private const val delete_all_option = 2
     private const val restore_default_option = 3
-    private var isBuysViewSelected: Boolean = java.lang.Boolean.FALSE
-    private var isBillsViewSelected: Boolean = java.lang.Boolean.FALSE
+    private var isBuysViewSelected: Boolean = false
+    private var isBillsViewSelected: Boolean = false
 
     @JvmStatic
     fun initializeHomeOptions() {
-        isBuysViewSelected = java.lang.Boolean.FALSE
-        isBillsViewSelected = java.lang.Boolean.FALSE
-        enableMenuItemOptions(java.lang.Boolean.FALSE)
+        isBuysViewSelected = false
+        isBillsViewSelected = false
+        enableMenuItemOptions(false)
     }
 
     fun initializeSummaryOptions() {
-        isBuysViewSelected = java.lang.Boolean.FALSE
-        isBillsViewSelected = java.lang.Boolean.FALSE
-        enableMenuItemOptions(java.lang.Boolean.FALSE)
+        isBuysViewSelected = false
+        isBillsViewSelected = false
+        enableMenuItemOptions(false)
     }
 
     @JvmStatic
     fun initializeBuysOptions() {
-        isBuysViewSelected = java.lang.Boolean.TRUE
-        isBillsViewSelected = java.lang.Boolean.FALSE
-        enableMenuItemOptions(java.lang.Boolean.TRUE)
+        isBuysViewSelected = true
+        isBillsViewSelected = false
+        enableMenuItemOptions(true)
     }
 
     @JvmStatic
     fun initializeBillsOptions() {
-        isBuysViewSelected = java.lang.Boolean.FALSE
-        isBillsViewSelected = java.lang.Boolean.TRUE
-        enableMenuItemOptions(java.lang.Boolean.TRUE)
+        isBuysViewSelected = false
+        isBillsViewSelected = true
+        enableMenuItemOptions(true)
     }
 
     fun enableMenuItemOptions(enable: Boolean) {
@@ -51,14 +51,11 @@ object MenuHelper {
         mainMenu?.getItem(itemIndex)?.isVisible = enabled
     }
 
-    fun conditionalMenuItemClickListener(
-        buysAction: Action?,
-        billsAction: Action?
-    ) {
-        if (isBuysViewSelected) {
+    fun conditionalMenuItemClickListener(buysAction: Action?, billsAction: Action?) {
+        if (isBuysViewSelected)
             buysAction?.let { runAction(it) }
-        } else if (isBillsViewSelected) {
-            billsAction?.let { runAction(it) }
-        }
+        else (isBillsViewSelected)
+        billsAction?.let { runAction(it) }
     }
+
 }

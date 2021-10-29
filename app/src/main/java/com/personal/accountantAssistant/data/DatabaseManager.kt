@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.personal.accountantAssistant.core.extensions.getDoubleColumn
+import com.personal.accountantAssistant.core.extensions.getIntColumn
+import com.personal.accountantAssistant.core.extensions.getStringColumn
 import com.personal.accountantAssistant.ui.bills.entities.Bills
 import com.personal.accountantAssistant.ui.bills.enums.BillsEnum
 import com.personal.accountantAssistant.ui.buys.entities.Buys
@@ -19,15 +22,14 @@ import com.personal.accountantAssistant.utils.*
 import java.util.*
 import java.util.stream.Collectors
 
-class DatabaseManager : SQLiteOpenHelper {
+class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: Context?) :
+    SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     companion object {
 
         private const val DB_VERSION = 1
 
         const val DB_NAME = "ACCOUNTANT_ASSISTANT"
-        const val BUY_TABLE = "PRODUCTS_TABLE"
-        const val BILL_TABLE = "BILLS_TABLE"
 
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
@@ -49,7 +51,8 @@ class DatabaseManager : SQLiteOpenHelper {
         private const val INTEGER_PRIMARY_KEY = "INTEGER PRIMARY KEY"
         private const val SPACE_TEXT = SPACE_SEPARATOR + TEXT
         private const val SPACE_TEXT_COMMA = SPACE_SEPARATOR + TEXT + COMMA_SEPARATOR
-        private const val SPACE_AUTOINCREMENT_COMMA = SPACE_SEPARATOR + AUTOINCREMENT + COMMA_SEPARATOR
+        private const val SPACE_AUTOINCREMENT_COMMA =
+            SPACE_SEPARATOR + AUTOINCREMENT + COMMA_SEPARATOR
 
         private val CREATE_PAYMENTS_TABLE_QUERY = CREATE_TABLE_COMMAND +
                 SPACE_SEPARATOR +
@@ -67,9 +70,6 @@ class DatabaseManager : SQLiteOpenHelper {
                 PaymentsEnum.ACTIVE.name + SPACE_TEXT + ")"
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    constructor(context: Context?) : super(context, DB_NAME, null, DB_VERSION)
-
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_PAYMENTS_TABLE_QUERY)
     }
@@ -83,39 +83,37 @@ class DatabaseManager : SQLiteOpenHelper {
         return "$SELECT_FROM_COMMAND$SPACE_SEPARATOR$tableName$DOT_COMMA_SEPARATOR"
     }
 
-    private fun cursorToPayments(cursor: Cursor): Payments {
-        val payments = Payments()
-        payments.id = cursor.getInt(cursor.getColumnIndex(Constants.UID))
-        payments.name = cursor.getString(cursor.getColumnIndex(PaymentsEnum.NAME.name))
-        payments.quantity = cursor.getInt(cursor.getColumnIndex(PaymentsEnum.QUANTITY.name))
-        payments.date = DateUtils.toDate(cursor.getString(cursor.getColumnIndex(PaymentsEnum.DATE.name)))
-        payments.unitaryValue = cursor.getDouble(cursor.getColumnIndex(PaymentsEnum.UNITARY_VALUE.name))
-        payments.totalValue = cursor.getDouble(cursor.getColumnIndex(PaymentsEnum.TOTAL_VALUE.name))
-        payments.type = PaymentsType.valueOf(cursor.getString(cursor.getColumnIndex(PaymentsEnum.TYPE.name)))
-        payments.isActive = NumberUtils.toBoolean(cursor.getString(cursor.getColumnIndex(PaymentsEnum.ACTIVE.name)))
-        return payments
+    private fun cursorToPayments(cursor: Cursor): Payments = Payments().apply {
+        id = cursor.getIntColumn(Constants.UID)
+        name = cursor.getStringColumn(PaymentsEnum.NAME.name)
+        quantity = cursor.getIntColumn(PaymentsEnum.QUANTITY.name)
+        date = DateUtils.toDate(cursor.getStringColumn(PaymentsEnum.DATE.name))
+        unitaryValue = cursor.getDoubleColumn(PaymentsEnum.UNITARY_VALUE.name)
+        totalValue = cursor.getDoubleColumn(PaymentsEnum.TOTAL_VALUE.name)
+        type = cursor.getStringColumn(PaymentsEnum.TYPE.name)?.let {
+            PaymentsType.valueOf(it)
+        } ?: PaymentsType.NONE
+        isActive = NumberUtils.toBoolean(cursor.getStringColumn(PaymentsEnum.ACTIVE.name))
     }
 
-    private fun toContentValues(payments: Payments?): ContentValues {
-        val contentValues = ContentValues()
-        contentValues.put(PaymentsEnum.NAME.name, payments?.name)
-        contentValues.put(PaymentsEnum.QUANTITY.name, payments?.quantity)
-        contentValues.put(PaymentsEnum.DATE.name, DateUtils.toString(payments?.date))
-        contentValues.put(PaymentsEnum.UNITARY_VALUE.name, payments?.unitaryValue)
-        contentValues.put(PaymentsEnum.TOTAL_VALUE.name, payments?.totalValue)
-        contentValues.put(PaymentsEnum.TYPE.name, payments?.type?.name)
-        contentValues.put(PaymentsEnum.ACTIVE.name, payments?.isActive)
-        return contentValues
+    private fun toContentValues(payments: Payments?): ContentValues = ContentValues().apply {
+        put(PaymentsEnum.NAME.name, payments?.name)
+        put(PaymentsEnum.QUANTITY.name, payments?.quantity)
+        put(PaymentsEnum.DATE.name, DateUtils.toString(payments?.date))
+        put(PaymentsEnum.UNITARY_VALUE.name, payments?.unitaryValue)
+        put(PaymentsEnum.TOTAL_VALUE.name, payments?.totalValue)
+        put(PaymentsEnum.TYPE.name, payments?.type?.name)
+        put(PaymentsEnum.ACTIVE.name, payments?.isActive)
     }
 
     @SuppressLint("Recycle")
-    private fun getOrCreateTable(sqLiteDatabase: SQLiteDatabase,
-                                 selectQuery: String): Cursor? {
-        return try {
-            sqLiteDatabase.rawQuery(selectQuery, null)
-        } catch (e: Exception) {
-            null
-        }
+    private fun getOrCreateTable(
+        sqLiteDatabase: SQLiteDatabase,
+        selectQuery: String
+    ): Cursor? = try {
+        sqLiteDatabase.rawQuery(selectQuery, null)
+    } catch (e: Exception) {
+        null
     }
 
     fun getPaymentsRecords(): ArrayList<Payments> {
@@ -140,38 +138,20 @@ class DatabaseManager : SQLiteOpenHelper {
         return payments
     }
 
-    private fun getPaymentsRecordsBy(paymentsType: PaymentsType): List<Payments> {
-        return getPaymentsRecords()
-                .stream()
-                .filter { paymentsType == it.type }
-                .collect(Collectors.toList())
-    }
+    private fun getPaymentsRecordsBy(type: PaymentsType): List<Payments>? =
+        getPaymentsRecords().stream().filter { type == it.type }.collect(Collectors.toList())
 
-    fun anyActivePaymentsRecordsBy(paymentsType: PaymentsType): Boolean {
-        return getPaymentsRecordsBy(paymentsType)
-                .stream()
-                .anyMatch { obj: Payments -> obj.isActive }
-    }
+    fun getSortedPaymentsRecordsBy(type: PaymentsType): List<Payments>? =
+        getPaymentsRecords().stream().filter { it.type == type }
+            .sorted(Comparator.comparing(Payments::date))
+            .collect(Collectors.toList())
 
-    fun allActivePaymentsRecordsBy(paymentsType: PaymentsType): Boolean {
-        return getPaymentsRecordsBy(paymentsType)
-                .stream()
-                .allMatch { obj: Payments -> obj.isActive }
-    }
+    fun anyActivePaymentsRecordsBy(type: PaymentsType): Boolean? = getPaymentsRecordsBy(type)
+        ?.stream()?.anyMatch { obj: Payments -> obj.isActive }
 
-    fun getBillsRecords(): List<Bills?>? {
-        return getPaymentsRecordsBy(PaymentsType.BILL)
-                .stream()
-                .map { payments: Payments? -> payments?.let { Bills(it) } }
-                .collect(Collectors.toList())
-    }
-
-    fun getBuysRecords(): List<Buys?>? {
-        return getPaymentsRecordsBy(PaymentsType.BUY)
-                .stream()
-                .map { payments: Payments? -> payments?.let { Buys(it) } }
-                .collect(Collectors.toList())
-    }
+    fun allActivePaymentsRecordsBy(paymentsType: PaymentsType): Boolean? =
+        getPaymentsRecordsBy(paymentsType)?.stream()
+            ?.allMatch { obj: Payments -> obj.isActive }
 
     fun insertDefaultBillsRecords() {
         for (defaultBillsEnum in BillsEnum.values()) {
@@ -185,11 +165,6 @@ class DatabaseManager : SQLiteOpenHelper {
         }
     }
 
-    fun insertDefaultPaymentsRecords() {
-        insertDefaultBuysRecords()
-        insertDefaultBillsRecords()
-    }
-
     private fun insertPaymentRecordFrom(payments: Payments?): Long {
         val sqLiteDatabase = this.writableDatabase
         val contentValues = toContentValues(payments)
@@ -198,104 +173,99 @@ class DatabaseManager : SQLiteOpenHelper {
         return id
     }
 
-    private fun insertBillRecordFrom(bill: Bills): Long? {
-        return ParserUtils.toPayments(bill)?.let { insertPaymentRecordFrom(it) }
+    private fun insertBillRecordFrom(bill: Bills): Long? = ParserUtils.toPayments(bill)?.let {
+        insertPaymentRecordFrom(it)
     }
 
-    private fun insertBuyRecordFrom(buy: Buys): Long? {
-        return ParserUtils.toPayments(buy)?.let { insertPaymentRecordFrom(it) }
+    private fun insertBuyRecordFrom(buy: Buys): Long? = ParserUtils.toPayments(buy)?.let {
+        insertPaymentRecordFrom(it)
     }
 
-    private fun updateQuery(table: String,
-                            contentValues: ContentValues,
-                            whereClause: String,
-                            whereArgs: Array<String?>?): Long {
+    private fun updateQuery(
+        table: String,
+        contentValues: ContentValues,
+        whereClause: String,
+        whereArgs: Array<String?>?
+    ): Long {
         val sqLiteDatabase = this.writableDatabase
-        val id = sqLiteDatabase.update(table,
-                contentValues,
-                whereClause,
-                whereArgs).toLong()
+        val id = sqLiteDatabase.update(
+            table,
+            contentValues,
+            whereClause,
+            whereArgs
+        ).toLong()
         sqLiteDatabase.close()
         return id
     }
 
-    private fun paymentsUpdateQuery(contentValues: ContentValues,
-                                    whereClause: String,
-                                    whereArgs: Array<String?>?): Long {
-        return updateQuery(PAYMENTS_TABLE,
-                contentValues,
-                whereClause,
-                whereArgs)
+    private fun paymentsUpdateQuery(
+        contentValues: ContentValues,
+        whereClause: String,
+        whereArgs: Array<String?>?
+    ): Long = updateQuery(
+        PAYMENTS_TABLE,
+        contentValues,
+        whereClause,
+        whereArgs
+    )
+
+    private fun toWhereArgs(payment: Payments?): Array<String?>? = payment?.let {
+        arrayOf(it.id.toString(), it.type?.name)
     }
 
-    private fun toWhereArgs(payment: Payments?): Array<String?>? {
-        return payment?.let { arrayOf(it.id.toString(), it.type?.name) }
-    }
+    fun updatePaymentsRecordFrom(payment: Payments?): Long = paymentsUpdateQuery(
+        toContentValues(payment),
+        UID_AND_TYPE_WHERE_CLAUSE,
+        toWhereArgs(payment)
+    )
 
-    fun updatePaymentsRecordFrom(payment: Payments?): Long {
-        return paymentsUpdateQuery(toContentValues(payment), UID_AND_TYPE_WHERE_CLAUSE, toWhereArgs(payment))
-    }
-
-    fun updateBuyRecordFrom(buy: Buys?): Long {
-        return updatePaymentsRecordFrom(buy?.let { Payments(it) })
-    }
-
-    fun updateBillRecordFrom(bill: Bills?): Long {
-        return updatePaymentsRecordFrom(bill?.let { Payments(it) })
-    }
-
-    private fun deleteQuery(table: String,
-                            whereClause: String?,
-                            whereArgs: Array<String?>?): Long {
+    private fun deleteQuery(
+        table: String,
+        whereClause: String?,
+        whereArgs: Array<String?>?
+    ): Long {
         val sqLiteDatabase = this.writableDatabase
-        val id = sqLiteDatabase.delete(table,
-                whereClause,
-                whereArgs).toLong()
+        val id = sqLiteDatabase.delete(
+            table,
+            whereClause,
+            whereArgs
+        ).toLong()
         sqLiteDatabase.close()
         return id
     }
 
-    private fun paymentDeleteQuery(whereClause: String?,
-                                   whereArgs: Array<String?>?): Long {
-        return deleteQuery(PAYMENTS_TABLE,
-                whereClause,
-                whereArgs)
-    }
+    private fun paymentDeleteQuery(
+        whereClause: String?, whereArgs: Array<String?>?
+    ): Long = deleteQuery(
+        PAYMENTS_TABLE,
+        whereClause,
+        whereArgs
+    )
 
-    fun deletePaymentsRecordFrom(payment: Payments?): Long {
-        return paymentDeleteQuery(UID_AND_TYPE_WHERE_CLAUSE,
-                toWhereArgs(payment))
-    }
+    fun deletePaymentsRecordFrom(payment: Payments?): Long = paymentDeleteQuery(
+        UID_AND_TYPE_WHERE_CLAUSE,
+        toWhereArgs(payment)
+    )
 
-    fun deleteBillRecordFrom(bill: Bills?): Long {
-        return deletePaymentsRecordFrom(ParserUtils.toPayments(bill))
-    }
+    private fun deleteAllPaymentsRecordsBy(paymentsType: PaymentsType): Long = paymentDeleteQuery(
+        TYPE_WHERE_CLAUSE, arrayOf(paymentsType.name)
+    )
 
-    fun deleteBuyRecordFrom(buy: Buys?): Long {
-        return deletePaymentsRecordFrom(ParserUtils.toPayments(buy))
-    }
+    fun deleteAllBuysRecord(): Long = deleteAllPaymentsRecordsBy(PaymentsType.BUY)
 
-    fun deleteAllPaymentsRecords(): Long {
-        return paymentDeleteQuery(null, null)
-    }
+    fun deleteAllBillsRecord(): Long = deleteAllPaymentsRecordsBy(PaymentsType.BILL)
 
-    private fun deleteAllPaymentsRecordsBy(paymentsType: PaymentsType): Long {
-        return paymentDeleteQuery(TYPE_WHERE_CLAUSE, arrayOf(paymentsType.name))
-    }
-
-    fun deleteAllBuysRecord(): Long {
-        return deleteAllPaymentsRecordsBy(PaymentsType.BUY)
-    }
-
-    fun deleteAllBillsRecord(): Long {
-        return deleteAllPaymentsRecordsBy(PaymentsType.BILL)
-    }
-
-    fun insertOrUpdatePayment(payment: Payments?): Long {
-        return if (DataBaseUtils.isNotDefaultRecord(payment?.id?.toLong())) {
+    fun insertOrUpdatePayment(payment: Payments?): Long =
+        if (isNotDefaultRecord(payment?.id?.toLong())) {
             updatePaymentsRecordFrom(payment)
         } else {
             insertPaymentRecordFrom(payment)
         }
-    }
+
+    fun getPaymentsTotalPriceUntil(type: PaymentsType, lastPeriodDate: Date?) = NumberUtils.roundTo(
+        getSortedPaymentsRecordsBy(type)?.stream()?.filter {
+            it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
+        }?.map { it.getTotalValue() }
+            ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
+    )
 }

@@ -6,24 +6,24 @@
     android:layout_margin="@dimen/five_margin"
     android:orientation="horizontal">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/cancel_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/ten_margin"
         android:layout_weight="@dimen/full_layout_weight"
-        android:background="@color/colorRed"
+        android:backgroundTint="@color/colorRed"
         android:gravity="center"
         android:text="@string/cancel"
         android:textColor="@color/design_default_color_background" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/ten_margin"
         android:layout_weight="@dimen/full_layout_weight"
-        android:background="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
         android:gravity="center"
         android:text="@string/save"
         android:textColor="@color/design_default_color_background" />

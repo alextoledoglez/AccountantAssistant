@@ -25,9 +25,7 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
     open fun onActivityBackPressed(): Boolean = false
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return binding.root
@@ -44,5 +42,5 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
 
     @Suppress("UNCHECKED_CAST")
     private fun viewModelClass(): KClass<V> =
-        ((javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<V>).kotlin
+            ((javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<V>).kotlin
 }

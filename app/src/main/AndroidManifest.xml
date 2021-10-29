@@ -52,10 +52,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.payments.PaymentsDetailsActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.barcode.BarcodeScanActivity"
             android:configChanges="orientation"
             android:label="Barcode Scan"

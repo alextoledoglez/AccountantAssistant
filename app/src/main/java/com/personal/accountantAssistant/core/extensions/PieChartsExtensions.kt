@@ -24,11 +24,13 @@ fun PieChart.drawFrom(expenses: Expenses, label: String?) {
 }
 
 fun PieChart.setDefaultSettings() {
-    description.text = String.EMPTY
+    val extraOffset = 15f
     isDrawHoleEnabled = false
+    description.text = String.EMPTY
     animateY(1000)
     setDrawEntryLabels(true)
     setUsePercentValues(false)
+    setExtraOffsets(extraOffset, extraOffset, extraOffset, extraOffset)
 }
 
 fun PieDataSet.setupDataSetBy(expenses: Expenses) {

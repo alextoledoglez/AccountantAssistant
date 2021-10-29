@@ -41,20 +41,20 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     @RequiresApi(Build.VERSION_CODES.P)
     private fun showRangePicker() {
         MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText("Select dates")
-                .setSelection(viewModel.getSelectedPeriod())
-                .build()
-                .apply {
-                    addOnPositiveButtonClickListener {
-                        viewModel.savePeriodDates(it?.first, it?.second)
-                        calculateExpensesOn(binding.root)
-                    }
+            .setTitleText("Select dates")
+            .setSelection(viewModel.getSelectedPeriod())
+            .build()
+            .apply {
+                addOnPositiveButtonClickListener {
+                    viewModel.savePeriodDates(it?.first, it?.second)
+                    calculateExpensesOn(binding.root)
                 }
-                .show(requireActivity().supportFragmentManager, "Test")
+            }
+            .show(requireActivity().supportFragmentManager, "Test")
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun calculateExpensesOn(rootView: View) = viewModel.calculateExpenses(context, activity, rootView)
+    fun calculateExpensesOn(rootView: View) = viewModel.calculateExpenses(context, rootView)
 
     companion object {
         fun newInstance() = HomeFragment()

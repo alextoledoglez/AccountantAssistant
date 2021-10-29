@@ -36,13 +36,15 @@ class Payments : Serializable {
     var isActive = false
 
     constructor()
-    constructor(id: Int,
-                name: String?,
-                quantity: Int,
-                date: Date?,
-                unitaryValue: Double,
-                type: PaymentsType?,
-                active: Boolean) {
+    constructor(
+        id: Int,
+        name: String?,
+        quantity: Int,
+        date: Date?,
+        unitaryValue: Double,
+        type: PaymentsType?,
+        active: Boolean
+    ) {
         this.id = id
         this.name = name
         this.quantity = quantity

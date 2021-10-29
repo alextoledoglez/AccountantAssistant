@@ -20,16 +20,9 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabHeader"
+            style="@style/TabLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            app:tabGravity="fill"
-            app:tabIconTint="@color/colorWhite"
-            app:tabIndicatorColor="@color/colorWhite"
-            app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorWhite"
-            app:tabTextColor="@color/colorWhite"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             tools:ignore="SpeakableTextPresentCheck" />
 
     </com.google.android.material.appbar.AppBarLayout>
