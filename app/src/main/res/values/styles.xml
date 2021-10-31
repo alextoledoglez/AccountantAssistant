@@ -7,12 +7,21 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarFullscreenTheme">
             @style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen
         </item>
         <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
         </item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/layout_rounded_shape</item>
     </style>
 
     <style name="activityTransitionsAnimations" parent="@android:style/Animation.Activity">
@@ -46,6 +55,15 @@
         <item name="android:textAlignment">gravity</item>
         <item name="android:textColor">@color/defaultFontColor</item>
         <item name="android:background">@color/colorWhite</item>
+        <item name="android:gravity">center|center_horizontal|center_vertical</item>
+    </style>
+
+    <style name="TitleDetailsTextView" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:background">@drawable/layout_top_rounded_shape</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
 
@@ -94,7 +112,7 @@
     </style>
 
     <style name="FocusEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">@color/disableForegroundColor</item>
+        <item name="colorControlNormal">@color/defaultFontColor</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>

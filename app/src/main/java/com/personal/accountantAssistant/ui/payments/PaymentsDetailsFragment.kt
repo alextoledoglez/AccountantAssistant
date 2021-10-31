@@ -41,42 +41,43 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
         val payment = (arguments?.getSerializable(Constants.ENTITY) as? Payments?)
 
-        binding.root.payment_name.filters = arrayOf<InputFilter>(AllCaps())
-        binding.root.payment_quantity.inputType = InputType.TYPE_NULL
-        binding.root.payment_date.inputType = InputType.TYPE_NULL
+        binding.root.apply {
 
-        payment?.let { it ->
-            val paymentType = it.type?.name
-            //supportActionBar?.setTitle(getActionBarTitleFrom(paymentType))
-            binding.root.payment_name.setText(it.name)
-            initializeFrom(context, binding.root.payment_quantity, it.quantity)
-            getDateFieldVisibilityFrom(paymentType)?.let { visibility ->
-                binding.root.payment_date_label.visibility = visibility
-                binding.root.payment_date.visibility = visibility
-            }
-            val dateStr = toString(it.date)
-            setDatePickerDialogFrom(context, binding.root.payment_date, dateStr)
-            binding.root.payment_value.setText(java.lang.String.valueOf(it.unitaryValue))
-            binding.root.payment_active.isChecked = it.isActive
-        }
+            etPaymentName.filters = arrayOf<InputFilter>(AllCaps())
+            etPaymentQuantity.inputType = InputType.TYPE_NULL
+            etPaymentDate.inputType = InputType.TYPE_NULL
 
-        binding.root.lytFooter.cancel_button.setOnClickListener { dismiss() }
-        binding.root.lytFooter.save_button.setOnClickListener {
-            payment?.let {
-                it.id = it.id
-                it.name = binding.root.payment_name.text.toString()
-                it.quantity = binding.root.payment_quantity.text.toString().toInt()
-                it.date = toDate(binding.root.payment_date.text.toString())
-                it.unitaryValue = binding.root.payment_value.text.toString().toDouble()
-                it.type = it.type?.name?.let { name -> PaymentsType.valueOf(name) }
-                it.isActive = binding.root.payment_active.isChecked
+            payment?.let { it ->
+                val paymentType = it.type?.name
+                tvPaymentDetailsTitle.setText(getActionBarTitleFrom(paymentType))
+                etPaymentName.setText(it.name)
+                initializeFrom(context, etPaymentQuantity, it.quantity)
+                getDateFieldVisibilityFrom(paymentType)?.let { visibility ->
+                    lytDate.visibility = visibility
+                }
+                val dateStr = toString(it.date)
+                setDatePickerDialogFrom(context, etPaymentDate, dateStr)
+                etPaymentValue.setText(java.lang.String.valueOf(it.unitaryValue))
+                payment_active.isChecked = it.isActive
             }
-            databaseManager?.saveDataFrom(activity, payment) {
-                showLongText(activity, R.string.record_successfully_save)
-                onSaveActionListener.invoke()
-                dismiss()
+
+            lytFooter.cancel_button.setOnClickListener { dismiss() }
+            lytFooter.save_button.setOnClickListener {
+                payment?.let {
+                    it.id = it.id
+                    it.name = etPaymentName.text.toString()
+                    it.quantity = etPaymentQuantity.text.toString().toInt()
+                    it.date = toDate(etPaymentDate.text.toString())
+                    it.unitaryValue = etPaymentValue.text.toString().toDouble()
+                    it.type = it.type?.name?.let { name -> PaymentsType.valueOf(name) }
+                    it.isActive = payment_active.isChecked
+                }
+                databaseManager?.saveDataFrom(activity, payment) {
+                    showLongText(activity, R.string.record_successfully_save)
+                    onSaveActionListener.invoke()
+                    dismiss()
+                }
             }
-        }
 
 /*        final Button barCodeScanButton = findViewById(R.id.bar_code_scan_button);
         barCodeScanButton.setOnClickListener(v -> {
@@ -86,6 +87,9 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             //startActivityForResult(barcodeScanIntent, REQUEST_CODE);
             //TODO something
         });*/
+        }
+
+        setFullScreen()
     }
 
     private fun getActionBarTitleFrom(paymentType: String?): Int {
