@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.core.AlertDialogBuilder
+import com.personal.accountantAssistant.core.extensions.confirmationDialog
 import com.personal.accountantAssistant.utils.*
 import io.reactivex.functions.Action
 
@@ -48,12 +50,13 @@ fun DatabaseManager.deleteDataFrom(context: Context?, entity: Any?, onSuccess: A
     }
 }
 
-//@JvmStatic
 @RequiresApi(Build.VERSION_CODES.P)
-fun DatabaseManager.deleteRecord(context: Context?, entity: Any?, onSuccess: Action?) {
-    DialogUtils.confirmationDialog(
-        context,
+fun DatabaseManager.deleteRecord(
+    context: Context?, entity: Any?, onSuccess: Action?
+) = context?.let {
+    AlertDialogBuilder(it).confirmationDialog(
         R.string.delete_record_title,
-        R.string.delete_record_message
-    ) { deleteDataFrom(context, entity, onSuccess) }
+        R.string.delete_record_message,
+        { deleteDataFrom(context, entity, onSuccess) }
+    )
 }

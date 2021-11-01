@@ -17,11 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.BaseFragment
 import com.personal.accountantAssistant.core.BaseViewModel
+import com.personal.accountantAssistant.core.extensions.confirmationDialog
+import com.personal.accountantAssistant.core.extensions.showImportExportDialog
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
-import com.personal.accountantAssistant.utils.*
+import com.personal.accountantAssistant.utils.ActionUtils
+import com.personal.accountantAssistant.utils.Constants
+import com.personal.accountantAssistant.utils.MenuHelper
+import com.personal.accountantAssistant.utils.ParserUtils
 import io.reactivex.functions.Action
 import org.koin.android.ext.android.inject
 
@@ -165,20 +171,24 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
         }
     }
 
-    private fun importExportMenuItemClickListener() = DialogUtils.showImportExportDialog(
-        context, R.string.import_export_title,
-        this::importMenuItemClickListener,
-        this::exportMenuItemClickListener
-    )
+    private fun importExportMenuItemClickListener() =
+        AlertDialogBuilder(requireContext()).showImportExportDialog(
+            R.string.import_export_title,
+            this::importMenuItemClickListener,
+            this::exportMenuItemClickListener
+        )
 
-    private fun deleteAllMenuItemClickListener() = DialogUtils.confirmationDialog(
-        requireContext(), R.string.delete_all_records_title, R.string.delete_all_records_message
-    ) { deleteAllPayments() }
+    private fun deleteAllMenuItemClickListener() =
+        AlertDialogBuilder(requireContext()).confirmationDialog(
+            R.string.delete_all_records_title,
+            R.string.delete_all_records_message,
+            ::deleteAllPayments
+        )
 
-
-    private fun restoreDefaultMenuItemClickListener() = DialogUtils.confirmationDialog(
-        requireContext(),
-        R.string.restore_default_records_title,
-        R.string.restore_default_records_message
-    ) { restoreDefaultPayments() }
+    private fun restoreDefaultMenuItemClickListener() =
+        AlertDialogBuilder(requireContext()).confirmationDialog(
+            R.string.restore_default_records_title,
+            R.string.restore_default_records_message,
+            ::restoreDefaultPayments
+        )
 }

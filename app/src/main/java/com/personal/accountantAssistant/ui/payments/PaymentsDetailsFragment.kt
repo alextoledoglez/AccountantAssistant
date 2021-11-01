@@ -9,7 +9,9 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.BaseBottomSheetDialogFragment
+import com.personal.accountantAssistant.core.extensions.showNumberPickerDialogFrom
 import com.personal.accountantAssistant.core.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.saveDataFrom
@@ -22,7 +24,6 @@ import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DatePickerDialogUtils.setDatePickerDialogFrom
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.DateUtils.toString
-import com.personal.accountantAssistant.utils.NumberPickerDialogUtils.initializeFrom
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.activity_payments_details.view.*
 import kotlinx.android.synthetic.main.options_footer_bar.view.*
@@ -48,62 +49,70 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             etPaymentDate.inputType = InputType.TYPE_NULL
 
             payment?.let { it ->
-                val paymentType = it.type?.name
-                tvPaymentDetailsTitle.setText(getActionBarTitleFrom(paymentType))
+                val type = it.type?.name
+
+                tvPaymentDetailsTitle.setText(getActionBarTitleFrom(type))
                 etPaymentName.setText(it.name)
-                initializeFrom(context, etPaymentQuantity, it.quantity)
-                getDateFieldVisibilityFrom(paymentType)?.let { visibility ->
+                initializePaymentQuantityBy(it.quantity)
+
+                getDateFieldVisibilityFrom(type)?.let { visibility ->
                     lytDate.visibility = visibility
                 }
                 val dateStr = toString(it.date)
                 setDatePickerDialogFrom(context, etPaymentDate, dateStr)
                 etPaymentValue.setText(java.lang.String.valueOf(it.unitaryValue))
                 payment_active.isChecked = it.isActive
-            }
 
-            lytFooter.cancel_button.setOnClickListener { dismiss() }
-            lytFooter.save_button.setOnClickListener {
-                payment?.let {
-                    it.id = it.id
-                    it.name = etPaymentName.text.toString()
-                    it.quantity = etPaymentQuantity.text.toString().toInt()
-                    it.date = toDate(etPaymentDate.text.toString())
-                    it.unitaryValue = etPaymentValue.text.toString().toDouble()
-                    it.type = it.type?.name?.let { name -> PaymentsType.valueOf(name) }
-                    it.isActive = payment_active.isChecked
-                }
-                databaseManager?.saveDataFrom(activity, payment) {
-                    showLongText(activity, R.string.record_successfully_save)
-                    onSaveActionListener.invoke()
-                    dismiss()
-                }
-            }
+                lytFooter.apply {
+                    cancel_button.setOnClickListener { dismiss() }
+                    save_button.setOnClickListener { _ ->
 
-/*        final Button barCodeScanButton = findViewById(R.id.bar_code_scan_button);
-        barCodeScanButton.setOnClickListener(v -> {
-            //final int REQUEST_CODE = 0;
-            final Intent barcodeScanIntent = new Intent(PaymentsDetailsActivity.this, BarcodeScanActivity.class);
-            startActivity(barcodeScanIntent);
-            //startActivityForResult(barcodeScanIntent, REQUEST_CODE);
-            //TODO something
-        });*/
+                        it.id = it.id
+                        it.name = etPaymentName.text.toString()
+                        it.quantity = etPaymentQuantity.text.toString().toInt()
+                        it.date = toDate(etPaymentDate.text.toString())
+                        it.unitaryValue = etPaymentValue.text.toString().toDouble()
+                        it.type = it.type?.name?.let { name -> PaymentsType.valueOf(name) }
+                        it.isActive = payment_active.isChecked
+
+                        databaseManager?.saveDataFrom(activity, it) {
+                            showLongText(activity, R.string.record_successfully_save)
+                            onSaveActionListener.invoke()
+                            dismiss()
+                        }
+                    }
+                }
+
+            }
         }
-
         setFullScreen()
     }
 
-    private fun getActionBarTitleFrom(paymentType: String?): Int {
-        return paymentType?.let {
-            when {
-                isBuy(paymentType) -> R.string.buys_details
-                isBill(paymentType) -> R.string.bills_details
-                else -> R.string.app_name
-            }
-        } ?: R.string.app_name
+    private fun getActionBarTitleFrom(paymentType: String?): Int = paymentType?.let {
+        when {
+            isBuy(paymentType) -> R.string.buys_details
+            isBill(paymentType) -> R.string.bills_details
+            else -> R.string.app_name
+        }
+    } ?: R.string.app_name
+
+    private fun getDateFieldVisibilityFrom(paymentType: String?): Int? = paymentType?.let {
+        if (isBuy(paymentType)) View.GONE else View.VISIBLE
     }
 
-    private fun getDateFieldVisibilityFrom(paymentType: String?): Int? {
-        return paymentType?.let { if (isBuy(paymentType)) View.GONE else View.VISIBLE }
+    private fun initializePaymentQuantityBy(quantity: Int) {
+        val dialogBuilder = AlertDialogBuilder(requireContext())
+        binding.root.etPaymentQuantity.apply {
+            etPaymentQuantity.setText(AlertDialogBuilder.toCurrentOrMinTextValue(quantity))
+            setOnClickListener {
+                dialogBuilder.showNumberPickerDialogFrom(etPaymentQuantity, quantity)
+            }
+            onFocusChangeListener = View.OnFocusChangeListener { _: View?, hasFocus: Boolean ->
+                if (hasFocus) {
+                    dialogBuilder.showNumberPickerDialogFrom(etPaymentQuantity, quantity)
+                }
+            }
+        }
     }
 
     companion object {

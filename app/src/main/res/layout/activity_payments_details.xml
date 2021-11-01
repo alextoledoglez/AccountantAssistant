@@ -12,7 +12,7 @@
 
     <TextView
         android:id="@+id/tvPaymentDetailsTitle"
-        style="@style/TitleDetailsTextView"
+        style="@style/TitleTopRoundedTextView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/title_height"
         android:gravity="center"
@@ -36,7 +36,6 @@
             android:id="@+id/etPaymentName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="textCapSentences"
             android:minHeight="@dimen/title_height"
@@ -62,7 +61,6 @@
             android:id="@+id/etPaymentQuantity"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="number"
             android:maxLength="3"
@@ -89,7 +87,6 @@
             android:id="@+id/etPaymentValue"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="numberDecimal"
             android:minHeight="@dimen/title_height"
@@ -115,7 +112,6 @@
             android:id="@+id/etPaymentDate"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="date"
             android:minHeight="@dimen/title_height"
@@ -136,7 +132,7 @@
         app:layout_constraintTop_toBottomOf="@id/lytValue">
 
         <TextView
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/active"
@@ -144,7 +140,7 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/payment_active"
-            android:layout_width="@dimen/switch_size"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
