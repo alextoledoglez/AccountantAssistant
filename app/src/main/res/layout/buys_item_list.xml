@@ -61,16 +61,17 @@
                     android:id="@+id/active_action"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/ten_margin"
+                    android:layout_margin="@dimen/small_material_margin"
                     tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 <ImageButton
                     android:id="@+id/delete_action"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/ten_margin"
+                    android:layout_margin="@dimen/small_material_margin"
                     android:background="@null"
                     android:contentDescription="@string/delete"
+                    android:minWidth="48dp"
                     android:src="@drawable/delete_red" />
             </LinearLayout>
 

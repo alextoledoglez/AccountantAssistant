@@ -25,9 +25,10 @@ class BillsFragment : PaymentsFragment<BillsViewModel>() {
         initializeVisualComponentsFrom(binding.root, PaymentsType.BILL)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun addMenuItemClickListener() {
         PaymentsDetailsFragment.newInstance(Payments().toBills()).apply {
-            onSaveActionListener = { adapter?.notifyDataSetChanged() }
+            onSaveActionListener = { adapter?.notifyItemAddedOrChanged(it) }
         }.show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 

@@ -6,24 +6,14 @@ enum class PaymentsType {
     BUY, BILL, NONE;
 
     companion object {
-        fun isBuy(name: String): Boolean {
-            return !isNullObject(name) && BUY.name == name
-        }
+        fun isBuy(name: String?) = (!isNullObject(name) && BUY.name == name)
 
-        @JvmStatic
-        fun isBuy(paymentsType: PaymentsType): Boolean {
-            return !isNullObject(paymentsType) &&
-                    isBuy(paymentsType.name)
-        }
+        fun isBuy(paymentsType: PaymentsType?) =
+            (!isNullObject(paymentsType) && isBuy(paymentsType?.name))
 
-        fun isBill(name: String): Boolean {
-            return !isNullObject(name) && BILL.name == name
-        }
+        fun isBill(name: String?) = (!isNullObject(name) && BILL.name == name)
 
-        @JvmStatic
-        fun isBill(paymentsType: PaymentsType): Boolean {
-            return !isNullObject(paymentsType) &&
-                    isBill(paymentsType.name)
-        }
+        fun isBill(paymentsType: PaymentsType?) =
+            (!isNullObject(paymentsType) && isBill(paymentsType?.name))
     }
 }

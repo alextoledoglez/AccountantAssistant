@@ -90,8 +90,17 @@ class Payments : Serializable {
 
     val isBill: Boolean?
         get() = type?.let { PaymentsType.isBill(it) }
+
     val isBuy: Boolean?
         get() = type?.let { PaymentsType.isBuy(it) }
+
+    fun update(name: String?, quantity: Int, date: Date?, unitaryValue: Double, isActive: Boolean) {
+        this.name = name
+        this.quantity = quantity
+        this.date = date
+        this.unitaryValue = unitaryValue
+        this.isActive = isActive
+    }
 
     fun equalsTo(payment: Payments): Boolean {
         return type == payment.type &&

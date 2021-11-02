@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.ui.payments
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.util.TypedValue
 import android.view.Menu
@@ -13,6 +12,7 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -27,7 +27,6 @@ import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.MenuHelper
-import com.personal.accountantAssistant.utils.ParserUtils
 import io.reactivex.functions.Action
 import org.koin.android.ext.android.inject
 
@@ -42,15 +41,15 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
     abstract fun restoreDefaultPayments()
 
     private val activity: Activity? = null
+    var adapter: PaymentsListAdapter? = null
     val databaseManager: DatabaseManager? by inject()
 
     private var titleImageView: ImageView? = null
     private var subTitleTextView: TextView? = null
     private var recyclerView: RecyclerView? = null
-    var adapter: PaymentsListAdapter? = null
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private var checker: androidx.appcompat.widget.SwitchCompat? = null
+    private var checker: SwitchCompat? = null
 
     override fun setupView() {
         setHasOptionsMenu(true)
@@ -84,7 +83,7 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun initializeVisualComponentsFrom(viewRoot: View, paymentsType: PaymentsType) {
+    fun initializeVisualComponentsFrom(viewRoot: View, type: PaymentsType) {
 
         val headerCardTitlesBar = viewRoot.findViewById<View>(R.id.header_card_titles_bar)
 
@@ -118,57 +117,46 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
                 return false
             }
         })
-        initializeAdapter(paymentsType) { updateRecyclerView(paymentsType) }
+        initializeAdapter(type) { updateHeaderBy(type) }
 
         //Recycler View
-        if (PaymentsType.isBuy(paymentsType)) {
+        if (PaymentsType.isBuy(type)) {
             recyclerView = viewRoot.findViewById(R.id.buy_list)
         }
-        if (PaymentsType.isBill(paymentsType)) {
+        if (PaymentsType.isBill(type)) {
             recyclerView = viewRoot.findViewById(R.id.bills_list)
         }
+
         recyclerView?.layoutManager = LinearLayoutManager(context)
         recyclerView?.adapter = adapter
-        updateRecyclerView(paymentsType)
+        updateHeaderBy(type)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun updateRecyclerView(paymentsType: PaymentsType) {
-        if (PaymentsType.isBuy(paymentsType)) {
+    private fun updateHeaderBy(type: PaymentsType) {
+
+        if (PaymentsType.isBuy(type)) {
             MenuHelper.initializeBuysOptions()
         }
-        if (PaymentsType.isBill(paymentsType)) {
+        if (PaymentsType.isBill(type)) {
             MenuHelper.initializeBillsOptions()
         }
-        val anyActive = databaseManager?.anyActivePaymentsRecordsBy(paymentsType)
-        titleImageView?.setImageResource(if (anyActive == true) R.drawable.ic_red_money else R.drawable.ic_menu_green_money)
+
+        val isAnyActive = databaseManager?.anyActivePaymentsRecordsBy(type) ?: false
+        val imageRes = if (isAnyActive) R.drawable.ic_red_money else R.drawable.ic_menu_green_money
+        val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
+
+        titleImageView?.setImageResource(imageRes)
         subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-        context?.let {
-            subTitleTextView?.setTextColor(
-                if (anyActive == true) it.getColor(R.color.colorRed) else it.getColor(
-                    R.color.colorPrimary
-                )
-            )
-        }
+        color?.let { subTitleTextView?.setTextColor(it) }
         subTitleTextView?.text = adapter?.totalPrice.toString()
-        checker?.isChecked = databaseManager?.allActivePaymentsRecordsBy(paymentsType) == true
+        checker?.isChecked = (databaseManager?.allActivePaymentsRecordsBy(type) == true)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun recyclerViewAdapterFilterBy(queryStr: String) {
         val paymentsFilter = adapter?.filter
         paymentsFilter?.filter(queryStr)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    fun onDetailsActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == Constants.DETAIL_REQUEST_CODE) {
-            resultData?.let { intent ->
-                val entity: Any? = intent.getSerializableExtra(Constants.ENTITY)
-                val payment = entity?.let { ParserUtils.toPayments(it) }
-                payment?.let { adapter?.notifyItemAddedOrChanged(it) }
-            }
-        }
     }
 
     private fun importExportMenuItemClickListener() =

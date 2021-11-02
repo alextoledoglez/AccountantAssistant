@@ -47,9 +47,7 @@ fun AlertDialogBuilder.showImportExportDialog(
     show()
 }
 
-fun AlertDialogBuilder.showNumberPickerDialogFrom(
-    editText: EditText, defaultValue: Int
-): AlertDialogBuilder = apply {
+fun AlertDialogBuilder.showNumberPickerDialogFrom(editText: EditText, defaultValue: Int) = apply {
     setView(
         NumberPicker(context).apply {
             minValue = MIN_VALUE
@@ -61,7 +59,7 @@ fun AlertDialogBuilder.showNumberPickerDialogFrom(
         }
     )
     setTitle(R.string.select_quantity)
-    setOkButtonAction() {}
-    setCancelButtonAction() {}
+    setOkButtonAction {}
+    setCancelButtonAction {}
     show()
 }

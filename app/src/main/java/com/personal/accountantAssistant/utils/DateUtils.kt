@@ -17,7 +17,7 @@ object DateUtils {
         var date: Date? = Date()
         val dateFormat = SimpleDateFormat(DD_MM_YYYY, Locale.getDefault())
         try {
-            date = strDate?.let { dateFormat.parse(it) }
+            date = strDate?.let { if (it.isNotEmpty()) dateFormat.parse(it) else date } ?: date
         } catch (e: Exception) {
             e.printStackTrace()
         }

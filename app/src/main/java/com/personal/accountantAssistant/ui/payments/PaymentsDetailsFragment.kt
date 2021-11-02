@@ -11,6 +11,7 @@ import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.BaseBottomSheetDialogFragment
+import com.personal.accountantAssistant.core.extensions.orZero
 import com.personal.accountantAssistant.core.extensions.showNumberPickerDialogFrom
 import com.personal.accountantAssistant.core.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
@@ -35,83 +36,90 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     val databaseManager: DatabaseManager? by inject()
 
-    lateinit var onSaveActionListener: () -> Unit
+    lateinit var onSaveActionListener: (payment: Payments) -> Unit
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun initView() {
-
-        val payment = (arguments?.getSerializable(Constants.ENTITY) as? Payments?)
-
-        binding.root.apply {
-
-            etPaymentName.filters = arrayOf<InputFilter>(AllCaps())
-            etPaymentQuantity.inputType = InputType.TYPE_NULL
-            etPaymentDate.inputType = InputType.TYPE_NULL
-
-            payment?.let { it ->
-                val type = it.type?.name
-
-                tvPaymentDetailsTitle.setText(getActionBarTitleFrom(type))
-                etPaymentName.setText(it.name)
-                initializePaymentQuantityBy(it.quantity)
-
-                getDateFieldVisibilityFrom(type)?.let { visibility ->
-                    lytDate.visibility = visibility
-                }
-                val dateStr = toString(it.date)
-                setDatePickerDialogFrom(context, etPaymentDate, dateStr)
-                etPaymentValue.setText(java.lang.String.valueOf(it.unitaryValue))
-                payment_active.isChecked = it.isActive
-
-                lytFooter.apply {
-                    cancel_button.setOnClickListener { dismiss() }
-                    save_button.setOnClickListener { _ ->
-
-                        it.id = it.id
-                        it.name = etPaymentName.text.toString()
-                        it.quantity = etPaymentQuantity.text.toString().toInt()
-                        it.date = toDate(etPaymentDate.text.toString())
-                        it.unitaryValue = etPaymentValue.text.toString().toDouble()
-                        it.type = it.type?.name?.let { name -> PaymentsType.valueOf(name) }
-                        it.isActive = payment_active.isChecked
-
-                        databaseManager?.saveDataFrom(activity, it) {
-                            showLongText(activity, R.string.record_successfully_save)
-                            onSaveActionListener.invoke()
-                            dismiss()
-                        }
-                    }
-                }
-
-            }
-        }
+        initializeViewComponentsFrom(getPayment())
         setFullScreen()
     }
 
-    private fun getActionBarTitleFrom(paymentType: String?): Int = paymentType?.let {
-        when {
-            isBuy(paymentType) -> R.string.buys_details
-            isBill(paymentType) -> R.string.bills_details
-            else -> R.string.app_name
-        }
-    } ?: R.string.app_name
-
-    private fun getDateFieldVisibilityFrom(paymentType: String?): Int? = paymentType?.let {
-        if (isBuy(paymentType)) View.GONE else View.VISIBLE
+    private fun getActionBarTitleFrom(type: PaymentsType?) = when {
+        isBuy(type) -> R.string.buys_details
+        isBill(type) -> R.string.bills_details
+        else -> R.string.app_name
     }
 
-    private fun initializePaymentQuantityBy(quantity: Int) {
-        val dialogBuilder = AlertDialogBuilder(requireContext())
-        binding.root.etPaymentQuantity.apply {
-            etPaymentQuantity.setText(AlertDialogBuilder.toCurrentOrMinTextValue(quantity))
-            setOnClickListener {
-                dialogBuilder.showNumberPickerDialogFrom(etPaymentQuantity, quantity)
+    private fun getDateFieldVisibilityFrom(type: PaymentsType?) = if (isBuy(type))
+        View.GONE
+    else
+        View.VISIBLE
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun initializeViewComponentsFrom(payment: Payments?) {
+
+        //Title and name
+        binding.root.apply {
+            tvPaymentDetailsTitle.setText(getActionBarTitleFrom(payment?.type))
+            etPaymentName.apply {
+                filters = arrayOf<InputFilter>(AllCaps())
+                setText(payment?.name)
             }
-            onFocusChangeListener = View.OnFocusChangeListener { _: View?, hasFocus: Boolean ->
+        }
+
+        //Quantity
+        binding.root.etPaymentQuantity.apply {
+            inputType = InputType.TYPE_NULL
+            val quantity = payment?.quantity.orZero()
+            val dialogBuilder = AlertDialogBuilder(requireContext())
+            setText(AlertDialogBuilder.toCurrentOrMinTextValue(quantity))
+            onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus: Boolean ->
                 if (hasFocus) {
-                    dialogBuilder.showNumberPickerDialogFrom(etPaymentQuantity, quantity)
+                    dialogBuilder.showNumberPickerDialogFrom(this, quantity)
                 }
             }
+            setOnClickListener { dialogBuilder.showNumberPickerDialogFrom(this, quantity) }
+        }
+
+        //Date
+        binding.root.apply {
+            lytDate.visibility = getDateFieldVisibilityFrom(payment?.type)
+            etPaymentDate.apply {
+                inputType = InputType.TYPE_NULL
+                setDatePickerDialogFrom(context, this, toString(payment?.date))
+            }
+        }
+
+        //Value and switch
+        binding.root.apply {
+            etPaymentValue.setText(java.lang.String.valueOf(payment?.unitaryValue))
+            scActive.isChecked = payment?.isActive ?: false
+        }
+
+        //Footer
+        binding.root.lytFooter.apply {
+            mbCancel.setOnClickListener { dismiss() }
+            mbSave.setOnClickListener { savePayment(payment) }
+        }
+    }
+
+    private fun getPayment() = (arguments?.getSerializable(Constants.ENTITY) as? Payments?)
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun savePayment(payment: Payments?) {
+        binding.root.apply {
+            payment?.update(
+                name = etPaymentName.text.toString(),
+                quantity = etPaymentQuantity.text.toString().toInt(),
+                date = toDate(etPaymentDate.text.toString()),
+                unitaryValue = etPaymentValue.text.toString().toDouble(),
+                isActive = scActive.isChecked
+            )
+        }
+        databaseManager?.saveDataFrom(context, payment) {
+            showLongText(context, R.string.record_successfully_save)
+            payment?.let { onSaveActionListener.invoke(it) }
+            dismiss()
         }
     }
 
