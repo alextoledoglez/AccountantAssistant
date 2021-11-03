@@ -7,14 +7,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
-        <!--        <item name="android:datePickerStyle">@style/DatePickerTheme</item>
-                <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>-->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
+        </item>
         <item name="materialCalendarFullscreenTheme">
             @style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen
-        </item>
-        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
         </item>
     </style>
 
@@ -185,15 +183,16 @@
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
 
-    <!--Hint text styles-->
+    <!--Text Input Layout styles-->
 
-    <style name="HintTextAppearance" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/colorPrimary</item>
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/selector_text_input_layout_hint_color</item>
+        <item name="android:textColor">@color/selector_text_input_layout_hint_color</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!--Focus edit text styles-->
+    <!--Edit Text styles-->
 
     <style name="FocusEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorControlNormal">@color/defaultFontColor</item>

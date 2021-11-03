@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/default_material_margin"
-    android:background="@drawable/layout_rounded_shape"
     android:orientation="vertical"
     tools:context=".ui.payments.PaymentsDetailsFragment"
     tools:ignore="PrivateResource">
@@ -22,12 +21,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lytName"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
         android:hint="@string/name"
-        app:hintTextAppearance="@style/HintTextAppearance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvPaymentDetailsTitle">
@@ -47,12 +45,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lytQuantity"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
         android:hint="@string/quantity"
-        app:hintTextAppearance="@style/HintTextAppearance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytName">
@@ -73,12 +70,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lytValue"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
         android:hint="@string/value"
-        app:hintTextAppearance="@style/HintTextAppearance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytQuantity">
@@ -98,12 +94,11 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lytDate"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
         android:hint="@string/date"
-        app:hintTextAppearance="@style/HintTextAppearance"
         app:layout_constraintEnd_toStartOf="@id/lytActive"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytValue">

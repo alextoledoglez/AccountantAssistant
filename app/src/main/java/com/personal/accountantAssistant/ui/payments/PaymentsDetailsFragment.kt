@@ -68,6 +68,7 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         binding.root.etPaymentQuantity.apply {
             inputType = InputType.TYPE_NULL
             val quantity = payment?.quantity.orZero()
+            setText(AlertDialogBuilder.toCurrentOrMinValue(quantity).toString())
             val dialogBuilder = AlertDialogBuilder(requireContext())
             val dialog = dialogBuilder.setupNumberPickerFrom(quantity) { _, _, value: Int ->
                 setText(AlertDialogBuilder.toCurrentOrMinValue(value).toString())
