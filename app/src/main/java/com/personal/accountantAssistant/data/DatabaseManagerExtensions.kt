@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.AlertDialogBuilder
-import com.personal.accountantAssistant.core.extensions.confirmationDialog
+import com.personal.accountantAssistant.core.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.ui.payments.entities.Payments
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.CalendarsUtils
@@ -53,7 +53,7 @@ fun DatabaseManager.deleteDataFrom(
 fun DatabaseManager.deleteRecord(
     context: Context?, payment: Payments?, onSuccess: Action?
 ) = context?.let {
-    AlertDialogBuilder(it).confirmationDialog(
+    AlertDialogBuilder(it).showConfirmationFrom(
         R.string.delete_record_title,
         R.string.delete_record_message,
         { deleteDataFrom(context, payment, onSuccess) }

@@ -1,18 +1,19 @@
 package com.personal.accountantAssistant.core.extensions
 
+import android.app.DatePickerDialog
 import android.content.DialogInterface
-import android.widget.EditText
 import android.widget.NumberPicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.AlertDialogBuilder.Companion.MAX_VALUE
 import com.personal.accountantAssistant.core.AlertDialogBuilder.Companion.MIN_VALUE
-import com.personal.accountantAssistant.core.AlertDialogBuilder.Companion.toCurrentOrMinTextValue
+import com.personal.accountantAssistant.core.AlertDialogBuilder.Companion.toCurrentOrMinValue
 import com.personal.accountantAssistant.utils.ActionUtils
 import io.reactivex.functions.Action
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-fun AlertDialogBuilder.confirmationDialog(
+fun AlertDialogBuilder.showConfirmationFrom(
     titleId: Int,
     messageId: Int,
     confirmAction: Action,
@@ -25,7 +26,7 @@ fun AlertDialogBuilder.confirmationDialog(
     show()
 }
 
-fun AlertDialogBuilder.showImportExportDialog(
+fun AlertDialogBuilder.showImportOrExportFrom(
     titleId: Int, importAction: Action, exportAction: Action
 ) = apply {
     val importOption = 0
@@ -47,19 +48,30 @@ fun AlertDialogBuilder.showImportExportDialog(
     show()
 }
 
-fun AlertDialogBuilder.showNumberPickerDialogFrom(editText: EditText, defaultValue: Int) = apply {
+fun AlertDialogBuilder.setupNumberPickerFrom(
+    defaultValue: Int, listener: NumberPicker.OnValueChangeListener
+) = apply {
     setView(
         NumberPicker(context).apply {
             minValue = MIN_VALUE
             maxValue = MAX_VALUE
-            value = if (defaultValue == 0) MIN_VALUE else defaultValue
-            setOnValueChangedListener { _: NumberPicker?, _: Int, newValue: Int ->
-                editText.setText(toCurrentOrMinTextValue(newValue))
-            }
+            value = toCurrentOrMinValue(defaultValue)
+            setOnValueChangedListener(listener)
         }
     )
     setTitle(R.string.select_quantity)
     setOkButtonAction {}
     setCancelButtonAction {}
-    show()
+}
+
+fun AlertDialogBuilder.showDatePickerFrom(
+    date: Date?, listener: DatePickerDialog.OnDateSetListener
+) = apply {
+    val calendar = Calendar.getInstance().also { it.time = date ?: Date() }
+    DatePickerDialog(
+        context, listener,
+        calendar[Calendar.YEAR],
+        calendar[Calendar.MONTH],
+        calendar[Calendar.DAY_OF_MONTH]
+    ).show()
 }

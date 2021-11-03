@@ -7,6 +7,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
+        <!--        <item name="android:datePickerStyle">@style/DatePickerTheme</item>
+                <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>-->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarFullscreenTheme">
@@ -126,6 +128,7 @@
 
     <style name="AlertDialogBuilderStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="alertDialogStyle">@style/AlertDialogStyle</item>
+        <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>
         <item name="materialAlertDialogBodyTextStyle">@style/AlertDialogBodyStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/AlertDialogPositiveTextStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/AlertDialogNegativeTextStyle</item>
@@ -137,6 +140,20 @@
 
     <style name="AlertDialogNegativeTextStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="materialThemeOverlay">@style/AlertDialogButtonStyle</item>
+    </style>
+
+    <!--Date Picker Dialog Styles-->
+
+    <style name="DatePickerTheme" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:datePickerStyle">@style/DatePickerStyle</item>
+    </style>
+
+    <style name="DatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="android:headerBackground">@color/colorPrimary</item>
+        <item name="android:yearListSelectorColor">@color/colorPrimary</item>
     </style>
 
     <!--Text view styles-->

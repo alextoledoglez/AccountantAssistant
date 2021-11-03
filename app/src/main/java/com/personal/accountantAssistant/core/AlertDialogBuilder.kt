@@ -41,7 +41,6 @@ class AlertDialogBuilder(context: Context) :
         const val MIN_VALUE = 1
         const val MAX_VALUE = 100
 
-        fun toCurrentOrMinTextValue(texValue: Int) =
-            (if (texValue == 0) MIN_VALUE.toString() else texValue.toString())
+        fun toCurrentOrMinValue(value: Int) = (if (value == 0) MIN_VALUE else value)
     }
 }

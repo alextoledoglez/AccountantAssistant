@@ -20,8 +20,8 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.BaseFragment
 import com.personal.accountantAssistant.core.BaseViewModel
-import com.personal.accountantAssistant.core.extensions.confirmationDialog
-import com.personal.accountantAssistant.core.extensions.showImportExportDialog
+import com.personal.accountantAssistant.core.extensions.showConfirmationFrom
+import com.personal.accountantAssistant.core.extensions.showImportOrExportFrom
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.ActionUtils
@@ -160,21 +160,21 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
     }
 
     private fun importExportMenuItemClickListener() =
-        AlertDialogBuilder(requireContext()).showImportExportDialog(
+        AlertDialogBuilder(requireContext()).showImportOrExportFrom(
             R.string.import_export_title,
             this::importMenuItemClickListener,
             this::exportMenuItemClickListener
         )
 
     private fun deleteAllMenuItemClickListener() =
-        AlertDialogBuilder(requireContext()).confirmationDialog(
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
             ::deleteAllPayments
         )
 
     private fun restoreDefaultMenuItemClickListener() =
-        AlertDialogBuilder(requireContext()).confirmationDialog(
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.restore_default_records_title,
             R.string.restore_default_records_message,
             ::restoreDefaultPayments

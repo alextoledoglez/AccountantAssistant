@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.payments
 
+import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.text.InputFilter
@@ -12,7 +13,8 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.AlertDialogBuilder
 import com.personal.accountantAssistant.core.BaseBottomSheetDialogFragment
 import com.personal.accountantAssistant.core.extensions.orZero
-import com.personal.accountantAssistant.core.extensions.showNumberPickerDialogFrom
+import com.personal.accountantAssistant.core.extensions.setupNumberPickerFrom
+import com.personal.accountantAssistant.core.extensions.showDatePickerFrom
 import com.personal.accountantAssistant.core.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.saveDataFrom
@@ -22,13 +24,13 @@ import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBill
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBuy
 import com.personal.accountantAssistant.utils.Constants
-import com.personal.accountantAssistant.utils.DatePickerDialogUtils.setDatePickerDialogFrom
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.activity_payments_details.view.*
 import kotlinx.android.synthetic.main.options_footer_bar.view.*
 import org.koin.android.ext.android.inject
+import java.util.*
 
 class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
@@ -50,11 +52,6 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         else -> R.string.app_name
     }
 
-    private fun getDateFieldVisibilityFrom(type: PaymentsType?) = if (isBuy(type))
-        View.GONE
-    else
-        View.VISIBLE
-
     @RequiresApi(Build.VERSION_CODES.P)
     private fun initializeViewComponentsFrom(payment: Payments?) {
 
@@ -72,21 +69,37 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             inputType = InputType.TYPE_NULL
             val quantity = payment?.quantity.orZero()
             val dialogBuilder = AlertDialogBuilder(requireContext())
-            setText(AlertDialogBuilder.toCurrentOrMinTextValue(quantity))
+            val dialog = dialogBuilder.setupNumberPickerFrom(quantity) { _, _, value: Int ->
+                setText(AlertDialogBuilder.toCurrentOrMinValue(value).toString())
+            }.create()
             onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus: Boolean ->
                 if (hasFocus) {
-                    dialogBuilder.showNumberPickerDialogFrom(this, quantity)
+                    dialog.show()
                 }
             }
-            setOnClickListener { dialogBuilder.showNumberPickerDialogFrom(this, quantity) }
+            setOnClickListener { dialog.show() }
         }
 
         //Date
         binding.root.apply {
-            lytDate.visibility = getDateFieldVisibilityFrom(payment?.type)
-            etPaymentDate.apply {
-                inputType = InputType.TYPE_NULL
-                setDatePickerDialogFrom(context, this, toString(payment?.date))
+            lytDate.visibility = if (isBuy(payment?.type))
+                View.GONE
+            else {
+                etPaymentDate.apply {
+                    inputType = InputType.TYPE_NULL
+                    setText(toString(payment?.date))
+                    val dialog = AlertDialogBuilder(context)
+                    val listener = DatePickerDialog.OnDateSetListener { _, y: Int, m: Int, d: Int ->
+                        setText(toString(Calendar.getInstance().also { it[y, m] = d }.time))
+                    }
+                    setOnClickListener { dialog.showDatePickerFrom(payment?.date, listener) }
+                    onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus: Boolean ->
+                        if (hasFocus) {
+                            dialog.showDatePickerFrom(payment?.date, listener)
+                        }
+                    }
+                }
+                View.VISIBLE
             }
         }
 
