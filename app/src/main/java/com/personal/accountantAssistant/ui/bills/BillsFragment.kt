@@ -28,7 +28,7 @@ class BillsFragment : PaymentsFragment<BillsViewModel>() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun addMenuItemClickListener() {
         PaymentsDetailsFragment.newInstance(Payments().toBills()).apply {
-            onSaveActionListener = { adapter?.notifyItemAddedOrChanged(it) }
+            onSaveActionListener = { adapter?.notifyPaymentAddedOrChanged(it) }
         }.show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
@@ -54,10 +54,8 @@ class BillsFragment : PaymentsFragment<BillsViewModel>() {
         }
     }
 
-    private fun deleteAllBillsRecords(): Boolean? {
-        return databaseManager?.deleteAllBillsRecord()
-            ?.let { databaseManager?.isNotDefaultRecord(it) }
-    }
+    private fun deleteAllBillsRecords() =
+        databaseManager?.deleteAllBillsRecord()?.let { databaseManager?.isNotDefaultRecord(it) }
 
     companion object {
         fun newInstance() = BillsFragment()

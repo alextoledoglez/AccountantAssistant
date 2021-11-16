@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.extensions.EMPTY
+import com.personal.accountantAssistant.core.extensions.orZero
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.deleteRecord
 import com.personal.accountantAssistant.data.isDefaultRecord
@@ -42,9 +43,8 @@ class PaymentsListAdapter constructor(
 
     private var payments: MutableList<Payments>? = null
 
-    fun loadPayments() {
-        payments = databaseManager?.getSortedPaymentsRecordsBy(type) as? MutableList<Payments>?
-    }
+    fun loadPayments() =
+        databaseManager?.getSortedPaymentsRecordsBy(type) as? MutableList<Payments>?
 
     fun setAllPaymentsRecordsActiveFrom(isActive: Boolean) {
         payments?.forEach(Consumer { payment: Payments -> setActiveRowFrom(isActive, payment) })
@@ -54,43 +54,39 @@ class PaymentsListAdapter constructor(
         get() = if (isBuy(type)) R.layout.buys_item_list else R.layout.bills_item_list
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderData {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(layoutToInflate, null, java.lang.Boolean.FALSE)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(layoutToInflate, null, false)
         return ViewHolderData(view, type)
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     override fun onBindViewHolder(viewHolderData: ViewHolderData, position: Int) {
 
-        payments?.let {
+        val payment = payments?.get(position)
+        payment?.let { it ->
 
-            it[position].let { payment ->
+            if (isBuy(type) && it.isBuy == true) {
+                //INITIALIZE
+                initializeBuysOptions()
+            }
+            if (isBill(type) && it.isBill == true) {
+                //INITIALIZE
+                initializeBillsOptions()
+                viewHolderData.date?.text = toString(it.date)
+            }
 
-                if (isBuy(type) && payment.isBuy == true) {
-                    //INITIALIZE
-                    initializeBuysOptions()
-                }
-                if (isBill(type) && payment.isBill == true) {
-                    //INITIALIZE
-                    initializeBillsOptions()
-                    viewHolderData.date?.text = toString(payment.date)
-                }
-
-                //DETAILS
-                viewHolderData.name.text = payment.name
-                viewHolderData.value.text = toFormattedValue(payment)
+            //DETAILS
+            viewHolderData.apply {
+                name.text = it.name
+                value.text = toFormattedValue(it)
 
                 //ACTIONS
-                viewHolderData.active.isChecked = payment.isActive
-                viewHolderData.active.setOnClickListener {
-                    val isChecked = viewHolderData.active.isChecked
-                    setActiveRowFrom(isChecked, payment)
-                }
-                viewHolderData.itemView.setOnClickListener { editRecordFrom(payment) }
-                viewHolderData.deleteItem.setOnClickListener { deleteRecordFrom(payment) }
-                setRowForegroundFrom(viewHolderData)
+                active.isChecked = it.isActive
+                active.setOnClickListener { _ -> setActiveRowFrom(active.isChecked, it) }
+                itemView.setOnClickListener { _ -> editRecordFrom(it) }
+                deleteItem.setOnClickListener { _ -> deleteRecordFrom(it) }
             }
+            setRowForegroundFrom(viewHolderData)
         }
     }
 
@@ -98,24 +94,21 @@ class PaymentsListAdapter constructor(
         payment.isActive = isActive
         val updateRecord = databaseManager?.updatePaymentsRecordFrom(payment)
         if (databaseManager?.isNotDefaultRecord(updateRecord) == true) {
-            notifyDataSetChanged()
+            notifyPaymentAddedOrChanged(payment)
         }
     }
 
     private fun editRecordFrom(payment: Payments) {
         (context as? MainActivity?)?.supportFragmentManager?.let {
             PaymentsDetailsFragment.newInstance(payment).apply {
-                onSaveActionListener = { notifyDataSetChanged() }
+                onSaveActionListener = { notifyPaymentAddedOrChanged(payment) }
             }.show(it, String.EMPTY)
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     private fun deleteRecordFrom(payment: Payments) {
-        databaseManager?.deleteRecord(context, payment) {
-            payments?.remove(payment)
-            notifyDataSetChanged()
-        }
+        databaseManager?.deleteRecord(context, payment) { notifyPaymentRemoved(payment) }
     }
 
     private fun setRowForegroundFrom(viewHolderData: ViewHolderData) {
@@ -133,22 +126,20 @@ class PaymentsListAdapter constructor(
     }
 
     override fun getItemCount(): Int {
-        return payments?.size ?: 0
+        return payments?.size.orZero()
     }
 
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val filterStr = charSequence.toString()
-                if (filterStr.isEmpty()) {
+                payments = if (filterStr.isEmpty()) {
                     loadPayments()
                 } else {
-                    payments = payments?.stream()?.filter { contains(it.name, filterStr) }
+                    payments?.stream()?.filter { contains(it.name, filterStr) }
                         ?.collect(Collectors.toList())
                 }
-                val filterResults = FilterResults()
-                filterResults.values = payments
-                return filterResults
+                return FilterResults().also { it.values = payments }
             }
 
             @Suppress("UNCHECKED_CAST")
@@ -160,8 +151,7 @@ class PaymentsListAdapter constructor(
     }
 
     class ViewHolderData(
-        itemView: View,
-        paymentsType: PaymentsType?
+        itemView: View, paymentsType: PaymentsType?
     ) : RecyclerView.ViewHolder(itemView) {
         var name: TextView = itemView.findViewById(R.id.name)
         var date: TextView? = null
@@ -203,8 +193,8 @@ class PaymentsListAdapter constructor(
                 roundTo(payment.getTotalValue())
     }
 
-    fun notifyItemAddedOrChanged(payment: Payments) {
-        loadPayments()
+    fun notifyPaymentAddedOrChanged(payment: Payments) {
+        payments = loadPayments()
         val loadedPayment =
             payments?.stream()?.filter { it.equalsTo(payment) }?.findFirst()?.orElse(payment)
         val loadedPaymentId = loadedPayment?.id?.toLong()
@@ -228,7 +218,14 @@ class PaymentsListAdapter constructor(
         notifyDataSetChanged()
     }
 
+    private fun notifyPaymentRemoved(payment: Payments) = payments?.apply {
+        val position = indexOf(payment)
+        val wasRemoved = remove(payment)
+        if (wasRemoved)
+            notifyItemRemoved(position)
+    }
+
     init {
-        loadPayments()
+        payments = loadPayments()
     }
 }

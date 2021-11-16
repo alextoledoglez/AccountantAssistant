@@ -18,6 +18,12 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override val binding by viewBinding(FragmentHomeBinding::inflate)
 
     @RequiresApi(Build.VERSION_CODES.P)
+    override fun onResume() {
+        super.onResume()
+        calculateExpensesOn(binding.root)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun setupView() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {

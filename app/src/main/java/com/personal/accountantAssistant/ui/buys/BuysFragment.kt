@@ -28,7 +28,7 @@ class BuysFragment : PaymentsFragment<BuysViewModel>() {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun addMenuItemClickListener() {
         PaymentsDetailsFragment.newInstance(Payments().toBuys()).apply {
-            onSaveActionListener = { adapter?.notifyItemAddedOrChanged(it) }
+            onSaveActionListener = { adapter?.notifyPaymentAddedOrChanged(it) }
         }.show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
