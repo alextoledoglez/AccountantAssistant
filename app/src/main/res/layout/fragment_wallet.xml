@@ -8,31 +8,9 @@
     android:background="@color/defaultBackgroundColor"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/header_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/half_material_margin"
-        android:visibility="visible"
-        app:cardBackgroundColor="@color/design_default_color_background"
-        app:cardCornerRadius="@dimen/card_view_default_radius"
-        app:cardElevation="@dimen/card_view_elevation"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="@dimen/card_view_content_padding">
-
-        <LinearLayout
-            android:id="@+id/footer_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/header_card_titles_bar"
-                layout="@layout/titles_bars" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+    <include
+        android:id="@+id/header_card_titles_bar"
+        layout="@layout/titles_bars" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCards"
