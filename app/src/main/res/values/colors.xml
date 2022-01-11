@@ -37,8 +37,7 @@
     <color name="colorSilver">#DCDCDC</color>
 
     //Error colors
-    <color name="colorErrorLight">#9D0822</color>
-    <color name="colorError">#7D0822</color>
+    <color name="colorError">@color/colorRed</color>
 
     //Success colors
     <color name="colorSuccessLight">#62C16E</color>

@@ -6,6 +6,7 @@
     <dimen name="separator_size">1dp</dimen>
     <dimen name="text_field_height">30dp</dimen>
     <dimen name="image_button_width">48dp</dimen>
+    <dimen name="icon_resource_size">24dp</dimen>
 
     <dimen name="full_layout_weight">1</dimen>
     <dimen name="end_layout_weight">0.3</dimen>
@@ -24,8 +25,6 @@
     <dimen name="big_text_size">30sp</dimen>
 
     <!-- Others -->
-    <dimen name="nav_header_height">176dp</dimen>
-
     <dimen name="card_width">100dp</dimen>
     <dimen name="card_height">190dp</dimen>
 

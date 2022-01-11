@@ -71,7 +71,7 @@
                     android:background="@null"
                     android:contentDescription="@string/delete"
                     android:minWidth="@dimen/image_button_width"
-                    android:src="@drawable/delete_red" />
+                    android:src="@drawable/ic_delete_red" />
             </LinearLayout>
 
         </TableRow>

@@ -3,22 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/add_payment"
-        android:icon="@drawable/add_white"
+        android:icon="@drawable/ic_add_white"
         android:title="@string/add_action"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/import_export"
-        android:icon="@drawable/import_export_white"
+        android:icon="@drawable/ic_import_export_white"
         android:title="@string/import_export"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/delete_all"
-        android:icon="@drawable/delete_white"
+        android:icon="@drawable/ic_delete_white"
         android:title="@string/delete_all"
         app:showAsAction="always" />
     <item
         android:id="@+id/restore_default"
-        android:icon="@drawable/restore_white"
+        android:icon="@drawable/ic_restore_white"
         android:title="@string/restore_default"
         app:showAsAction="always" />
 </menu>

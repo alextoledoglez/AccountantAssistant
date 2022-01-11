@@ -44,7 +44,7 @@
             android:maxLines="4"
             android:minLines="2"
             android:textAlignment="gravity"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorWhite"
             android:textStyle="bold" />
 
         <include layout="@layout/options_footer_bar" />
