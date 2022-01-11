@@ -7,7 +7,7 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.extensions.EMPTY
 import com.personal.accountantAssistant.data.DatabaseManager
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
@@ -138,7 +138,7 @@ object ImportExportUtils {
                 .getPaymentsRecords()
                 .stream()
                 .filter { type == it.type }
-                .forEach { payment: Payments ->
+                .forEach { payment: PaymentsEntity ->
                     val currentRowIndex = rowIndex.get()
                     addCell(sheet, 0, currentRowIndex, payment.name.toString())
                     addCell(sheet, 1, currentRowIndex, payment.quantity.toString())
@@ -151,7 +151,7 @@ object ImportExportUtils {
                 }
     }
 
-    private fun getConditionalDateValueFrom(payment: Payments): String {
+    private fun getConditionalDateValueFrom(payment: PaymentsEntity): String {
         return if (payment.isBill == true) payment.date.toString() else Constants.DASH_SEPARATOR
     }
 

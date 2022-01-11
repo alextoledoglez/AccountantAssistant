@@ -23,6 +23,7 @@ import com.personal.accountantAssistant.core.BaseViewModel
 import com.personal.accountantAssistant.core.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.core.extensions.showImportOrExportFrom
 import com.personal.accountantAssistant.data.DatabaseManager
+import com.personal.accountantAssistant.ui.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.Constants
@@ -30,18 +31,12 @@ import com.personal.accountantAssistant.utils.MenuHelper
 import io.reactivex.functions.Action
 import org.koin.android.ext.android.inject
 
-abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
+abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOptionsInterface {
 
     abstract override val binding: ViewBinding
 
-    abstract fun addMenuItemClickListener()
-    abstract fun importMenuItemClickListener()
-    abstract fun exportMenuItemClickListener()
-    abstract fun deleteAllPayments()
-    abstract fun restoreDefaultPayments()
-
     private val activity: Activity? = null
-    var adapter: PaymentsListAdapter? = null
+    open var adapter: PaymentsListAdapter? = null
     val databaseManager: DatabaseManager? by inject()
 
     private var titleImageView: ImageView? = null
@@ -119,12 +114,11 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
         })
         initializeAdapter(type) { updateHeaderBy(type) }
 
-        //Recycler View
         if (PaymentsType.isBuy(type)) {
-            recyclerView = viewRoot.findViewById(R.id.buy_list)
+            recyclerView = viewRoot.findViewById(R.id.rvBuys)
         }
         if (PaymentsType.isBill(type)) {
-            recyclerView = viewRoot.findViewById(R.id.bills_list)
+            recyclerView = viewRoot.findViewById(R.id.rvBills)
         }
 
         recyclerView?.layoutManager = LinearLayoutManager(context)
@@ -135,11 +129,10 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
     @RequiresApi(Build.VERSION_CODES.P)
     private fun updateHeaderBy(type: PaymentsType) {
 
-        if (PaymentsType.isBuy(type)) {
-            MenuHelper.initializeBuysOptions()
-        }
-        if (PaymentsType.isBill(type)) {
-            MenuHelper.initializeBillsOptions()
+        when {
+            PaymentsType.isBuy(type) -> MenuHelper.initializeBuysOptions()
+            PaymentsType.isBill(type) -> MenuHelper.initializeBillsOptions()
+            else -> MenuHelper.initializeHomeOptions()
         }
 
         val isAnyActive = databaseManager?.anyActivePaymentsRecordsBy(type) ?: false
@@ -170,13 +163,13 @@ abstract class PaymentsFragment<V : BaseViewModel> : BaseFragment<V>() {
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
-            ::deleteAllPayments
+            ::deleteAllRecords
         )
 
     private fun restoreDefaultMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.restore_default_records_title,
             R.string.restore_default_records_message,
-            ::restoreDefaultPayments
+            ::restoreDefaultRecords
         )
 }

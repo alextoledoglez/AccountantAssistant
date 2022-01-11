@@ -2,13 +2,12 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/buys_item_list_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/colorWhite"
-    app:cardElevation="1dp"
+    app:cardElevation="@dimen/card_view_elevation"
     app:cardUseCompatPadding="true"
-    app:contentPadding="3dp">
+    app:contentPadding="@dimen/card_view_content_padding">
 
     <TableLayout
         android:layout_width="match_parent"
@@ -24,26 +23,26 @@
 
             <LinearLayout
                 android:id="@+id/item_detail_col"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zero"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/ten_margin"
+                android:layout_marginStart="@dimen/half_material_margin"
                 android:layout_weight="@dimen/start_layout_weight"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/text_field_height"
                     android:gravity="center_vertical"
                     android:text="@string/food_product"
                     android:textAlignment="gravity"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/small_text_size"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/value"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="@dimen/text_field_height"
                     android:gravity="center_vertical"
                     android:text="@string/price_default_value"
                     android:textAlignment="gravity" />
@@ -52,7 +51,7 @@
 
             <LinearLayout
                 android:id="@+id/item_action_col"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zero"
                 android:layout_height="match_parent"
                 android:layout_weight="@dimen/end_layout_weight"
                 android:orientation="horizontal">
@@ -71,7 +70,7 @@
                     android:layout_margin="@dimen/small_material_margin"
                     android:background="@null"
                     android:contentDescription="@string/delete"
-                    android:minWidth="48dp"
+                    android:minWidth="@dimen/image_button_width"
                     android:src="@drawable/delete_red" />
             </LinearLayout>
 

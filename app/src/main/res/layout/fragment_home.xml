@@ -12,32 +12,51 @@
     tools:context=".ui.home.HomeFragment">
 
     <include
-        android:id="@+id/lytChartCardView"
-        style="@style/cardMarginStyle"
-        layout="@layout/layout_home_chart_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/zero"
-        app:layout_constraintBottom_toTopOf="@+id/dashboard_card"
+        android:id="@+id/available_section"
+        layout="@layout/layout_home_available_card"
+        android:layout_width="@dimen/zero"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_material_margin"
+        android:layout_marginVertical="@dimen/small_material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/dashboard_card"
-        style="@style/bottomTopCardStyle"
-        layout="@layout/layout_home_subtitle_card"
-        app:layout_constraintBottom_toTopOf="@id/available_card"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/available_card"
-        app:layout_constraintTop_toBottomOf="@id/lytChartCardView" />
-
-    <include
-        android:id="@+id/available_card"
-        style="@style/homeBottomCardStyle"
-        layout="@layout/layout_home_title_card"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/expenses_section"
+        layout="@layout/layout_home_expenses_card"
+        android:layout_width="@dimen/zero"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_material_margin"
+        android:layout_marginVertical="@dimen/small_material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dashboard_card" />
+        app:layout_constraintTop_toBottomOf="@id/available_section" />
+
+    <include
+        android:id="@+id/summary_section"
+        layout="@layout/layout_home_summary_card"
+        android:layout_width="@dimen/zero"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_material_margin"
+        android:layout_marginVertical="@dimen/small_material_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expenses_section" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mbDateRangePicker"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/default_material_margin"
+        android:layout_marginVertical="@dimen/smallest_material_margin"
+        android:minHeight="@dimen/title_height"
+        android:text="@string/period_to_expense"
+        app:icon="@drawable/ic_today"
+        app:iconGravity="textStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/summary_section" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

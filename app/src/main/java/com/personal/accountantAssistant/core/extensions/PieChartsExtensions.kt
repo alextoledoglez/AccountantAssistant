@@ -7,17 +7,17 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
-import com.personal.accountantAssistant.data.dto.Expenses
+import com.personal.accountantAssistant.data.dto.Summary
 import kotlin.math.abs
 
 
-fun PieChart.drawFrom(expenses: Expenses, label: String?) {
+fun PieChart.drawFrom(summary: Summary, label: String?) {
     setDefaultSettings()
     val entries = listOf(
-            PieEntry(expenses.total.orZero(), expenses.totalStr),
-            PieEntry(abs(expenses.needed.orZero()), expenses.neededStr)
+            PieEntry(summary.total.orZero(), summary.totalStr),
+            PieEntry(abs(summary.needed.orZero()), summary.neededStr)
     )
-    val dataSet = PieDataSet(entries, label).apply { setupDataSetBy(expenses) }
+    val dataSet = PieDataSet(entries, label).apply { setupDataSetBy(summary) }
     data = getPieDataBy(dataSet)
     legend.isEnabled = false
     invalidate()
@@ -33,8 +33,8 @@ fun PieChart.setDefaultSettings() {
     setExtraOffsets(extraOffset, extraOffset, extraOffset, extraOffset)
 }
 
-fun PieDataSet.setupDataSetBy(expenses: Expenses) {
-    colors = listOf(expenses.totalColor, expenses.neededColor)
+fun PieDataSet.setupDataSetBy(summary: Summary) {
+    colors = listOf(summary.totalColor, summary.neededColor)
     valueTextColor = Color.WHITE
     valueTextSize = 18f
     valueTypeface = Typeface.DEFAULT_BOLD

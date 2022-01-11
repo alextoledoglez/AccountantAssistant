@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.ui.buys.entities
 
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.utils.Constants
 
 class Buys {
@@ -32,12 +32,12 @@ class Buys {
         isActive = active
     }
 
-    constructor(payments: Payments) {
-        uid = payments.id
-        product = payments.name
-        quantity = payments.quantity
-        price = payments.unitaryValue
-        totalValue = payments.totalValue
-        isActive = payments.isActive
+    constructor(paymentsEntity: PaymentsEntity) {
+        uid = paymentsEntity.id
+        product = paymentsEntity.name
+        quantity = paymentsEntity.quantity
+        price = paymentsEntity.unitaryValue
+        totalValue = paymentsEntity.totalValue
+        isActive = paymentsEntity.isActive
     }
 }

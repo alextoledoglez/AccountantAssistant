@@ -3,14 +3,14 @@
     style="?android:attr/buttonBarStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/five_margin"
+    android:layout_margin="@dimen/small_material_margin"
     android:orientation="horizontal">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mbCancel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/ten_margin"
+        android:layout_margin="@dimen/half_material_margin"
         android:layout_weight="@dimen/full_layout_weight"
         android:backgroundTint="@color/colorRed"
         android:gravity="center"
@@ -21,7 +21,7 @@
         android:id="@+id/mbSave"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/ten_margin"
+        android:layout_margin="@dimen/half_material_margin"
         android:layout_weight="@dimen/full_layout_weight"
         android:backgroundTint="@color/colorPrimary"
         android:gravity="center"

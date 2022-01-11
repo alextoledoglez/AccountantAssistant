@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/nav_wallet"
+        android:name="com.personal.accountantAssistant.ui.wallet.WalletFragment"
+        android:label="@string/menu_wallet"
+        tools:layout="@layout/fragment_wallet" />
+
+    <fragment
         android:id="@+id/nav_buys"
         android:name="com.personal.accountantAssistant.ui.buys.BuysFragment"
         android:label="@string/menu_buys"

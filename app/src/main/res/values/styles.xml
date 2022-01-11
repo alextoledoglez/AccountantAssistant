@@ -74,14 +74,6 @@
         <item name="android:layout_marginBottom">@dimen/smallest_material_margin</item>
     </style>
 
-    <style name="bottomTopCardStyle" parent="CardView">
-        <item name="android:layout_width">@dimen/landscape_card_width</item>
-        <item name="android:layout_height">@dimen/landscape_card_height</item>
-        <item name="android:layout_marginEnd">@dimen/default_material_margin</item>
-        <item name="android:layout_marginTop">@dimen/smallest_material_margin</item>
-        <item name="android:layout_marginBottom">@dimen/smallest_material_margin</item>
-    </style>
-
     <style name="homeBottomCardStyle" parent="CardView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

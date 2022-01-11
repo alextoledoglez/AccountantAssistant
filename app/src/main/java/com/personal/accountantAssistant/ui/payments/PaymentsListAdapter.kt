@@ -20,7 +20,7 @@ import com.personal.accountantAssistant.data.isDefaultRecord
 import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.payments.PaymentsListAdapter.ViewHolderData
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBill
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBuy
@@ -41,13 +41,18 @@ class PaymentsListAdapter constructor(
     private val databaseManager: DatabaseManager?
 ) : RecyclerView.Adapter<ViewHolderData>(), Filterable {
 
-    private var payments: MutableList<Payments>? = null
+    private var payments: MutableList<PaymentsEntity>? = null
 
     fun loadPayments() =
-        databaseManager?.getSortedPaymentsRecordsBy(type) as? MutableList<Payments>?
+        databaseManager?.getSortedPaymentsRecordsBy(type) as? MutableList<PaymentsEntity>?
 
     fun setAllPaymentsRecordsActiveFrom(isActive: Boolean) {
-        payments?.forEach(Consumer { payment: Payments -> setActiveRowFrom(isActive, payment) })
+        payments?.forEach(Consumer { payment: PaymentsEntity ->
+            setActiveRowFrom(
+                isActive,
+                payment
+            )
+        })
     }
 
     private val layoutToInflate: Int
@@ -90,7 +95,7 @@ class PaymentsListAdapter constructor(
         }
     }
 
-    private fun setActiveRowFrom(isActive: Boolean, payment: Payments) {
+    private fun setActiveRowFrom(isActive: Boolean, payment: PaymentsEntity) {
         payment.isActive = isActive
         val updateRecord = databaseManager?.updatePaymentsRecordFrom(payment)
         if (databaseManager?.isNotDefaultRecord(updateRecord) == true) {
@@ -98,7 +103,7 @@ class PaymentsListAdapter constructor(
         }
     }
 
-    private fun editRecordFrom(payment: Payments) {
+    private fun editRecordFrom(payment: PaymentsEntity) {
         (context as? MainActivity?)?.supportFragmentManager?.let {
             PaymentsDetailsFragment.newInstance(payment).apply {
                 onSaveActionListener = { notifyPaymentAddedOrChanged(payment) }
@@ -107,7 +112,7 @@ class PaymentsListAdapter constructor(
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
-    private fun deleteRecordFrom(payment: Payments) {
+    private fun deleteRecordFrom(payment: PaymentsEntity) {
         databaseManager?.deleteRecord(context, payment) { notifyPaymentRemoved(payment) }
     }
 
@@ -144,7 +149,7 @@ class PaymentsListAdapter constructor(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
-                payments = filterResults?.values as MutableList<Payments>?
+                payments = filterResults?.values as MutableList<PaymentsEntity>?
                 notifyDataSetChanged()
             }
         }
@@ -178,12 +183,12 @@ class PaymentsListAdapter constructor(
 
     val totalPrice: Double
         get() = roundTo(
-            payments?.stream()?.filter(Payments::isActive)
-                ?.map { obj: Payments -> obj.getTotalValue() }
+            payments?.stream()?.filter(PaymentsEntity::isActive)
+                ?.map { obj: PaymentsEntity -> obj.getTotalValue() }
                 ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
         )
 
-    private fun toFormattedValue(payment: Payments): String {
+    private fun toFormattedValue(payment: PaymentsEntity): String {
         var quantityStr = java.lang.String.valueOf(payment.quantity)
         quantityStr += if (payment.isBuy == true) Constants.UNITY else Constants.TIMES
         return quantityStr +
@@ -193,7 +198,7 @@ class PaymentsListAdapter constructor(
                 roundTo(payment.getTotalValue())
     }
 
-    fun notifyPaymentAddedOrChanged(payment: Payments) {
+    fun notifyPaymentAddedOrChanged(payment: PaymentsEntity) {
         payments = loadPayments()
         val loadedPayment =
             payments?.stream()?.filter { it.equalsTo(payment) }?.findFirst()?.orElse(payment)
@@ -218,7 +223,7 @@ class PaymentsListAdapter constructor(
         notifyDataSetChanged()
     }
 
-    private fun notifyPaymentRemoved(payment: Payments) = payments?.apply {
+    private fun notifyPaymentRemoved(payment: PaymentsEntity) = payments?.apply {
         val position = indexOf(payment)
         val wasRemoved = remove(payment)
         if (wasRemoved)

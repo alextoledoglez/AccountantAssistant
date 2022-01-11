@@ -19,7 +19,7 @@ import com.personal.accountantAssistant.core.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.ActivityPaymentsDetailsBinding
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBill
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType.Companion.isBuy
@@ -38,7 +38,7 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     val databaseManager: DatabaseManager? by inject()
 
-    lateinit var onSaveActionListener: (payment: Payments) -> Unit
+    lateinit var onSaveActionListener: (payment: PaymentsEntity) -> Unit
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun initView() {
@@ -53,7 +53,7 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun initializeViewComponentsFrom(payment: Payments?) {
+    private fun initializeViewComponentsFrom(payment: PaymentsEntity?) {
 
         //Title and name
         binding.root.apply {
@@ -83,7 +83,7 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
         //Date
         binding.root.apply {
-            lytDate.visibility = if (isBuy(payment?.type))
+            lytDate.visibility = if (!isBill(payment?.type))
                 View.GONE
             else {
                 etPaymentDate.apply {
@@ -117,10 +117,10 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         }
     }
 
-    private fun getPayment() = (arguments?.getSerializable(Constants.ENTITY) as? Payments?)
+    private fun getPayment() = (arguments?.getSerializable(Constants.ENTITY) as? PaymentsEntity?)
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun savePayment(payment: Payments?) {
+    private fun savePayment(payment: PaymentsEntity?) {
         binding.root.apply {
             payment?.update(
                 name = etPaymentName.text.toString(),
@@ -138,7 +138,7 @@ class PaymentsDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     }
 
     companion object {
-        fun newInstance(payment: Payments?) = PaymentsDetailsFragment().apply {
+        fun newInstance(payment: PaymentsEntity?) = PaymentsDetailsFragment().apply {
             arguments = Bundle().apply { putSerializable(Constants.ENTITY, payment) }
         }
     }

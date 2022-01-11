@@ -1,8 +1,6 @@
 package com.personal.accountantAssistant.utils
 
 import android.view.Menu
-import com.personal.accountantAssistant.utils.ActionUtils.runAction
-import io.reactivex.functions.Action
 
 object MenuHelper {
     var mainMenu: Menu? = null
@@ -10,24 +8,29 @@ object MenuHelper {
     private const val import_export_option = 1
     private const val delete_all_option = 2
     private const val restore_default_option = 3
+    private var isWalletViewSelected: Boolean = false
     private var isBuysViewSelected: Boolean = false
     private var isBillsViewSelected: Boolean = false
 
     @JvmStatic
     fun initializeHomeOptions() {
-        isBuysViewSelected = false
-        isBillsViewSelected = false
-        enableMenuItemOptions(false)
-    }
-
-    fun initializeSummaryOptions() {
+        isWalletViewSelected = false
         isBuysViewSelected = false
         isBillsViewSelected = false
         enableMenuItemOptions(false)
     }
 
     @JvmStatic
+    fun initializeWalletOptions() {
+        isWalletViewSelected = true
+        isBuysViewSelected = false
+        isBillsViewSelected = false
+        enableMenuItemOptions(true)
+    }
+
+    @JvmStatic
     fun initializeBuysOptions() {
+        isWalletViewSelected = false
         isBuysViewSelected = true
         isBillsViewSelected = false
         enableMenuItemOptions(true)
@@ -35,6 +38,7 @@ object MenuHelper {
 
     @JvmStatic
     fun initializeBillsOptions() {
+        isWalletViewSelected = false
         isBuysViewSelected = false
         isBillsViewSelected = true
         enableMenuItemOptions(true)
@@ -49,13 +53,6 @@ object MenuHelper {
 
     private fun setItemEnabled(itemIndex: Int, enabled: Boolean) {
         mainMenu?.getItem(itemIndex)?.isVisible = enabled
-    }
-
-    fun conditionalMenuItemClickListener(buysAction: Action?, billsAction: Action?) {
-        if (isBuysViewSelected)
-            buysAction?.let { runAction(it) }
-        else (isBillsViewSelected)
-        billsAction?.let { runAction(it) }
     }
 
 }

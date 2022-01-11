@@ -12,12 +12,11 @@ import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.core.BaseViewModel
 import com.personal.accountantAssistant.core.extensions.orZero
-import com.personal.accountantAssistant.core.extensions.toValue
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.dto.Expenses
+import com.personal.accountantAssistant.data.dto.Summary
+import com.personal.accountantAssistant.databinding.LayoutHomeCardBinding
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
-import com.personal.accountantAssistant.utils.Constants.STR_DEFAULT_MONETARY_VALUE
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.NumberUtils
@@ -30,11 +29,8 @@ class HomeViewModel(
 
     private var model: HomeModel? = null
 
-    private val _availableMoney = MutableLiveData<String>()
-    val availableMoney: LiveData<String> get() = _availableMoney
-
-    private val _expensedMoney = MutableLiveData<Expenses>()
-    val expensedMoney = _expensedMoney
+    private val _summaryValues = MutableLiveData<Summary>()
+    val summaryValues = _summaryValues
 
     private val _periodText = MutableLiveData<String>()
     val periodText: LiveData<String> get() = _periodText
@@ -51,6 +47,9 @@ class HomeViewModel(
     private fun isMoreThanAvailableMoney(value: String): Boolean? =
         localStorage?.getAvailableMoney()
             ?.let { model?.isMoreThanAvailableMoney(value.toDouble(), it) }
+
+    private fun isMoreThanOrEqualTo(available: Double?, total: Double?) =
+        (available.orZero() >= total.orZero())
 
     private fun isMoreThanOrEqualToZero(value: String) = (value.toDouble() >= 0)
 
@@ -92,21 +91,49 @@ class HomeViewModel(
         setupCardSubtitleTextView(cardTextValue, cardSubtitleTextView)
     }
 
-    private fun updateAvailableMoney(value: Float? = null) = value?.let {
-        localStorage?.setAvailableMoney(it)
-        setAvailableMoney()
+    private fun setupHomeCardLayout(
+        layout: LayoutHomeCardBinding, color: Int?, text: String?, value: Float?
+    ) = layout.apply {
+        val notNullColor = color ?: R.color.colorBlack
+        ivCardImage.visibility = View.GONE
+
+        tvCardTitle.text = text
+        tvCardTitle.setTextColor(notNullColor)
+        tvCardTitle.visibility = View.VISIBLE
+
+        tvCardSubtitle.text = value?.orZero().toString()
+        tvCardSubtitle.setTextColor(notNullColor)
+        tvCardSubtitle.visibility = View.VISIBLE
     }
+
+    fun setupHomeNeededCardLayout(
+        layout: LayoutHomeCardBinding, summary: Summary
+    ) = setupHomeCardLayout(
+        layout, summary.neededColor, summary.neededStr, summary.needed
+    )
+
+    fun setupHomeTotalCardLayout(
+        layout: LayoutHomeCardBinding, summary: Summary
+    ) = setupHomeCardLayout(
+        layout, summary.totalColor, summary.totalStr, summary.total
+    )
+
+    fun setupHomeAvailableCardLayout(
+        layout: LayoutHomeCardBinding, summary: Summary
+    ) = setupHomeCardLayout(
+        layout, summary.availableColor, summary.availableStr, summary.available
+    )
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses(context: Context?, rootView: View) {
 
         model = context?.let { HomeModel(it) }
 
-        _availableMoney.value = localStorage?.getAvailableMoney().toString()
+        val availableMoney = localStorage?.getAvailableMoney()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
         val days = periodDays.value?.let { if (it > 0) it else 1 } ?: run { 1 }
-        val dailyExpenses = NumberUtils.roundTo(availableMoney.value?.toDouble()?.div(days))
+        val dailyExpenses = NumberUtils.roundTo(availableMoney?.toDouble()?.div(days))
         fillDashBoardCard(rootView, R.id.daily_card, dailyExpenses.toString())
 
         val buysExpenses = databaseManager?.getPaymentsTotalPriceUntil(
@@ -119,15 +146,20 @@ class HomeViewModel(
         )
         fillDashBoardCard(rootView, R.id.bill_card, billsExpenses.toString())
 
-        val value = buysExpenses?.plus(billsExpenses.orZero())?.plus(dailyExpenses)
-
-        val total = NumberUtils.roundTo(value)
-        val needed = NumberUtils.roundTo(availableMoney.value?.toFloat()?.minus(total))
-        val isMoreThanAvailableMoney = isMoreThanAvailableMoney(value.toString())
+        val expenses = buysExpenses?.plus(billsExpenses.orZero())?.plus(dailyExpenses)
+        val totalExpenses = NumberUtils.roundTo(expenses)
+        val needed = NumberUtils.roundTo(availableMoney?.minus(totalExpenses))
+        val isMoreThanOrEqualToExpenses =
+            isMoreThanOrEqualTo(availableMoney?.toDouble(), totalExpenses)
+        val isMoreThanAvailableMoney = isMoreThanAvailableMoney(expenses.toString())
         val isMoreThanOrEqualToZero = isMoreThanOrEqualToZero(needed.toString())
-        expensedMoney.postValue(
-            Expenses(
-                total.toFloat(),
+
+        summaryValues.postValue(
+            Summary(
+                availableMoney.orZero(),
+                model?.cardTitles?.available,
+                model?.getAvailableBackgroundColorBy(isMoreThanOrEqualToExpenses),
+                totalExpenses.toFloat(),
                 model?.cardTitles?.total,
                 model?.getTotalBackgroundColorBy(isMoreThanAvailableMoney),
                 needed.toFloat(),
@@ -136,12 +168,6 @@ class HomeViewModel(
             )
         )
     }
-
-    fun updateAvailableMoney(value: String? = null) = updateAvailableMoney(
-        value?.toValue(STR_DEFAULT_MONETARY_VALUE)?.toFloat()
-    )
-
-    fun setAvailableMoney() = _availableMoney.postValue(getAvailableMoneyStr())
 
     fun savePeriodDates(firstTimeInMillis: Long?, lastTimeInMillis: Long?) {
         savePeriodDates(toDate(firstTimeInMillis), toDate(lastTimeInMillis))
@@ -161,8 +187,6 @@ class HomeViewModel(
 
     fun getSelectedPeriod() =
         androidx.core.util.Pair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)
-
-    fun getAvailableMoneyStr() = localStorage?.getAvailableMoneyStr().orEmpty()
 
     override fun onCleared() {
         super.onCleared()

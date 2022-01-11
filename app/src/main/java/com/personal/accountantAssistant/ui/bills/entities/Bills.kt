@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.ui.bills.entities
 
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.utils.Constants
 import java.util.*
 
@@ -37,13 +37,13 @@ class Bills {
         isActive = active
     }
 
-    constructor(payments: Payments) {
-        uid = payments.id
-        bill = payments.name
-        quantity = payments.quantity
-        date = payments.date
-        value = payments.unitaryValue
-        totalValue = payments.totalValue
-        isActive = payments.isActive
+    constructor(paymentsEntity: PaymentsEntity) {
+        uid = paymentsEntity.id
+        bill = paymentsEntity.name
+        quantity = paymentsEntity.quantity
+        date = paymentsEntity.date
+        value = paymentsEntity.unitaryValue
+        totalValue = paymentsEntity.totalValue
+        isActive = paymentsEntity.isActive
     }
 }

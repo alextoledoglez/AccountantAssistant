@@ -10,7 +10,7 @@ import java.io.Serializable
 import java.util.*
 
 @Entity
-class Payments : Serializable {
+class PaymentsEntity : Serializable {
     @PrimaryKey
     var id = 0
 
@@ -36,6 +36,7 @@ class Payments : Serializable {
     var isActive = false
 
     constructor()
+
     constructor(
         id: Int,
         name: String?,
@@ -55,6 +56,17 @@ class Payments : Serializable {
         isActive = active
     }
 
+    constructor(buy: Buys) {
+        id = buy.uid
+        name = buy.product
+        quantity = buy.quantity
+        date = Date()
+        unitaryValue = buy.price
+        totalValue = getTotalValue()
+        type = PaymentsType.BUY
+        isActive = buy.isActive
+    }
+
     constructor(bill: Bills) {
         id = bill.uid
         name = bill.bill
@@ -66,16 +78,6 @@ class Payments : Serializable {
         isActive = bill.isActive
     }
 
-    constructor(buy: Buys) {
-        id = buy.uid
-        name = buy.product
-        quantity = buy.quantity
-        date = Date()
-        unitaryValue = buy.price
-        totalValue = getTotalValue()
-        type = PaymentsType.BUY
-        isActive = buy.isActive
-    }
 
     @JvmName("getTotalValue1")
     fun getTotalValue(): Double {
@@ -88,11 +90,11 @@ class Payments : Serializable {
         this.totalValue = totalValue
     }
 
-    val isBill: Boolean?
-        get() = type?.let { PaymentsType.isBill(it) }
-
     val isBuy: Boolean?
         get() = type?.let { PaymentsType.isBuy(it) }
+
+    val isBill: Boolean?
+        get() = type?.let { PaymentsType.isBill(it) }
 
     fun update(name: String?, quantity: Int, date: Date?, unitaryValue: Double, isActive: Boolean) {
         this.name = name
@@ -102,7 +104,7 @@ class Payments : Serializable {
         this.isActive = isActive
     }
 
-    fun equalsTo(payment: Payments): Boolean {
+    fun equalsTo(payment: PaymentsEntity): Boolean {
         return type == payment.type &&
                 name == payment.name &&
                 quantity == payment.quantity &&

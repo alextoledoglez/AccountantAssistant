@@ -3,19 +3,25 @@ package com.personal.accountantAssistant.ui.home
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.core.widget.doOnTextChanged
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.core.BaseFragment
-import com.personal.accountantAssistant.core.extensions.drawFrom
+import com.personal.accountantAssistant.core.extensions.EMPTY
 import com.personal.accountantAssistant.core.extensions.viewBinding
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
 import com.personal.accountantAssistant.utils.MenuHelper
-import kotlinx.android.synthetic.main.layout_home_chart_card_view.*
-import kotlinx.android.synthetic.main.layout_home_title_card.*
 
+@RequiresApi(Build.VERSION_CODES.P)
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
+
+    private lateinit var tlMediator: TabLayoutMediator
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tlMediator.detach()
+    }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
@@ -27,19 +33,14 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun setupView() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
-            availableMoney.observe(viewLifecycleOwner, { updateAvailableMoney(it) })
-            expensedMoney.observe(viewLifecycleOwner, { pcContent.drawFrom(it, periodText.value) })
-            viewModel.setAvailableMoney()
+            summaryValues.observe(viewLifecycleOwner, { summary ->
+                setupHomeAvailableCardLayout(binding.availableSection.availableCard, summary)
+                setupHomeNeededCardLayout(binding.summarySection.neededCard, summary)
+                setupHomeTotalCardLayout(binding.summarySection.totalCard, summary)
+            })
         }
         with(binding) {
             calculateExpensesOn(root)
-            etCardSubtitle?.apply {
-                setText(viewModel.getAvailableMoneyStr())
-                doOnTextChanged { text, _, _, _ ->
-                    viewModel.updateAvailableMoney(text.toString())
-                    calculateExpensesOn(root)
-                }
-            }
             mbDateRangePicker.setOnClickListener { showRangePicker() }
         }
     }
@@ -56,7 +57,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
                     calculateExpensesOn(binding.root)
                 }
             }
-            .show(requireActivity().supportFragmentManager, "Test")
+            .show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

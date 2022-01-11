@@ -14,6 +14,7 @@ import com.personal.accountantAssistant.ui.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
+import com.personal.accountantAssistant.ui.wallet.WalletFragment
 import com.personal.accountantAssistant.utils.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -23,11 +24,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val icons = arrayOf(
-        R.drawable.ic_menu_home, R.drawable.ic_menu_buys, R.drawable.ic_menu_bills
-    )
-    private val titles = arrayOf(R.string.menu_home, R.string.menu_buys, R.string.menu_bills)
     private var tabLayoutMediator: TabLayoutMediator? = null
+
+    private val icons = arrayOf(
+        R.drawable.ic_menu_home,
+        R.drawable.ic_menu_wallet,
+        R.drawable.ic_menu_buys,
+        R.drawable.ic_menu_bills
+    )
+
+    private val titles = arrayOf(
+        R.string.menu_home, R.string.menu_wallet, R.string.menu_buys, R.string.menu_bills
+    )
 
     override fun onDestroy() {
         super.onDestroy()
@@ -47,7 +55,10 @@ class MainActivity : AppCompatActivity() {
 
         vpContent.adapter = ViewPagerAdapter(
             this@MainActivity, listOf(
-                HomeFragment.newInstance(), BuysFragment.newInstance(), BillsFragment.newInstance()
+                HomeFragment.newInstance(),
+                WalletFragment.newInstance(),
+                BuysFragment.newInstance(),
+                BillsFragment.newInstance()
             )
         )
         tabLayoutMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->

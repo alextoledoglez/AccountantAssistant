@@ -5,7 +5,7 @@
     android:id="@+id/dashboard_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/five_margin"
+    android:layout_margin="@dimen/small_material_margin"
     android:orientation="vertical"
     tools:ignore="PrivateResource">
 

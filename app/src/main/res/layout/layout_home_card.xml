@@ -9,7 +9,7 @@
         android:id="@+id/ivCardImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/five_margin"
+        android:layout_marginTop="@dimen/small_material_margin"
         android:layout_weight="1"
         android:src="@drawable/ic_menu_buys"
         tools:ignore="ContentDescription" />
@@ -29,7 +29,7 @@
         android:id="@+id/tvCardSubtitle"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:layout_marginBottom="@dimen/five_margin"
+        android:layout_marginBottom="@dimen/small_material_margin"
         android:layout_weight="1"
         android:gravity="center|center_horizontal|center_vertical"
         android:text="@string/menu_buys"

@@ -25,7 +25,11 @@
     <string name="missing">Faltando</string>
     <string name="daily">Diario</string>
 
+    <string name="wallet_title">Título</string>
+    <string name="wallet_password">Contraseña</string>
+
     <string name="menu_summary">Resumen</string>
+    <string name="menu_wallet">Cartera</string>
     <string name="menu_buys">Compras</string>
     <string name="menu_bills">Cuentas</string>
     <string name="menu_tickets">Ingresos</string>
@@ -65,6 +69,7 @@
     <string name="db_successfully_exported">DB exportado correctamente!</string>
     <string name="db_importing_failure">La importación de la base de datos falló</string>
     <string name="db_exporting_failure">No se pudo exportar la base de datos</string>
+    <string name="wallet_details">Detalles de la cartera</string>
     <string name="bills_details">Detalles de la cuenta</string>
     <string name="buys_details">Detalles de la compra</string>
     <string name="delete_record_title">Eliminar el registro</string>

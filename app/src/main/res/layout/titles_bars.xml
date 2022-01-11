@@ -22,7 +22,7 @@
             android:id="@+id/title_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_margin="@dimen/five_margin"
+            android:layout_margin="@dimen/small_material_margin"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_menu_green_money" />
 
@@ -30,7 +30,7 @@
             android:id="@+id/titles_bar_subtitle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_margin="@dimen/five_margin"
+            android:layout_margin="@dimen/small_material_margin"
             android:layout_weight="0.5"
             android:theme="@style/SubTitleTextView" />
 
@@ -38,7 +38,7 @@
             android:id="@+id/title_switch"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
-            android:layout_margin="@dimen/five_margin"
+            android:layout_margin="@dimen/small_material_margin"
             android:layout_weight="1"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -53,7 +53,7 @@
             android:id="@+id/title_search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/five_margin"
+            android:layout_margin="@dimen/small_material_margin"
             android:iconifiedByDefault="false"
             android:queryHint="@string/search_view_hint_message" />
     </LinearLayout>

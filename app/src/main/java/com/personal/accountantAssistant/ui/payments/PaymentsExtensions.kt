@@ -1,8 +1,8 @@
 package com.personal.accountantAssistant.ui.payments
 
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 
-fun Payments.toBuys() = also { it.type = PaymentsType.BUY }
+fun PaymentsEntity.toBuys() = also { it.type = PaymentsType.BUY }
 
-fun Payments.toBills() = also { it.type = PaymentsType.BILL }
+fun PaymentsEntity.toBills() = also { it.type = PaymentsType.BILL }

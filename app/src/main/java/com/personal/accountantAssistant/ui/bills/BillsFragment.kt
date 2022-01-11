@@ -9,7 +9,7 @@ import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.ui.payments.PaymentsDetailsFragment
 import com.personal.accountantAssistant.ui.payments.PaymentsFragment
-import com.personal.accountantAssistant.ui.payments.entities.Payments
+import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
 import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
 import com.personal.accountantAssistant.ui.payments.toBills
 import com.personal.accountantAssistant.utils.ActionUtils
@@ -27,7 +27,7 @@ class BillsFragment : PaymentsFragment<BillsViewModel>() {
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun addMenuItemClickListener() {
-        PaymentsDetailsFragment.newInstance(Payments().toBills()).apply {
+        PaymentsDetailsFragment.newInstance(PaymentsEntity().toBills()).apply {
             onSaveActionListener = { adapter?.notifyPaymentAddedOrChanged(it) }
         }.show(requireActivity().supportFragmentManager, String.EMPTY)
     }
@@ -41,13 +41,13 @@ class BillsFragment : PaymentsFragment<BillsViewModel>() {
         ImportExportUtils.xlsExport(requireContext(), PaymentsType.BILL)
     }
 
-    override fun deleteAllPayments() {
+    override fun deleteAllRecords() {
         deleteAllBillsRecords()?.let {
             ActionUtils.conditionalActions(it, { /*refreshRecyclerView()*/ })
         }
     }
 
-    override fun restoreDefaultPayments() {
+    override fun restoreDefaultRecords() {
         deleteAllBillsRecords()?.let {
             databaseManager?.insertDefaultBillsRecords()
             //refreshRecyclerView()

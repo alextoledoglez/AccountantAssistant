@@ -25,7 +25,11 @@
     <string name="missing">Faltando</string>
     <string name="daily">Diária</string>
 
+    <string name="wallet_title">Título</string>
+    <string name="wallet_password">Senha</string>
+
     <string name="menu_summary">Resumo</string>
+    <string name="menu_wallet">Carteira</string>
     <string name="menu_buys">Compras</string>
     <string name="menu_bills">Contas</string>
     <string name="menu_tickets">Ingressos</string>
@@ -65,8 +69,9 @@
     <string name="db_successfully_exported">DB exportado com sucesso!</string>
     <string name="db_importing_failure">Falha na importação de DB</string>
     <string name="db_exporting_failure">Falha ao exportar DB</string>
-    <string name="bills_details">Detalhes de contas</string>
-    <string name="buys_details">Detalhes de compras</string>
+    <string name="wallet_details">Detalhes da carteira</string>
+    <string name="bills_details">Detalhes das contas</string>
+    <string name="buys_details">Detalhes das compras</string>
     <string name="delete_record_title">Apagar registro</string>
     <string name="delete_record_message">Tem certeza que deseja excluir o registro atual?\n\nVocê vai perder o recorde atual!</string>
     <string name="delete_all_records_title">Apagar todos os registros</string>
