@@ -38,7 +38,7 @@
         android:id="@+id/rvBills"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/small_material_margin"
+        android:layout_margin="@dimen/half_material_margin"
         tools:listitem="@layout/bills_item_list" />
 
 </LinearLayout>
