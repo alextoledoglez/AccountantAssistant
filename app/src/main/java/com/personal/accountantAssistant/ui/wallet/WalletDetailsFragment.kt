@@ -7,13 +7,13 @@ import android.text.InputFilter.AllCaps
 import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.BaseBottomSheetDialogFragment
-import com.personal.accountantAssistant.core.extensions.orZero
-import com.personal.accountantAssistant.core.extensions.viewBinding
+import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
-import com.personal.accountantAssistant.ui.wallet.entities.CardEntity
+import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.activity_wallet_details.view.*

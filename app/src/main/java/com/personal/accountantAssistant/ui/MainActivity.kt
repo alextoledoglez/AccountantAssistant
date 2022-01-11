@@ -10,7 +10,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.ActivityMainBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
-import com.personal.accountantAssistant.ui.adapters.ViewPagerAdapter
+import com.personal.accountantAssistant.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment

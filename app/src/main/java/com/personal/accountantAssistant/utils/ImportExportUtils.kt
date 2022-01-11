@@ -5,11 +5,11 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.extensions.EMPTY
 import com.personal.accountantAssistant.data.DatabaseManager
-import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
+import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesFieldsEnum
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
 import jxl.Workbook
 import jxl.WorkbookSettings
@@ -31,14 +31,14 @@ object ImportExportUtils {
     private const val BODY_ROW = HEADER_ROW + 1
     private const val TITLE_POINT_SIZE = 16
 
-    fun xlsImport(context: Context?, type: PaymentsType?) {
+    fun xlsImport(context: Context?, type: ExpensesType?) {
         //TODO
         print(type)
         ToastUtils.showShortText(context, R.string.excel_data_imported)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun xlsExport(context: Context, type: PaymentsType) {
+    fun xlsExport(context: Context, type: ExpensesType) {
         val storageDirectory = context.getExternalFilesDir("")
         val directory = storageDirectory?.absolutePath?.let { File(it) }
         val directoryExist = directory?.isDirectory?.not().let {
@@ -50,10 +50,10 @@ object ImportExportUtils {
                 val BILLS = "Bills"
                 var xlsFileName = String.EMPTY
                 var sheetName = String.EMPTY
-                if (PaymentsType.isBuy(type)) {
+                if (ExpensesType.isBuy(type)) {
                     xlsFileName = BUYS
                     sheetName = BUYS
-                } else if (PaymentsType.isBill(type)) {
+                } else if (ExpensesType.isBill(type)) {
                     xlsFileName = BILLS
                     sheetName = BILLS
                 }
@@ -81,7 +81,7 @@ object ImportExportUtils {
                 if (sourceDirectory?.canWrite() == true) {
                     val backupDB: File = context.getDatabasePath(DB_NAME)
                     val backupDBPath: String =
-                            java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                        java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
                     val currentDB = File(sourceDirectory, backupDBPath)
                     val src: FileChannel = FileInputStream(currentDB).channel
                     val dst: FileChannel = FileOutputStream(backupDB).channel
@@ -108,7 +108,7 @@ object ImportExportUtils {
                 val sourceDirectory: File? = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
                 if (sourceDirectory?.canWrite() == true) {
                     val backupDBPath: String =
-                            java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                        java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
                     val backupDB = File(sourceDirectory, backupDBPath)
                     val dst: FileChannel = FileOutputStream(backupDB).channel
                     dst.transferFrom(src, 0, src.size())
@@ -129,41 +129,36 @@ object ImportExportUtils {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun fillSheetFrom(context: Context,
-                              sheet: WritableSheet,
-                              type: PaymentsType) {
+    private fun fillSheetFrom(context: Context, sheet: WritableSheet, type: ExpensesType) {
         setHeaderCell(sheet)
         val rowIndex = AtomicInteger(BODY_ROW)
         DatabaseManager(context)
-                .getPaymentsRecords()
-                .stream()
-                .filter { type == it.type }
-                .forEach { payment: PaymentsEntity ->
-                    val currentRowIndex = rowIndex.get()
-                    addCell(sheet, 0, currentRowIndex, payment.name.toString())
-                    addCell(sheet, 1, currentRowIndex, payment.quantity.toString())
-                    addCell(sheet, 2, currentRowIndex, getConditionalDateValueFrom(payment))
-                    addCell(sheet, 3, currentRowIndex, payment.unitaryValue.toString())
-                    addCell(sheet, 4, currentRowIndex, payment.totalValue.toString())
-                    addCell(sheet, 5, currentRowIndex, payment.type?.name.toString())
-                    addCell(sheet, 6, currentRowIndex, payment.isActive.toString())
-                    rowIndex.getAndIncrement()
-                }
+            .getExpensesRecords()
+            .stream()
+            .filter { type == it.type }
+            .forEach { expenseEntity: ExpenseEntity ->
+                val currentRowIndex = rowIndex.get()
+                addCell(sheet, 0, currentRowIndex, expenseEntity.name.toString())
+                addCell(sheet, 1, currentRowIndex, expenseEntity.quantity.toString())
+                addCell(sheet, 2, currentRowIndex, getConditionalDateValueFrom(expenseEntity))
+                addCell(sheet, 3, currentRowIndex, expenseEntity.unitaryValue.toString())
+                addCell(sheet, 4, currentRowIndex, expenseEntity.totalValue.toString())
+                addCell(sheet, 5, currentRowIndex, expenseEntity.type?.name.toString())
+                addCell(sheet, 6, currentRowIndex, expenseEntity.isActive.toString())
+                rowIndex.getAndIncrement()
+            }
     }
 
-    private fun getConditionalDateValueFrom(payment: PaymentsEntity): String {
-        return if (payment.isBill == true) payment.date.toString() else Constants.DASH_SEPARATOR
-    }
+    private fun getConditionalDateValueFrom(expenseEntity: ExpenseEntity) =
+        if (expenseEntity.isBill == true) expenseEntity.date.toString() else Constants.DASH_SEPARATOR
 
     private fun setHeaderCell(sheet: WritableSheet) {
-        for ((colIndex, value) in PaymentsEnum.values().withIndex()) {
+        for ((colIndex, value) in ExpensesFieldsEnum.values().withIndex()) {
             addHeaderCell(sheet, colIndex, value.value)
         }
     }
 
-    private fun addHeaderCell(sheet: WritableSheet,
-                              colIndex: Int,
-                              cellValue: String) {
+    private fun addHeaderCell(sheet: WritableSheet, colIndex: Int, cellValue: String) {
         try {
             val cellFont = WritableFont(WritableFont.ARIAL, TITLE_POINT_SIZE)
             cellFont.setBoldStyle(WritableFont.BOLD)
@@ -175,11 +170,13 @@ object ImportExportUtils {
         }
     }
 
-    private fun addCell(sheet: WritableSheet,
-                        colIndex: Int,
-                        rowIndex: Int,
-                        value: String,
-                        cellFormat: WritableCellFormat? = null) {
+    private fun addCell(
+        sheet: WritableSheet,
+        colIndex: Int,
+        rowIndex: Int,
+        value: String,
+        cellFormat: WritableCellFormat? = null
+    ) {
         try {
             val cellLabel: Label = if (ParserUtils.isNullObject(cellFormat)) {
                 Label(colIndex, rowIndex, value)
@@ -194,9 +191,9 @@ object ImportExportUtils {
 
     private fun requestStoragePermissionsFrom(context: Context) {
         requestPermissions(
-                ActivityUtils.parse(context),
-                PermissionsUtils.STORAGE_PERMISSIONS,
-                PermissionsUtils.STORAGE_PERMISSION_CODE
+            ActivityUtils.parse(context),
+            PermissionsUtils.STORAGE_PERMISSIONS,
+            PermissionsUtils.STORAGE_PERMISSION_CODE
         )
     }
 }

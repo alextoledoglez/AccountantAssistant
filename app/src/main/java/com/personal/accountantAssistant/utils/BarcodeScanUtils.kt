@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.EMPTY
 
 object BarcodeScanUtils {
     fun scanFrom(context: Context): String {

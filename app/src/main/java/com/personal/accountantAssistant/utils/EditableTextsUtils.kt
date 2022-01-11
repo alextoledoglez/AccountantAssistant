@@ -11,7 +11,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import com.personal.accountantAssistant.core.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.utils.ActionUtils.runAction
 import java.text.Normalizer
 import java.util.*

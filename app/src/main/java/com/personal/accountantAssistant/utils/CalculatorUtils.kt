@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.utils
 
-import com.personal.accountantAssistant.core.extensions.orZero
+import com.personal.accountantAssistant.extensions.orZero
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.function.BinaryOperator

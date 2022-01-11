@@ -8,19 +8,20 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.personal.accountantAssistant.core.extensions.getDoubleColumn
-import com.personal.accountantAssistant.core.extensions.getIntColumn
-import com.personal.accountantAssistant.core.extensions.getStringColumn
-import com.personal.accountantAssistant.ui.bills.entities.Bills
-import com.personal.accountantAssistant.ui.bills.enums.BillsEnum
-import com.personal.accountantAssistant.ui.buys.entities.Buys
-import com.personal.accountantAssistant.ui.buys.enums.BuysEnum
-import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsEnum
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
-import com.personal.accountantAssistant.ui.wallet.entities.CardEntity
-import com.personal.accountantAssistant.ui.wallet.enums.CardFieldsEnum
-import com.personal.accountantAssistant.ui.wallet.enums.DefaultCardsEnum
+import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.entities.wallet.CardEntity
+import com.personal.accountantAssistant.data.enums.bills.BillsEnum
+import com.personal.accountantAssistant.data.enums.buys.BuysEnum
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesFieldsEnum
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.data.enums.wallet.CardFieldsEnum
+import com.personal.accountantAssistant.data.enums.wallet.DefaultCardsEnum
+import com.personal.accountantAssistant.data.mappers.toExpense
+import com.personal.accountantAssistant.domain.models.bills.BillModel
+import com.personal.accountantAssistant.domain.models.buys.BuyModel
+import com.personal.accountantAssistant.extensions.getDoubleColumn
+import com.personal.accountantAssistant.extensions.getIntColumn
+import com.personal.accountantAssistant.extensions.getStringColumn
 import com.personal.accountantAssistant.utils.*
 import java.util.*
 import java.util.stream.Collectors
@@ -37,10 +38,10 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
         private const val UID_WHERE_CLAUSE = Constants.UID + WHERE_CLAUSE_PARAMETER
-        private val TYPE_WHERE_CLAUSE = PaymentsEnum.TYPE.toString() + WHERE_CLAUSE_PARAMETER
+        private val TYPE_WHERE_CLAUSE = ExpensesFieldsEnum.TYPE.toString() + WHERE_CLAUSE_PARAMETER
         private val UID_AND_TYPE_WHERE_CLAUSE = UID_WHERE_CLAUSE +
                 WHERE_CLAUSE_JOIN +
-                PaymentsEnum.TYPE + WHERE_CLAUSE_PARAMETER
+                ExpensesFieldsEnum.TYPE + WHERE_CLAUSE_PARAMETER
 
         private const val CREATE_TABLE_COMMAND = "CREATE TABLE"
         private const val SELECT_FROM_COMMAND = "SELECT * FROM"
@@ -77,13 +78,13 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
                 SPACE_SEPARATOR +
                 INTEGER_PRIMARY_KEY +
                 SPACE_AUTOINCREMENT_COMMA +
-                PaymentsEnum.NAME.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.QUANTITY.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.DATE.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.UNITARY_VALUE.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.TOTAL_VALUE.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.TYPE.name + SPACE_TEXT_COMMA +
-                PaymentsEnum.ACTIVE.name + SPACE_TEXT + ")"
+                ExpensesFieldsEnum.NAME.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.QUANTITY.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.DATE.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.UNITARY_VALUE.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.TOTAL_VALUE.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.TYPE.name + SPACE_TEXT_COMMA +
+                ExpensesFieldsEnum.ACTIVE.name + SPACE_TEXT + ")"
     }
 
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
@@ -109,36 +110,36 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         isActive = NumberUtils.toBoolean(cursor.getStringColumn(CardFieldsEnum.ACTIVE.name))
     }
 
-    private fun cursorToPaymentsEntity(cursor: Cursor): PaymentsEntity = PaymentsEntity().apply {
-        id = cursor.getIntColumn(Constants.UID)
-        name = cursor.getStringColumn(PaymentsEnum.NAME.name)
-        quantity = cursor.getIntColumn(PaymentsEnum.QUANTITY.name)
-        date = DateUtils.toDate(cursor.getStringColumn(PaymentsEnum.DATE.name))
-        unitaryValue = cursor.getDoubleColumn(PaymentsEnum.UNITARY_VALUE.name)
-        totalValue = cursor.getDoubleColumn(PaymentsEnum.TOTAL_VALUE.name)
-        type = cursor.getStringColumn(PaymentsEnum.TYPE.name)?.let {
-            PaymentsType.valueOf(it)
-        } ?: PaymentsType.NONE
-        isActive = NumberUtils.toBoolean(cursor.getStringColumn(PaymentsEnum.ACTIVE.name))
-    }
-
-    private fun toPaymentContentValues(paymentsEntity: PaymentsEntity?): ContentValues =
-        ContentValues().apply {
-            put(PaymentsEnum.NAME.name, paymentsEntity?.name)
-            put(PaymentsEnum.QUANTITY.name, paymentsEntity?.quantity)
-            put(PaymentsEnum.DATE.name, DateUtils.toString(paymentsEntity?.date))
-            put(PaymentsEnum.UNITARY_VALUE.name, paymentsEntity?.unitaryValue)
-            put(PaymentsEnum.TOTAL_VALUE.name, paymentsEntity?.totalValue)
-            put(PaymentsEnum.TYPE.name, paymentsEntity?.type?.name)
-            put(PaymentsEnum.ACTIVE.name, paymentsEntity?.isActive)
-        }
-
     private fun toCardContentValues(cardEntity: CardEntity?): ContentValues =
         ContentValues().apply {
             put(CardFieldsEnum.TITLE.name, cardEntity?.title)
             put(CardFieldsEnum.PASSWORD.name, cardEntity?.password)
             put(CardFieldsEnum.VALUE.name, cardEntity?.value)
             put(CardFieldsEnum.ACTIVE.name, cardEntity?.isActive)
+        }
+
+    private fun cursorToExpenseEntity(cursor: Cursor): ExpenseEntity = ExpenseEntity().apply {
+        id = cursor.getIntColumn(Constants.UID)
+        name = cursor.getStringColumn(ExpensesFieldsEnum.NAME.name)
+        quantity = cursor.getIntColumn(ExpensesFieldsEnum.QUANTITY.name)
+        date = DateUtils.toDate(cursor.getStringColumn(ExpensesFieldsEnum.DATE.name))
+        unitaryValue = cursor.getDoubleColumn(ExpensesFieldsEnum.UNITARY_VALUE.name)
+        totalValue = cursor.getDoubleColumn(ExpensesFieldsEnum.TOTAL_VALUE.name)
+        type = cursor.getStringColumn(ExpensesFieldsEnum.TYPE.name)?.let {
+            ExpensesType.valueOf(it)
+        } ?: ExpensesType.NONE
+        isActive = NumberUtils.toBoolean(cursor.getStringColumn(ExpensesFieldsEnum.ACTIVE.name))
+    }
+
+    private fun toExpenseContentValues(expenseEntity: ExpenseEntity?): ContentValues =
+        ContentValues().apply {
+            put(ExpensesFieldsEnum.NAME.name, expenseEntity?.name)
+            put(ExpensesFieldsEnum.QUANTITY.name, expenseEntity?.quantity)
+            put(ExpensesFieldsEnum.DATE.name, DateUtils.toString(expenseEntity?.date))
+            put(ExpensesFieldsEnum.UNITARY_VALUE.name, expenseEntity?.unitaryValue)
+            put(ExpensesFieldsEnum.TOTAL_VALUE.name, expenseEntity?.totalValue)
+            put(ExpensesFieldsEnum.TYPE.name, expenseEntity?.type?.name)
+            put(ExpensesFieldsEnum.ACTIVE.name, expenseEntity?.isActive)
         }
 
     @SuppressLint("Recycle")
@@ -183,45 +184,45 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         obj.isActive == true
     }
 
-    fun getPaymentsRecords(): ArrayList<PaymentsEntity> {
+    fun getExpensesRecords(): ArrayList<ExpenseEntity> {
         var cursor: Cursor?
-        val payments = ArrayList<PaymentsEntity>()
-        val selectAllPaymentsRecordsQuery = getSelectAllQueryStrFrom(PAYMENTS_TABLE)
-        cursor = getOrCreateTable(writableDatabase, selectAllPaymentsRecordsQuery)
+        val expenses = ArrayList<ExpenseEntity>()
+        val selectAllExpensesRecordsQuery = getSelectAllQueryStrFrom(PAYMENTS_TABLE)
+        cursor = getOrCreateTable(writableDatabase, selectAllExpensesRecordsQuery)
         if (ParserUtils.isNullObject(cursor)) {
             writableDatabase.execSQL(CREATE_PAYMENTS_TABLE_QUERY)
-            cursor = getOrCreateTable(writableDatabase, selectAllPaymentsRecordsQuery)
+            cursor = getOrCreateTable(writableDatabase, selectAllExpensesRecordsQuery)
         }
         cursor?.let {
             if (it.moveToFirst()) {
-                payments.add(cursorToPaymentsEntity(it))
+                expenses.add(cursorToExpenseEntity(it))
             }
             while (it.moveToNext()) {
-                payments.add(cursorToPaymentsEntity(it))
+                expenses.add(cursorToExpenseEntity(it))
             }
         }
         writableDatabase.close()
-        return payments
+        return expenses
     }
 
-    private fun getPaymentsRecordsBy(type: PaymentsType): List<PaymentsEntity>? =
-        getPaymentsRecords().stream().filter { type == it.type }.collect(Collectors.toList())
+    private fun getExpensesRecordsBy(type: ExpensesType): List<ExpenseEntity>? =
+        getExpensesRecords().stream().filter { type == it.type }.collect(Collectors.toList())
 
-    fun getSortedPaymentsRecordsBy(type: PaymentsType): List<PaymentsEntity>? =
-        getPaymentsRecords().stream().filter { it.type == type }
-            .sorted(Comparator.comparing(PaymentsEntity::date))
+    fun getSortedExpensesRecordsBy(type: ExpensesType): List<ExpenseEntity>? =
+        getExpensesRecords().stream().filter { it.type == type }
+            .sorted(Comparator.comparing(ExpenseEntity::date))
             .collect(Collectors.toList())
 
-    fun anyActivePaymentsRecordsBy(type: PaymentsType): Boolean? = getPaymentsRecordsBy(type)
-        ?.stream()?.anyMatch { obj: PaymentsEntity -> obj.isActive }
+    fun anyActiveExpensesRecordsBy(type: ExpensesType): Boolean? = getExpensesRecordsBy(type)
+        ?.stream()?.anyMatch { obj: ExpenseEntity -> obj.isActive }
 
-    fun allActivePaymentsRecordsBy(paymentsType: PaymentsType): Boolean? =
-        getPaymentsRecordsBy(paymentsType)?.stream()
-            ?.allMatch { obj: PaymentsEntity -> obj.isActive }
+    fun allActiveExpensesRecordsBy(expensesType: ExpensesType): Boolean? =
+        getExpensesRecordsBy(expensesType)?.stream()
+            ?.allMatch { obj: ExpenseEntity -> obj.isActive }
 
     fun insertDefaultBillsRecords() {
         for (defaultBillsEnum in BillsEnum.values()) {
-            insertBillRecordFrom(Bills(defaultBillsEnum.value))
+            insertBillRecordFrom(BillModel(defaultBillsEnum.value))
         }
     }
 
@@ -233,7 +234,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     fun insertDefaultBuysRecords() {
         for (products in BuysEnum.values()) {
-            insertBuyRecordFrom(Buys(products.value))
+            insertBuyRecordFrom(BuyModel(products.value))
         }
     }
 
@@ -244,20 +245,17 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         return id
     }
 
-    private fun insertPaymentRecordFrom(paymentsEntity: PaymentsEntity?): Long {
-        val contentValues = toPaymentContentValues(paymentsEntity)
+    private fun insertExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long {
+        val contentValues = toExpenseContentValues(expenseEntity)
         val id = writableDatabase.insert(PAYMENTS_TABLE, null, contentValues)
         writableDatabase.close()
         return id
     }
 
-    private fun insertBuyRecordFrom(buy: Buys): Long? = ParserUtils.toPayments(buy)?.let {
-        insertPaymentRecordFrom(it)
-    }
+    private fun insertBuyRecordFrom(buy: BuyModel): Long = insertExpenseRecordFrom(buy.toExpense())
 
-    private fun insertBillRecordFrom(bill: Bills): Long? = ParserUtils.toPayments(bill)?.let {
-        insertPaymentRecordFrom(it)
-    }
+    private fun insertBillRecordFrom(bill: BillModel): Long =
+        insertExpenseRecordFrom(bill.toExpense())
 
     private fun updateQuery(
         table: String, contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
@@ -275,18 +273,16 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         toCardContentValues(card), UID_WHERE_CLAUSE, arrayOf(card?.id.toString())
     )
 
-    private fun paymentsUpdateQuery(
+    private fun expensesUpdateQuery(
         contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
     ): Long = updateQuery(PAYMENTS_TABLE, contentValues, whereClause, whereArgs)
 
-    private fun toWhereArgs(payment: PaymentsEntity?): Array<String?>? = payment?.let {
+    private fun toWhereArgs(expenseEntity: ExpenseEntity?): Array<String?>? = expenseEntity?.let {
         arrayOf(it.id.toString(), it.type?.name)
     }
 
-    fun updatePaymentsRecordFrom(payment: PaymentsEntity?): Long = paymentsUpdateQuery(
-        toPaymentContentValues(payment),
-        UID_AND_TYPE_WHERE_CLAUSE,
-        toWhereArgs(payment)
+    fun updateExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long = expensesUpdateQuery(
+        toExpenseContentValues(expenseEntity), UID_AND_TYPE_WHERE_CLAUSE, toWhereArgs(expenseEntity)
     )
 
     private fun deleteQuery(table: String, whereClause: String?, whereArgs: Array<String?>?): Long {
@@ -303,23 +299,23 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         UID_WHERE_CLAUSE, arrayOf(card?.id.toString())
     )
 
-    private fun paymentDeleteQuery(
+    private fun expensesDeleteQuery(
         whereClause: String?, whereArgs: Array<String?>?
     ): Long = deleteQuery(PAYMENTS_TABLE, whereClause, whereArgs)
 
-    fun deletePaymentsRecordFrom(payment: PaymentsEntity?): Long = paymentDeleteQuery(
-        UID_AND_TYPE_WHERE_CLAUSE, toWhereArgs(payment)
+    fun deleteExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long = expensesDeleteQuery(
+        UID_AND_TYPE_WHERE_CLAUSE, toWhereArgs(expenseEntity)
     )
 
-    private fun deleteAllPaymentsRecordsBy(paymentsType: PaymentsType): Long = paymentDeleteQuery(
-        TYPE_WHERE_CLAUSE, arrayOf(paymentsType.name)
+    private fun deleteAllExpensesRecordsBy(expensesType: ExpensesType): Long = expensesDeleteQuery(
+        TYPE_WHERE_CLAUSE, arrayOf(expensesType.name)
     )
 
     fun deleteAllCardsRecords(): Long = TODO()
 
-    fun deleteAllBuysRecord(): Long = deleteAllPaymentsRecordsBy(PaymentsType.BUY)
+    fun deleteAllBuysRecord(): Long = deleteAllExpensesRecordsBy(ExpensesType.BUY)
 
-    fun deleteAllBillsRecord(): Long = deleteAllPaymentsRecordsBy(PaymentsType.BILL)
+    fun deleteAllBillsRecord(): Long = deleteAllExpensesRecordsBy(ExpensesType.BILL)
 
     fun insertOrUpdateCard(card: CardEntity?): Long = if (isNotDefaultRecord(card?.id?.toLong())) {
         updateCardRecordFrom(card)
@@ -327,15 +323,15 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         insertCardRecordFrom(card)
     }
 
-    fun insertOrUpdatePayment(payment: PaymentsEntity?): Long =
-        if (isNotDefaultRecord(payment?.id?.toLong())) {
-            updatePaymentsRecordFrom(payment)
+    fun insertOrUpdateExpense(expenseEntity: ExpenseEntity?): Long =
+        if (isNotDefaultRecord(expenseEntity?.id?.toLong())) {
+            updateExpenseRecordFrom(expenseEntity)
         } else {
-            insertPaymentRecordFrom(payment)
+            insertExpenseRecordFrom(expenseEntity)
         }
 
-    fun getPaymentsTotalPriceUntil(type: PaymentsType, lastPeriodDate: Date?) = NumberUtils.roundTo(
-        getSortedPaymentsRecordsBy(type)?.stream()?.filter {
+    fun getExpensesTotalPriceUntil(type: ExpensesType, lastPeriodDate: Date?) = NumberUtils.roundTo(
+        getSortedExpensesRecordsBy(type)?.stream()?.filter {
             it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
         }?.map { it.getTotalValue() }
             ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)

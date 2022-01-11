@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.utils
 
-import com.personal.accountantAssistant.data.dto.CalendarValues
+import com.personal.accountantAssistant.domain.models.CalendarValuesModel
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
@@ -41,7 +41,7 @@ object DateUtils {
     @JvmStatic
     fun toCurrentDateStr(): String {
         val calendar = Calendar.getInstance()
-        val calendarValues = CalendarValues(calendar)
+        val calendarValues = CalendarValuesModel(calendar)
         return calendarValues.toCurrentDateStr()
     }
 
@@ -66,7 +66,7 @@ object DateUtils {
 
     private fun toLocalDate(calendar: Calendar?): LocalDate? {
         return calendar?.let {
-            val calendarValues = CalendarValues(it)
+            val calendarValues = CalendarValuesModel(it)
             LocalDate.of(
                 calendarValues.getYear(),
                 calendarValues.getMonth(),

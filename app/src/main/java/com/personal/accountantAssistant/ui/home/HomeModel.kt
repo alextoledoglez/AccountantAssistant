@@ -2,7 +2,7 @@ package com.personal.accountantAssistant.ui.home
 
 import android.content.Context
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.EMPTY
 
 data class HomeModel(val context: Context) {
 

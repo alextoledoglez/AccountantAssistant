@@ -7,7 +7,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
-import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
+import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import java.util.*
 
 @SuppressLint("MissingPermission")
@@ -25,8 +25,8 @@ object CalendarsUtils {
             return String.format(selectionFormatStr, *PROJECTION)
         }
 
-    private fun toSelectionArgs(paymentsEntity: PaymentsEntity?): Array<String?> {
-        return paymentsEntity?.let {
+    private fun toSelectionArgs(expenseEntity: ExpenseEntity?): Array<String?> {
+        return expenseEntity?.let {
             arrayOf(
                 DEFAULT_CALENDAR_ID.toString(),
                 it.name,
@@ -56,15 +56,15 @@ object CalendarsUtils {
     @JvmStatic
     fun createCalendarEventFrom(
         context: Context,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ) {
         val contentResolver = context.contentResolver
         contentResolver?.let {
-            if (paymentsEntity?.isBill == true) {
+            if (expenseEntity?.isBill == true) {
                 val uri =
                     if (PermissionsUtils.isCalendarWritePermissionGranted(context)) addEventFrom(
                         it,
-                        paymentsEntity
+                        expenseEntity
                     ) else null
                 uri?.lastPathSegment?.let { eventID -> setMultipleRemindersFrom(it, eventID) }
             }
@@ -73,50 +73,50 @@ object CalendarsUtils {
 
     private fun getCalendarCursorFrom(
         contentResolver: ContentResolver,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ): Cursor? {
         return if (ParserUtils.isNullObject(contentResolver)) null else contentResolver.query(
             CalendarContract.Events.CONTENT_URI,
             PROJECTION,
             selectionFields,
-            toSelectionArgs(paymentsEntity),
+            toSelectionArgs(expenseEntity),
             null
         )
     }
 
     private fun alreadyExistCalendarEventFor(
         contentResolver: ContentResolver,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ): Boolean {
-        getCalendarCursorFrom(contentResolver, paymentsEntity)?.let {
-            readCalendarEvent(contentResolver, paymentsEntity)
+        getCalendarCursorFrom(contentResolver, expenseEntity)?.let {
+            readCalendarEvent(contentResolver, expenseEntity)
             return java.lang.Boolean.TRUE
         } ?: run { return java.lang.Boolean.FALSE }
     }
 
     private fun addEventFrom(
         contentResolver: ContentResolver,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ): Uri? {
         val timeZone = TimeZone.getDefault()
-        val calendarMillis = DateUtils.toCalendarMillis(paymentsEntity?.date)
+        val calendarMillis = DateUtils.toCalendarMillis(expenseEntity?.date)
         val event = ContentValues()
         event.put(CalendarContract.Events.CALENDAR_ID, DEFAULT_CALENDAR_ID)
         event.put(CalendarContract.Events.ALL_DAY, java.lang.Boolean.TRUE)
         event.put(CalendarContract.Events.STATUS, java.lang.Boolean.TRUE)
         event.put(CalendarContract.Events.HAS_ALARM, 1)
-        event.put(CalendarContract.Events.TITLE, paymentsEntity?.name)
+        event.put(CalendarContract.Events.TITLE, expenseEntity?.name)
         event.put(CalendarContract.Events.DTSTART, calendarMillis)
         event.put(CalendarContract.Events.DTEND, calendarMillis)
         //TODO event.put("rrule", "FREQ=YEARLY");
         event.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.id)
-        event.put(CalendarContract.Events.DESCRIPTION, paymentsEntity?.totalValue)
+        event.put(CalendarContract.Events.DESCRIPTION, expenseEntity?.totalValue)
         event.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_PRIVATE)
         event.put(CalendarContract.EXTRA_EVENT_ALL_DAY, java.lang.Boolean.TRUE)
         //event.put(CalendarContract.EXTRA_EVENT_BEGIN_TIME, calendarMillis);
         //event.put(CalendarContract.EXTRA_EVENT_END_TIME, calendarMillis);
         var uri: Uri? = null
-        if (alreadyExistCalendarEventFor(contentResolver, paymentsEntity)) {
+        if (alreadyExistCalendarEventFor(contentResolver, expenseEntity)) {
             contentResolver.update(
                 CalendarContract.Events.CONTENT_URI,
                 event,
@@ -132,15 +132,15 @@ object CalendarsUtils {
     @JvmStatic
     fun deleteCalendarEventsFrom(
         context: Context,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ) {
         if (PermissionsUtils.isCalendarWritePermissionGranted(context)) {
             val contentResolver = context.contentResolver
-            if (alreadyExistCalendarEventFor(contentResolver, paymentsEntity)) {
+            if (alreadyExistCalendarEventFor(contentResolver, expenseEntity)) {
                 contentResolver.delete(
                     CalendarContract.Events.CONTENT_URI,
                     selectionFields,
-                    toSelectionArgs(paymentsEntity)
+                    toSelectionArgs(expenseEntity)
                 )
             }
         }
@@ -160,10 +160,10 @@ object CalendarsUtils {
 
     private fun readCalendarEvent(
         contentResolver: ContentResolver,
-        paymentsEntity: PaymentsEntity?
+        expenseEntity: ExpenseEntity?
     ) {
         //TODO
-        print(paymentsEntity)
+        print(expenseEntity)
         contentResolver.query(CalendarContract.Events.CONTENT_URI, PROJECTION, null, null, null)
             ?.apply {
                 var strCalendarValues: StringBuilder? = null

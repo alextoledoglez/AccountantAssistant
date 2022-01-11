@@ -4,10 +4,10 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.AlertDialogBuilder
-import com.personal.accountantAssistant.core.extensions.showConfirmationFrom
-import com.personal.accountantAssistant.ui.payments.entities.PaymentsEntity
-import com.personal.accountantAssistant.ui.wallet.entities.CardEntity
+import com.personal.accountantAssistant.bases.AlertDialogBuilder
+import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.entities.wallet.CardEntity
+import com.personal.accountantAssistant.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.CalendarsUtils
 import com.personal.accountantAssistant.utils.Constants
@@ -24,14 +24,14 @@ fun DatabaseManager.isDefaultRecord(idOrRecord: Long?): Boolean {
 
 @RequiresApi(Build.VERSION_CODES.P)
 fun DatabaseManager.saveDataFrom(
-    context: Context?, payment: PaymentsEntity?, onSuccess: Action?
+    context: Context?, expenseEntity: ExpenseEntity?, onSuccess: Action?
 ) = context?.let { ctx ->
-    val recordSaved: Long = insertOrUpdatePayment(payment)
+    val recordSaved: Long = insertOrUpdateExpense(expenseEntity)
     if (isNotDefaultRecord(recordSaved)) {
-        CalendarsUtils.createCalendarEventFrom(ctx, payment)
+        CalendarsUtils.createCalendarEventFrom(ctx, expenseEntity)
         onSuccess?.let { ActionUtils.runAction(it) }
     } else {
-        CalendarsUtils.deleteCalendarEventsFrom(ctx, payment)
+        CalendarsUtils.deleteCalendarEventsFrom(ctx, expenseEntity)
         ToastUtils.showLongText(ctx, R.string.error_saving_your_data)
     }
 }
@@ -50,11 +50,11 @@ fun DatabaseManager.saveDataFrom(
 
 @RequiresApi(Build.VERSION_CODES.P)
 fun DatabaseManager.deleteDataFrom(
-    context: Context?, payment: PaymentsEntity?, onSuccess: Action?
+    context: Context?, expenseEntity: ExpenseEntity?, onSuccess: Action?
 ) = context?.let { ctx ->
-    val recordDeleted = deletePaymentsRecordFrom(payment)
+    val recordDeleted = deleteExpenseRecordFrom(expenseEntity)
     if (isNotDefaultRecord(recordDeleted)) {
-        CalendarsUtils.deleteCalendarEventsFrom(ctx, payment)
+        CalendarsUtils.deleteCalendarEventsFrom(ctx, expenseEntity)
         ToastUtils.showLongText(ctx, R.string.successfully_deleted_record)
         onSuccess?.let { ActionUtils.runAction(it) }
     } else {
@@ -77,12 +77,12 @@ fun DatabaseManager.deleteDataFrom(
 
 @RequiresApi(Build.VERSION_CODES.P)
 fun DatabaseManager.deleteRecord(
-    context: Context?, payment: PaymentsEntity?, onSuccess: Action?
+    context: Context?, expenseEntity: ExpenseEntity?, onSuccess: Action?
 ) = context?.let {
     AlertDialogBuilder(it).showConfirmationFrom(
         R.string.delete_record_title,
         R.string.delete_record_message,
-        { deleteDataFrom(context, payment, onSuccess) }
+        { deleteDataFrom(context, expenseEntity, onSuccess) }
     )
 }
 

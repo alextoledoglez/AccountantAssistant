@@ -2,7 +2,7 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.personal.accountantAssistant.core.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
 import java.util.*

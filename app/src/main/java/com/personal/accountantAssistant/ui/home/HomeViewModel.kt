@@ -10,13 +10,12 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.BaseViewModel
-import com.personal.accountantAssistant.core.extensions.orZero
+import com.personal.accountantAssistant.bases.BaseViewModel
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.dto.Summary
-import com.personal.accountantAssistant.databinding.LayoutHomeCardBinding
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
+import com.personal.accountantAssistant.domain.models.home.SummaryModel
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.NumberUtils
@@ -29,7 +28,7 @@ class HomeViewModel(
 
     private var model: HomeModel? = null
 
-    private val _summaryValues = MutableLiveData<Summary>()
+    private val _summaryValues = MutableLiveData<SummaryModel>()
     val summaryValues = _summaryValues
 
     private val _periodText = MutableLiveData<String>()
@@ -91,39 +90,6 @@ class HomeViewModel(
         setupCardSubtitleTextView(cardTextValue, cardSubtitleTextView)
     }
 
-    private fun setupHomeCardLayout(
-        layout: LayoutHomeCardBinding, color: Int?, text: String?, value: Float?
-    ) = layout.apply {
-        val notNullColor = color ?: R.color.colorBlack
-        ivCardImage.visibility = View.GONE
-
-        tvCardTitle.text = text
-        tvCardTitle.setTextColor(notNullColor)
-        tvCardTitle.visibility = View.VISIBLE
-
-        tvCardSubtitle.text = value?.orZero().toString()
-        tvCardSubtitle.setTextColor(notNullColor)
-        tvCardSubtitle.visibility = View.VISIBLE
-    }
-
-    fun setupHomeNeededCardLayout(
-        layout: LayoutHomeCardBinding, summary: Summary
-    ) = setupHomeCardLayout(
-        layout, summary.neededColor, summary.neededStr, summary.needed
-    )
-
-    fun setupHomeTotalCardLayout(
-        layout: LayoutHomeCardBinding, summary: Summary
-    ) = setupHomeCardLayout(
-        layout, summary.totalColor, summary.totalStr, summary.total
-    )
-
-    fun setupHomeAvailableCardLayout(
-        layout: LayoutHomeCardBinding, summary: Summary
-    ) = setupHomeCardLayout(
-        layout, summary.availableColor, summary.availableStr, summary.available
-    )
-
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses(context: Context?, rootView: View) {
 
@@ -136,13 +102,13 @@ class HomeViewModel(
         val dailyExpenses = NumberUtils.roundTo(availableMoney?.toDouble()?.div(days))
         fillDashBoardCard(rootView, R.id.daily_card, dailyExpenses.toString())
 
-        val buysExpenses = databaseManager?.getPaymentsTotalPriceUntil(
-            PaymentsType.BUY, localStorage?.getLastDate()
+        val buysExpenses = databaseManager?.getExpensesTotalPriceUntil(
+            ExpensesType.BUY, localStorage?.getLastDate()
         )
         fillDashBoardCard(rootView, R.id.buy_card, buysExpenses.toString())
 
-        val billsExpenses = databaseManager?.getPaymentsTotalPriceUntil(
-            PaymentsType.BILL, localStorage?.getLastDate()
+        val billsExpenses = databaseManager?.getExpensesTotalPriceUntil(
+            ExpensesType.BILL, localStorage?.getLastDate()
         )
         fillDashBoardCard(rootView, R.id.bill_card, billsExpenses.toString())
 
@@ -155,7 +121,7 @@ class HomeViewModel(
         val isMoreThanOrEqualToZero = isMoreThanOrEqualToZero(needed.toString())
 
         summaryValues.postValue(
-            Summary(
+            SummaryModel(
                 availableMoney.orZero(),
                 model?.cardTitles?.available,
                 model?.getAvailableBackgroundColorBy(isMoreThanOrEqualToExpenses),

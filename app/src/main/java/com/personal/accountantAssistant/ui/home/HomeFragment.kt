@@ -4,24 +4,20 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.tabs.TabLayoutMediator
-import com.personal.accountantAssistant.core.BaseFragment
-import com.personal.accountantAssistant.core.extensions.EMPTY
-import com.personal.accountantAssistant.core.extensions.viewBinding
+import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
+import com.personal.accountantAssistant.databinding.LayoutHomeCardBinding
+import com.personal.accountantAssistant.domain.models.home.SummaryModel
+import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.utils.MenuHelper
 
 @RequiresApi(Build.VERSION_CODES.P)
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
-
-    private lateinit var tlMediator: TabLayoutMediator
-
-    override fun onDestroy() {
-        super.onDestroy()
-        tlMediator.detach()
-    }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
@@ -45,10 +41,43 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         }
     }
 
+    private fun setupHomeCardLayout(
+        layout: LayoutHomeCardBinding, color: Int?, text: String?, value: Float?
+    ) = layout.apply {
+        val notNullColor = color ?: R.color.colorBlack
+        ivCardImage.visibility = View.GONE
+
+        tvCardTitle.text = text
+        tvCardTitle.setTextColor(notNullColor)
+        tvCardTitle.visibility = View.VISIBLE
+
+        tvCardSubtitle.text = value?.orZero().toString()
+        tvCardSubtitle.setTextColor(notNullColor)
+        tvCardSubtitle.visibility = View.VISIBLE
+    }
+
+    private fun setupHomeNeededCardLayout(
+        layout: LayoutHomeCardBinding, summaryModel: SummaryModel
+    ) = setupHomeCardLayout(
+        layout, summaryModel.neededColor, summaryModel.neededStr, summaryModel.needed
+    )
+
+    private fun setupHomeTotalCardLayout(
+        layout: LayoutHomeCardBinding, summaryModel: SummaryModel
+    ) = setupHomeCardLayout(
+        layout, summaryModel.totalColor, summaryModel.totalStr, summaryModel.total
+    )
+
+    private fun setupHomeAvailableCardLayout(
+        layout: LayoutHomeCardBinding, summaryModel: SummaryModel
+    ) = setupHomeCardLayout(
+        layout, summaryModel.availableColor, summaryModel.availableStr, summaryModel.available
+    )
+
     @RequiresApi(Build.VERSION_CODES.P)
     private fun showRangePicker() {
         MaterialDatePicker.Builder.dateRangePicker()
-            .setTitleText("Select dates")
+            .setTitleText(getString(R.string.select_period))
             .setSelection(viewModel.getSelectedPeriod())
             .build()
             .apply {

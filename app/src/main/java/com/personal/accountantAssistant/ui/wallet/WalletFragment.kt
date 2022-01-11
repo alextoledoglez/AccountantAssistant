@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.wallet
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.util.TypedValue
 import android.view.Menu
@@ -11,21 +10,20 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.core.AlertDialogBuilder
-import com.personal.accountantAssistant.core.BaseFragment
-import com.personal.accountantAssistant.core.extensions.*
+import com.personal.accountantAssistant.adapters.wallet.CardsListAdapter
+import com.personal.accountantAssistant.bases.AlertDialogBuilder
+import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
+import com.personal.accountantAssistant.data.entities.wallet.CardEntity
+import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
-import com.personal.accountantAssistant.ui.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.ui.payments.enums.PaymentsType
-import com.personal.accountantAssistant.ui.wallet.adapters.CardsListAdapter
-import com.personal.accountantAssistant.ui.wallet.entities.CardEntity
+import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ImportExportUtils
@@ -43,8 +41,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     private var cardsAdapter: CardsListAdapter? = null
     private var cardsRecyclerView: RecyclerView? = null
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private var checker: SwitchCompat? = null
+    private var checker: androidx.appcompat.widget.SwitchCompat? = null
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun setupView() {
@@ -61,7 +58,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.add_payment -> addMenuItemClickListener()
+            R.id.add_record -> addMenuItemClickListener()
             R.id.import_export -> importExportMenuItemClickListener()
             R.id.delete_all -> deleteAllMenuItemClickListener()
             R.id.restore_default -> restoreDefaultMenuItemClickListener()
@@ -142,8 +139,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun recyclerViewAdapterFilterBy(queryStr: String) {
-        val paymentsFilter = cardsAdapter?.filter
-        paymentsFilter?.filter(queryStr)
+        cardsAdapter?.filter?.filter(queryStr)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -154,12 +150,12 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     }
 
     override fun importMenuItemClickListener() {
-        ImportExportUtils.xlsImport(context, PaymentsType.BUY)
+        ImportExportUtils.xlsImport(context, ExpensesType.BUY)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun exportMenuItemClickListener() {
-        ImportExportUtils.xlsExport(requireContext(), PaymentsType.BUY)
+        ImportExportUtils.xlsExport(requireContext(), ExpensesType.BUY)
     }
 
     override fun deleteAllRecords() {
