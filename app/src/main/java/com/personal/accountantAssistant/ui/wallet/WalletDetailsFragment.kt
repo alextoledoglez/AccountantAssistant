@@ -26,7 +26,7 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     val databaseManager: DatabaseManager? by inject()
 
-    lateinit var onSaveActionListener: (card: CardEntity) -> Unit
+    lateinit var onSaveActionListener: (cardEntity: CardEntity) -> Unit
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun initView() {

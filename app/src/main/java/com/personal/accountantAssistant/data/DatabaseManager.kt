@@ -22,6 +22,7 @@ import com.personal.accountantAssistant.domain.models.buys.BuyModel
 import com.personal.accountantAssistant.extensions.getDoubleColumn
 import com.personal.accountantAssistant.extensions.getIntColumn
 import com.personal.accountantAssistant.extensions.getStringColumn
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.*
 import java.util.*
 import java.util.stream.Collectors
@@ -38,13 +39,9 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
         private const val UID_WHERE_CLAUSE = "${Constants.UID}$WHERE_CLAUSE_PARAMETER"
-        private val COMPANY_WHERE_CLAUSE = "${CardFieldsEnum.COMPANY}$WHERE_CLAUSE_PARAMETER"
-        private val NAME_WHERE_CLAUSE = "${CardFieldsEnum.NAME}$WHERE_CLAUSE_PARAMETER"
-        private val TYPE_WHERE_CLAUSE = ExpensesFieldsEnum.TYPE.toString() + WHERE_CLAUSE_PARAMETER
+        private val TYPE_WHERE_CLAUSE = "${ExpensesFieldsEnum.TYPE.value}$WHERE_CLAUSE_PARAMETER"
         private val UID_AND_TYPE_WHERE_CLAUSE =
-            "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN${ExpensesFieldsEnum.TYPE}$WHERE_CLAUSE_PARAMETER"
-        private val UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE =
-            "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$COMPANY_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$NAME_WHERE_CLAUSE"
+            "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$TYPE_WHERE_CLAUSE"
 
         private const val CREATE_TABLE_COMMAND = "CREATE TABLE"
         private const val SELECT_FROM_COMMAND = "SELECT * FROM"
@@ -178,9 +175,10 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         return cards
     }
 
-    fun getSortedCardRecords(): List<CardEntity> = getCardRecords()
-        .sortedWith(compareBy(CardEntity::value, CardEntity::isActive))
-        .reversed()
+    fun getSortedCardRecords(): List<CardEntity> = getCardRecords().stream()
+        .sorted(Comparator.comparingDouble { it.value.orZero() })
+        .sorted(Collections.reverseOrder())
+        .collect(Collectors.toList())
 
     fun isAnyCardRecordActive(): Boolean = getCardRecords().stream().anyMatch { obj: CardEntity ->
         obj.isActive == true
@@ -271,30 +269,22 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         return id
     }
 
-    private fun cardsUpdateQuery(
-        contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
-    ): Long = updateQuery(CARD_TABLE, contentValues, whereClause, whereArgs)
-
-    fun updateCardRecordFrom(cardEntity: CardEntity?): Long = cardsUpdateQuery(
-        toCardContentValues(cardEntity),
-        UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE,
+    fun updateCardRecordFrom(cardEntity: CardEntity?): Long = updateQuery(
+        CARD_TABLE, toCardContentValues(cardEntity), UID_WHERE_CLAUSE,
         toWhereArgs(cardEntity)
     )
 
-    private fun expensesUpdateQuery(
-        contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
-    ): Long = updateQuery(PAYMENTS_TABLE, contentValues, whereClause, whereArgs)
-
     private fun toWhereArgs(cardEntity: CardEntity?): Array<String?>? = cardEntity?.let {
-        arrayOf(it.id.toString(), it.company.toString(), it.name.toString())
+        arrayOf(it.id.toString())
     }
 
     private fun toWhereArgs(expenseEntity: ExpenseEntity?): Array<String?>? = expenseEntity?.let {
         arrayOf(it.id.toString(), it.type?.name)
     }
 
-    fun updateExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long = expensesUpdateQuery(
-        toExpenseContentValues(expenseEntity), UID_AND_TYPE_WHERE_CLAUSE, toWhereArgs(expenseEntity)
+    fun updateExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long = updateQuery(
+        PAYMENTS_TABLE, toExpenseContentValues(expenseEntity), UID_AND_TYPE_WHERE_CLAUSE,
+        toWhereArgs(expenseEntity)
     )
 
     private fun deleteQuery(table: String, whereClause: String?, whereArgs: Array<String?>?): Long {
@@ -308,7 +298,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
     ): Long = deleteQuery(CARD_TABLE, whereClause, whereArgs)
 
     fun deleteCardsRecordFrom(cardEntity: CardEntity?): Long = cardDeleteQuery(
-        UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE, toWhereArgs(cardEntity)
+        UID_WHERE_CLAUSE, toWhereArgs(cardEntity)
     )
 
     private fun expensesDeleteQuery(

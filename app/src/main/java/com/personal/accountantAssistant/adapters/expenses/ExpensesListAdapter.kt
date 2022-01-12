@@ -38,13 +38,13 @@ class ExpensesListAdapter constructor(
     private val databaseManager: DatabaseManager?
 ) : RecyclerView.Adapter<ExpensesViewHolderData>(), Filterable {
 
-    private var expens: MutableList<ExpenseEntity>? = null
+    private var expenses: MutableList<ExpenseEntity>? = null
 
     fun loadExpenses() =
         databaseManager?.getSortedExpensesRecordsBy(type) as? MutableList<ExpenseEntity>?
 
     fun setAllExpensesRecordsActiveFrom(isActive: Boolean) {
-        expens?.forEach(Consumer { expenseEntity: ExpenseEntity ->
+        expenses?.forEach(Consumer { expenseEntity: ExpenseEntity ->
             setActiveRowFrom(isActive, expenseEntity)
         })
     }
@@ -61,7 +61,7 @@ class ExpensesListAdapter constructor(
     @RequiresApi(api = Build.VERSION_CODES.P)
     override fun onBindViewHolder(viewHolderData: ExpensesViewHolderData, position: Int) {
 
-        val expenseEntity = expens?.get(position)
+        val expenseEntity = expenses?.get(position)
         expenseEntity?.let { it ->
 
             if (isBuy(type) && it.isBuy == true) {
@@ -128,25 +128,25 @@ class ExpensesListAdapter constructor(
     }
 
     override fun getItemCount(): Int {
-        return expens?.size.orZero()
+        return expenses?.size.orZero()
     }
 
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val filterStr = charSequence.toString()
-                expens = if (filterStr.isEmpty()) {
+                expenses = if (filterStr.isEmpty()) {
                     loadExpenses()
                 } else {
-                    expens?.stream()?.filter { contains(it.name, filterStr) }
+                    expenses?.stream()?.filter { contains(it.name, filterStr) }
                         ?.collect(Collectors.toList())
                 }
-                return FilterResults().also { it.values = expens }
+                return FilterResults().also { it.values = expenses }
             }
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
-                expens = filterResults?.values as MutableList<ExpenseEntity>?
+                expenses = filterResults?.values as MutableList<ExpenseEntity>?
                 notifyDataSetChanged()
             }
         }
@@ -154,7 +154,7 @@ class ExpensesListAdapter constructor(
 
     val totalPrice: Double
         get() = roundTo(
-            expens?.stream()?.filter(ExpenseEntity::isActive)
+            expenses?.stream()?.filter(ExpenseEntity::isActive)
                 ?.map { obj: ExpenseEntity -> obj.getTotalValue() }
                 ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
         )
@@ -170,17 +170,17 @@ class ExpensesListAdapter constructor(
     }
 
     fun notifyExpenseAddedOrChanged(expenseEntity: ExpenseEntity) {
-        expens = loadExpenses()
-        val loadedExpense = expens?.stream()?.filter {
+        expenses = loadExpenses()
+        val loadedExpense = expenses?.stream()?.filter {
             it.equalsTo(expenseEntity)
         }?.findFirst()?.orElse(expenseEntity)
         val loadedExpenseId = loadedExpense?.id?.toLong()
         if (databaseManager?.isDefaultRecord(loadedExpenseId) == true) {
-            loadedExpense?.let { expens?.add(it) }
+            loadedExpense?.let { expenses?.add(it) }
             val position = itemCount - 1
             notifyItemInserted(position)
         } else {
-            expens?.let {
+            expenses?.let {
                 for (position in 0 until itemCount) {
                     val item = it[position]
                     if (loadedExpenseId?.equals(item.id.toLong()) == true) {
@@ -194,7 +194,7 @@ class ExpensesListAdapter constructor(
         notifyDataSetChanged()
     }
 
-    private fun notifyExpenseRemoved(expenseEntity: ExpenseEntity) = expens?.apply {
+    private fun notifyExpenseRemoved(expenseEntity: ExpenseEntity) = expenses?.apply {
         val position = indexOf(expenseEntity)
         val wasRemoved = remove(expenseEntity)
         if (wasRemoved)
@@ -202,6 +202,6 @@ class ExpensesListAdapter constructor(
     }
 
     init {
-        expens = loadExpenses()
+        expenses = loadExpenses()
     }
 }

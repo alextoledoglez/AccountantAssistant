@@ -141,9 +141,11 @@ class CardsListAdapter constructor(
         }
     }
 
-    fun notifyCardsAddedOrChanged(card: CardEntity) {
+    fun notifyCardsAddedOrChanged(cardEntity: CardEntity) {
         cards = loadCards()
-        val loadedCard = cards?.stream()?.findFirst()?.orElse(card)
+        val loadedCard = cards?.stream()?.filter {
+            it.equalsTo(cardEntity)
+        }?.findFirst()?.orElse(cardEntity)
         val loadedCardId = loadedCard?.id?.toLong()
         if (databaseManager?.isDefaultRecord(loadedCardId) == true) {
             loadedCard?.let { cards?.add(it) }

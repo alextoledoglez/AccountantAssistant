@@ -45,4 +45,9 @@ class CardEntity() : Serializable {
         this.value = value
         this.isActive = isActive
     }
+
+    fun equalsTo(cardEntity: CardEntity): Boolean = (company == cardEntity.company) &&
+            (name == cardEntity.name) && (password == cardEntity.password) &&
+            (value == cardEntity.value)
+
 }
