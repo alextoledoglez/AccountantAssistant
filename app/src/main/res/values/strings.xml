@@ -24,8 +24,8 @@
     <string name="missing">Missing</string>
     <string name="daily">Daily</string>
 
-    <string name="wallet_title">Title</string>
-    <string name="wallet_password">Password</string>
+    <string name="card_company">Company</string>
+    <string name="card_password">Password</string>
 
     <string name="menu_summary">Summary</string>
     <string name="menu_wallet">Wallet</string>

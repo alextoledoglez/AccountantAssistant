@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
 
 class CardsViewHolderData(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var title: TextView = itemView.findViewById(R.id.title)
-    var password: TextView = itemView.findViewById(R.id.password)
-    var value: TextView = itemView.findViewById(R.id.value)
+    var company: TextView = itemView.findViewById(R.id.tvCompany)
+    var name: TextView = itemView.findViewById(R.id.tvName)
+/*    var password: TextView = itemView.findViewById(R.id.tvPassword)*/
+    var value: TextView = itemView.findViewById(R.id.tvValue)
     var active: androidx.appcompat.widget.SwitchCompat = itemView.findViewById(R.id.scActive)
     var deleteItem: ImageButton = itemView.findViewById(R.id.ibDelete)
 }

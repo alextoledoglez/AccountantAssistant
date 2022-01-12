@@ -13,7 +13,10 @@ class CardEntity() : Serializable {
     var id = 0
 
     @ColumnInfo(name = "title")
-    var title: String? = null
+    var company: String? = null
+
+    @ColumnInfo(name = "name")
+    var name: String? = null
 
     @ColumnInfo(name = "password")
     var password: Int? = 0
@@ -24,16 +27,20 @@ class CardEntity() : Serializable {
     @ColumnInfo(name = "enabled")
     var isActive: Boolean? = false
 
-    constructor(title: String?) : this() {
+    constructor(company: String?, name: String?) : this() {
         id = 0
-        this.title = title
+        this.company = company
+        this.name = name
         password = Constants.DEFAULT_QUANTITY_VALUE
         value = Constants.DEFAULT_VALUE
         isActive = Constants.DEFAULT_ACTIVE_STATUS
     }
 
-    fun update(title: String?, password: Int, value: Double, isActive: Boolean) {
-        this.title = title
+    fun update(
+        company: String?, name: String?, password: Int, value: Double, isActive: Boolean
+    ) {
+        this.company = company
+        this.name = name
         this.password = password
         this.value = value
         this.isActive = isActive

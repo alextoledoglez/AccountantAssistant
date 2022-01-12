@@ -68,7 +68,8 @@ class CardsListAdapter constructor(
 
             //DETAILS
             viewHolderData.apply {
-                title.text = it.title
+                company.text = it.company
+                name.text = it.name
                 value.text = "$ ${roundTo(it.value)}"
 
                 //ACTIONS
@@ -108,7 +109,8 @@ class CardsListAdapter constructor(
         else
             context?.getColor(R.color.disableForegroundColor)
         color?.let {
-            viewHolderData.title.setTextColor(it)
+            viewHolderData.company.setTextColor(it)
+            viewHolderData.name.setTextColor(it)
             viewHolderData.value.setTextColor(it)
         }
     }
@@ -124,8 +126,9 @@ class CardsListAdapter constructor(
                 cards = if (filterStr.isEmpty()) {
                     loadCards()
                 } else {
-                    cards?.stream()?.filter { contains(it.title, filterStr) }
-                        ?.collect(Collectors.toList())
+                    cards?.stream()?.filter {
+                        contains(it.company, filterStr) || contains(it.name, filterStr)
+                    }?.collect(Collectors.toList())
                 }
                 return FilterResults().also { it.values = cards }
             }

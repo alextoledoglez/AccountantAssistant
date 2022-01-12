@@ -20,18 +20,42 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/lytTitle"
+        android:id="@+id/lytCompany"
         style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
-        android:hint="@string/wallet_title"
+        android:hint="@string/card_company"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etTitle"
+            android:id="@+id/etCompany"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:ems="10"
+            android:inputType="textCapSentences"
+            android:minHeight="@dimen/title_height"
+            android:textAlignment="center"
+            android:textSize="@dimen/card_subTitle_text_size"
+            android:theme="@style/FocusEditTextTheme" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lytName"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_material_margin"
+        android:hint="@string/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lytCompany">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
             android:ems="10"
@@ -52,7 +76,7 @@
         android:hint="@string/value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lytTitle">
+        app:layout_constraintTop_toBottomOf="@id/lytName">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etValue"
@@ -73,8 +97,8 @@
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_material_margin"
-        android:hint="@string/wallet_password"
-        app:layout_constraintEnd_toStartOf="@id/lytActive"
+        android:hint="@string/card_password"
+        app:layout_constraintEnd_toStartOf="@id/tvActive"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytValue">
 
@@ -92,31 +116,26 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/lytActive"
+    <TextView
+        android:id="@+id/tvActive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_material_margin"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/lytPassword"
-        app:layout_constraintTop_toBottomOf="@id/lytValue">
+        android:gravity="center"
+        android:text="@string/active"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/lytPassword"
+        app:layout_constraintEnd_toStartOf="@id/scActive"
+        app:layout_constraintTop_toTopOf="@id/lytPassword" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/active"
-            android:textStyle="bold" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/scActive"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-    </LinearLayout>
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/scActive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/lytPassword"
+        app:layout_constraintEnd_toEndOf="@id/lytValue"
+        app:layout_constraintTop_toTopOf="@id/lytPassword"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <include
         android:id="@+id/lytFooter"

@@ -5,7 +5,7 @@
     <dimen name="title_height">48dp</dimen>
     <dimen name="separator_size">1dp</dimen>
     <dimen name="text_field_height">30dp</dimen>
-    <dimen name="image_button_width">48dp</dimen>
+    <dimen name="image_button_size">48dp</dimen>
     <dimen name="icon_resource_size">24dp</dimen>
 
     <dimen name="full_layout_weight">1</dimen>
@@ -21,8 +21,8 @@
     <!-- Text -->
     <dimen name="small_text_size">12sp</dimen>
     <dimen name="default_text_size">14sp</dimen>
-    <dimen name="medium_text_size">20sp</dimen>
-    <dimen name="big_text_size">30sp</dimen>
+    <dimen name="medium_text_size">18sp</dimen>
+    <dimen name="big_text_size">20sp</dimen>
 
     <!-- Others -->
     <dimen name="card_width">100dp</dimen>
@@ -36,9 +36,9 @@
     <dimen name="card_view_default_radius">4dp</dimen>
     <dimen name="card_view_big_radius">16dp</dimen>
 
-    <dimen name="card_title_text_size">12sp</dimen>
-    <dimen name="card_subTitle_text_size">14sp</dimen>
-    <dimen name="card_title_text_big_size">18sp</dimen>
+    <dimen name="card_title_text_size">@dimen/small_text_size</dimen>
+    <dimen name="card_subTitle_text_size">@dimen/default_text_size</dimen>
+    <dimen name="card_title_text_big_size">@dimen/medium_text_size</dimen>
 
     <dimen name="card_view_elevation">1dp</dimen>
     <dimen name="card_view_content_padding">3dp</dimen>

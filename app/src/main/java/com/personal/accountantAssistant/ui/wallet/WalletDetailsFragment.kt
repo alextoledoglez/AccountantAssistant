@@ -8,12 +8,12 @@ import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.data.DatabaseManager
+import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
-import com.personal.accountantAssistant.data.entities.wallet.CardEntity
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.activity_wallet_details.view.*
@@ -40,9 +40,15 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         binding.root.apply {
             //Title
             tvTitle.setText(R.string.wallet_details)
-            etTitle.apply {
+            //Company
+            etCompany.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(card?.title.orEmpty())
+                setText(card?.company.orEmpty())
+            }
+            //Name
+            etName.apply {
+                filters = arrayOf<InputFilter>(AllCaps())
+                setText(card?.name.orEmpty())
             }
             //Value
             etValue.apply {
@@ -56,7 +62,6 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             }
             //Value and switch
             scActive.isChecked = card?.isActive ?: false
-
             //Footer
             lytFooter.apply {
                 mbCancel.setOnClickListener { dismiss() }
@@ -71,7 +76,8 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun saveCard(card: CardEntity?) {
         binding.root.apply {
             card?.update(
-                title = etTitle.text.toString(),
+                company = etCompany.text.toString(),
+                name = etName.text.toString(),
                 password = etPassword.text.toString().toInt(),
                 value = etValue.text.toString().toDouble(),
                 isActive = scActive.isChecked

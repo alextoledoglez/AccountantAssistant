@@ -37,11 +37,14 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
-        private const val UID_WHERE_CLAUSE = Constants.UID + WHERE_CLAUSE_PARAMETER
+        private const val UID_WHERE_CLAUSE = "${Constants.UID}$WHERE_CLAUSE_PARAMETER"
+        private val COMPANY_WHERE_CLAUSE = "${CardFieldsEnum.COMPANY}$WHERE_CLAUSE_PARAMETER"
+        private val NAME_WHERE_CLAUSE = "${CardFieldsEnum.NAME}$WHERE_CLAUSE_PARAMETER"
         private val TYPE_WHERE_CLAUSE = ExpensesFieldsEnum.TYPE.toString() + WHERE_CLAUSE_PARAMETER
-        private val UID_AND_TYPE_WHERE_CLAUSE = UID_WHERE_CLAUSE +
-                WHERE_CLAUSE_JOIN +
-                ExpensesFieldsEnum.TYPE + WHERE_CLAUSE_PARAMETER
+        private val UID_AND_TYPE_WHERE_CLAUSE =
+            "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN${ExpensesFieldsEnum.TYPE}$WHERE_CLAUSE_PARAMETER"
+        private val UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE =
+            "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$COMPANY_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$NAME_WHERE_CLAUSE"
 
         private const val CREATE_TABLE_COMMAND = "CREATE TABLE"
         private const val SELECT_FROM_COMMAND = "SELECT * FROM"
@@ -66,7 +69,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
                 SPACE_SEPARATOR +
                 INTEGER_PRIMARY_KEY +
                 SPACE_AUTOINCREMENT_COMMA +
-                CardFieldsEnum.TITLE.name + SPACE_TEXT_COMMA +
+                CardFieldsEnum.COMPANY.name + SPACE_TEXT_COMMA +
+                CardFieldsEnum.NAME.name + SPACE_TEXT_COMMA +
                 CardFieldsEnum.PASSWORD.name + SPACE_TEXT_COMMA +
                 CardFieldsEnum.VALUE.name + SPACE_TEXT_COMMA +
                 CardFieldsEnum.ACTIVE.name + SPACE_TEXT + ")"
@@ -104,7 +108,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     private fun cursorToCardEntity(cursor: Cursor): CardEntity = CardEntity().apply {
         id = cursor.getIntColumn(Constants.UID)
-        title = cursor.getStringColumn(CardFieldsEnum.TITLE.name)
+        company = cursor.getStringColumn(CardFieldsEnum.COMPANY.name)
+        name = cursor.getStringColumn(CardFieldsEnum.NAME.name)
         password = cursor.getIntColumn(CardFieldsEnum.PASSWORD.name)
         value = cursor.getDoubleColumn(CardFieldsEnum.VALUE.name)
         isActive = NumberUtils.toBoolean(cursor.getStringColumn(CardFieldsEnum.ACTIVE.name))
@@ -112,7 +117,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     private fun toCardContentValues(cardEntity: CardEntity?): ContentValues =
         ContentValues().apply {
-            put(CardFieldsEnum.TITLE.name, cardEntity?.title)
+            put(CardFieldsEnum.COMPANY.name, cardEntity?.company)
+            put(CardFieldsEnum.NAME.name, cardEntity?.name)
             put(CardFieldsEnum.PASSWORD.name, cardEntity?.password)
             put(CardFieldsEnum.VALUE.name, cardEntity?.value)
             put(CardFieldsEnum.ACTIVE.name, cardEntity?.isActive)
@@ -228,7 +234,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     fun insertDefaultCardsRecords() {
         for (card in DefaultCardsEnum.values()) {
-            insertCardRecordFrom(CardEntity(card.title))
+            insertCardRecordFrom(CardEntity(card.company, card.title))
         }
     }
 
@@ -269,13 +275,19 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
     ): Long = updateQuery(CARD_TABLE, contentValues, whereClause, whereArgs)
 
-    fun updateCardRecordFrom(card: CardEntity?): Long = cardsUpdateQuery(
-        toCardContentValues(card), UID_WHERE_CLAUSE, arrayOf(card?.id.toString())
+    fun updateCardRecordFrom(cardEntity: CardEntity?): Long = cardsUpdateQuery(
+        toCardContentValues(cardEntity),
+        UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE,
+        toWhereArgs(cardEntity)
     )
 
     private fun expensesUpdateQuery(
         contentValues: ContentValues, whereClause: String, whereArgs: Array<String?>?
     ): Long = updateQuery(PAYMENTS_TABLE, contentValues, whereClause, whereArgs)
+
+    private fun toWhereArgs(cardEntity: CardEntity?): Array<String?>? = cardEntity?.let {
+        arrayOf(it.id.toString(), it.company.toString(), it.name.toString())
+    }
 
     private fun toWhereArgs(expenseEntity: ExpenseEntity?): Array<String?>? = expenseEntity?.let {
         arrayOf(it.id.toString(), it.type?.name)
@@ -295,8 +307,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         whereClause: String?, whereArgs: Array<String?>?
     ): Long = deleteQuery(CARD_TABLE, whereClause, whereArgs)
 
-    fun deleteCardsRecordFrom(card: CardEntity?): Long = cardDeleteQuery(
-        UID_WHERE_CLAUSE, arrayOf(card?.id.toString())
+    fun deleteCardsRecordFrom(cardEntity: CardEntity?): Long = cardDeleteQuery(
+        UID_AND_COMPANY_AND_NAME_WHERE_CLAUSE, toWhereArgs(cardEntity)
     )
 
     private fun expensesDeleteQuery(
@@ -311,7 +323,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         TYPE_WHERE_CLAUSE, arrayOf(expensesType.name)
     )
 
-    fun deleteAllCardsRecords(): Long = TODO()
+    fun deleteAllCardsRecords(): Long = cardDeleteQuery(null, null)
 
     fun deleteAllBuysRecord(): Long = deleteAllExpensesRecordsBy(ExpensesType.BUY)
 

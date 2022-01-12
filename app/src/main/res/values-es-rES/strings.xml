@@ -25,8 +25,8 @@
     <string name="missing">Faltando</string>
     <string name="daily">Diario</string>
 
-    <string name="wallet_title">Título</string>
-    <string name="wallet_password">Contraseña</string>
+    <string name="card_company">Empresa</string>
+    <string name="card_password">Contraseña</string>
 
     <string name="menu_summary">Resumen</string>
     <string name="menu_wallet">Cartera</string>
