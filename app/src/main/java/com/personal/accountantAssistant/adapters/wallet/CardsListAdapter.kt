@@ -112,6 +112,7 @@ class CardsListAdapter constructor(
             viewHolderData.company.setTextColor(it)
             viewHolderData.name.setTextColor(it)
             viewHolderData.value.setTextColor(it)
+            viewHolderData.membership.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
         }
     }
 

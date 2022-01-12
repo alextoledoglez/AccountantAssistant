@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
@@ -41,7 +42,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     private var cardsAdapter: CardsListAdapter? = null
     private var cardsRecyclerView: RecyclerView? = null
 
-    private var checker: androidx.appcompat.widget.SwitchCompat? = null
+    private var checker: SwitchCompat? = null
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun setupView() {

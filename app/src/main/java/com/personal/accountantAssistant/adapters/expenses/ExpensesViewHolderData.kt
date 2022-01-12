@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.adapters.expenses
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
@@ -14,7 +15,7 @@ class ExpensesViewHolderData(
     var date: TextView? = null
     var value: TextView
 
-    var active: androidx.appcompat.widget.SwitchCompat
+    var active: SwitchCompat
     var deleteItem: ImageButton
 
     init {

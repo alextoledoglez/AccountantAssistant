@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -42,7 +43,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
     private var subTitleTextView: TextView? = null
     private var recyclerView: RecyclerView? = null
 
-    private var checker: androidx.appcompat.widget.SwitchCompat? = null
+    private var checker: SwitchCompat? = null
 
     override fun setupView() {
         setHasOptionsMenu(true)
