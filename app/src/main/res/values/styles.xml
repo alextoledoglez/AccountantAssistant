@@ -105,7 +105,7 @@
     </style>
 
     <style name="AlertDialogBodyStyle" parent="">
-        <item name="android:textColor">@color/defaultFontColor</item>
+        <item name="android:textColor">@color/fontColor</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:paddingHorizontal">@dimen/default_material_margin</item>
     </style>
@@ -161,7 +161,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">gravity</item>
-        <item name="android:textColor">@color/defaultFontColor</item>
+        <item name="android:textColor">@color/fontColor</item>
         <item name="android:background">@color/colorWhite</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
@@ -187,7 +187,7 @@
     <!--Edit Text styles-->
 
     <style name="FocusEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">@color/defaultFontColor</item>
+        <item name="colorControlNormal">@color/fontColor</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>

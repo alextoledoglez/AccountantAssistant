@@ -115,9 +115,9 @@ class ExpensesListAdapter constructor(
 
     private fun setRowForegroundFrom(viewHolderData: ExpensesViewHolderData) {
         val color = if (viewHolderData.active.isChecked)
-            context?.getColor(R.color.defaultFontColor)
+            context?.getColor(R.color.fontColor)
         else
-            context?.getColor(R.color.disableForegroundColor)
+            context?.getColor(R.color.disableFontColor)
         color?.let {
             viewHolderData.name.setTextColor(it)
             if (isBill(type)) {

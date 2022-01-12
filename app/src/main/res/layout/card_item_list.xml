@@ -17,38 +17,60 @@
 
         <TextView
             android:id="@+id/tvCompany"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/zero"
             android:layout_height="@dimen/title_height"
-            android:gravity="center"
+            android:gravity="start"
             android:textAlignment="gravity"
+            android:textAllCaps="true"
             android:textSize="@dimen/default_text_size"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Itau" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/scActive"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="@id/tvName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvName"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="@dimen/zero"
             android:layout_height="@dimen/title_height"
-            android:gravity="center"
+            android:gravity="end|center"
             android:textAlignment="gravity"
-            android:textSize="@dimen/default_text_size"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/ibDelete"
-            app:layout_constraintStart_toEndOf="@id/scActive"
-            app:layout_constraintTop_toBottomOf="@id/tvCompany"
+            android:textAllCaps="false"
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toTopOf="@id/tvValue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvCompany"
             tools:text="Latam Pass" />
+
+        <ImageView
+            android:id="@+id/ivChip"
+            android:layout_width="@dimen/image_button_size"
+            android:layout_height="@dimen/image_button_size"
+            android:src="@drawable/ic_chip"
+            app:layout_constraintBottom_toBottomOf="@id/tvValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvValue" />
+
+        <TextView
+            android:id="@+id/tvValue"
+            android:layout_width="@dimen/zero"
+            android:layout_height="@dimen/title_height"
+            android:layout_marginEnd="@dimen/image_button_size"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="@dimen/big_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivChip"
+            app:layout_constraintTop_toBottomOf="@id/tvCompany"
+            tools:text="R$ 1000,00" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/scActive"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toStartOf="@id/ibDelete"
+            app:layout_constraintTop_toBottomOf="@id/tvValue"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <ImageButton
             android:id="@+id/ibDelete"
@@ -58,29 +80,6 @@
             android:contentDescription="@string/delete"
             android:minWidth="@dimen/image_button_size"
             android:src="@drawable/ic_delete_red"
-            app:layout_constraintBottom_toBottomOf="@id/tvName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvName" />
-
-        <TextView
-            android:id="@+id/tvValue"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/title_height"
-            android:gravity="center"
-            android:textAlignment="gravity"
-            android:textSize="@dimen/medium_text_size"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvName"
-            tools:text="R$ 1000,00" />
-
-        <ImageView
-            android:id="@+id/ivMembership"
-            android:layout_width="@dimen/image_button_size"
-            android:layout_height="@dimen/image_button_size"
-            android:src="@drawable/ic_card_membership"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvValue" />
 

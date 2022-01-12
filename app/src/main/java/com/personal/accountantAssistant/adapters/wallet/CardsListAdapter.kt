@@ -61,58 +61,55 @@ class CardsListAdapter constructor(
     override fun onBindViewHolder(viewHolderData: CardsViewHolderData, position: Int) {
 
         val card = cards?.get(position)
-        card?.let {
 
+        card?.let {
             //INITIALIZE
             initializeWalletOptions()
-
             //DETAILS
             viewHolderData.apply {
-                company.text = it.company
-                name.text = it.name
-                value.text = "$ ${roundTo(it.value)}"
-
+                tvCompany.text = it.company
+                tvName.text = it.name
+                tvValue.text = "$ ${roundTo(it.value)}"
                 //ACTIONS
-                active.isChecked = it.isActive ?: false
-                active.setOnClickListener { _ -> setActiveRowFrom(active.isChecked, it) }
+                scActive.isChecked = it.isActive ?: false
+                scActive.setOnClickListener { _ -> setActiveRowFrom(scActive.isChecked, it) }
+                ibDelete.setOnClickListener { _ -> deleteRecordFrom(it) }
                 itemView.setOnClickListener { _ -> editRecordFrom(it) }
-                deleteItem.setOnClickListener { _ -> deleteRecordFrom(it) }
             }
             setRowForegroundFrom(viewHolderData)
         }
     }
 
-    private fun setActiveRowFrom(isActive: Boolean, card: CardEntity) {
-        card.isActive = isActive
-        val updateRecord = databaseManager?.updateCardRecordFrom(card)
+    private fun setActiveRowFrom(isActive: Boolean, cardEntity: CardEntity) {
+        cardEntity.isActive = isActive
+        val updateRecord = databaseManager?.updateCardRecordFrom(cardEntity)
         if (databaseManager?.isNotDefaultRecord(updateRecord) == true) {
-            notifyCardsAddedOrChanged(card)
+            notifyCardsAddedOrChanged(cardEntity)
         }
     }
 
-    private fun editRecordFrom(card: CardEntity) {
+    private fun editRecordFrom(cardEntity: CardEntity) {
         (context as? MainActivity?)?.supportFragmentManager?.let {
-            WalletDetailsFragment.newInstance(card).apply {
-                onSaveActionListener = { notifyCardsAddedOrChanged(card) }
+            WalletDetailsFragment.newInstance(cardEntity).apply {
+                onSaveActionListener = { notifyCardsAddedOrChanged(cardEntity) }
             }.show(it, String.EMPTY)
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.P)
-    private fun deleteRecordFrom(card: CardEntity) {
-        databaseManager?.deleteRecord(context, card) { notifyCardRemoved(card) }
+    private fun deleteRecordFrom(cardEntity: CardEntity) {
+        databaseManager?.deleteRecord(context, cardEntity) { notifyCardRemoved(cardEntity) }
     }
 
-    private fun setRowForegroundFrom(viewHolderData: CardsViewHolderData) {
-        val color = if (viewHolderData.active.isChecked)
-            context?.getColor(R.color.defaultFontColor)
-        else
-            context?.getColor(R.color.disableForegroundColor)
-        color?.let {
-            viewHolderData.company.setTextColor(it)
-            viewHolderData.name.setTextColor(it)
-            viewHolderData.value.setTextColor(it)
-            viewHolderData.membership.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+    private fun setRowForegroundFrom(viewHolder: CardsViewHolderData) {
+        val isActive = viewHolder.scActive.isChecked
+        context?.getColor(if (isActive) R.color.fontColor else R.color.disableFontColor)?.let {
+            viewHolder.tvCompany.setTextColor(it)
+            viewHolder.tvName.setTextColor(it)
+            viewHolder.tvValue.setTextColor(it)
+        }
+        context?.getColor(if (isActive) R.color.chipColor else R.color.disableChipColor)?.let {
+            viewHolder.ivChip.setColorFilter(it, android.graphics.PorterDuff.Mode.MULTIPLY)
         }
     }
 
