@@ -10,11 +10,11 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.domain.models.home.SummaryModel
+import com.personal.accountantAssistant.domain.models.home.DashboardModel
 
 const val BAR_STACK_MIN_SIZE = 10f
 
-fun BarChart.drawFrom(summaryModel: SummaryModel) {
+fun BarChart.drawFrom(dashboardModel: DashboardModel) {
     val xAxisValues: ArrayList<String> = ArrayList()
     setDefaultSettings()
 

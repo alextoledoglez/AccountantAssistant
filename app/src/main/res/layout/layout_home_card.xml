@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_material_margin"
         android:layout_weight="1"
-        android:src="@drawable/ic_menu_buys"
+        android:src="@drawable/ic_buys"
         tools:ignore="ContentDescription" />
 
     <TextView

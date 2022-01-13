@@ -135,13 +135,17 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         }
 
         val isAnyActive = databaseManager?.anyActiveExpensesRecordsBy(type) ?: false
-        val imageRes = if (isAnyActive) R.drawable.ic_red_money else R.drawable.ic_menu_green_money
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
-        titleImageView?.setImageResource(imageRes)
-        subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-        color?.let { subTitleTextView?.setTextColor(it) }
+        titleImageView?.setImageResource(R.drawable.ic_money)
         subTitleTextView?.text = adapter?.totalPrice.toString()
+        subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+
+        color?.let {
+            titleImageView?.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+            subTitleTextView?.setTextColor(it)
+        }
+
         checker?.isChecked = (databaseManager?.allActiveExpensesRecordsBy(type) == true)
     }
 

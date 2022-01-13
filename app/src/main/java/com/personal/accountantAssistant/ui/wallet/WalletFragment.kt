@@ -125,16 +125,18 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         MenuHelper.initializeWalletOptions()
 
         val isAnyActive = databaseManager?.isAnyCardRecordActive() ?: false
-        val imageRes = if (isAnyActive) R.drawable.ic_red_money else R.drawable.ic_menu_green_money
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
-        titleImageView?.setImageResource(imageRes)
-
+        titleImageView?.setImageResource(R.drawable.ic_money)
         subTitleTextView?.text = cardsAdapter?.totalValue.toString()
-        subTitleTextView?.setTextColor(color ?: R.color.colorBlack)
         subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-        localStorage?.setAvailableMoney(cardsAdapter?.totalValue.orZero().toFloat())
 
+        color?.let {
+            titleImageView?.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+            subTitleTextView?.setTextColor(it)
+        }
+
+        localStorage?.setAvailableMoney(cardsAdapter?.totalValue.orZero().toFloat())
         checker?.isChecked = (databaseManager?.isAllCardRecordsActive() == true)
     }
 

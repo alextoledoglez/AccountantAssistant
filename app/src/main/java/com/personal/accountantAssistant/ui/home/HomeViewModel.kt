@@ -8,9 +8,10 @@ import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.domain.models.home.HomeExpensesModel
-import com.personal.accountantAssistant.domain.models.home.SummaryItemModel
-import com.personal.accountantAssistant.domain.models.home.SummaryModel
+import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
+import com.personal.accountantAssistant.domain.models.home.DashboardModel
+import com.personal.accountantAssistant.domain.models.home.ExpensesItemsModel
+import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
@@ -24,14 +25,11 @@ class HomeViewModel(
 
     var availableMoney: Double? = 00.00
 
-    private val _expensesValues = MutableLiveData<HomeExpensesModel>()
+    private val _dashboardValues = MutableLiveData<DashboardModel>()
+    val dashboardValues = _dashboardValues
+
+    private val _expensesValues = MutableLiveData<ExpensesValuesModel>()
     val expensesValues = _expensesValues
-
-    private val _totalExpensesValue = MutableLiveData<Double>()
-    val totalExpensesValue = _totalExpensesValue
-
-    private val _summaryValues = MutableLiveData<SummaryModel>()
-    val summaryValues = _summaryValues
 
     private val _periodText = MutableLiveData<String>()
     val periodText: LiveData<String> get() = _periodText
@@ -58,19 +56,18 @@ class HomeViewModel(
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
         val days = periodDays.value?.let { if (it > 0) it else 1 } ?: run { 1 }
-        val dailyExpenses = NumberUtils.roundTo(availableMoney?.div(days))
+        val daily = NumberUtils.roundTo(availableMoney?.div(days))
 
-        val buysExpenses = databaseManager?.getExpensesTotalPriceUntil(
+        val buys = databaseManager?.getExpensesTotalPriceUntil(
             ExpensesType.BUY, localStorage?.getLastDate()
         )
 
-        val billsExpenses = databaseManager?.getExpensesTotalPriceUntil(
+        val bills = databaseManager?.getExpensesTotalPriceUntil(
             ExpensesType.BILL, localStorage?.getLastDate()
         )
 
-        _expensesValues.postValue(HomeExpensesModel(dailyExpenses, buysExpenses, billsExpenses))
-        val totalExpenses = buysExpenses?.plus(billsExpenses.orZero())?.plus(dailyExpenses)
-        _totalExpensesValue.postValue(totalExpenses.orZero())
+        val total = buys?.plus(bills.orZero())?.plus(daily)
+        _expensesValues.postValue(ExpensesValuesModel(daily, buys, bills, total))
     }
 
     fun savePeriodDates(firstTimeInMillis: Long?, lastTimeInMillis: Long?) {
@@ -93,12 +90,12 @@ class HomeViewModel(
         firstPeriodDate.value?.time, lastPeriodDate.value?.time
     )
 
-    fun setHomeSummaryModel(
-        available: SummaryItemModel?,
-        total: SummaryItemModel?,
-        gainOrNeeded: SummaryItemModel?
+    fun postDashboardValues(
+        available: DashboardItemModel?,
+        expensesItems: ExpensesItemsModel?,
+        gainOrNeeded: DashboardItemModel?
     ) {
-        _summaryValues.postValue(SummaryModel(available, total, gainOrNeeded))
+        _dashboardValues.postValue(DashboardModel(available, expensesItems, gainOrNeeded))
     }
 
     override fun onCleared() {

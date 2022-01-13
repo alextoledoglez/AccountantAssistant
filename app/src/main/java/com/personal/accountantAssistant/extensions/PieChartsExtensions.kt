@@ -7,15 +7,18 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
-import com.personal.accountantAssistant.domain.models.home.SummaryModel
+import com.personal.accountantAssistant.domain.models.home.DashboardModel
 import kotlin.math.abs
 
 
-fun PieChart.drawFrom(model: SummaryModel, label: String?) {
+fun PieChart.drawFrom(model: DashboardModel, label: String?) {
     setDefaultSettings()
     val entries = listOf(
-        PieEntry(model.expenses?.value.orZero(), model.expenses?.strResource),
-        PieEntry(abs(model.gainOrNeeded?.value.orZero()), model.gainOrNeeded?.strResource)
+        PieEntry(
+            model.expensesItems?.total?.value.orZero().toFloat(),
+            model.expensesItems?.total?.strResource
+        ),
+        PieEntry(abs(model.gainOrNeeded?.value.orZero().toFloat()), model.gainOrNeeded?.strResource)
     )
     val dataSet = PieDataSet(entries, label).apply { setupDataSetBy(model) }
     data = getPieDataBy(dataSet)
@@ -33,8 +36,8 @@ fun PieChart.setDefaultSettings() {
     setExtraOffsets(extraOffset, extraOffset, extraOffset, extraOffset)
 }
 
-fun PieDataSet.setupDataSetBy(model: SummaryModel) {
-    colors = listOf(model.expenses?.colorResource, model.gainOrNeeded?.colorResource)
+fun PieDataSet.setupDataSetBy(model: DashboardModel) {
+    colors = listOf(model.expensesItems?.total?.colorResource, model.gainOrNeeded?.colorResource)
     valueTextColor = Color.WHITE
     valueTextSize = 18f
     valueTypeface = Typeface.DEFAULT_BOLD

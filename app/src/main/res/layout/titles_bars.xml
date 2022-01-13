@@ -36,7 +36,7 @@
                 android:layout_height="@dimen/title_height"
                 android:layout_margin="@dimen/small_material_margin"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/ic_menu_green_money" />
+                app:srcCompat="@drawable/ic_money" />
 
             <TextView
                 android:id="@+id/titles_bar_subtitle"

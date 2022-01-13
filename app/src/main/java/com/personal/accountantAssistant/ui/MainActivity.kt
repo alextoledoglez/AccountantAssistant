@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.databinding.ActivityMainBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
-import com.personal.accountantAssistant.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
@@ -27,10 +27,7 @@ class MainActivity : AppCompatActivity() {
     private var tabLayoutMediator: TabLayoutMediator? = null
 
     private val icons = arrayOf(
-        R.drawable.ic_menu_home,
-        R.drawable.ic_menu_wallet,
-        R.drawable.ic_menu_buys,
-        R.drawable.ic_menu_bills
+        R.drawable.ic_home, R.drawable.ic_wallet, R.drawable.ic_buys, R.drawable.ic_bills
     )
 
     private val titles = arrayOf(

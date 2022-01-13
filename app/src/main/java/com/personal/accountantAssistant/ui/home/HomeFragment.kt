@@ -13,11 +13,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
-import com.personal.accountantAssistant.databinding.LayoutHomeCardBinding
 import com.personal.accountantAssistant.domain.models.TextSizeResourcesModel
-import com.personal.accountantAssistant.domain.models.home.ColorResourcesModel
-import com.personal.accountantAssistant.domain.models.home.SummaryItemModel
-import com.personal.accountantAssistant.domain.models.home.TitleResourcesModel
+import com.personal.accountantAssistant.domain.models.home.*
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
@@ -54,17 +51,15 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun setupView() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
-            expensesValues.observe(viewLifecycleOwner, { expenses ->
-                setupExpenseCard(R.id.daily_card, expenses.daily)
-                setupExpenseCard(R.id.buy_card, expenses.buys)
-                setupExpenseCard(R.id.bill_card, expenses.bills)
+            dashboardValues.observe(viewLifecycleOwner, {
+                setupDashboardCard(R.id.available_card, it?.available)
+                setupDashboardCard(R.id.needed_card, it?.gainOrNeeded)
+                setupDashboardCard(R.id.total_card, it?.expensesItems?.total)
+                setupDashboardCard(R.id.daily_card, it?.expensesItems?.daily)
+                setupDashboardCard(R.id.buy_card, it?.expensesItems?.buy)
+                setupDashboardCard(R.id.bill_card, it?.expensesItems?.bill)
             })
-            totalExpensesValue.observe(viewLifecycleOwner, ::highlightExpenses)
-            summaryValues.observe(viewLifecycleOwner, { summary ->
-                setupSummaryCard(binding.availableSection.availableCard, summary?.available)
-                setupSummaryCard(binding.summarySection.neededCard, summary?.gainOrNeeded)
-                setupSummaryCard(binding.summarySection.totalCard, summary?.expenses)
-            })
+            expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
         }
         with(binding) {
             viewModel.calculateExpenses()
@@ -89,63 +84,34 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     private fun getDefaultBackgroundColorResource() = R.color.colorWhite
 
-    private fun setupExpenseCard(resourceId: Int, cardTextValue: Double?) {
+    private fun setupDashboardCard(resourceId: Int, model: DashboardItemModel?) {
 
         val rootView = binding.root.findViewById<View>(resourceId)
         val imageView = rootView.ivCardImage
         val titleTextView = rootView.tvCardTitle
         val subtitleTextView = rootView.tvCardSubtitle
-        val isExpensesMoreThanAvailable = viewModel.isExpensesMoreThanAvailable(cardTextValue)
 
         cardTitle = String.EMPTY
         textSize = textSizeResources.normal
-        fontColorResource = getColorResourceBy(
-            isExpensesMoreThanAvailable, colorResources.error, colorResources.success
-        )
-        colorResource = getDefaultBackgroundColorResource()
+        model?.colorResource?.let { fontColorResource = it }
 
         when (resourceId) {
-            R.id.daily_card -> setupImageCardTitleBy(
-                titleResources.daily,
-                isExpensesMoreThanAvailable,
-                R.drawable.ic_menu_red_daily,
-                R.drawable.ic_menu_green_daily
-            )
-            R.id.buy_card -> setupImageCardTitleBy(
-                titleResources.buys,
-                isExpensesMoreThanAvailable,
-                R.drawable.ic_menu_red_buys,
-                R.drawable.ic_menu_green_buys
-            )
-            R.id.bill_card -> setupImageCardTitleBy(
-                titleResources.bills,
-                isExpensesMoreThanAvailable,
-                R.drawable.ic_menu_red_bills,
-                R.drawable.ic_menu_green_bills
-            )
+            R.id.available_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_wallet)
+            R.id.needed_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_money)
+            R.id.total_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_total)
+            R.id.daily_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_daily)
+            R.id.buy_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_buys)
+            R.id.bill_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_bills)
         }
 
         setupCardImageView(imageView)
         setupCardTitleTextView(titleTextView)
-        setupCardSubtitleTextView(cardTextValue.toString(), subtitleTextView)
+        setupCardSubtitleTextView(model?.value.toString(), subtitleTextView)
     }
-
-    private fun setupSummaryCard(layout: LayoutHomeCardBinding, model: SummaryItemModel?) =
-        layout.apply {
-            val notNullColor = model?.colorResource ?: R.color.colorBlack
-            ivCardImage.visibility = View.GONE
-
-            tvCardTitle.text = model?.strResource?.let { getString(it) }
-            tvCardTitle.setTextColor(tvCardTitle.context.getColor(notNullColor))
-            tvCardTitle.visibility = View.VISIBLE
-
-            tvCardSubtitle.text = model?.value?.orZero().toString()
-            tvCardSubtitle.setTextColor(tvCardSubtitle.context.getColor(notNullColor))
-            tvCardSubtitle.visibility = View.VISIBLE
-        }
 
     private fun setupCardImageView(cardImageView: ImageView) = cardImageView.apply {
         imageResource?.let { setImageResource(it) }
+        setColorFilter(context.getColor(fontColorResource), android.graphics.PorterDuff.Mode.SRC_IN)
         visibility = if (hideImageView == true) View.GONE else View.VISIBLE
     }
 
@@ -161,55 +127,62 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         setTextColor(context.getColor(fontColorResource))
     }
 
-    private fun setupImageCardTitleBy(
-        @StringRes titleRes: Int,
-        isMoreThanAvailable: Boolean?,
-        @DrawableRes warningResource: Int,
-        @DrawableRes successResource: Int
-    ) {
-        cardTitle = getString(titleRes)
-        imageResource = if (isMoreThanAvailable == true) warningResource else successResource
+    private fun setupImageCardTitleBy(@StringRes titleRes: Int?, @DrawableRes imageResource: Int?) {
         hideImageView = false
+        this.imageResource = imageResource
+        cardTitle = titleRes?.let { getString(it) }
         colorResource = getDefaultBackgroundColorResource()
     }
 
-    private fun highlightExpenses(expenses: Double?) {
+    private fun settingDashboardItems(values: ExpensesValuesModel?) {
 
-        val totalExpenses = expenses.orZero()
         val availableMoney = viewModel.availableMoney.orZero()
+        val dailyExpenses = values?.daily.orZero()
+        val buyExpenses = values?.buys.orZero()
+        val billExpenses = values?.bills.orZero()
+        val totalExpenses = values?.total.orZero()
 
         val isExpensesLessThanAvailable = viewModel.isExpensesLessThanAvailable(totalExpenses)
-        val availableColor = getColorResourceBy(
-            isExpensesLessThanAvailable, colorResources.success, colorResources.error
-        )
-        val available = SummaryItemModel(
-            availableMoney.toFloat(), titleResources.available, availableColor
-        )
+        val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
+        val available = DashboardItemModel(availableMoney, titleResources.available, availableColor)
 
-        val isExpensesMoreThanAvailable = viewModel.isExpensesMoreThanAvailable(totalExpenses)
-        val totalColor = getColorResourceBy(
-            isExpensesMoreThanAvailable, colorResources.error, colorResources.success
+        val expenses = ExpensesItemsModel(
+            DashboardItemModel(
+                dailyExpenses, titleResources.daily, getExpenseColorResourceBy(dailyExpenses)
+            ),
+            DashboardItemModel(
+                buyExpenses, titleResources.buys, getExpenseColorResourceBy(buyExpenses)
+            ),
+            DashboardItemModel(
+                billExpenses, titleResources.bills, getExpenseColorResourceBy(billExpenses)
+            ),
+            DashboardItemModel(
+                totalExpenses, titleResources.total, getExpenseColorResourceBy(totalExpenses)
+            )
         )
-        val total = SummaryItemModel(totalExpenses.toFloat(), titleResources.total, totalColor)
 
         val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(totalExpenses))
         val isZeroLessThanGainOrNeeded = viewModel.isZeroLessThan(gainOrNeededValue)
         val gainOrNeededTitle =
             if (isZeroLessThanGainOrNeeded) titleResources.gain else titleResources.missing
-        val gainOrNeededColor = getColorResourceBy(
-            isZeroLessThanGainOrNeeded, colorResources.success, colorResources.error
-        )
+        val gainOrNeededColor = getColorResourceBy(isZeroLessThanGainOrNeeded)
+        val gainOrNeeded =
+            DashboardItemModel(gainOrNeededValue, gainOrNeededTitle, gainOrNeededColor)
 
-        val gainOrNeeded = SummaryItemModel(
-            gainOrNeededValue.toFloat(), gainOrNeededTitle, gainOrNeededColor
-        )
-
-        viewModel.setHomeSummaryModel(available, total, gainOrNeeded)
+        viewModel.postDashboardValues(available, expenses, gainOrNeeded)
     }
 
     private fun getColorResourceBy(
-        isCondition: Boolean?, @ColorRes trueResource: Int, @ColorRes falseResource: Int
+        isCondition: Boolean?,
+        @ColorRes trueResource: Int = colorResources.success,
+        @ColorRes falseResource: Int = colorResources.error
     ) = if (isCondition == true) trueResource else falseResource
+
+    private fun getExpenseColorResourceBy(expense: Double?): Int = getColorResourceBy(
+        viewModel.isExpensesMoreThanAvailable(expense),
+        colorResources.error,
+        colorResources.success
+    )
 
     companion object {
         fun newInstance() = HomeFragment()

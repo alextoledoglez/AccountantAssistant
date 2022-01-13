@@ -1,7 +1,8 @@
 package com.personal.accountantAssistant.domain.models.home
 
-data class HomeExpensesModel(
+data class ExpensesValuesModel(
     val daily: Double?,
     val buys: Double?,
-    val bills: Double?
+    val bills: Double?,
+    val total: Double?
 )
