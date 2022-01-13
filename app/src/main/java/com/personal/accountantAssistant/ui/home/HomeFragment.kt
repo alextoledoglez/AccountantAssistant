@@ -140,7 +140,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val dailyExpenses = values?.daily.orZero()
         val buyExpenses = values?.buys.orZero()
         val billExpenses = values?.bills.orZero()
-        val totalExpenses = values?.total.orZero()
+        val totalExpenses = NumberUtils.roundTo(values?.total.orZero())
+        val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(totalExpenses))
 
         val isExpensesLessThanAvailable = viewModel.isExpensesLessThanAvailable(totalExpenses)
         val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
@@ -161,7 +162,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             )
         )
 
-        val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(totalExpenses))
         val isZeroLessThanGainOrNeeded = viewModel.isZeroLessThan(gainOrNeededValue)
         val gainOrNeededTitle =
             if (isZeroLessThanGainOrNeeded) titleResources.gain else titleResources.missing
