@@ -11,13 +11,13 @@ import com.personal.accountantAssistant.domain.models.home.SummaryModel
 import kotlin.math.abs
 
 
-fun PieChart.drawFrom(summaryModel: SummaryModel, label: String?) {
+fun PieChart.drawFrom(model: SummaryModel, label: String?) {
     setDefaultSettings()
     val entries = listOf(
-            PieEntry(summaryModel.total.orZero(), summaryModel.totalStr),
-            PieEntry(abs(summaryModel.needed.orZero()), summaryModel.neededStr)
+        PieEntry(model.expenses?.value.orZero(), model.expenses?.strResource),
+        PieEntry(abs(model.gainOrNeeded?.value.orZero()), model.gainOrNeeded?.strResource)
     )
-    val dataSet = PieDataSet(entries, label).apply { setupDataSetBy(summaryModel) }
+    val dataSet = PieDataSet(entries, label).apply { setupDataSetBy(model) }
     data = getPieDataBy(dataSet)
     legend.isEnabled = false
     invalidate()
@@ -33,8 +33,8 @@ fun PieChart.setDefaultSettings() {
     setExtraOffsets(extraOffset, extraOffset, extraOffset, extraOffset)
 }
 
-fun PieDataSet.setupDataSetBy(summaryModel: SummaryModel) {
-    colors = listOf(summaryModel.totalColor, summaryModel.neededColor)
+fun PieDataSet.setupDataSetBy(model: SummaryModel) {
+    colors = listOf(model.expenses?.colorResource, model.gainOrNeeded?.colorResource)
     valueTextColor = Color.WHITE
     valueTextSize = 18f
     valueTypeface = Typeface.DEFAULT_BOLD
