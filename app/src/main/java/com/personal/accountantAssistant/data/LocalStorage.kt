@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.utils.NumberUtils
 import java.util.*
 
 class LocalStorage(val context: Context) {
@@ -25,9 +26,10 @@ class LocalStorage(val context: Context) {
         getDefaultSharedPreferences().edit().putFloat(AVAILABLE_MONEY, availableMoneyValue).apply()
     }
 
-    fun getAvailableMoney(): Float = getDefaultSharedPreferences().getFloat(
-        AVAILABLE_MONEY,
-        Constants.STR_DEFAULT_MONETARY_VALUE.toFloat()
+    fun getAvailableMoney(): Double = NumberUtils.roundTo(
+        getDefaultSharedPreferences().getFloat(
+            AVAILABLE_MONEY, Constants.STR_DEFAULT_MONETARY_VALUE.toFloat()
+        ).toDouble()
     )
 
     fun getAvailableMoneyStr(): String = getAvailableMoney().toString()

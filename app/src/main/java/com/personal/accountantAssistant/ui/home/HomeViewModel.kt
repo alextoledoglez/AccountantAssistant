@@ -52,7 +52,7 @@ class HomeViewModel(
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses() {
 
-        availableMoney = localStorage?.getAvailableMoney()?.toDouble()
+        availableMoney = localStorage?.getAvailableMoney()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
         val days = periodDays.value?.let { if (it > 0) it else 1 } ?: run { 1 }
