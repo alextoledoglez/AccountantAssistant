@@ -176,7 +176,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
     }
 
     fun getSortedCardRecords(): List<CardEntity> = getCardRecords().stream()
-        .sorted(Comparator.comparingDouble { it.value.orZero() })
+        .sorted(Comparator.comparing<CardEntity?, Boolean?> { it.isActive == true }
+            .thenComparingDouble { it.value.orZero() })
         .collect(Collectors.toList())
         .asReversed()
 
