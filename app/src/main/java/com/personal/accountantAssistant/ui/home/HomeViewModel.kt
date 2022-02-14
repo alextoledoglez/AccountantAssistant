@@ -12,11 +12,11 @@ import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.home.DashboardModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesItemsModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
+import com.personal.accountantAssistant.extensions.orOne
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toDate
-import com.personal.accountantAssistant.utils.NumberUtils
 import java.util.*
 
 class HomeViewModel(
@@ -55,8 +55,7 @@ class HomeViewModel(
         availableMoney = localStorage?.getAvailableMoney()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
-        val days = periodDays.value?.let { if (it > 0) it else 1 } ?: run { 1 }
-        val daily = NumberUtils.roundTo(availableMoney?.div(days))
+        val days = periodDays.value.orOne()
 
         val buys = databaseManager?.getExpensesTotalPriceUntil(
             ExpensesType.BUY, localStorage?.getLastDate()
@@ -66,8 +65,8 @@ class HomeViewModel(
             ExpensesType.BILL, localStorage?.getLastDate()
         )
 
-        val total = buys?.plus(bills.orZero())?.plus(daily)
-        _expensesValues.postValue(ExpensesValuesModel(daily, buys, bills, total))
+        val total = buys?.plus(bills.orZero())
+        _expensesValues.postValue(ExpensesValuesModel(buys, bills, total))
     }
 
     fun savePeriodDates(firstTimeInMillis: Long?, lastTimeInMillis: Long?) {

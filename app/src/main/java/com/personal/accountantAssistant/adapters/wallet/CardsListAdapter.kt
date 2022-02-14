@@ -15,6 +15,7 @@ import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.isDefaultRecord
 import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.wallet.WalletDetailsFragment
@@ -71,7 +72,7 @@ class CardsListAdapter constructor(
                 tvName.text = it.name
                 tvValue.text = "$ ${roundTo(it.value)}"
                 //ACTIONS
-                scActive.isChecked = it.isActive ?: false
+                scActive.isChecked = it.isActive.orFalse()
                 scActive.setOnClickListener { _ -> setActiveRowFrom(scActive.isChecked, it) }
                 ibDelete.setOnClickListener { _ -> deleteRecordFrom(it) }
                 itemView.setOnClickListener { _ -> editRecordFrom(it) }

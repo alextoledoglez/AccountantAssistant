@@ -22,6 +22,7 @@ import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.extensions.showImportOrExportFrom
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
@@ -134,7 +135,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             else -> MenuHelper.initializeHomeOptions()
         }
 
-        val isAnyActive = databaseManager?.anyActiveExpensesRecordsBy(type) ?: false
+        val isAnyActive = databaseManager?.anyActiveExpensesRecordsBy(type).orFalse()
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
         titleImageView?.setImageResource(R.drawable.ic_money)

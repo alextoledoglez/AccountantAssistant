@@ -124,7 +124,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
         MenuHelper.initializeWalletOptions()
 
-        val isAnyActive = databaseManager?.isAnyCardRecordActive() ?: false
+        val isAnyActive = databaseManager?.isAnyCardRecordActive().orFalse()
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
         titleImageView?.setImageResource(R.drawable.ic_money)

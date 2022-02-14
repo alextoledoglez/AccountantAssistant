@@ -51,14 +51,13 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun setupView() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
-            dashboardValues.observe(viewLifecycleOwner, {
+            dashboardValues.observe(viewLifecycleOwner) {
                 setupDashboardCard(R.id.available_card, it?.available)
-                setupDashboardCard(R.id.needed_card, it?.gainOrNeeded)
-                setupDashboardCard(R.id.total_card, it?.expensesItems?.total)
-                setupDashboardCard(R.id.daily_card, it?.expensesItems?.daily)
                 setupDashboardCard(R.id.buy_card, it?.expensesItems?.buy)
                 setupDashboardCard(R.id.bill_card, it?.expensesItems?.bill)
-            })
+                setupDashboardCard(R.id.needed_card, it?.gainOrNeeded)
+                setupDashboardCard(R.id.total_card, it?.expensesItems?.total)
+            }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
         }
         with(binding) {
@@ -99,7 +98,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             R.id.available_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_wallet)
             R.id.needed_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_money)
             R.id.total_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_total)
-            R.id.daily_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_daily)
             R.id.buy_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_buys)
             R.id.bill_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_bills)
         }
@@ -137,7 +135,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     private fun settingDashboardItems(values: ExpensesValuesModel?) {
 
         val availableMoney = viewModel.availableMoney.orZero()
-        val dailyExpenses = values?.daily.orZero()
         val buyExpenses = values?.buys.orZero()
         val billExpenses = values?.bills.orZero()
         val totalExpenses = NumberUtils.roundTo(values?.total.orZero())
@@ -148,9 +145,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val available = DashboardItemModel(availableMoney, titleResources.available, availableColor)
 
         val expenses = ExpensesItemsModel(
-            DashboardItemModel(
-                dailyExpenses, titleResources.daily, getExpenseColorResourceBy(dailyExpenses)
-            ),
             DashboardItemModel(
                 buyExpenses, titleResources.buys, getExpenseColorResourceBy(buyExpenses)
             ),

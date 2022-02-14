@@ -19,10 +19,7 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Compani
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Companion.isBuy
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.FragmentExpensesDetailsBinding
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.setupNumberPickerFrom
-import com.personal.accountantAssistant.extensions.showDatePickerFrom
-import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.DateUtils.toString
@@ -107,7 +104,7 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         //Value and switch
         binding.root.apply {
             etValue.setText(java.lang.String.valueOf(expenseEntity?.unitaryValue))
-            scActive.isChecked = expenseEntity?.isActive ?: false
+            scActive.isChecked = expenseEntity?.isActive.orFalse()
         }
 
         //Footer

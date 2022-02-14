@@ -12,6 +12,7 @@ import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.utils.Constants
@@ -61,7 +62,7 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
                 setText(card?.password.orZero().toString())
             }
             //Value and switch
-            scActive.isChecked = card?.isActive ?: false
+            scActive.isChecked = card?.isActive.orFalse()
             //Footer
             lytFooter.apply {
                 mbCancel.setOnClickListener { dismiss() }
