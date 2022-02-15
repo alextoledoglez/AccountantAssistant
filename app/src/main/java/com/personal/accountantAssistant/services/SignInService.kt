@@ -44,8 +44,8 @@ class SignInService(val context: Context) {
 
     private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder {
         return GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
     }
 
     private fun getSignInClient(signInOptions: GoogleSignInOptions?): GoogleSignInClient? {
@@ -60,7 +60,7 @@ class SignInService(val context: Context) {
     /**
      * Request sign in intent from a provided account.
      */
-    fun getAccountNameSignInClient(): GoogleSignInClient? {
+    private fun getAccountNameSignInClient(): GoogleSignInClient? {
         Log.d(TAG, "Requesting silent sign-in")
         signInOptions = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
         return getSignInClient(signInOptions)
@@ -85,46 +85,52 @@ class SignInService(val context: Context) {
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
-    fun handleSignInResult(result: Intent, requestCode: Int, signInButton: SignInButton?, progressBar: ProgressBar?) {
+    fun handleSignInResult(
+        result: Intent,
+        requestCode: Int,
+        signInButton: SignInButton?,
+        progressBar: ProgressBar?
+    ) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
-                .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
-                    setAccountName(googleAccount.email)
-                    Log.d(TAG, "Signed in as $accountName")
-                    // Use the authenticated account to sign in to the Drive service.
-                    credential = GoogleAccountCredential.usingOAuth2(context, scopes)
-                    credential?.selectedAccount = googleAccount.account
-                    driveService = Drive.Builder(AndroidHttp.newCompatibleTransport(), GsonFactory(), credential)
-                            .setApplicationName(context.getString(R.string.app_name))
-                            .build()
-                    //Once time you are sign in
-                    if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
-                        signInButton?.visibility = View.INVISIBLE
-                    }
-                    ActivityUtils.startMainActivity(context)
+            .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
+                setAccountName(googleAccount.email)
+                Log.d(TAG, "Signed in as $accountName")
+                // Use the authenticated account to sign in to the Drive service.
+                credential = GoogleAccountCredential.usingOAuth2(context, scopes)
+                credential?.selectedAccount = googleAccount.account
+                driveService =
+                    Drive.Builder(AndroidHttp.newCompatibleTransport(), GsonFactory(), credential)
+                        .setApplicationName(context.getString(R.string.app_name))
+                        .build()
+                //Once time you are sign in
+                if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
+                    signInButton?.visibility = View.INVISIBLE
                 }
-                .addOnFailureListener { exception: Exception? ->
-                    Log.e(TAG, "Unable to sign in.", exception)
-                    if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
-                        signInButton?.visibility = View.VISIBLE
-                    }
-                    progressBar?.visibility = View.GONE
-                    cleanData()
+                ActivityUtils.startMainActivity(context)
+            }
+            .addOnFailureListener { exception: Exception? ->
+                Log.e(TAG, "Unable to sign in.", exception)
+                if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
+                    signInButton?.visibility = View.VISIBLE
                 }
+                progressBar?.visibility = View.GONE
+                cleanData()
+            }
     }
 
-    fun signOutResult(): Task<Void>? {
+    private fun signOutResult(): Task<Void>? {
         return signInClient?.signOut()
     }
 
     fun signOut(): Task<Void>? {
         return signOutResult()
-                ?.addOnSuccessListener {
-                    Log.d(TAG, "Signed out")
-                    cleanData()
-                }
-                ?.addOnFailureListener { exception: Exception? ->
-                    Log.e(TAG, "Unable to sign out.", exception)
-                }
+            ?.addOnSuccessListener {
+                Log.d(TAG, "Signed out")
+                cleanData()
+            }
+            ?.addOnFailureListener { exception: Exception? ->
+                Log.e(TAG, "Unable to sign out.", exception)
+            }
     }
 
     private fun setAccountName(accountName: String?) {
