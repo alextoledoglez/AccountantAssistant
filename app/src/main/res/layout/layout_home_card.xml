@@ -17,24 +17,24 @@
     <TextView
         android:id="@+id/tvCardTitle"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="@dimen/small_material_margin"
         android:layout_weight="1"
         android:gravity="center|center_horizontal|center_vertical"
-        android:text="@string/menu_buys"
         android:textAlignment="gravity"
         android:textSize="@dimen/card_title_text_size"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Expense type" />
 
     <TextView
         android:id="@+id/tvCardSubtitle"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="@dimen/small_material_margin"
         android:layout_marginBottom="@dimen/small_material_margin"
         android:layout_weight="1"
         android:gravity="center|center_horizontal|center_vertical"
-        android:text="@string/menu_buys"
         android:textAlignment="gravity"
         android:textSize="@dimen/card_subTitle_text_size"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="$ 1000000.00" />
 
 </LinearLayout>

@@ -71,6 +71,7 @@
         <item name="android:layout_width">@dimen/zero</item>
         <item name="android:layout_height">@dimen/small_card_height</item>
         <item name="android:layout_marginTop">@dimen/smallest_material_margin</item>
+        <item name="android:layout_marginHorizontal">@dimen/smallest_material_margin</item>
         <item name="android:layout_marginBottom">@dimen/smallest_material_margin</item>
     </style>
 

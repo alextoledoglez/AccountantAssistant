@@ -18,6 +18,7 @@ import com.personal.accountantAssistant.domain.models.home.*
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.MenuHelper
 import com.personal.accountantAssistant.utils.NumberUtils
 import kotlinx.android.synthetic.main.layout_home_card.view.*
@@ -51,6 +52,9 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun setupView() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
+            periodValue.observe(viewLifecycleOwner) {
+                binding.availableSection.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
+            }
             dashboardValues.observe(viewLifecycleOwner) {
                 setupDashboardCard(R.id.available_card, it?.available)
                 setupDashboardCard(R.id.buy_card, it?.expensesItems?.buy)
@@ -62,7 +66,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         }
         with(binding) {
             viewModel.calculateExpenses()
-            mbDateRangePicker.setOnClickListener { showRangePicker() }
+            availableSection.ibDateRangePicker.setOnClickListener { showRangePicker() }
         }
     }
 
@@ -73,8 +77,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             .setSelection(viewModel.getSelectedPeriod())
             .build()
             .apply {
-                addOnPositiveButtonClickListener {
-                    viewModel.savePeriodDates(it?.first, it?.second)
+                addOnPositiveButtonClickListener { period ->
+                    viewModel.savePeriodDates(period)
                     viewModel.calculateExpenses()
                 }
             }

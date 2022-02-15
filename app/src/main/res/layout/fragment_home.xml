@@ -44,19 +44,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/expenses_section" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbDateRangePicker"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_height"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="@dimen/default_material_margin"
-        android:layout_marginVertical="@dimen/smallest_material_margin"
-        android:minHeight="@dimen/title_height"
-        android:text="@string/period_to_expense"
-        app:icon="@drawable/ic_today"
-        app:iconGravity="textStart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/summary_section" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

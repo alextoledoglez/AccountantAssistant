@@ -46,18 +46,19 @@ object DateUtils {
     }
 
     fun toPeriodStr(firstDate: Date?, lastDate: Date?): String {
-        return toString(firstDate) + Constants.DASH_SEPARATOR + toString(lastDate)
+        return "${toString(firstDate)}${Constants.DASH_SEPARATOR}${toString(lastDate)}"
     }
 
-    private fun toCalendar(timeInMillis: Long?): Calendar? =
-        Calendar.getInstance().also { calendar ->
-            timeInMillis?.let { calendar.timeInMillis = it }
-        }
+    private fun toCalendar(timeInMillis: Long?): Calendar? {
+        val calendar = Calendar.getInstance()
+        timeInMillis?.let { calendar.timeInMillis = it }
+        return calendar
+    }
 
     private fun toCalendar(date: Date?): Calendar {
-        val calendarDate = Calendar.getInstance()
-        date?.let { calendarDate.time = it }
-        return calendarDate
+        val calendar = Calendar.getInstance()
+        date?.let { calendar.time = it }
+        return calendar
     }
 
     fun toCalendarMillis(date: Date?): Long {
