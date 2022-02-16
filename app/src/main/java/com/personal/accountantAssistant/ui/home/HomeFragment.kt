@@ -3,44 +3,37 @@ package com.personal.accountantAssistant.ui.home
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.adapters.home.HomeListAdapter
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
-import com.personal.accountantAssistant.domain.models.TextSizeResourcesModel
-import com.personal.accountantAssistant.domain.models.home.*
+import com.personal.accountantAssistant.domain.models.home.ColorResourcesModel
+import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
+import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
+import com.personal.accountantAssistant.domain.models.home.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.MenuHelper
 import com.personal.accountantAssistant.utils.NumberUtils
-import kotlinx.android.synthetic.main.layout_home_card.view.*
 import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.P)
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
-    private var textSizeResources: TextSizeResourcesModel = TextSizeResourcesModel()
-    private var titleResources: TitleResourcesModel = TitleResourcesModel()
-    private var colorResources: ColorResourcesModel = ColorResourcesModel()
-    private var cardTitle: String? = String.EMPTY
-    private var hideImageView: Boolean? = false
-    private var imageResource: Int? = null
-    private var textSize: Int? = null
+    private var titleRes: TitleResourcesModel = TitleResourcesModel()
+    private var colorRes: ColorResourcesModel = ColorResourcesModel()
+    private val adapter by lazy { HomeListAdapter() }
 
-    @ColorRes
-    private var fontColorResource = R.color.colorBlack
-
-    @ColorRes
-    private var colorResource = getDefaultBackgroundColorResource()
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.rvDashboard.adapter = null
+    }
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
@@ -55,16 +48,12 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             periodValue.observe(viewLifecycleOwner) {
                 binding.availableSection.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
             }
-            dashboardValues.observe(viewLifecycleOwner) {
-                setupDashboardCard(R.id.available_card, it?.available)
-                setupDashboardCard(R.id.buy_card, it?.expensesItems?.buy)
-                setupDashboardCard(R.id.bill_card, it?.expensesItems?.bill)
-                setupDashboardCard(R.id.needed_card, it?.gainOrNeeded)
-                setupDashboardCard(R.id.total_card, it?.expensesItems?.total)
-            }
+            availableMoney.observe(viewLifecycleOwner, ::settingAvailableMoneyCard)
+            dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
         }
         with(binding) {
+            rvDashboard.adapter = adapter
             viewModel.calculateExpenses()
             availableSection.ibDateRangePicker.setOnClickListener { showRangePicker() }
         }
@@ -85,101 +74,73 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             .show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
-    private fun getDefaultBackgroundColorResource() = R.color.colorWhite
+    private fun settingAvailableMoneyCard(value: Double?) {
+        val isExpensesLessThanAvailable = viewModel.isExpensesLessThanAvailable(
+            viewModel.totalExpenses.value
+        )
+        val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
+        binding.availableSection.availableCard.apply {
+            ivCardImage.apply {
+                setImageResource(R.drawable.ic_wallet)
+                setColorFilter(
+                    context.getColor(availableColor),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+                visibility = View.VISIBLE
+            }
+            tvCardTitle.apply {
+                text = context.getString(titleRes.available)
+                setTextColor(context.getColor(availableColor))
+                setBackgroundColor(context.getColor(R.color.colorWhite))
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.orZero())
+            }
 
-    private fun setupDashboardCard(resourceId: Int, model: DashboardItemModel?) {
-
-        val rootView = binding.root.findViewById<View>(resourceId)
-        val imageView = rootView.ivCardImage
-        val titleTextView = rootView.tvCardTitle
-        val subtitleTextView = rootView.tvCardSubtitle
-
-        cardTitle = String.EMPTY
-        textSize = textSizeResources.normal
-        model?.colorResource?.let { fontColorResource = it }
-
-        when (resourceId) {
-            R.id.available_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_wallet)
-            R.id.needed_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_money)
-            R.id.total_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_total)
-            R.id.buy_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_buys)
-            R.id.bill_card -> setupImageCardTitleBy(model?.strResource, R.drawable.ic_bills)
+            tvCardSubtitle.apply {
+                text = abs(value.orZero()).toString()
+                setTextColor(context.getColor(availableColor))
+            }
         }
-
-        setupCardImageView(imageView)
-        setupCardTitleTextView(titleTextView)
-        setupCardSubtitleTextView(model?.value.toString(), subtitleTextView)
-    }
-
-    private fun setupCardImageView(cardImageView: ImageView) = cardImageView.apply {
-        imageResource?.let { setImageResource(it) }
-        setColorFilter(context.getColor(fontColorResource), android.graphics.PorterDuff.Mode.SRC_IN)
-        visibility = if (hideImageView == true) View.GONE else View.VISIBLE
-    }
-
-    private fun setupCardTitleTextView(tvTitle: TextView) = tvTitle.apply {
-        text = cardTitle.orEmpty()
-        setTextColor(context.getColor(fontColorResource))
-        setBackgroundColor(context.getColor(colorResource))
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.orZero())
-    }
-
-    private fun setupCardSubtitleTextView(value: String, tvSubtitle: TextView) = tvSubtitle.apply {
-        text = abs(value.toDouble()).toString()
-        setTextColor(context.getColor(fontColorResource))
-    }
-
-    private fun setupImageCardTitleBy(@StringRes titleRes: Int?, @DrawableRes imageResource: Int?) {
-        hideImageView = false
-        this.imageResource = imageResource
-        cardTitle = titleRes?.let { getString(it) }
-        colorResource = getDefaultBackgroundColorResource()
     }
 
     private fun settingDashboardItems(values: ExpensesValuesModel?) {
 
-        val availableMoney = viewModel.availableMoney.orZero()
-        val buyExpenses = values?.buys.orZero()
-        val billExpenses = values?.bills.orZero()
-        val totalExpenses = NumberUtils.roundTo(values?.total.orZero())
-        val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(totalExpenses))
+        val availableMoney = viewModel.availableMoney.value.orZero()
+        val buys = values?.buys.orZero()
+        val bills = values?.bills.orZero()
+        val total = NumberUtils.roundTo(values?.total.orZero())
+        val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(total))
+        val isZeroLessThanGainOrNeeded = viewModel.isZeroLessThan(gainOrNeededValue)
+        val gainOrNeededTitle = if (isZeroLessThanGainOrNeeded) titleRes.gain else titleRes.missing
+        val gainOrNeededColor = getColorResourceBy(isZeroLessThanGainOrNeeded)
 
-        val isExpensesLessThanAvailable = viewModel.isExpensesLessThanAvailable(totalExpenses)
-        val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
-        val available = DashboardItemModel(availableMoney, titleResources.available, availableColor)
-
-        val expenses = ExpensesItemsModel(
-            DashboardItemModel(
-                buyExpenses, titleResources.buys, getExpenseColorResourceBy(buyExpenses)
-            ),
-            DashboardItemModel(
-                billExpenses, titleResources.bills, getExpenseColorResourceBy(billExpenses)
-            ),
-            DashboardItemModel(
-                totalExpenses, titleResources.total, getExpenseColorResourceBy(totalExpenses)
+        viewModel.postDashboardValues(
+            listOf(
+                DashboardItemModel(
+                    R.drawable.ic_buys, titleRes.buys, getExpenseColorResourceBy(buys), buys
+                ),
+                DashboardItemModel(
+                    R.drawable.ic_bills, titleRes.bills, getExpenseColorResourceBy(bills), bills
+                ),
+                DashboardItemModel(
+                    R.drawable.ic_money, gainOrNeededTitle, gainOrNeededColor, gainOrNeededValue
+                ),
+                DashboardItemModel(
+                    R.drawable.ic_total, titleRes.total, getExpenseColorResourceBy(total), total
+                )
             )
         )
-
-        val isZeroLessThanGainOrNeeded = viewModel.isZeroLessThan(gainOrNeededValue)
-        val gainOrNeededTitle =
-            if (isZeroLessThanGainOrNeeded) titleResources.gain else titleResources.missing
-        val gainOrNeededColor = getColorResourceBy(isZeroLessThanGainOrNeeded)
-        val gainOrNeeded =
-            DashboardItemModel(gainOrNeededValue, gainOrNeededTitle, gainOrNeededColor)
-
-        viewModel.postDashboardValues(available, expenses, gainOrNeeded)
     }
 
     private fun getColorResourceBy(
         isCondition: Boolean?,
-        @ColorRes trueResource: Int = colorResources.success,
-        @ColorRes falseResource: Int = colorResources.error
+        @ColorRes trueResource: Int = colorRes.success,
+        @ColorRes falseResource: Int = colorRes.error
     ) = if (isCondition == true) trueResource else falseResource
 
     private fun getExpenseColorResourceBy(expense: Double?): Int = getColorResourceBy(
         viewModel.isExpensesMoreThanAvailable(expense),
-        colorResources.error,
-        colorResources.success
+        colorRes.error,
+        colorRes.success
     )
 
     companion object {

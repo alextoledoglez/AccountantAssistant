@@ -1,75 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/small_material_margin"
-    android:orientation="vertical"
-    app:cardBackgroundColor="@color/colorWhite"
-    app:cardCornerRadius="@dimen/card_view_default_radius"
-    app:cardElevation="@dimen/card_view_elevation"
-    app:cardUseCompatPadding="true"
-    app:contentPadding="@dimen/card_view_content_padding">
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <include
+        android:id="@+id/available_card"
+        style="@style/smallCardStyle"
+        layout="@layout/home_item_list"
+        android:layout_width="@dimen/small_card_width"
+        android:layout_height="@dimen/small_card_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <include
-            android:id="@+id/available_card"
-            style="@style/smallCardStyle"
-            layout="@layout/layout_home_card"
-            android:layout_width="@dimen/small_card_width"
-            android:layout_height="@dimen/small_card_height"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvPeriodTitle"
+        android:layout_width="@dimen/zero"
+        android:layout_height="@dimen/zero"
+        android:layout_marginBottom="@dimen/smallest_material_margin"
+        android:gravity="center_horizontal|bottom"
+        android:text="@string/period_to_expense"
+        android:textAlignment="gravity"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/default_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tvPeriodValue"
+        app:layout_constraintEnd_toStartOf="@id/ibDateRangePicker"
+        app:layout_constraintStart_toEndOf="@id/available_card"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/period_to_expense" />
 
-        <TextView
-            android:id="@+id/tvPeriodTitle"
-            android:layout_width="@dimen/zero"
-            android:layout_height="@dimen/zero"
-            android:layout_marginBottom="@dimen/smallest_material_margin"
-            android:gravity="center_horizontal|bottom"
-            android:text="@string/period_to_expense"
-            android:textAlignment="gravity"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/default_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/tvPeriodValue"
-            app:layout_constraintEnd_toStartOf="@id/ibDateRangePicker"
-            app:layout_constraintStart_toEndOf="@id/available_card"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/period_to_expense" />
+    <TextView
+        android:id="@+id/tvPeriodValue"
+        android:layout_width="@dimen/zero"
+        android:layout_height="@dimen/zero"
+        android:layout_marginTop="@dimen/smallest_material_margin"
+        android:gravity="center_horizontal|top"
+        android:textAlignment="gravity"
+        android:textSize="@dimen/card_title_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ibDateRangePicker"
+        app:layout_constraintStart_toEndOf="@id/available_card"
+        app:layout_constraintTop_toBottomOf="@id/tvPeriodTitle"
+        tools:text="31/12/2021-31/12/2022" />
 
-        <TextView
-            android:id="@+id/tvPeriodValue"
-            android:layout_width="@dimen/zero"
-            android:layout_height="@dimen/zero"
-            android:layout_marginTop="@dimen/smallest_material_margin"
-            android:gravity="center_horizontal|top"
-            android:textAlignment="gravity"
-            android:textSize="@dimen/card_title_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/ibDateRangePicker"
-            app:layout_constraintStart_toEndOf="@id/available_card"
-            app:layout_constraintTop_toBottomOf="@id/tvPeriodTitle"
-            tools:text="31/12/2021-31/12/2022" />
+    <ImageButton
+        android:id="@+id/ibDateRangePicker"
+        android:layout_width="@dimen/title_height"
+        android:layout_height="@dimen/title_height"
+        android:layout_marginHorizontal="@dimen/smallest_material_margin"
+        android:backgroundTint="@color/backgroundColor"
+        android:src="@drawable/ic_today"
+        app:layout_constraintBottom_toBottomOf="@id/tvPeriodValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvPeriodValue"
+        app:layout_constraintTop_toTopOf="@id/tvPeriodTitle"
+        app:tint="@color/colorPrimary"
+        tools:ignore="ContentDescription" />
 
-        <ImageButton
-            android:id="@+id/ibDateRangePicker"
-            android:layout_width="@dimen/title_height"
-            android:layout_height="@dimen/title_height"
-            android:layout_marginHorizontal="@dimen/smallest_material_margin"
-            android:backgroundTint="@color/colorWhite"
-            android:src="@drawable/ic_today"
-            app:layout_constraintBottom_toBottomOf="@id/tvPeriodValue"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tvPeriodValue"
-            app:layout_constraintTop_toTopOf="@id/tvPeriodTitle"
-            app:tint="@color/colorPrimary"
-            tools:ignore="ContentDescription" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,26 +22,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
-        android:id="@+id/expenses_section"
-        layout="@layout/layout_home_expenses_card"
-        android:layout_width="@dimen/zero"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_material_margin"
-        android:layout_marginVertical="@dimen/small_material_margin"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDashboard"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero"
+        android:layout_margin="@dimen/default_material_margin"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/available_section" />
-
-    <include
-        android:id="@+id/summary_section"
-        layout="@layout/layout_home_summary_card"
-        android:layout_width="@dimen/zero"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_material_margin"
-        android:layout_marginVertical="@dimen/small_material_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/expenses_section" />
+        app:layout_constraintTop_toBottomOf="@id/available_section"
+        app:spanCount="2"
+        tools:listitem="@layout/home_item_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
