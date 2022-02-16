@@ -19,6 +19,7 @@
     <string name="period_to_expense">Período para gastos</string>
 
     <string name="available">Disponible</string>
+    <string name="available_value">Disponible : %1$s</string>
     <string name="expenses">Gastos</string>
     <string name="total">Total</string>
     <string name="gain">Ganancia</string>

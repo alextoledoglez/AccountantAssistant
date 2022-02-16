@@ -1,8 +1,6 @@
 package com.personal.accountantAssistant.ui.home
 
 import android.os.Build
-import android.util.TypedValue
-import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -46,7 +44,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
             periodValue.observe(viewLifecycleOwner) {
-                binding.availableSection.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
+                binding.lytHeader.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
             }
             availableMoney.observe(viewLifecycleOwner, ::settingAvailableMoneyCard)
             dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
@@ -55,7 +53,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         with(binding) {
             rvDashboard.adapter = adapter
             viewModel.calculateExpenses()
-            availableSection.ibDateRangePicker.setOnClickListener { showRangePicker() }
+            lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }
         }
     }
 
@@ -79,24 +77,14 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             viewModel.totalExpenses.value
         )
         val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
-        binding.availableSection.availableCard.apply {
-            ivCardImage.apply {
-                setImageResource(R.drawable.ic_wallet)
+        binding.lytHeader.apply {
+            ivAvailable.apply {
                 setColorFilter(
-                    context.getColor(availableColor),
-                    android.graphics.PorterDuff.Mode.SRC_IN
+                    context.getColor(availableColor), android.graphics.PorterDuff.Mode.SRC_IN
                 )
-                visibility = View.VISIBLE
             }
-            tvCardTitle.apply {
-                text = context.getString(titleRes.available)
-                setTextColor(context.getColor(availableColor))
-                setBackgroundColor(context.getColor(R.color.colorWhite))
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.orZero())
-            }
-
-            tvCardSubtitle.apply {
-                text = abs(value.orZero()).toString()
+            tvAvailable.apply {
+                text = getString(R.string.available_value, abs(value.orZero()).toString())
                 setTextColor(context.getColor(availableColor))
             }
         }
