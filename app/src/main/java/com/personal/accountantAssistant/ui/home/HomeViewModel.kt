@@ -31,9 +31,6 @@ class HomeViewModel(
     private val _availableMoney = MutableLiveData<Double>()
     val availableMoney: LiveData<Double> get() = _availableMoney
 
-    private val _totalExpenses = MutableLiveData(Constants.DEFAULT_VALUE)
-    val totalExpenses: LiveData<Double> get() = _totalExpenses
-
     private val _firstPeriodDate = MutableLiveData<Date?>(localStorage?.getFirstDate())
     private val firstPeriodDate = _firstPeriodDate
 
@@ -54,16 +51,17 @@ class HomeViewModel(
 
         val buysExpenses = databaseManager?.getExpensesTotalPriceUntil(
             ExpensesType.BUY, localStorage?.getLastDate()
-        )
+        ).orZero()
 
         val billsExpenses = databaseManager?.getExpensesTotalPriceUntil(
             ExpensesType.BILL, localStorage?.getLastDate()
-        )
+        ).orZero()
 
-        _totalExpenses.postValue(buysExpenses?.plus(billsExpenses.orZero()))
+        val totalExpenses = buysExpenses.plus(billsExpenses)
+
         _availableMoney.postValue(localStorage?.getAvailableMoney())
         _expensesValues.postValue(
-            ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses.value)
+            ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses)
         )
 
     }

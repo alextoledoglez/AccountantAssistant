@@ -46,9 +46,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             periodValue.observe(viewLifecycleOwner) {
                 binding.lytHeader.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
             }
-            availableMoney.observe(viewLifecycleOwner, ::settingAvailableMoneyCard)
-            dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
+            dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
         }
         with(binding) {
             rvDashboard.adapter = adapter
@@ -72,49 +71,42 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             .show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
-    private fun settingAvailableMoneyCard(value: Double?) {
-        val isExpensesLessThanAvailable = viewModel.isExpensesLessThanAvailable(
-            viewModel.totalExpenses.value
-        )
-        val availableColor = getColorResourceBy(isExpensesLessThanAvailable)
-        binding.lytHeader.apply {
-            ivAvailable.apply {
-                setColorFilter(
-                    context.getColor(availableColor), android.graphics.PorterDuff.Mode.SRC_IN
-                )
-            }
-            tvAvailable.apply {
-                text = getString(R.string.available_value, abs(value.orZero()).toString())
-                setTextColor(context.getColor(availableColor))
-            }
-        }
-    }
-
     private fun settingDashboardItems(values: ExpensesValuesModel?) {
 
-        val availableMoney = viewModel.availableMoney.value.orZero()
+        //Values
         val buys = values?.buys.orZero()
         val bills = values?.bills.orZero()
+        val available = viewModel.availableMoney.value.orZero()
         val total = NumberUtils.roundTo(values?.total.orZero())
-        val gainOrNeededValue = NumberUtils.roundTo(availableMoney.minus(total))
-        val isZeroLessThanGainOrNeeded = viewModel.isZeroLessThan(gainOrNeededValue)
-        val gainOrNeededTitle = if (isZeroLessThanGainOrNeeded) titleRes.gain else titleRes.missing
-        val gainOrNeededColor = getColorResourceBy(isZeroLessThanGainOrNeeded)
+        val result = NumberUtils.roundTo(available.minus(total))
+
+        //Colors
+        val buysColor = getExpenseColorResourceBy(buys)
+        val billsColor = getExpenseColorResourceBy(bills)
+        val totalColor = getExpenseColorResourceBy(total)
+        val availableColor = requireContext().getColor(
+            getColorResourceBy(viewModel.isExpensesLessThanAvailable(total))
+        )
+
+        //Result
+        val isZeroLessThanResult = viewModel.isZeroLessThan(result)
+        val resultTitle = if (isZeroLessThanResult) titleRes.gain else titleRes.missing
+        val resultColor = getColorResourceBy(isZeroLessThanResult)
+
+        binding.lytHeader.apply {
+            ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
+            tvAvailable.apply {
+                text = getString(R.string.available_value, abs(available).toString())
+                setTextColor(availableColor)
+            }
+        }
 
         viewModel.postDashboardValues(
             listOf(
-                DashboardItemModel(
-                    R.drawable.ic_buys, titleRes.buys, getExpenseColorResourceBy(buys), buys
-                ),
-                DashboardItemModel(
-                    R.drawable.ic_bills, titleRes.bills, getExpenseColorResourceBy(bills), bills
-                ),
-                DashboardItemModel(
-                    R.drawable.ic_money, gainOrNeededTitle, gainOrNeededColor, gainOrNeededValue
-                ),
-                DashboardItemModel(
-                    R.drawable.ic_total, titleRes.total, getExpenseColorResourceBy(total), total
-                )
+                DashboardItemModel(R.drawable.ic_buys, titleRes.buys, buysColor, buys),
+                DashboardItemModel(R.drawable.ic_bills, titleRes.bills, billsColor, bills),
+                DashboardItemModel(R.drawable.ic_money, resultTitle, resultColor, result),
+                DashboardItemModel(R.drawable.ic_total, titleRes.total, totalColor, total)
             )
         )
     }
