@@ -13,6 +13,8 @@ import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
+import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
 import java.util.*
 
 class HomeViewModel(
@@ -66,8 +68,10 @@ class HomeViewModel(
 
     }
 
+    fun getSelectedPeriod() = toUtcPair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)
+
     fun savePeriodDates(period: androidx.core.util.Pair<Long, Long>?) {
-        period?.let { savePeriodDates(Date(it.first), Date(it.second)) }
+        period?.let { savePeriodDates(toUtcDate(it.first), toUtcDate(it.second)) }
     }
 
     private fun setPeriodDates(firstDate: Date?, lastDate: Date?) {
@@ -80,10 +84,6 @@ class HomeViewModel(
         setPeriodDates(firstDate, lastDate)
         localStorage?.setPeriodDates(firstDate, lastDate)
     }
-
-    fun getSelectedPeriod() = androidx.core.util.Pair(
-        firstPeriodDate.value?.time, lastPeriodDate.value?.time
-    )
 
     fun postDashboardValues(list: List<DashboardItemModel>) {
         _dashboardValues.postValue(list)

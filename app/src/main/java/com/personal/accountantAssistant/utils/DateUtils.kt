@@ -24,7 +24,15 @@ object DateUtils {
         return date
     }
 
-    fun toDate(timeInMillis: Long?): Date? = toCalendar(timeInMillis)?.time
+    fun toUtcPair(first: Long?, second: Long?) = androidx.core.util.Pair(
+        toUtcTime(first), toUtcTime(second)
+    )
+
+    private fun toUtcTime(timeInMillis: Long?) = timeInMillis?.plus(
+        kotlin.math.abs(TimeZone.getDefault().getOffset(timeInMillis))
+    )
+
+    fun toUtcDate(timeInMillis: Long?) = toCalendar(toUtcTime(timeInMillis))?.time
 
     @JvmStatic
     fun toString(date: Date?): String? {
