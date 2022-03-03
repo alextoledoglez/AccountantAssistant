@@ -21,11 +21,9 @@ import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ImportExportUtils
 import com.personal.accountantAssistant.utils.MenuHelper
@@ -161,24 +159,24 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         ImportExportUtils.xlsExport(requireContext(), ExpensesType.BUY)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun deleteAllRecords() {
-        deleteAllCardsRecords()?.let {
-            ActionUtils.conditionalActions(it, { /*refreshRecyclerView()*/ })
-        }
+        deleteAllCardsRecords()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun restoreDefaultRecords() {
         deleteAllCardsRecords()?.let {
-            databaseManager?.insertDefaultCardsRecords()
-            //refreshRecyclerView()
+            databaseManager?.insertDefaultCardsRecords { cardsAdapter?.notifyCardsAddedOrChanged(it) }
         }
     }
 
-    private fun deleteAllCardsRecords(): Boolean? {
-        return databaseManager?.deleteAllCardsRecords()
-            ?.let { databaseManager?.isNotDefaultRecord(it) }
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun deleteAllCardsRecords() = databaseManager?.deleteAllCardsRecords {
+        cardsAdapter?.notifyCleanCards()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun importExportMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showImportOrExportFrom(
             R.string.import_export_title,
@@ -186,6 +184,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             this::exportMenuItemClickListener
         )
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun deleteAllMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_all_records_title,
@@ -193,6 +192,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             ::deleteAllRecords
         )
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun restoreDefaultMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.restore_default_records_title,

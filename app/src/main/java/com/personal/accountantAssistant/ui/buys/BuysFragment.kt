@@ -5,14 +5,12 @@ import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.data.mappers.toBuys
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
-import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.ImportExportUtils
 
 class BuysFragment : ExpensesFragment<BuysViewModel>() {
@@ -41,22 +39,21 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         ImportExportUtils.xlsExport(requireContext(), ExpensesType.BUY)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun deleteAllRecords() {
-        deleteAllBuysRecords()?.let {
-            ActionUtils.conditionalActions(it, { /*refreshRecyclerView()*/ })
-        }
+        deleteAllBuysRecords()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun restoreDefaultRecords() {
         deleteAllBuysRecords()?.let {
-            databaseManager?.insertDefaultBuysRecords()
-            //refreshRecyclerView()
+            databaseManager?.insertDefaultBuysRecords { adapter?.notifyExpenseAddedOrChanged(it) }
         }
     }
 
-    private fun deleteAllBuysRecords(): Boolean? {
-        return databaseManager?.deleteAllBuysRecord()
-            ?.let { databaseManager?.isNotDefaultRecord(it) }
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun deleteAllBuysRecords() = databaseManager?.deleteAllBuysRecord {
+        adapter?.notifyCleanExpenses()
     }
 
     companion object {

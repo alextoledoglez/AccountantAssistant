@@ -5,14 +5,12 @@ import androidx.annotation.RequiresApi
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.data.isNotDefaultRecord
 import com.personal.accountantAssistant.data.mappers.toBills
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
-import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.ImportExportUtils
 
 class BillsFragment : ExpensesFragment<BillsViewModel>() {
@@ -41,21 +39,22 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         ImportExportUtils.xlsExport(requireContext(), ExpensesType.BILL)
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun deleteAllRecords() {
-        deleteAllBillsRecords()?.let {
-            ActionUtils.conditionalActions(it, { /*refreshRecyclerView()*/ })
-        }
+        deleteAllBillsRecords()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun restoreDefaultRecords() {
         deleteAllBillsRecords()?.let {
-            databaseManager?.insertDefaultBillsRecords()
-            //refreshRecyclerView()
+            databaseManager?.insertDefaultBillsRecords { adapter?.notifyExpenseAddedOrChanged(it) }
         }
     }
 
-    private fun deleteAllBillsRecords() =
-        databaseManager?.deleteAllBillsRecord()?.let { databaseManager?.isNotDefaultRecord(it) }
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun deleteAllBillsRecords() = databaseManager?.deleteAllBillsRecord {
+        adapter?.notifyCleanExpenses()
+    }
 
     companion object {
         fun newInstance() = BillsFragment()

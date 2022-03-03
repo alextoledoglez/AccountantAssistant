@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.adapters.expenses
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -145,6 +146,7 @@ class ExpensesListAdapter constructor(
             }
 
             @Suppress("UNCHECKED_CAST")
+            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
                 expenses = filterResults?.values as MutableList<ExpenseEntity>?
                 notifyDataSetChanged()
@@ -169,6 +171,7 @@ class ExpensesListAdapter constructor(
                 roundTo(expenseEntity.getTotalValue())
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun notifyExpenseAddedOrChanged(expenseEntity: ExpenseEntity) {
         expenses = loadExpenses()
         val loadedExpense = expenses?.stream()?.filter {
@@ -199,6 +202,12 @@ class ExpensesListAdapter constructor(
         val wasRemoved = remove(expenseEntity)
         if (wasRemoved)
             notifyItemRemoved(position)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun notifyCleanExpenses() {
+        expenses = mutableListOf()
+        notifyDataSetChanged()
     }
 
     init {

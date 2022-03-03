@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.adapters.wallet
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -170,6 +171,12 @@ class CardsListAdapter constructor(
         val wasRemoved = remove(card)
         if (wasRemoved)
             notifyItemRemoved(position)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun notifyCleanCards() {
+        cards = mutableListOf()
+        notifyDataSetChanged()
     }
 
     init {

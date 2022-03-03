@@ -62,9 +62,7 @@ class HomeViewModel(
         val totalExpenses = buysExpenses.plus(billsExpenses)
 
         _availableMoney.postValue(localStorage?.getAvailableMoney())
-        _expensesValues.postValue(
-            ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses)
-        )
+        _expensesValues.postValue(ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses))
 
     }
 

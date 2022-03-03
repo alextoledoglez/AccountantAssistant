@@ -225,21 +225,30 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         getExpensesRecordsBy(expensesType)?.stream()
             ?.allMatch { obj: ExpenseEntity -> obj.isActive }
 
-    fun insertDefaultBillsRecords() {
-        for (defaultBillsEnum in BillsEnum.values()) {
-            insertBillRecordFrom(BillModel(defaultBillsEnum.value))
+    fun insertDefaultBillsRecords(notifyExpenseAddedOrChanged: (expenses: ExpenseEntity) -> Unit) {
+        BillsEnum.values().forEach {
+            val model = BillModel(it.value)
+            val id = insertBillRecordFrom(model)
+            if (id > Constants.DEFAULT_UID)
+                notifyExpenseAddedOrChanged(model.toExpense())
         }
     }
 
-    fun insertDefaultCardsRecords() {
-        for (card in DefaultCardsEnum.values()) {
-            insertCardRecordFrom(CardEntity(card.company, card.title))
+    fun insertDefaultCardsRecords(notifyCardAddedOrChanged: (card: CardEntity) -> Unit) {
+        DefaultCardsEnum.values().forEach {
+            val entity = CardEntity(it.company, it.title)
+            val id = insertCardRecordFrom(entity)
+            if (id > Constants.DEFAULT_UID)
+                notifyCardAddedOrChanged(entity)
         }
     }
 
-    fun insertDefaultBuysRecords() {
-        for (products in BuysEnum.values()) {
-            insertBuyRecordFrom(BuyModel(products.value))
+    fun insertDefaultBuysRecords(notifyExpenseAddedOrChanged: (expenses: ExpenseEntity) -> Unit) {
+        BuysEnum.values().forEach {
+            val model = BuyModel(it.value)
+            val id = insertBuyRecordFrom(model)
+            if (id > Constants.DEFAULT_UID)
+                notifyExpenseAddedOrChanged(model.toExpense())
         }
     }
 
@@ -250,7 +259,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         return id
     }
 
-    private fun insertExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long {
+    fun insertExpenseRecordFrom(expenseEntity: ExpenseEntity?): Long {
         val contentValues = toExpenseContentValues(expenseEntity)
         val id = writableDatabase.insert(PAYMENTS_TABLE, null, contentValues)
         writableDatabase.close()
@@ -314,11 +323,23 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         TYPE_WHERE_CLAUSE, arrayOf(expensesType.name)
     )
 
-    fun deleteAllCardsRecords(): Long = cardDeleteQuery(null, null)
+    fun deleteAllCardsRecords(notifyCleanCards: () -> Unit) {
+        val id = cardDeleteQuery(null, null)
+        if (id > Constants.DEFAULT_UID)
+            notifyCleanCards()
+    }
 
-    fun deleteAllBuysRecord(): Long = deleteAllExpensesRecordsBy(ExpensesType.BUY)
+    fun deleteAllBuysRecord(notifyCleanExpenses: () -> Unit) {
+        val id = deleteAllExpensesRecordsBy(ExpensesType.BUY)
+        if (id > Constants.DEFAULT_UID)
+            notifyCleanExpenses()
+    }
 
-    fun deleteAllBillsRecord(): Long = deleteAllExpensesRecordsBy(ExpensesType.BILL)
+    fun deleteAllBillsRecord(notifyCleanExpenses: () -> Unit) {
+        val id = deleteAllExpensesRecordsBy(ExpensesType.BILL)
+        if (id > Constants.DEFAULT_UID)
+            notifyCleanExpenses()
+    }
 
     fun insertOrUpdateCard(card: CardEntity?): Long = if (isNotDefaultRecord(card?.id?.toLong())) {
         updateCardRecordFrom(card)
