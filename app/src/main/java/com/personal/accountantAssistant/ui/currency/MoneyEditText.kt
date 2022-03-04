@@ -14,44 +14,31 @@ import java.util.*
 
 class MoneyEditText : AppCompatEditText {
 
-    private var ctx: Context? = null
-    private val editText = this@MoneyEditText
-
-    private var spacing: Boolean = false
-    private var decimals: Boolean = true
-    private var delimiter: Boolean = false
-
     private var current = String.EMPTY
     private var currency = String.EMPTY
+    private var decimals: Boolean = true
+    private val editText = this@MoneyEditText
     private var separator = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
 
     constructor(context: Context) : super(context) {
-        init(context)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context)
+        init()
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context, attrs, defStyleAttr
     ) {
-        init(context)
+        init()
     }
 
     private fun init(
-        context: Context,
-        currency: String? = null,
-        separator: String? = null,
-        spacing: Boolean? = null,
-        delimiter: Boolean? = null,
-        decimals: Boolean? = null
+        currency: String? = null, separator: String? = null, decimals: Boolean? = null
     ) {
-        ctx = context
         this.currency = currency.orEmpty()
         this.separator = separator.orEmpty()
-        this.spacing = spacing.orFalse()
-        this.delimiter = delimiter.orFalse()
         this.decimals = decimals.orFalse()
         initByAttributes()
     }
@@ -62,20 +49,15 @@ class MoneyEditText : AppCompatEditText {
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 if (charSequence.toString() != current) {
                     editText.removeTextChangedListener(this)
-                    val unmaskedText = unmaskText(charSequence)
+                    val unmaskedText = getUnmaskTextBy(charSequence)
                     if (unmaskedText.isNotEmpty()) {
-                        try {
-                            current = getFormattedTextBy(unmaskedText)
+                        getMaskedTextBy(unmaskedText)?.let {
+                            current = it
+                            val masked = getOrReplaceMaskedTextBy(it)
                             editText.apply {
-                                setText(
-                                    if (separator != String.COMMA && !decimals)
-                                        current.replace(String.COMMA.toRegex(), separator)
-                                    else
-                                        current
-                                )
-                                setSelection(current.length)
+                                setText(masked)
+                                setSelection(masked.length)
                             }
-                        } catch (e: NumberFormatException) {
                         }
                     }
                     editText.addTextChangedListener(this)
@@ -86,25 +68,30 @@ class MoneyEditText : AppCompatEditText {
         })
     }
 
-    private fun unmaskText(sequence: CharSequence) = sequence.toString()
+    private fun getUnmaskTextBy(sequence: CharSequence) = sequence.toString()
         .replace("[$,.]".toRegex(), String.EMPTY)
         .replace(currency.toRegex(), String.EMPTY)
         .replace("\\s+".toRegex(), String.EMPTY)
 
-    private fun getFormattedTextBy(unmaskedText: String): String {
-        val currencyFormat = if (spacing)
-            if (delimiter) "$currency. " else "$currency "
-        else
-            if (delimiter) "$currency." else currency
-        return if (decimals) {
+    private fun getMaskedTextBy(unmaskedText: String) = try {
+        if (decimals) {
             val number = (unmaskedText.toDouble() / 100)
             NumberFormat.getCurrencyInstance().format(number).replace(
-                NumberFormat.getCurrencyInstance().currency?.symbol.orEmpty(), currencyFormat
+                NumberFormat.getCurrencyInstance().currency?.symbol.orEmpty(), currency
             )
         } else {
             val locale = Locale.getDefault()
             val parsed = unmaskedText.toInt()
-            "$currencyFormat${NumberFormat.getNumberInstance(locale).format(parsed.toLong())}"
+            "$currency${NumberFormat.getNumberInstance(locale).format(parsed.toLong())}"
         }
+    } catch (e: NumberFormatException) {
+        null
     }
+
+    private fun getOrReplaceMaskedTextBy(
+        maskedText: String
+    ) = if (separator != String.COMMA && !decimals)
+        maskedText.replace(String.COMMA.toRegex(), separator)
+    else
+        maskedText
 }
