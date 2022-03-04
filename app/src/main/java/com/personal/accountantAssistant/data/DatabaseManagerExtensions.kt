@@ -7,11 +7,11 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
+import com.personal.accountantAssistant.extensions.DEFAULT_UID
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.CalendarsUtils
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ToastUtils
 import io.reactivex.functions.Action
 
@@ -20,7 +20,7 @@ fun DatabaseManager.isNotDefaultRecord(idOrRecord: Long?): Boolean = !isDefaultR
 
 
 fun DatabaseManager.isDefaultRecord(idOrRecord: Long?): Boolean {
-    return idOrRecord?.let { it.toInt() == Constants.DEFAULT_UID }.orFalse()
+    return idOrRecord?.let { it.toInt() == Int.DEFAULT_UID }.orFalse()
 }
 
 @RequiresApi(Build.VERSION_CODES.P)

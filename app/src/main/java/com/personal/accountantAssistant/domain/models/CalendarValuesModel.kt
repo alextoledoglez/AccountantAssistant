@@ -1,6 +1,6 @@
 package com.personal.accountantAssistant.domain.models
 
-import com.personal.accountantAssistant.utils.Constants
+import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
 import com.personal.accountantAssistant.utils.DateUtils
 import java.util.*
 
@@ -70,6 +70,6 @@ data class CalendarValuesModel(private var calendar: Calendar) {
     }
 
     fun toCurrentDateStr(): String {
-        return "${getDayOfMonth()}${Constants.DASH_SEPARATOR}${getMonth()}${Constants.DASH_SEPARATOR}${getYear()}"
+        return "${getDayOfMonth()}${String.DASH_SEPARATOR}${getMonth()}${String.DASH_SEPARATOR}${getYear()}"
     }
 }

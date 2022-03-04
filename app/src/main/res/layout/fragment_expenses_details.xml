@@ -79,12 +79,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytQuantity">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.personal.accountantAssistant.ui.currency.MoneyEditText
             android:id="@+id/etValue"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
             android:ems="10"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:minHeight="@dimen/title_height"
             android:textAlignment="center"
             android:textSize="@dimen/card_subTitle_text_size"

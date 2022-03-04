@@ -13,6 +13,7 @@
     <string name="import_export">Importar / Exportar</string>
     <string name="delete_all">Apagar tudo</string>
     <string name="restore_default">Restaurar padrão</string>
+    <string name="money_format">###.###.###,##</string>
 
     <string name="menu_home">Início</string>
     <string name="money_to_expense">Dinheiro para gastar</string>

@@ -9,6 +9,7 @@ import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesFieldsEnum
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
 import jxl.Workbook
@@ -150,7 +151,7 @@ object ImportExportUtils {
     }
 
     private fun getConditionalDateValueFrom(expenseEntity: ExpenseEntity) =
-        if (expenseEntity.isBill == true) expenseEntity.date.toString() else Constants.DASH_SEPARATOR
+        if (expenseEntity.isBill == true) expenseEntity.date.toString() else String.DASH_SEPARATOR
 
     private fun setHeaderCell(sheet: WritableSheet) {
         for ((colIndex, value) in ExpensesFieldsEnum.values().withIndex()) {

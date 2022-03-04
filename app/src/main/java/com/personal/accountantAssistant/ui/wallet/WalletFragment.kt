@@ -24,7 +24,6 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ImportExportUtils
 import com.personal.accountantAssistant.utils.MenuHelper
 import org.koin.android.ext.android.inject
@@ -90,7 +89,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
         //Subtitle
         subTitleTextView = headerCardTitlesBar.findViewById(R.id.titles_bar_subtitle)
-        subTitleTextView?.text = java.lang.String.valueOf(Constants.DEFAULT_VALUE)
+        subTitleTextView?.text = String.STR_DEFAULT_MONETARY_VALUE
 
         //Switch
         checker = headerCardTitlesBar.findViewById(R.id.title_switch)

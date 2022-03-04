@@ -18,12 +18,10 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Compani
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Companion.isBuy
 import com.personal.accountantAssistant.data.isDefaultRecord
 import com.personal.accountantAssistant.data.isNotDefaultRecord
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.utils.CalculatorUtils
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import com.personal.accountantAssistant.utils.MenuHelper.initializeBillsOptions
@@ -158,17 +156,21 @@ class ExpensesListAdapter constructor(
         get() = roundTo(
             expenses?.stream()?.filter(ExpenseEntity::isActive)
                 ?.map { obj: ExpenseEntity -> obj.getTotalValue() }
-                ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
+                ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
         )
 
-    private fun toFormattedValue(expenseEntity: ExpenseEntity): String {
-        var quantityStr = java.lang.String.valueOf(expenseEntity.quantity)
-        quantityStr += if (expenseEntity.isBuy == true) Constants.UNITY else Constants.TIMES
-        return quantityStr +
-                Constants.MULTIPLY_OPERATOR +
-                expenseEntity.unitaryValue +
-                Constants.EQUAL_OPERATOR +
-                roundTo(expenseEntity.getTotalValue())
+    private fun toFormattedValue(entity: ExpenseEntity): String {
+        val isBuyEntity = entity.isBuy.orFalse()
+        val operator: String
+        var quantityStr = java.lang.String.valueOf(entity.quantity)
+        if (isBuyEntity) {
+            quantityStr += String.UNITY
+            operator = String.MULTIPLY_OPERATOR
+        } else {
+            quantityStr += String.TIMES
+            operator = String.EMPTY
+        }
+        return "$quantityStr$operator${entity.unitaryValue}${String.EQUAL_OPERATOR}${roundTo(entity.getTotalValue())}"
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -22,12 +22,12 @@ import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.extensions.STR_DEFAULT_MONETARY_VALUE
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.showConfirmationFrom
 import com.personal.accountantAssistant.extensions.showImportOrExportFrom
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.ActionUtils
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.MenuHelper
 import io.reactivex.functions.Action
 import org.koin.android.ext.android.inject
@@ -91,7 +91,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
         //Subtitle
         subTitleTextView = headerCardTitlesBar.findViewById(R.id.titles_bar_subtitle)
-        subTitleTextView?.text = java.lang.String.valueOf(Constants.DEFAULT_VALUE)
+        subTitleTextView?.text = String.STR_DEFAULT_MONETARY_VALUE
 
         //Switch
         checker = headerCardTitlesBar.findViewById(R.id.title_switch)

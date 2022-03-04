@@ -12,10 +12,10 @@ import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
+import com.personal.accountantAssistant.extensions.ENTITY
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.activity_wallet_details.view.*
 import kotlinx.android.synthetic.main.options_footer_bar.view.*
@@ -71,7 +71,7 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         }
     }
 
-    private fun getCard() = (arguments?.getSerializable(Constants.ENTITY) as? CardEntity?)
+    private fun getCard() = (arguments?.getSerializable(String.ENTITY) as? CardEntity?)
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun saveCard(card: CardEntity?) {
@@ -93,7 +93,7 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     companion object {
         fun newInstance(card: CardEntity?) = WalletDetailsFragment().apply {
-            arguments = Bundle().apply { putSerializable(Constants.ENTITY, card) }
+            arguments = Bundle().apply { putSerializable(String.ENTITY, card) }
         }
     }
 }

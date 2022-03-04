@@ -2,8 +2,8 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.NumberUtils
 import java.util.*
@@ -28,7 +28,7 @@ class LocalStorage(val context: Context) {
 
     fun getAvailableMoney(): Double = NumberUtils.roundTo(
         getDefaultSharedPreferences().getFloat(
-            AVAILABLE_MONEY, Constants.STR_DEFAULT_MONETARY_VALUE.toFloat()
+            AVAILABLE_MONEY, Double.DEFAULT_VALUE.toFloat()
         ).toDouble()
     )
 

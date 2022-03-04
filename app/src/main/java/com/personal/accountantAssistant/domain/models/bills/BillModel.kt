@@ -1,7 +1,9 @@
 package com.personal.accountantAssistant.domain.models.bills
 
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
-import com.personal.accountantAssistant.utils.Constants
+import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
+import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import java.util.*
 
 data class BillModel(
@@ -9,18 +11,18 @@ data class BillModel(
     var bill: String? = null,
     var quantity: Int = 0,
     var date: Date? = null,
-    var value: Double = Constants.DEFAULT_VALUE,
-    var totalValue: Double = Constants.DEFAULT_VALUE,
+    var value: Double = Double.DEFAULT_VALUE,
+    var totalValue: Double = Double.DEFAULT_VALUE,
     var isActive: Boolean = false
 ) {
 
     constructor(bill: String?) : this() {
         this.bill = bill
-        quantity = Constants.DEFAULT_QUANTITY_VALUE
-        date = Constants.DEFAULT_DATE_VALUE
-        value = Constants.DEFAULT_VALUE
-        totalValue = Constants.DEFAULT_VALUE
-        isActive = Constants.DEFAULT_ACTIVE_STATUS
+        quantity = Int.DEFAULT_QUANTITY_VALUE
+        date = Date()
+        value = Double.DEFAULT_VALUE
+        totalValue = Double.DEFAULT_VALUE
+        isActive = Boolean.DEFAULT_ACTIVE_STATUS
     }
 
     constructor(

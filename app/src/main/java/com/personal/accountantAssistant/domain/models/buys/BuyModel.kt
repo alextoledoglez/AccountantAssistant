@@ -1,24 +1,26 @@
 package com.personal.accountantAssistant.domain.models.buys
 
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
-import com.personal.accountantAssistant.utils.Constants
+import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
+import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 
 data class BuyModel(
     var uid: Int = 0,
     var product: String? = null,
     var quantity: Int = 0,
-    var price: Double = Constants.DEFAULT_VALUE,
-    var totalValue: Double = Constants.DEFAULT_VALUE,
+    var price: Double = Double.DEFAULT_VALUE,
+    var totalValue: Double = Double.DEFAULT_VALUE,
     var isActive: Boolean = false
 ) {
 
 
     constructor(product: String?) : this() {
         this.product = product
-        quantity = Constants.DEFAULT_QUANTITY_VALUE
-        price = Constants.DEFAULT_VALUE
-        totalValue = Constants.DEFAULT_VALUE
-        isActive = Constants.DEFAULT_ACTIVE_STATUS
+        quantity = Int.DEFAULT_QUANTITY_VALUE
+        price = Double.DEFAULT_VALUE
+        totalValue = Double.DEFAULT_VALUE
+        isActive = Boolean.DEFAULT_ACTIVE_STATUS
     }
 
     constructor(

@@ -15,13 +15,13 @@ import com.personal.accountantAssistant.data.deleteRecord
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.isDefaultRecord
 import com.personal.accountantAssistant.data.isNotDefaultRecord
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.wallet.WalletDetailsFragment
 import com.personal.accountantAssistant.utils.CalculatorUtils
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
 import com.personal.accountantAssistant.utils.NumberUtils.roundTo
@@ -50,7 +50,7 @@ class CardsListAdapter constructor(
             cards?.stream()
                 ?.filter { obj: CardEntity -> obj.isActive == true }
                 ?.map { obj: CardEntity -> obj.value.orZero() }
-                ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
+                ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
         )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardsViewHolderData {

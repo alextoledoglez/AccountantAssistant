@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.utils
 
 import com.personal.accountantAssistant.domain.models.CalendarValuesModel
+import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
@@ -54,7 +55,7 @@ object DateUtils {
     }
 
     fun toPeriodStr(firstDate: Date?, lastDate: Date?): String {
-        return "${toString(firstDate)}${Constants.DASH_SEPARATOR}${toString(lastDate)}"
+        return "${toString(firstDate)}${String.DASH_SEPARATOR}${toString(lastDate)}"
     }
 
     private fun toCalendar(timeInMillis: Long?): Calendar? {

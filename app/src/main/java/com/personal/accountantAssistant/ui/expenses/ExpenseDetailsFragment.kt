@@ -20,7 +20,6 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Compani
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.FragmentExpensesDetailsBinding
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
@@ -114,7 +113,7 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
         }
     }
 
-    private fun getExpense() = (arguments?.getSerializable(Constants.ENTITY) as? ExpenseEntity?)
+    private fun getExpense() = (arguments?.getSerializable(String.ENTITY) as? ExpenseEntity?)
 
     @RequiresApi(Build.VERSION_CODES.P)
     private fun save(expenseEntity: ExpenseEntity?) {
@@ -136,7 +135,7 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     companion object {
         fun newInstance(expenseEntity: ExpenseEntity?) = ExpenseDetailsFragment().apply {
-            arguments = Bundle().apply { putSerializable(Constants.ENTITY, expenseEntity) }
+            arguments = Bundle().apply { putSerializable(String.ENTITY, expenseEntity) }
         }
     }
 }

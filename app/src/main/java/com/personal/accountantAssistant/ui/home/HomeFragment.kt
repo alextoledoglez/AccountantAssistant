@@ -12,10 +12,10 @@ import com.personal.accountantAssistant.domain.models.home.ColorResourcesModel
 import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.models.home.TitleResourcesModel
+import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.MenuHelper
 import com.personal.accountantAssistant.utils.NumberUtils
 import kotlin.math.abs
@@ -44,7 +44,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         MenuHelper.initializeHomeOptions()
         with(viewModel) {
             periodValue.observe(viewLifecycleOwner) {
-                binding.lytHeader.tvPeriodValue.text = it ?: Constants.DASH_SEPARATOR
+                binding.lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner, adapter::submitList)

@@ -19,11 +19,11 @@ import com.personal.accountantAssistant.data.enums.wallet.DefaultCardsEnum
 import com.personal.accountantAssistant.data.mappers.toExpense
 import com.personal.accountantAssistant.domain.models.bills.BillModel
 import com.personal.accountantAssistant.domain.models.buys.BuyModel
-import com.personal.accountantAssistant.extensions.getDoubleColumn
-import com.personal.accountantAssistant.extensions.getIntColumn
-import com.personal.accountantAssistant.extensions.getStringColumn
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.utils.*
+import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.utils.CalculatorUtils
+import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.utils.NumberUtils
+import com.personal.accountantAssistant.utils.ParserUtils
 import java.util.*
 import java.util.stream.Collectors
 
@@ -38,7 +38,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
         private const val WHERE_CLAUSE_PARAMETER = " = ?"
         private const val WHERE_CLAUSE_JOIN = " and "
-        private const val UID_WHERE_CLAUSE = "${Constants.UID}$WHERE_CLAUSE_PARAMETER"
+
+        private val UID_WHERE_CLAUSE = "${String.UID}$WHERE_CLAUSE_PARAMETER"
         private val TYPE_WHERE_CLAUSE = "${ExpensesFieldsEnum.TYPE.value}$WHERE_CLAUSE_PARAMETER"
         private val UID_AND_TYPE_WHERE_CLAUSE =
             "$UID_WHERE_CLAUSE$WHERE_CLAUSE_JOIN$TYPE_WHERE_CLAUSE"
@@ -62,7 +63,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         private val CREATE_CARD_TABLE_QUERY = CREATE_TABLE_COMMAND +
                 SPACE_SEPARATOR +
                 CARD_TABLE +
-                "(" + Constants.UID +
+                "(" + String.UID +
                 SPACE_SEPARATOR +
                 INTEGER_PRIMARY_KEY +
                 SPACE_AUTOINCREMENT_COMMA +
@@ -75,7 +76,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         private val CREATE_PAYMENTS_TABLE_QUERY = CREATE_TABLE_COMMAND +
                 SPACE_SEPARATOR +
                 PAYMENTS_TABLE +
-                "(" + Constants.UID +
+                "(" + String.UID +
                 SPACE_SEPARATOR +
                 INTEGER_PRIMARY_KEY +
                 SPACE_AUTOINCREMENT_COMMA +
@@ -104,7 +105,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
     }
 
     private fun cursorToCardEntity(cursor: Cursor): CardEntity = CardEntity().apply {
-        id = cursor.getIntColumn(Constants.UID)
+        id = cursor.getIntColumn(String.UID)
         company = cursor.getStringColumn(CardFieldsEnum.COMPANY.name)
         name = cursor.getStringColumn(CardFieldsEnum.NAME.name)
         password = cursor.getIntColumn(CardFieldsEnum.PASSWORD.name)
@@ -122,7 +123,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         }
 
     private fun cursorToExpenseEntity(cursor: Cursor): ExpenseEntity = ExpenseEntity().apply {
-        id = cursor.getIntColumn(Constants.UID)
+        id = cursor.getIntColumn(String.UID)
         name = cursor.getStringColumn(ExpensesFieldsEnum.NAME.name)
         quantity = cursor.getIntColumn(ExpensesFieldsEnum.QUANTITY.name)
         date = DateUtils.toDate(cursor.getStringColumn(ExpensesFieldsEnum.DATE.name))
@@ -229,7 +230,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         BillsEnum.values().forEach {
             val model = BillModel(it.value)
             val id = insertBillRecordFrom(model)
-            if (id > Constants.DEFAULT_UID)
+            if (id > Int.DEFAULT_UID)
                 notifyExpenseAddedOrChanged(model.toExpense())
         }
     }
@@ -238,7 +239,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         DefaultCardsEnum.values().forEach {
             val entity = CardEntity(it.company, it.title)
             val id = insertCardRecordFrom(entity)
-            if (id > Constants.DEFAULT_UID)
+            if (id > Int.DEFAULT_UID)
                 notifyCardAddedOrChanged(entity)
         }
     }
@@ -247,7 +248,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         BuysEnum.values().forEach {
             val model = BuyModel(it.value)
             val id = insertBuyRecordFrom(model)
-            if (id > Constants.DEFAULT_UID)
+            if (id > Int.DEFAULT_UID)
                 notifyExpenseAddedOrChanged(model.toExpense())
         }
     }
@@ -325,19 +326,19 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     fun deleteAllCardsRecords(notifyCleanCards: () -> Unit) {
         val id = cardDeleteQuery(null, null)
-        if (id > Constants.DEFAULT_UID)
+        if (id > Int.DEFAULT_UID)
             notifyCleanCards()
     }
 
     fun deleteAllBuysRecord(notifyCleanExpenses: () -> Unit) {
         val id = deleteAllExpensesRecordsBy(ExpensesType.BUY)
-        if (id > Constants.DEFAULT_UID)
+        if (id > Int.DEFAULT_UID)
             notifyCleanExpenses()
     }
 
     fun deleteAllBillsRecord(notifyCleanExpenses: () -> Unit) {
         val id = deleteAllExpensesRecordsBy(ExpensesType.BILL)
-        if (id > Constants.DEFAULT_UID)
+        if (id > Int.DEFAULT_UID)
             notifyCleanExpenses()
     }
 
@@ -358,6 +359,6 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         getSortedExpensesRecordsBy(type)?.stream()?.filter {
             it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
         }?.map { it.getTotalValue() }
-            ?.reduce(Constants.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
+            ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
     )
 }

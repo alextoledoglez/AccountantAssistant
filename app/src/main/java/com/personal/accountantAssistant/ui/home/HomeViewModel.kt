@@ -10,8 +10,8 @@ import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.utils.Constants
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
 import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
@@ -39,7 +39,7 @@ class HomeViewModel(
     private val _lastPeriodDate = MutableLiveData<Date?>(localStorage?.getLastDate())
     private val lastPeriodDate = _lastPeriodDate
 
-    fun isZeroLessThan(value: Double?) = (value.orZero() >= Constants.DEFAULT_VALUE)
+    fun isZeroLessThan(value: Double?) = (value.orZero() >= Double.DEFAULT_VALUE)
 
     fun isExpensesLessThanAvailable(value: Double?) =
         (availableMoney.value.orZero() >= value.orZero())
