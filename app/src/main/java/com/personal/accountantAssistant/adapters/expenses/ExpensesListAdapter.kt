@@ -26,7 +26,7 @@ import com.personal.accountantAssistant.utils.DateUtils.toString
 import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import com.personal.accountantAssistant.utils.MenuHelper.initializeBillsOptions
 import com.personal.accountantAssistant.utils.MenuHelper.initializeBuysOptions
-import com.personal.accountantAssistant.utils.NumberUtils.roundTo
+import java.math.BigDecimal
 import java.util.function.Consumer
 import java.util.stream.Collectors
 
@@ -152,25 +152,24 @@ class ExpensesListAdapter constructor(
         }
     }
 
-    val totalPrice: Double
-        get() = roundTo(
-            expenses?.stream()?.filter(ExpenseEntity::isActive)
-                ?.map { obj: ExpenseEntity -> obj.getTotalValue() }
-                ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
-        )
+    val totalPrice: BigDecimal
+        get() = expenses?.stream()?.filter(ExpenseEntity::isActive)
+            ?.map { obj: ExpenseEntity -> obj.getTotalValue() }
+            ?.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum).orZero().rounded()
 
     private fun toFormattedValue(entity: ExpenseEntity): String {
         val isBuyEntity = entity.isBuy.orFalse()
-        val operator: String
-        var quantityStr = java.lang.String.valueOf(entity.quantity)
-        if (isBuyEntity) {
+        var quantityStr = entity.quantity.toString()
+        val operator = if (isBuyEntity) {
             quantityStr += String.UNITY
-            operator = String.MULTIPLY_OPERATOR
+            String.MULTIPLY_OPERATOR
         } else {
             quantityStr += String.TIMES
-            operator = String.EMPTY
+            String.EMPTY
         }
-        return "$quantityStr$operator${entity.unitaryValue}${String.EQUAL_OPERATOR}${roundTo(entity.getTotalValue())}"
+        val unitaryPriceStr = entity.unitaryValue.toCurrencyMaskedStr()
+        val totalPriceStr = entity.getTotalValue().toCurrencyMaskedStr()
+        return "$quantityStr$operator${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
     }
 
     @SuppressLint("NotifyDataSetChanged")

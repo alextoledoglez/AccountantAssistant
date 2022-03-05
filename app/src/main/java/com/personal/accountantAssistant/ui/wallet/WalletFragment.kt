@@ -125,7 +125,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
         titleImageView?.setImageResource(R.drawable.ic_money)
-        subTitleTextView?.text = cardsAdapter?.totalValue.toString()
+        subTitleTextView?.text = cardsAdapter?.totalValue.toCurrencyMaskedStr()
         subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
 
         color?.let {

@@ -15,9 +15,7 @@ import com.personal.accountantAssistant.utils.CalendarsUtils
 import com.personal.accountantAssistant.utils.ToastUtils
 import io.reactivex.functions.Action
 
-
 fun DatabaseManager.isNotDefaultRecord(idOrRecord: Long?): Boolean = !isDefaultRecord(idOrRecord)
-
 
 fun DatabaseManager.isDefaultRecord(idOrRecord: Long?): Boolean {
     return idOrRecord?.let { it.toInt() == Int.DEFAULT_UID }.orFalse()

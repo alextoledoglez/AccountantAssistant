@@ -4,12 +4,13 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
+import java.math.BigDecimal
 
 data class DashboardItemModel(
     @DrawableRes val drawableRes: Int?,
     @StringRes val strResource: Int?,
     @ColorRes var colorResource: Int?,
-    val value: Double?
+    val value: BigDecimal?
 ) {
     companion object {
         val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<DashboardItemModel>() {

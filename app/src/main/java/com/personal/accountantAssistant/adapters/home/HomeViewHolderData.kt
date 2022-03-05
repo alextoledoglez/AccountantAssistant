@@ -10,7 +10,7 @@ import com.personal.accountantAssistant.domain.models.TextSizeResourcesModel
 import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
-import kotlin.math.abs
+import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 
 class HomeViewHolderData(
     private val binding: HomeItemListBinding
@@ -54,7 +54,7 @@ class HomeViewHolderData(
             }
 
             tvCardSubtitle.apply {
-                text = abs(model.value.toString().toDouble()).toString()
+                text = model.value?.abs().toCurrencyMaskedStr()
                 setTextColor(context.getColor(fontColorResource))
             }
         }

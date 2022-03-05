@@ -3,14 +3,14 @@ package com.personal.accountantAssistant.domain.models.buys
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
 import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
-import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
+import java.math.BigDecimal
 
 data class BuyModel(
     var uid: Int = 0,
     var product: String? = null,
     var quantity: Int = 0,
-    var price: Double = Double.DEFAULT_VALUE,
-    var totalValue: Double = Double.DEFAULT_VALUE,
+    var price: BigDecimal = BigDecimal.ZERO,
+    var totalValue: BigDecimal = BigDecimal.ZERO,
     var isActive: Boolean = false
 ) {
 
@@ -18,13 +18,13 @@ data class BuyModel(
     constructor(product: String?) : this() {
         this.product = product
         quantity = Int.DEFAULT_QUANTITY_VALUE
-        price = Double.DEFAULT_VALUE
-        totalValue = Double.DEFAULT_VALUE
+        price = BigDecimal.ZERO
+        totalValue = BigDecimal.ZERO
         isActive = Boolean.DEFAULT_ACTIVE_STATUS
     }
 
     constructor(
-        id: Int, product: String?, quantity: Int, price: Double, active: Boolean
+        id: Int, product: String?, quantity: Int, price: BigDecimal, active: Boolean
     ) : this() {
         uid = id
         this.product = product

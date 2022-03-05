@@ -24,6 +24,7 @@ import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.NumberUtils
 import com.personal.accountantAssistant.utils.ParserUtils
+import java.math.BigDecimal
 import java.util.*
 import java.util.stream.Collectors
 
@@ -109,7 +110,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         company = cursor.getStringColumn(CardFieldsEnum.COMPANY.name)
         name = cursor.getStringColumn(CardFieldsEnum.NAME.name)
         password = cursor.getIntColumn(CardFieldsEnum.PASSWORD.name)
-        value = cursor.getDoubleColumn(CardFieldsEnum.VALUE.name)
+        value = cursor.getDoubleColumn(CardFieldsEnum.VALUE.name).toBigDecimal()
         isActive = NumberUtils.toBoolean(cursor.getStringColumn(CardFieldsEnum.ACTIVE.name))
     }
 
@@ -118,7 +119,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
             put(CardFieldsEnum.COMPANY.name, cardEntity?.company)
             put(CardFieldsEnum.NAME.name, cardEntity?.name)
             put(CardFieldsEnum.PASSWORD.name, cardEntity?.password)
-            put(CardFieldsEnum.VALUE.name, cardEntity?.value)
+            put(CardFieldsEnum.VALUE.name, cardEntity?.value?.toDouble())
             put(CardFieldsEnum.ACTIVE.name, cardEntity?.isActive)
         }
 
@@ -127,8 +128,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
         name = cursor.getStringColumn(ExpensesFieldsEnum.NAME.name)
         quantity = cursor.getIntColumn(ExpensesFieldsEnum.QUANTITY.name)
         date = DateUtils.toDate(cursor.getStringColumn(ExpensesFieldsEnum.DATE.name))
-        unitaryValue = cursor.getDoubleColumn(ExpensesFieldsEnum.UNITARY_VALUE.name)
-        totalValue = cursor.getDoubleColumn(ExpensesFieldsEnum.TOTAL_VALUE.name)
+        unitaryValue = cursor.getDoubleColumn(ExpensesFieldsEnum.UNITARY_VALUE.name).toBigDecimal()
+        totalValue = cursor.getDoubleColumn(ExpensesFieldsEnum.TOTAL_VALUE.name).toBigDecimal()
         type = cursor.getStringColumn(ExpensesFieldsEnum.TYPE.name)?.let {
             ExpensesType.valueOf(it)
         } ?: ExpensesType.NONE
@@ -140,8 +141,8 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
             put(ExpensesFieldsEnum.NAME.name, expenseEntity?.name)
             put(ExpensesFieldsEnum.QUANTITY.name, expenseEntity?.quantity)
             put(ExpensesFieldsEnum.DATE.name, DateUtils.toString(expenseEntity?.date))
-            put(ExpensesFieldsEnum.UNITARY_VALUE.name, expenseEntity?.unitaryValue)
-            put(ExpensesFieldsEnum.TOTAL_VALUE.name, expenseEntity?.totalValue)
+            put(ExpensesFieldsEnum.UNITARY_VALUE.name, expenseEntity?.unitaryValue?.toDouble())
+            put(ExpensesFieldsEnum.TOTAL_VALUE.name, expenseEntity?.totalValue?.toDouble())
             put(ExpensesFieldsEnum.TYPE.name, expenseEntity?.type?.name)
             put(ExpensesFieldsEnum.ACTIVE.name, expenseEntity?.isActive)
         }
@@ -178,7 +179,7 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
 
     fun getSortedCardRecords(): List<CardEntity> = getCardRecords().stream()
         .sorted(Comparator.comparing<CardEntity?, Boolean?> { it.isActive == true }
-            .thenComparingDouble { it.value.orZero() })
+            .thenComparingDouble { it.value.orZero().toDouble() })
         .collect(Collectors.toList())
         .asReversed()
 
@@ -355,10 +356,9 @@ class DatabaseManager @RequiresApi(Build.VERSION_CODES.P) constructor(context: C
             insertExpenseRecordFrom(expenseEntity)
         }
 
-    fun getExpensesTotalPriceUntil(type: ExpensesType, lastPeriodDate: Date?) = NumberUtils.roundTo(
+    fun getExpensesTotalPriceUntil(type: ExpensesType, lastPeriodDate: Date?) =
         getSortedExpensesRecordsBy(type)?.stream()?.filter {
             it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
         }?.map { it.getTotalValue() }
-            ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
-    )
+            ?.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum).orZero().rounded()
 }

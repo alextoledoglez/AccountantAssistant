@@ -38,18 +38,10 @@ object CalculatorUtils {
         return a.orZero() + b.orZero()
     }
 
-    private fun sum(a: Double?, b: Double?): Double {
-        return a.orZero() + b.orZero()
-    }
-
     var accumulatedSum =
         BinaryOperator { a: Int?, b: Int? -> sum(a.orZero(), b.orZero()) }
 
     var accumulatedDecimalSum =
         BinaryOperator { a: BigDecimal?, b: BigDecimal? -> a?.add(b) }
 
-    @JvmField
-    var accumulatedDoubleSum = BinaryOperator { a: Double?, b: Double? ->
-        sum(a.orZero(), b.orZero())
-    }
 }

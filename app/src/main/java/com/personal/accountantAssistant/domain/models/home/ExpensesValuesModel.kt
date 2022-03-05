@@ -1,7 +1,9 @@
 package com.personal.accountantAssistant.domain.models.home
 
+import java.math.BigDecimal
+
 data class ExpensesValuesModel(
-    val buys: Double?,
-    val bills: Double?,
-    val total: Double?
+    val buys: BigDecimal?,
+    val bills: BigDecimal?,
+    val total: BigDecimal?
 )

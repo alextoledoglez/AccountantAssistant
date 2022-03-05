@@ -20,7 +20,6 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType.Compani
 import com.personal.accountantAssistant.data.saveDataFrom
 import com.personal.accountantAssistant.databinding.FragmentExpensesDetailsBinding
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.DateUtils.toDate
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import com.personal.accountantAssistant.utils.ToastUtils.showLongText
 import kotlinx.android.synthetic.main.fragment_expenses_details.view.*
@@ -102,7 +101,7 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
         //Value and switch
         binding.root.apply {
-            etValue.setText(java.lang.String.valueOf(expenseEntity?.unitaryValue))
+            etValue.setText(expenseEntity?.unitaryValue.toString())
             scActive.isChecked = expenseEntity?.isActive.orFalse()
         }
 
@@ -119,10 +118,10 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun save(expenseEntity: ExpenseEntity?) {
         binding.root.apply {
             expenseEntity?.update(
-                name = etName.text.toString(),
-                quantity = etQuantity.text.toString().toInt(),
-                date = toDate(etDate.text.toString()),
-                unitaryValue = etValue.text.toString().toDouble(),
+                name = etName.text,
+                quantity = etQuantity.text,
+                date = etDate.text,
+                unitaryValue = etValue.text,
                 isActive = scActive.isChecked
             )
         }

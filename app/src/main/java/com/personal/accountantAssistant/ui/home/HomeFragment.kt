@@ -12,13 +12,9 @@ import com.personal.accountantAssistant.domain.models.home.ColorResourcesModel
 import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.models.home.TitleResourcesModel
-import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.MenuHelper
-import com.personal.accountantAssistant.utils.NumberUtils
-import kotlin.math.abs
+import java.math.BigDecimal
 
 @RequiresApi(Build.VERSION_CODES.P)
 class HomeFragment : BaseFragment<HomeViewModel>() {
@@ -77,8 +73,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val buys = values?.buys.orZero()
         val bills = values?.bills.orZero()
         val available = viewModel.availableMoney.value.orZero()
-        val total = NumberUtils.roundTo(values?.total.orZero())
-        val result = NumberUtils.roundTo(available.minus(total))
+        val total = values?.total.orZero().rounded()
+        val result = available.minus(total).rounded()
 
         //Colors
         val buysColor = getExpenseColorResourceBy(buys)
@@ -96,7 +92,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         binding.lytHeader.apply {
             ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
             tvAvailable.apply {
-                text = getString(R.string.available_value, abs(available).toString())
+                text = getString(R.string.available_value, available.abs().toCurrencyMaskedStr())
                 setTextColor(availableColor)
             }
         }
@@ -117,7 +113,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         @ColorRes falseResource: Int = colorRes.error
     ) = if (isCondition == true) trueResource else falseResource
 
-    private fun getExpenseColorResourceBy(expense: Double?): Int = getColorResourceBy(
+    private fun getExpenseColorResourceBy(expense: BigDecimal?): Int = getColorResourceBy(
         viewModel.isExpensesMoreThanAvailable(expense),
         colorRes.error,
         colorRes.success

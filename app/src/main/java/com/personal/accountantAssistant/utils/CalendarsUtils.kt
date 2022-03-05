@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.extensions.orZero
 import java.util.*
 
 @SuppressLint("MissingPermission")
@@ -110,7 +111,10 @@ object CalendarsUtils {
         event.put(CalendarContract.Events.DTEND, calendarMillis)
         //TODO event.put("rrule", "FREQ=YEARLY");
         event.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.id)
-        event.put(CalendarContract.Events.DESCRIPTION, expenseEntity?.totalValue)
+        event.put(
+            CalendarContract.Events.DESCRIPTION,
+            expenseEntity?.totalValue.orZero().toDouble()
+        )
         event.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_PRIVATE)
         event.put(CalendarContract.EXTRA_EVENT_ALL_DAY, java.lang.Boolean.TRUE)
         //event.put(CalendarContract.EXTRA_EVENT_BEGIN_TIME, calendarMillis);

@@ -10,11 +10,11 @@ import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
-import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
 import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
+import java.math.BigDecimal
 import java.util.*
 
 class HomeViewModel(
@@ -30,8 +30,8 @@ class HomeViewModel(
     private val _periodValue = MutableLiveData<String>()
     val periodValue: LiveData<String> get() = _periodValue
 
-    private val _availableMoney = MutableLiveData<Double>()
-    val availableMoney: LiveData<Double> get() = _availableMoney
+    private val _availableMoney = MutableLiveData<BigDecimal>()
+    val availableMoney: LiveData<BigDecimal> get() = _availableMoney
 
     private val _firstPeriodDate = MutableLiveData<Date?>(localStorage?.getFirstDate())
     private val firstPeriodDate = _firstPeriodDate
@@ -39,12 +39,13 @@ class HomeViewModel(
     private val _lastPeriodDate = MutableLiveData<Date?>(localStorage?.getLastDate())
     private val lastPeriodDate = _lastPeriodDate
 
-    fun isZeroLessThan(value: Double?) = (value.orZero() >= Double.DEFAULT_VALUE)
+    fun isZeroLessThan(value: BigDecimal?) = (value.orZero() >= BigDecimal.ZERO)
 
-    fun isExpensesLessThanAvailable(value: Double?) =
+    fun isExpensesLessThanAvailable(value: BigDecimal?) =
         (availableMoney.value.orZero() >= value.orZero())
 
-    fun isExpensesMoreThanAvailable(value: Double?): Boolean = !isExpensesLessThanAvailable(value)
+    fun isExpensesMoreThanAvailable(value: BigDecimal?): Boolean =
+        !isExpensesLessThanAvailable(value)
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses() {

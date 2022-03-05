@@ -3,7 +3,7 @@ package com.personal.accountantAssistant.domain.models.bills
 import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
 import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
 import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
-import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
+import java.math.BigDecimal
 import java.util.*
 
 data class BillModel(
@@ -11,8 +11,8 @@ data class BillModel(
     var bill: String? = null,
     var quantity: Int = 0,
     var date: Date? = null,
-    var value: Double = Double.DEFAULT_VALUE,
-    var totalValue: Double = Double.DEFAULT_VALUE,
+    var value: BigDecimal = BigDecimal.ZERO,
+    var totalValue: BigDecimal = BigDecimal.ZERO,
     var isActive: Boolean = false
 ) {
 
@@ -20,13 +20,13 @@ data class BillModel(
         this.bill = bill
         quantity = Int.DEFAULT_QUANTITY_VALUE
         date = Date()
-        value = Double.DEFAULT_VALUE
-        totalValue = Double.DEFAULT_VALUE
+        value = BigDecimal.ZERO
+        totalValue = BigDecimal.ZERO
         isActive = Boolean.DEFAULT_ACTIVE_STATUS
     }
 
     constructor(
-        id: Int, bill: String?, quantity: Int, date: Date?, value: Double, active: Boolean
+        id: Int, bill: String?, quantity: Int, date: Date?, value: BigDecimal, active: Boolean
     ) : this() {
         uid = id
         this.bill = bill

@@ -79,7 +79,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytQuantity">
 
-        <com.personal.accountantAssistant.ui.currency.MoneyEditText
+        <com.personal.accountantAssistant.ui.currency.CurrencyEditText
             android:id="@+id/etValue"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"

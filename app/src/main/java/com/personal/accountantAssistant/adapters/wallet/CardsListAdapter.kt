@@ -15,16 +15,13 @@ import com.personal.accountantAssistant.data.deleteRecord
 import com.personal.accountantAssistant.data.entities.wallet.CardEntity
 import com.personal.accountantAssistant.data.isDefaultRecord
 import com.personal.accountantAssistant.data.isNotDefaultRecord
-import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.wallet.WalletDetailsFragment
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
-import com.personal.accountantAssistant.utils.NumberUtils.roundTo
+import java.math.BigDecimal
 import java.util.function.Consumer
 import java.util.stream.Collectors
 
@@ -45,13 +42,11 @@ class CardsListAdapter constructor(
     private val layoutToInflate: Int
         get() = R.layout.card_item_list
 
-    val totalValue: Double
-        get() = roundTo(
-            cards?.stream()
-                ?.filter { obj: CardEntity -> obj.isActive == true }
-                ?.map { obj: CardEntity -> obj.value.orZero() }
-                ?.reduce(Double.DEFAULT_VALUE, CalculatorUtils.accumulatedDoubleSum)
-        )
+    val totalValue: BigDecimal
+        get() = cards?.stream()
+            ?.filter { obj: CardEntity -> obj.isActive == true }
+            ?.map { obj: CardEntity -> obj.value.orZero() }
+            ?.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum).orZero().rounded()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardsViewHolderData {
         val view = LayoutInflater.from(parent.context)
@@ -71,7 +66,7 @@ class CardsListAdapter constructor(
             viewHolderData.apply {
                 tvCompany.text = it.company
                 tvName.text = it.name
-                tvValue.text = "$ ${roundTo(it.value)}"
+                tvValue.text = it.value.toCurrencyMaskedStr()
                 //ACTIONS
                 scActive.isChecked = it.isActive.orFalse()
                 scActive.setOnClickListener { _ -> setActiveRowFrom(scActive.isChecked, it) }

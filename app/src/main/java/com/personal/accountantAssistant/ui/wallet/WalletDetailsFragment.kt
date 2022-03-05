@@ -77,10 +77,10 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun saveCard(card: CardEntity?) {
         binding.root.apply {
             card?.update(
-                company = etCompany.text.toString(),
-                name = etName.text.toString(),
-                password = etPassword.text.toString().toInt(),
-                value = etValue.text.toString().toDouble(),
+                company = etCompany.text,
+                name = etName.text,
+                password = etPassword.text,
+                value = etValue.text,
                 isActive = scActive.isChecked
             )
         }

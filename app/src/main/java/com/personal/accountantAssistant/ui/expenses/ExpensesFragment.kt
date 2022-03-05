@@ -22,10 +22,7 @@ import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.extensions.STR_DEFAULT_MONETARY_VALUE
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.showConfirmationFrom
-import com.personal.accountantAssistant.extensions.showImportOrExportFrom
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.MenuHelper
@@ -139,7 +136,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
 
         titleImageView?.setImageResource(R.drawable.ic_money)
-        subTitleTextView?.text = adapter?.totalPrice.toString()
+        subTitleTextView?.text = adapter?.totalPrice.toCurrencyMaskedStr()
         subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
 
         color?.let {

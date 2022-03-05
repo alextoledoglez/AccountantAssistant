@@ -1,12 +1,16 @@
 package com.personal.accountantAssistant.data.entities.expenses
 
+import android.text.Editable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.domain.models.bills.BillModel
 import com.personal.accountantAssistant.domain.models.buys.BuyModel
+import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
+import com.personal.accountantAssistant.utils.DateUtils
 import java.io.Serializable
+import java.math.BigDecimal
 import java.util.*
 
 @Entity
@@ -24,10 +28,10 @@ class ExpenseEntity : Serializable {
     var date: Date? = null
 
     @ColumnInfo(name = "unitary_value")
-    var unitaryValue = 0.0
+    var unitaryValue: BigDecimal = BigDecimal.ZERO
 
     @ColumnInfo(name = "total_value")
-    var totalValue = 0.0
+    var totalValue: BigDecimal = BigDecimal.ZERO
 
     @ColumnInfo(name = "type")
     var type: ExpensesType? = null
@@ -42,7 +46,7 @@ class ExpenseEntity : Serializable {
         name: String?,
         quantity: Int,
         date: Date?,
-        unitaryValue: Double,
+        unitaryValue: BigDecimal,
         type: ExpensesType?,
         active: Boolean
     ) {
@@ -80,14 +84,9 @@ class ExpenseEntity : Serializable {
 
 
     @JvmName("getTotalValue1")
-    fun getTotalValue(): Double {
-        totalValue = unitaryValue * quantity
+    fun getTotalValue(): BigDecimal {
+        totalValue = unitaryValue.multiply(quantity.toBigDecimal())
         return totalValue
-    }
-
-    @JvmName("setTotalValue1")
-    fun setTotalValue(totalValue: Double) {
-        this.totalValue = totalValue
     }
 
     val isBuy: Boolean?
@@ -96,11 +95,17 @@ class ExpenseEntity : Serializable {
     val isBill: Boolean?
         get() = type?.let { ExpensesType.isBill(it) }
 
-    fun update(name: String?, quantity: Int, date: Date?, unitaryValue: Double, isActive: Boolean) {
-        this.name = name
-        this.quantity = quantity
-        this.date = date
-        this.unitaryValue = unitaryValue
+    fun update(
+        name: Editable?,
+        quantity: Editable?,
+        date: Editable?,
+        unitaryValue: Editable?,
+        isActive: Boolean
+    ) {
+        this.name = name.toString()
+        this.quantity = quantity.toString().toInt()
+        this.date = DateUtils.toDate(date.toString())
+        this.unitaryValue = unitaryValue.toCurrencyBigDecimal()
         this.isActive = isActive
     }
 

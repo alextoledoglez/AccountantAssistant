@@ -2,10 +2,10 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.rounded
 import com.personal.accountantAssistant.utils.DateUtils
-import com.personal.accountantAssistant.utils.NumberUtils
+import java.math.BigDecimal
 import java.util.*
 
 class LocalStorage(val context: Context) {
@@ -26,11 +26,9 @@ class LocalStorage(val context: Context) {
         getDefaultSharedPreferences().edit().putFloat(AVAILABLE_MONEY, availableMoneyValue).apply()
     }
 
-    fun getAvailableMoney(): Double = NumberUtils.roundTo(
-        getDefaultSharedPreferences().getFloat(
-            AVAILABLE_MONEY, Double.DEFAULT_VALUE.toFloat()
-        ).toDouble()
-    )
+    fun getAvailableMoney(): BigDecimal = getDefaultSharedPreferences().getFloat(
+        AVAILABLE_MONEY, BigDecimal.ZERO.toFloat()
+    ).toBigDecimal().rounded()
 
     fun getAvailableMoneyStr(): String = getAvailableMoney().toString()
 
