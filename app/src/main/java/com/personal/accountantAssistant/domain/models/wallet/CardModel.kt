@@ -1,12 +1,13 @@
 package com.personal.accountantAssistant.domain.models.wallet
 
 import androidx.recyclerview.widget.DiffUtil
+import java.math.BigDecimal
 
 data class CardModel(
     val company: String,
     val name: String,
     val password: Number,
-    val value: Float,
+    val value: BigDecimal,
     val isEnabled: Boolean
 ) {
     companion object {

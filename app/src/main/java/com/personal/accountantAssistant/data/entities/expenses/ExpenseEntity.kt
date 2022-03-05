@@ -8,7 +8,8 @@ import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
 import com.personal.accountantAssistant.domain.models.bills.BillModel
 import com.personal.accountantAssistant.domain.models.buys.BuyModel
 import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
-import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.extensions.toDate
+import com.personal.accountantAssistant.extensions.toInt
 import java.io.Serializable
 import java.math.BigDecimal
 import java.util.*
@@ -103,8 +104,8 @@ class ExpenseEntity : Serializable {
         isActive: Boolean
     ) {
         this.name = name.toString()
-        this.quantity = quantity.toString().toInt()
-        this.date = DateUtils.toDate(date.toString())
+        this.quantity = quantity.toInt()
+        this.date = date.toDate()
         this.unitaryValue = unitaryValue.toCurrencyBigDecimal()
         this.isActive = isActive
     }

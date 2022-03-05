@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
 import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
 import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
+import com.personal.accountantAssistant.extensions.toInt
 import java.io.Serializable
 import java.math.BigDecimal
 
@@ -49,7 +50,7 @@ class CardEntity() : Serializable {
     ) {
         this.company = company.toString()
         this.name = name.toString()
-        this.password = password.toString().toInt()
+        this.password = password.toInt()
         this.value = value.toCurrencyBigDecimal()
         this.isActive = isActive
     }
