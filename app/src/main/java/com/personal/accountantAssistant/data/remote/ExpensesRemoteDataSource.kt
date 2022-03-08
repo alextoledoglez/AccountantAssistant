@@ -17,7 +17,7 @@ import java.util.stream.Collectors
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
-    private fun insertOrUpdateExpense(model: ExpenseModel?) = model?.let {
+    private suspend fun insertOrUpdateExpense(model: ExpenseModel?) = model?.let {
         if (it.id >= 0)
             expenseDao.update(it.toEntity())
         else
@@ -59,25 +59,19 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
     suspend fun setDefaultBuys() {
         if (expenseDao.deleteByType(ExpensesType.BUY.name) > Int.DEFAULT_UID) {
-            BuysEnum.values().forEach {
-                val model = ExpenseModel(it.value)
-                val id = insertOrUpdateExpense(model)
-            }
+            BuysEnum.values().forEach { insertOrUpdateExpense(ExpenseModel(it.value)) }
         }
     }
 
     suspend fun setDefaultBills() {
         if (expenseDao.deleteByType(ExpensesType.BILL.name) > Int.DEFAULT_UID) {
-            BillsEnum.values().forEach {
-                val model = ExpenseModel(it.value)
-                val id = insertOrUpdateExpense(model)
-            }
+            BillsEnum.values().forEach { insertOrUpdateExpense(ExpenseModel(it.value)) }
         }
     }
 
-    fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
+    suspend fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
 
-    fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()
+    suspend fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()
 
     suspend fun deleteAllBuys() {
         expenseDao.deleteByType(ExpensesType.BUY.name)

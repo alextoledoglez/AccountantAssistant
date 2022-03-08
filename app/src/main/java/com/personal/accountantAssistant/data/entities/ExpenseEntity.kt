@@ -9,12 +9,23 @@ import com.personal.accountantAssistant.extensions.EMPTY
 
 @Entity(tableName = PAYMENTS_TABLE)
 data class ExpenseEntity(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "ID") var id: Int? = Int.DEFAULT_UID,
-    @ColumnInfo(name = "NAME") var name: String? = String.EMPTY,
-    @ColumnInfo(name = "QUANTITY") var quantity: String? = String.EMPTY,
-    @ColumnInfo(name = "DATE") var date: String? = String.EMPTY,
-    @ColumnInfo(name = "UNITARY_VALUE") var unitaryValue: String? = String.EMPTY,
-    @ColumnInfo(name = "TOTAL_VALUE") var totalValue: String? = String.EMPTY,
-    @ColumnInfo(name = "TYPE") var type: String? = String.EMPTY,
-    @ColumnInfo(name = "ACTIVE") var isActive: String? = String.EMPTY
-)
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) var id: Int? = Int.DEFAULT_UID,
+    @ColumnInfo(name = NAME) var name: String? = String.EMPTY,
+    @ColumnInfo(name = QUANTITY) var quantity: String? = String.EMPTY,
+    @ColumnInfo(name = DATE) var date: String? = String.EMPTY,
+    @ColumnInfo(name = UNITARY_VALUE) var unitaryValue: String? = String.EMPTY,
+    @ColumnInfo(name = TOTAL_VALUE) var totalValue: String? = String.EMPTY,
+    @ColumnInfo(name = TYPE) var type: String? = String.EMPTY,
+    @ColumnInfo(name = ACTIVE) var isActive: String? = String.EMPTY
+) {
+    companion object {
+        const val ID = "ID"
+        const val NAME = "NAME"
+        const val QUANTITY = "QUANTITY"
+        const val DATE = "DATE"
+        const val UNITARY_VALUE = "UNITARY_VALUE"
+        const val TOTAL_VALUE = "TOTAL_VALUE"
+        const val TYPE = "TYPE"
+        const val ACTIVE = "ACTIVE"
+    }
+}

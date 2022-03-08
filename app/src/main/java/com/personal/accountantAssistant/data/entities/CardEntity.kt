@@ -9,15 +9,24 @@ import com.personal.accountantAssistant.extensions.EMPTY
 
 @Entity(tableName = CARD_TABLE)
 data class CardEntity(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "ID") var id: Int? = Int.DEFAULT_UID,
-    @ColumnInfo(name = "COMPANY") var company: String? = String.EMPTY,
-    @ColumnInfo(name = "NAME") var name: String? = String.EMPTY,
-    @ColumnInfo(name = "PASSWORD") var password: String? = String.EMPTY,
-    @ColumnInfo(name = "VALUE") var value: String? = String.EMPTY,
-    @ColumnInfo(name = "ACTIVE") var isActive: String? = String.EMPTY
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) var id: Int? = Int.DEFAULT_UID,
+    @ColumnInfo(name = COMPANY) var company: String? = String.EMPTY,
+    @ColumnInfo(name = NAME) var name: String? = String.EMPTY,
+    @ColumnInfo(name = PASSWORD) var password: String? = String.EMPTY,
+    @ColumnInfo(name = VALUE) var value: String? = String.EMPTY,
+    @ColumnInfo(name = ACTIVE) var isActive: String? = String.EMPTY
 ) {
     constructor(company: String?, name: String?) : this() {
         this.company = company.orEmpty()
         this.name = name.orEmpty()
+    }
+
+    companion object {
+        const val ID = "ID"
+        const val COMPANY = "COMPANY"
+        const val NAME = "NAME"
+        const val VALUE = "VALUE"
+        const val PASSWORD = "PASSWORD"
+        const val ACTIVE = "ACTIVE"
     }
 }
