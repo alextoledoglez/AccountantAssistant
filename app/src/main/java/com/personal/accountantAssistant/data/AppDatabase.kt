@@ -6,9 +6,10 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import com.personal.accountantAssistant.data.dao.CardDao
 import com.personal.accountantAssistant.data.dao.ExpenseDao
-import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.entities.CardEntity
+import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.utils.ActivityUtils
 import com.personal.accountantAssistant.utils.PermissionsUtils
 import com.personal.accountantAssistant.utils.ToastUtils
@@ -17,17 +18,19 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 
-@Database(entities = [ExpenseEntity::class], version = 1, exportSchema = false)
-@TypeConverters()
+@Database(entities = [CardEntity::class, ExpenseEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun cardsDao(): CardDao
     abstract fun expensesDao(): ExpenseDao
 
     companion object {
 
-        private const val DB_NAME = "ACCOUNTANT_ASSISTANT"
+        const val DB_NAME = "ACCOUNTANT_ASSISTANT"
         private const val FILE_DIRECTORY_TYPE = ""
         private const val DB_BACKUP_FORMAT = "%s"
+        const val CARD_TABLE = "CARD_TABLE"
+        const val PAYMENTS_TABLE = "PAYMENTS_TABLE"
 
         @JvmStatic
         fun getInstance(context: Context) = Room.databaseBuilder(

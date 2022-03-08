@@ -5,13 +5,13 @@ import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.home.HomeListAdapter
+import com.personal.accountantAssistant.adapters.HomeListAdapter
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
-import com.personal.accountantAssistant.domain.models.home.ColorResourcesModel
-import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
-import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.models.home.TitleResourcesModel
+import com.personal.accountantAssistant.domain.models.ColorResourcesModel
+import com.personal.accountantAssistant.domain.models.DashboardItemModel
+import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
+import com.personal.accountantAssistant.domain.models.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.MenuHelper
 import java.math.BigDecimal
@@ -36,19 +36,22 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    override fun setupView() {
+    override fun initComponents() {
         MenuHelper.initializeHomeOptions()
+        with(binding) {
+            rvDashboard.adapter = adapter
+            viewModel.calculateExpenses()
+            lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }
+        }
+    }
+
+    override fun initObservers() {
         with(viewModel) {
             periodValue.observe(viewLifecycleOwner) {
                 binding.lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
-        }
-        with(binding) {
-            rvDashboard.adapter = adapter
-            viewModel.calculateExpenses()
-            lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }
         }
     }
 

@@ -15,9 +15,7 @@ import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
-import com.personal.accountantAssistant.utils.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import com.personal.accountantAssistant.utils.MenuHelper
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        vpContent.adapter = ViewPagerAdapter(
+        binding.vpContent.adapter = ViewPagerAdapter(
             this@MainActivity, listOf(
                 HomeFragment.newInstance(),
                 WalletFragment.newInstance(),
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                 BillsFragment.newInstance()
             )
         )
-        tabLayoutMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->
+        tabLayoutMediator = TabLayoutMediator(binding.tabHeader, binding.vpContent) { tab, index ->
             tab.apply {
                 setIcon(icons[index])
                 setText(titles[index])

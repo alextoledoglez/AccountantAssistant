@@ -1,16 +1,16 @@
 package com.personal.accountantAssistant.utils
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.data.DatabaseManager
-import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
-import com.personal.accountantAssistant.data.enums.expenses.ExpensesFieldsEnum
-import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
+import com.personal.accountantAssistant.data.AppDatabase
+import com.personal.accountantAssistant.data.enums.ExpensesFieldsEnum
+import com.personal.accountantAssistant.data.enums.ExpensesType
+import com.personal.accountantAssistant.data.mappers.isBill
+import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
 import jxl.Workbook
 import jxl.WorkbookSettings
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object ImportExportUtils {
 
-    private const val DB_NAME = DatabaseManager.DB_NAME
+    private const val DB_NAME = AppDatabase.DB_NAME
     private const val DB_BACKUP_FORMAT = "%s"
     private const val FILE_DIRECTORY_TYPE = ""
     private const val FIRST_SHEET = 0
@@ -38,9 +38,8 @@ object ImportExportUtils {
         ToastUtils.showShortText(context, R.string.excel_data_imported)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    fun xlsExport(context: Context, type: ExpensesType) {
-        val storageDirectory = context.getExternalFilesDir("")
+    fun xlsExport(context: Context, expenses: List<ExpenseModel>?, type: ExpensesType) {
+        val storageDirectory = context.getExternalFilesDir(String.EMPTY)
         val directory = storageDirectory?.absolutePath?.let { File(it) }
         val directoryExist = directory?.isDirectory?.not().let {
             directory?.mkdirs()
@@ -65,7 +64,7 @@ object ImportExportUtils {
                 wbSettings.locale = Locale(LocaleTypes.EN.language, LocaleTypes.EN.name)
                 val workbook = Workbook.createWorkbook(xlsFile, wbSettings)
                 val sheet = workbook.createSheet(sheetName, FIRST_SHEET)
-                fillSheetFrom(context, sheet, type)
+                fillSheetFrom(expenses, sheet, type)
                 workbook.write()
                 workbook.close()
                 ToastUtils.showShortText(context, R.string.excel_data_exported)
@@ -129,29 +128,27 @@ object ImportExportUtils {
         return null
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    private fun fillSheetFrom(context: Context, sheet: WritableSheet, type: ExpensesType) {
+    private fun fillSheetFrom(
+        expenses: List<ExpenseModel>?, sheet: WritableSheet, type: ExpensesType
+    ) {
         setHeaderCell(sheet)
         val rowIndex = AtomicInteger(BODY_ROW)
-        DatabaseManager(context)
-            .getExpensesRecords()
-            .stream()
-            .filter { type == it.type }
-            .forEach { expenseEntity: ExpenseEntity ->
+        expenses?.stream()
+            ?.filter { type == it.type }?.forEach {
                 val currentRowIndex = rowIndex.get()
-                addCell(sheet, 0, currentRowIndex, expenseEntity.name.toString())
-                addCell(sheet, 1, currentRowIndex, expenseEntity.quantity.toString())
-                addCell(sheet, 2, currentRowIndex, getConditionalDateValueFrom(expenseEntity))
-                addCell(sheet, 3, currentRowIndex, expenseEntity.unitaryValue.toString())
-                addCell(sheet, 4, currentRowIndex, expenseEntity.totalValue.toString())
-                addCell(sheet, 5, currentRowIndex, expenseEntity.type?.name.toString())
-                addCell(sheet, 6, currentRowIndex, expenseEntity.isActive.toString())
+                addCell(sheet, 0, currentRowIndex, it.name.toString())
+                addCell(sheet, 1, currentRowIndex, it.quantity.toString())
+                addCell(sheet, 2, currentRowIndex, getConditionalDateValueFrom(it))
+                addCell(sheet, 3, currentRowIndex, it.unitaryValue.toString())
+                addCell(sheet, 4, currentRowIndex, it.totalValue.toString())
+                addCell(sheet, 5, currentRowIndex, it.type.toString())
+                addCell(sheet, 6, currentRowIndex, it.isActive.toString())
                 rowIndex.getAndIncrement()
             }
     }
 
-    private fun getConditionalDateValueFrom(expenseEntity: ExpenseEntity) =
-        if (expenseEntity.isBill == true) expenseEntity.date.toString() else String.DASH_SEPARATOR
+    private fun getConditionalDateValueFrom(model: ExpenseModel) =
+        if (model.isBill().orFalse()) model.date.toString() else String.DASH_SEPARATOR
 
     private fun setHeaderCell(sheet: WritableSheet) {
         for ((colIndex, value) in ExpensesFieldsEnum.values().withIndex()) {

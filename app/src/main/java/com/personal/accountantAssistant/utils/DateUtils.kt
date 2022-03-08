@@ -25,16 +25,6 @@ object DateUtils {
         return date
     }
 
-    fun toUtcPair(first: Long?, second: Long?) = androidx.core.util.Pair(
-        toUtcTime(first), toUtcTime(second)
-    )
-
-    private fun toUtcTime(timeInMillis: Long?) = timeInMillis?.plus(
-        kotlin.math.abs(TimeZone.getDefault().getOffset(timeInMillis))
-    )
-
-    fun toUtcDate(timeInMillis: Long?) = toCalendar(toUtcTime(timeInMillis))?.time
-
     @JvmStatic
     fun toString(date: Date?): String? {
         var strDate: String? = date.toString()
@@ -46,6 +36,17 @@ object DateUtils {
         }
         return strDate
     }
+
+    fun toUtcPair(first: Long?, second: Long?) = androidx.core.util.Pair(
+        toUtcTime(first), toUtcTime(second)
+    )
+
+    private fun toUtcTime(timeInMillis: Long?) = timeInMillis?.plus(
+        kotlin.math.abs(TimeZone.getDefault().getOffset(timeInMillis))
+    )
+
+    fun toUtcDate(timeInMillis: Long?) = toCalendar(toUtcTime(timeInMillis))?.time
+
 
     @JvmStatic
     fun toCurrentDateStr(): String {

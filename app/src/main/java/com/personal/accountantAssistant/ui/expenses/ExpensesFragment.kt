@@ -1,50 +1,78 @@
 package com.personal.accountantAssistant.ui.expenses
 
 import android.app.Activity
-import android.os.Build
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
 import android.widget.SearchView
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SwitchCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.expenses.ExpensesListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.DatabaseManager
-import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.databinding.TitlesBarsBinding
+import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.domain.repository.ExpensesRepository
+import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.STR_DEFAULT_MONETARY_VALUE
+import com.personal.accountantAssistant.extensions.showConfirmationFrom
+import com.personal.accountantAssistant.extensions.showImportOrExportFrom
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.utils.ActionUtils
 import com.personal.accountantAssistant.utils.MenuHelper
-import io.reactivex.functions.Action
 import org.koin.android.ext.android.inject
 
 abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOptionsInterface {
 
     abstract override val binding: ViewBinding
+    abstract val adapter: ListAdapter<*, *>
+    abstract fun onUpdateExpense(model: ExpenseModel)
+    abstract fun onDeleteExpense(model: ExpenseModel)
 
+    private val repository: ExpensesRepository? by inject()
     private val activity: Activity? = null
-    open var adapter: ExpensesListAdapter? = null
-    val databaseManager: DatabaseManager? by inject()
 
-    private var titleImageView: ImageView? = null
-    private var subTitleTextView: TextView? = null
-    private var recyclerView: RecyclerView? = null
-
-    private var checker: SwitchCompat? = null
-
-    override fun setupView() {
+    override fun initComponents() {
         setHasOptionsMenu(true)
+    }
+
+    fun initHeader(header: TitlesBarsBinding) {
+        with(header) {
+            //headerCardTitle.visibility = View.GONE
+            titleImage.setImageResource(R.drawable.ic_money)
+            titlesBarSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
+            titlesBarSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            titleSwitch.setOnClickListener { titleSwitch.isChecked.let { } }
+            titleSearchView.setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(queryStr: String): Boolean {
+                    recyclerViewAdapterFilterBy(queryStr)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    recyclerViewAdapterFilterBy(newText)
+                    return false
+                }
+            })
+        }
+    }
+
+    fun updateHeader(
+        header: TitlesBarsBinding, isAnyChecked: Boolean, isAllChecked: Boolean, text: String
+    ) {
+        val color = context?.getColor(
+            if (isAnyChecked) R.color.colorRed else R.color.colorPrimary
+        )
+        with(header) {
+            color?.let {
+                titleImage.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+                titlesBarSubtitle.setTextColor(it)
+            }
+            titlesBarSubtitle.text = text
+            titleSwitch.isChecked = isAllChecked
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -63,93 +91,8 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         return super.onOptionsItemSelected(menuItem)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    private fun initializeAdapter(expensesType: ExpensesType, onChangeAction: Action?) {
-        adapter = ExpensesListAdapter(expensesType, context, databaseManager)
-        adapter?.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onChanged() {
-                super.onChanged()
-                onChangeAction?.let { ActionUtils.runAction(it) }
-            }
-        })
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    fun initializeVisualComponentsFrom(viewRoot: View, type: ExpensesType) {
-
-        val headerCardTitlesBar = viewRoot.findViewById<View>(R.id.header_card_titles_bar)
-
-        //Title
-        val headerCardTitle = headerCardTitlesBar.findViewById<TextView>(R.id.titles_bar_title)
-        headerCardTitle.visibility = View.GONE
-
-        //Image
-        titleImageView = headerCardTitlesBar.findViewById(R.id.title_image)
-
-        //Subtitle
-        subTitleTextView = headerCardTitlesBar.findViewById(R.id.titles_bar_subtitle)
-        subTitleTextView?.text = String.STR_DEFAULT_MONETARY_VALUE
-
-        //Switch
-        checker = headerCardTitlesBar.findViewById(R.id.title_switch)
-        checker?.setOnClickListener {
-            checker?.isChecked?.let { adapter?.setAllExpensesRecordsActiveFrom(it) }
-        }
-
-        //Search View
-        val searchView = headerCardTitlesBar.findViewById<SearchView>(R.id.title_search_view)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(queryStr: String): Boolean {
-                recyclerViewAdapterFilterBy(queryStr)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                recyclerViewAdapterFilterBy(newText)
-                return false
-            }
-        })
-        initializeAdapter(type) { updateHeaderBy(type) }
-
-        if (ExpensesType.isBuy(type)) {
-            recyclerView = viewRoot.findViewById(R.id.rvBuys)
-        }
-        if (ExpensesType.isBill(type)) {
-            recyclerView = viewRoot.findViewById(R.id.rvBills)
-        }
-
-        recyclerView?.layoutManager = LinearLayoutManager(context)
-        recyclerView?.adapter = adapter
-        updateHeaderBy(type)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    private fun updateHeaderBy(type: ExpensesType) {
-
-        when {
-            ExpensesType.isBuy(type) -> MenuHelper.initializeBuysOptions()
-            ExpensesType.isBill(type) -> MenuHelper.initializeBillsOptions()
-            else -> MenuHelper.initializeHomeOptions()
-        }
-
-        val isAnyActive = databaseManager?.anyActiveExpensesRecordsBy(type).orFalse()
-        val color = context?.getColor(if (isAnyActive) R.color.colorRed else R.color.colorPrimary)
-
-        titleImageView?.setImageResource(R.drawable.ic_money)
-        subTitleTextView?.text = adapter?.totalPrice.toCurrencyMaskedStr()
-        subTitleTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-
-        color?.let {
-            titleImageView?.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
-            subTitleTextView?.setTextColor(it)
-        }
-
-        checker?.isChecked = (databaseManager?.allActiveExpensesRecordsBy(type) == true)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.P)
     private fun recyclerViewAdapterFilterBy(queryStr: String) {
-        adapter?.filter?.filter(queryStr)
+        //adapter.filter?.filter(queryStr)
     }
 
     private fun importExportMenuItemClickListener() =
@@ -164,12 +107,18 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
             ::deleteAllRecords
-        )
+        ) {}
 
     private fun restoreDefaultMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.restore_default_records_title,
             R.string.restore_default_records_message,
             ::restoreDefaultRecords
+        ) {}
+
+    fun onExpenseClicked(model: ExpenseModel) {
+        ExpenseDetailsFragment.newInstance(model).show(
+            requireActivity().supportFragmentManager, String.EMPTY
         )
+    }
 }

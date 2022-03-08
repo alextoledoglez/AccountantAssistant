@@ -8,16 +8,11 @@ import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.AlertDialogBuilder.Companion.MAX_VALUE
 import com.personal.accountantAssistant.bases.AlertDialogBuilder.Companion.MIN_VALUE
 import com.personal.accountantAssistant.bases.AlertDialogBuilder.Companion.toCurrentOrMinValue
-import com.personal.accountantAssistant.utils.ActionUtils
-import io.reactivex.functions.Action
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 fun AlertDialogBuilder.showConfirmationFrom(
-    titleId: Int,
-    messageId: Int,
-    confirmAction: Action,
-    cancelAction: Action = ActionUtils.NONE_ACTION_TO_DO
+    titleId: Int, messageId: Int, confirmAction: () -> Unit, cancelAction: () -> Unit
 ) = apply {
     setTitle(titleId)
     setMessage(messageId)
@@ -27,23 +22,16 @@ fun AlertDialogBuilder.showConfirmationFrom(
 }
 
 fun AlertDialogBuilder.showImportOrExportFrom(
-    titleId: Int, importAction: Action, exportAction: Action
+    titleId: Int, importAction: () -> Unit, exportAction: () -> Unit
 ) = apply {
     val importOption = 0
-    val exportOption = 1
     val checkedItem = AtomicInteger(0)
     val options =
         arrayOf(context.getString(R.string.import_all), context.getString(R.string.export_all))
     setTitle(context.getString(titleId))
     setSingleChoiceItems(options, checkedItem.get())
     { _: DialogInterface?, which: Int -> checkedItem.set(which) }
-    setOkButtonAction(
-        when (checkedItem.get()) {
-            importOption -> importAction
-            exportOption -> exportAction
-            else -> ActionUtils.NONE_ACTION_TO_DO
-        }
-    )
+    setOkButtonAction(if (checkedItem.get() == importOption) importAction else exportAction)
     setCancelButtonAction {}
     show()
 }

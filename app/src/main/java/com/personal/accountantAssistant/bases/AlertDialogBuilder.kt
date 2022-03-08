@@ -7,8 +7,6 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.LayoutDialogTitleBinding
-import com.personal.accountantAssistant.utils.ActionUtils
-import io.reactivex.functions.Action
 
 class AlertDialogBuilder(context: Context) :
     MaterialAlertDialogBuilder(context, R.style.AlertDialogBuilderStyle) {
@@ -29,13 +27,12 @@ class AlertDialogBuilder(context: Context) :
         return this
     }
 
-    fun setOkButtonAction(action: Action): AlertDialog.Builder =
-        setPositiveButton(R.string.ok)
-        { _: DialogInterface?, _: Int -> ActionUtils.runAction(action) }
+    fun setOkButtonAction(action: () -> Unit): AlertDialog.Builder = setPositiveButton(R.string.ok)
+    { _: DialogInterface?, _: Int -> action() }
 
-    fun setCancelButtonAction(action: Action): AlertDialog.Builder =
+    fun setCancelButtonAction(action: () -> Unit): AlertDialog.Builder =
         setNegativeButton(R.string.cancel)
-        { _: DialogInterface?, _: Int -> ActionUtils.runAction(action) }
+        { _: DialogInterface?, _: Int -> action() }
 
     companion object {
         const val MIN_VALUE = 1

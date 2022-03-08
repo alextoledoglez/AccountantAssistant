@@ -15,17 +15,17 @@ import kotlin.reflect.KClass
 abstract class BaseFragment<V : BaseViewModel> : Fragment() {
 
     abstract val binding: ViewBinding
+    abstract fun initComponents()
+    abstract fun initObservers()
 
     val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
 
     private val toolbarTitle = MutableLiveData<String>()
 
-    abstract fun setupView()
-
     open fun onActivityBackPressed(): Boolean = false
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return binding.root
@@ -33,14 +33,16 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupView()
+        initComponents()
+        initObservers()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun viewModelClass(): KClass<V> =
+        ((javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<V>).kotlin
 
     fun onTitleChanged(): LiveData<String> = toolbarTitle
 
     fun setTitle(title: String) = toolbarTitle.postValue(title)
 
-    @Suppress("UNCHECKED_CAST")
-    private fun viewModelClass(): KClass<V> =
-            ((javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<V>).kotlin
 }

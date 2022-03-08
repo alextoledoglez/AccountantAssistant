@@ -4,7 +4,6 @@ import androidx.room.*
 
 @Dao
 interface BaseDao<T> {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(t: T): Long
 
@@ -12,13 +11,13 @@ interface BaseDao<T> {
     fun insert(t: List<T>): List<Long>
 
     @Delete
-    fun delete(t: T)
+    fun delete(t: T): Int
 
     @Delete
     fun delete(t: List<T>)
 
     @Update
-    fun update(t: T)
+    fun update(t: T): Int
 
     @Update
     fun update(t: List<T>)

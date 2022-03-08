@@ -29,9 +29,4 @@ object ActivityUtils {
     fun parse(context: Context): Activity {
         return context as Activity
     }
-
-    @JvmStatic
-    fun parse(activity: Activity?): Context? {
-        return activity?.applicationContext
-    }
 }

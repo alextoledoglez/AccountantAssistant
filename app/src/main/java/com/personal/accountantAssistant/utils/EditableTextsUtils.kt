@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.utils.ActionUtils.runAction
 import java.text.Normalizer
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -29,12 +28,12 @@ object EditableTextsUtils {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 setEditTextValue(editText.text.toString())
-                runAction(actionWhenTextChange)
+                actionWhenTextChange()
             }
 
             override fun afterTextChanged(s: Editable) {
                 setEditTextValue(editText.text.toString())
-                runAction(actionWhenTextChange)
+                actionWhenTextChange()
             }
         })
         editText.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
@@ -51,7 +50,7 @@ object EditableTextsUtils {
         }
     }
 
-    fun hideSoftInputFromWindow(activity: Activity?, editText: EditText) {
+    private fun hideSoftInputFromWindow(activity: Activity?, editText: EditText) {
         activity?.currentFocus?.let { hideSoftInputFromWindow(it, editText) }
     }
 

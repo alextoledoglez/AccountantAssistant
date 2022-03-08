@@ -14,11 +14,10 @@ import kotlin.reflect.KClass
 abstract class BaseBottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogFragment() {
 
     abstract val binding: ViewBinding
+    abstract fun initComponents()
+    abstract fun initObservers()
 
-    abstract fun initView()
-
-    protected lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
-
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
 
     override fun onCreateView(
@@ -31,7 +30,8 @@ abstract class BaseBottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDia
     override fun onStart() {
         super.onStart()
         bottomSheetBehavior = BottomSheetBehavior.from(binding.root.parent as View)
-        initView()
+        initComponents()
+        initObservers()
     }
 
     protected fun setFullScreen() {

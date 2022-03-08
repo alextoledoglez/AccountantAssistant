@@ -1,59 +1,71 @@
 package com.personal.accountantAssistant.ui.bills
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.viewbinding.ViewBinding
-import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
-import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.data.mappers.toBills
+import com.personal.accountantAssistant.adapters.BillsListAdapter
+import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
-import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
-import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 import com.personal.accountantAssistant.utils.ImportExportUtils
+import com.personal.accountantAssistant.utils.MenuHelper
 
 class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
-    override val binding: ViewBinding by viewBinding(FragmentBillsBinding::inflate)
-
-    @RequiresApi(Build.VERSION_CODES.P)
-    override fun setupView() {
-        super.setupView()
-        initializeVisualComponentsFrom(binding.root, ExpensesType.BILL)
+    override val binding by viewBinding(FragmentBillsBinding::inflate)
+    override val adapter by lazy {
+        BillsListAdapter(
+            ::onUpdateExpense, ::onDeleteExpense, ::onExpenseClicked
+        )
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
+    override fun initComponents() {
+        super.initComponents()
+        MenuHelper.initializeBillsOptions()
+        initHeader(binding.headerCardTitlesBar)
+    }
+
+    override fun initObservers() {
+        with(viewModel) {
+            bills.observe(viewLifecycleOwner) {
+                updateHeader(
+                    binding.headerCardTitlesBar,
+                    it.isAnyChecked,
+                    it.isAllChecked,
+                    it.total.toCurrencyMaskedStr()
+                )
+                adapter.submitList(it.expenses)
+            }
+            getBills()
+        }
+    }
+
     override fun addMenuItemClickListener() {
-        ExpenseDetailsFragment.newInstance(ExpenseEntity().toBills()).apply {
-            onSaveActionListener = { adapter?.notifyExpenseAddedOrChanged(it) }
-        }.show(requireActivity().supportFragmentManager, String.EMPTY)
+        onExpenseClicked(ExpenseModel())
     }
 
     override fun importMenuItemClickListener() {
         ImportExportUtils.xlsImport(context, ExpensesType.BILL)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun exportMenuItemClickListener() {
-        ImportExportUtils.xlsExport(requireContext(), ExpensesType.BILL)
+        //ImportExportUtils.xlsExport(requireContext(), appDatabase, ExpensesType.BILL)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun deleteAllRecords() {
-        deleteAllBillsRecords()
+        viewModel.deleteAllBills()
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun restoreDefaultRecords() {
-        deleteAllBillsRecords()?.let {
-            databaseManager?.insertDefaultBillsRecords { adapter?.notifyExpenseAddedOrChanged(it) }
-        }
+        viewModel.setDefaultBills()
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    private fun deleteAllBillsRecords() = databaseManager?.deleteAllBillsRecord {
-        adapter?.notifyCleanExpenses()
+    override fun onUpdateExpense(model: ExpenseModel) {
+        viewModel.updateExpense(model)
+    }
+
+    override fun onDeleteExpense(model: ExpenseModel) {
+        viewModel.deleteExpense(model)
     }
 
     companion object {

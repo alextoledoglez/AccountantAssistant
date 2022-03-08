@@ -1,15 +1,22 @@
 package com.personal.accountantAssistant.data.dao
 
+import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.personal.accountantAssistant.bases.dao.BaseDao
-import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.AppDatabase.Companion.PAYMENTS_TABLE
+import com.personal.accountantAssistant.data.entities.ExpenseEntity
 
+@Dao
 interface ExpenseDao : BaseDao<ExpenseEntity> {
-    @Transaction
-    @Query("SELECT * FROM ExpenseEntity")
-    fun selectAll(): List<ExpenseEntity>
 
-    @Query("DELETE FROM ExpenseEntity")
-    fun clearTable()
+    @Transaction
+    @Query("SELECT * FROM $PAYMENTS_TABLE")
+    suspend fun selectAll(): Array<ExpenseEntity>
+
+    @Query("DELETE FROM $PAYMENTS_TABLE WHERE type ==:typeName")
+    suspend fun deleteByType(typeName: String): Int
+
+    @Query("DELETE FROM $PAYMENTS_TABLE")
+    suspend fun clearTable(): Int
 }

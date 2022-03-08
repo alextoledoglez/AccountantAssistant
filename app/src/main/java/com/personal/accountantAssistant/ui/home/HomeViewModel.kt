@@ -5,20 +5,22 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.DatabaseManager
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.enums.expenses.ExpensesType
-import com.personal.accountantAssistant.domain.models.home.DashboardItemModel
-import com.personal.accountantAssistant.domain.models.home.ExpensesValuesModel
+import com.personal.accountantAssistant.data.enums.ExpensesType
+import com.personal.accountantAssistant.domain.models.DashboardItemModel
+import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
+import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
 import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
+import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.util.*
 
 class HomeViewModel(
-    private val localStorage: LocalStorage?, private val databaseManager: DatabaseManager?
+    private val localStorage: LocalStorage?, private val repository: ExpensesRepository?
 ) : BaseViewModel() {
 
     private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
@@ -48,17 +50,17 @@ class HomeViewModel(
         !isExpensesLessThanAvailable(value)
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun calculateExpenses() {
+    fun calculateExpenses() = launch {
 
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
-        val buysExpenses = databaseManager?.getExpensesTotalPriceUntil(
+        val buysExpenses = BigDecimal.ZERO/*repository?.getExpensesTotalPriceUntil(
             ExpensesType.BUY, localStorage?.getLastDate()
-        ).orZero()
+        )?.singleOrNull().orZero()*/
 
-        val billsExpenses = databaseManager?.getExpensesTotalPriceUntil(
+        val billsExpenses = BigDecimal.ZERO/*repository?.getExpensesTotalPriceUntil(
             ExpensesType.BILL, localStorage?.getLastDate()
-        ).orZero()
+        )?.singleOrNull().orZero()*/
 
         val totalExpenses = buysExpenses.plus(billsExpenses)
 

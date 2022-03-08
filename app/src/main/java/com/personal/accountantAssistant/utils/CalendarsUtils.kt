@@ -7,7 +7,9 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
-import com.personal.accountantAssistant.data.entities.expenses.ExpenseEntity
+import com.personal.accountantAssistant.data.mappers.isBill
+import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import java.util.*
 
@@ -26,8 +28,8 @@ object CalendarsUtils {
             return String.format(selectionFormatStr, *PROJECTION)
         }
 
-    private fun toSelectionArgs(expenseEntity: ExpenseEntity?): Array<String?> {
-        return expenseEntity?.let {
+    private fun toSelectionArgs(model: ExpenseModel?): Array<String?> {
+        return model?.let {
             arrayOf(
                 DEFAULT_CALENDAR_ID.toString(),
                 it.name,
@@ -57,11 +59,11 @@ object CalendarsUtils {
     @JvmStatic
     fun createCalendarEventFrom(
         context: Context,
-        expenseEntity: ExpenseEntity?
+        expenseEntity: ExpenseModel?
     ) {
         val contentResolver = context.contentResolver
         contentResolver?.let {
-            if (expenseEntity?.isBill == true) {
+            if (expenseEntity?.isBill().orFalse()) {
                 val uri =
                     if (PermissionsUtils.isCalendarWritePermissionGranted(context)) addEventFrom(
                         it,
@@ -73,54 +75,49 @@ object CalendarsUtils {
     }
 
     private fun getCalendarCursorFrom(
-        contentResolver: ContentResolver,
-        expenseEntity: ExpenseEntity?
+        contentResolver: ContentResolver, model: ExpenseModel?
     ): Cursor? {
         return if (ParserUtils.isNullObject(contentResolver)) null else contentResolver.query(
             CalendarContract.Events.CONTENT_URI,
             PROJECTION,
             selectionFields,
-            toSelectionArgs(expenseEntity),
+            toSelectionArgs(model),
             null
         )
     }
 
     private fun alreadyExistCalendarEventFor(
-        contentResolver: ContentResolver,
-        expenseEntity: ExpenseEntity?
+        contentResolver: ContentResolver, model: ExpenseModel?
     ): Boolean {
-        getCalendarCursorFrom(contentResolver, expenseEntity)?.let {
-            readCalendarEvent(contentResolver, expenseEntity)
+        getCalendarCursorFrom(contentResolver, model)?.let {
+            readCalendarEvent(contentResolver, model)
             return java.lang.Boolean.TRUE
         } ?: run { return java.lang.Boolean.FALSE }
     }
 
-    private fun addEventFrom(
-        contentResolver: ContentResolver,
-        expenseEntity: ExpenseEntity?
-    ): Uri? {
+    private fun addEventFrom(contentResolver: ContentResolver, model: ExpenseModel?): Uri? {
         val timeZone = TimeZone.getDefault()
-        val calendarMillis = DateUtils.toCalendarMillis(expenseEntity?.date)
+        val calendarMillis = DateUtils.toCalendarMillis(model?.date)
         val event = ContentValues()
         event.put(CalendarContract.Events.CALENDAR_ID, DEFAULT_CALENDAR_ID)
         event.put(CalendarContract.Events.ALL_DAY, java.lang.Boolean.TRUE)
         event.put(CalendarContract.Events.STATUS, java.lang.Boolean.TRUE)
         event.put(CalendarContract.Events.HAS_ALARM, 1)
-        event.put(CalendarContract.Events.TITLE, expenseEntity?.name)
+        event.put(CalendarContract.Events.TITLE, model?.name)
         event.put(CalendarContract.Events.DTSTART, calendarMillis)
         event.put(CalendarContract.Events.DTEND, calendarMillis)
         //TODO event.put("rrule", "FREQ=YEARLY");
         event.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.id)
         event.put(
             CalendarContract.Events.DESCRIPTION,
-            expenseEntity?.totalValue.orZero().toDouble()
+            model?.totalValue.orZero().toDouble()
         )
         event.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_PRIVATE)
         event.put(CalendarContract.EXTRA_EVENT_ALL_DAY, java.lang.Boolean.TRUE)
         //event.put(CalendarContract.EXTRA_EVENT_BEGIN_TIME, calendarMillis);
         //event.put(CalendarContract.EXTRA_EVENT_END_TIME, calendarMillis);
         var uri: Uri? = null
-        if (alreadyExistCalendarEventFor(contentResolver, expenseEntity)) {
+        if (alreadyExistCalendarEventFor(contentResolver, model)) {
             contentResolver.update(
                 CalendarContract.Events.CONTENT_URI,
                 event,
@@ -134,17 +131,14 @@ object CalendarsUtils {
     }
 
     @JvmStatic
-    fun deleteCalendarEventsFrom(
-        context: Context,
-        expenseEntity: ExpenseEntity?
-    ) {
+    fun deleteCalendarEventsFrom(context: Context, model: ExpenseModel?) {
         if (PermissionsUtils.isCalendarWritePermissionGranted(context)) {
             val contentResolver = context.contentResolver
-            if (alreadyExistCalendarEventFor(contentResolver, expenseEntity)) {
+            if (alreadyExistCalendarEventFor(contentResolver, model)) {
                 contentResolver.delete(
                     CalendarContract.Events.CONTENT_URI,
                     selectionFields,
-                    toSelectionArgs(expenseEntity)
+                    toSelectionArgs(model)
                 )
             }
         }
@@ -163,11 +157,10 @@ object CalendarsUtils {
     }
 
     private fun readCalendarEvent(
-        contentResolver: ContentResolver,
-        expenseEntity: ExpenseEntity?
+        contentResolver: ContentResolver, model: ExpenseModel?
     ) {
         //TODO
-        print(expenseEntity)
+        print(model)
         contentResolver.query(CalendarContract.Events.CONTENT_URI, PROJECTION, null, null, null)
             ?.apply {
                 var strCalendarValues: StringBuilder? = null
