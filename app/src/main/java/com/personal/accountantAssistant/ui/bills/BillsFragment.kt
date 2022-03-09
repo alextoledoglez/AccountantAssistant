@@ -24,7 +24,10 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()
         binding.srlLoader.setOnRefreshListener { viewModel.getBills() }
-        initHeader(binding.headerCardTitlesBar)
+        binding.headerCardTitlesBar.apply {
+            initHeader(binding.headerCardTitlesBar)
+            titleSwitch.setOnClickListener { viewModel.setAllBillsActive(titleSwitch.isChecked) }
+        }
         binding.rvBills.adapter = adapter
     }
 

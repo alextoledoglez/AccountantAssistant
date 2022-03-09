@@ -23,6 +23,11 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     }
 
     fun setDefaultBuys() = launch { repository?.setDefaultBuys()?.collect() }
+
+    fun setAllBuysActive(isActive: Boolean) = launch {
+        repository?.setAllBuysActive(isActive)?.collect { getBuys() }
+    }
+
     fun updateExpense(model: ExpenseModel) = launch { repository?.updateExpense(model)?.collect() }
     fun deleteExpense(model: ExpenseModel) = launch { repository?.deleteExpense(model)?.collect() }
     fun deleteAllBuys() = launch { repository?.deleteAllBuys()?.collect() }

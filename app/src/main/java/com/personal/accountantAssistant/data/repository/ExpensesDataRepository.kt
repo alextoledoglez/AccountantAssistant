@@ -17,6 +17,14 @@ class ExpensesDataRepository(
     override fun setDefaultBuys(): Flow<Unit> = flowEmit { dataSource.setDefaultBuys() }
     override fun setDefaultBills(): Flow<Unit> = flowEmit { dataSource.setDefaultBills() }
 
+    override fun setAllBuysActive(isActive: Boolean): Flow<Unit> = flowEmit {
+        dataSource.setAllBuysActive(isActive)
+    }
+
+    override fun setAllBillsActive(isActive: Boolean): Flow<Unit> = flowEmit {
+        dataSource.setAllBillsActive(isActive)
+    }
+
     override fun updateExpense(model: ExpenseModel): Flow<Long> = flowEmit {
         dataSource.updateExpense(model)
     }

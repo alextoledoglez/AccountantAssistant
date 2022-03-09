@@ -16,10 +16,7 @@ import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.databinding.TitlesBarsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.STR_DEFAULT_MONETARY_VALUE
-import com.personal.accountantAssistant.extensions.showConfirmationFrom
-import com.personal.accountantAssistant.extensions.showImportOrExportFrom
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.MenuHelper
 import org.koin.android.ext.android.inject
@@ -44,7 +41,6 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             titleImage.setImageResource(R.drawable.ic_money)
             titlesBarSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
             titlesBarSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-            titleSwitch.setOnClickListener { /*viewModel.setAllExpensesActive(titleSwitch.isChecked)*/ }
             titleSearchView.setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(queryStr: String): Boolean {
@@ -61,18 +57,18 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
     }
 
     fun updateHeader(
-        header: TitlesBarsBinding, isAnyChecked: Boolean, isAllChecked: Boolean, text: String
+        header: TitlesBarsBinding, isAnyChecked: Boolean?, isAllChecked: Boolean?, text: String?
     ) {
         val color = context?.getColor(
-            if (isAnyChecked) R.color.colorRed else R.color.colorPrimary
+            if (isAnyChecked.orFalse()) R.color.colorRed else R.color.colorPrimary
         )
         with(header) {
             color?.let {
                 titleImage.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
                 titlesBarSubtitle.setTextColor(it)
             }
-            titlesBarSubtitle.text = text
-            titleSwitch.isChecked = isAllChecked
+            titlesBarSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
+            titleSwitch.isChecked = isAllChecked.orFalse()
         }
     }
 

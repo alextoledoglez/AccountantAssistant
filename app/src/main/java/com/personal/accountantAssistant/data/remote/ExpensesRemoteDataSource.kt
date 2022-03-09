@@ -69,6 +69,18 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         }
     }
 
+    suspend fun setAllBuysActive(isActive: Boolean) = getExpenses()
+        .stream().filter { it.type == ExpensesType.BUY }.forEach {
+            it.isActive = isActive
+            //cardDao.update(it.toEntity())
+        }
+
+    suspend fun setAllBillsActive(isActive: Boolean) = getExpenses()
+        .stream().filter { it.type == ExpensesType.BILL }.forEach {
+            it.isActive = isActive
+            //cardDao.update(it.toEntity())
+        }
+
     suspend fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
 
     suspend fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()

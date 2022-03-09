@@ -29,7 +29,10 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         super.initComponents()
         MenuHelper.initializeBuysOptions()
         binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
-        initHeader(binding.headerCardTitlesBar)
+        binding.headerCardTitlesBar.apply {
+            initHeader(binding.headerCardTitlesBar)
+            titleSwitch.setOnClickListener { viewModel.setAllBuysActive(titleSwitch.isChecked) }
+        }
         binding.rvBuys.adapter = adapter
     }
 

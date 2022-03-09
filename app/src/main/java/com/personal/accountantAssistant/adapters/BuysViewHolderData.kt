@@ -52,7 +52,7 @@ class BuysViewHolderData(
         val quantityStr = model.quantity.toString() + String.UNITY
         val operator = String.MULTIPLY_OPERATOR
         val unitaryPriceStr = model.unitaryValue.toCurrencyMaskedStr()
-        val totalPriceStr = ""//model.calculateTotalValue().toCurrencyMaskedStr()
+        val totalPriceStr = model.calculateTotalValue().toCurrencyMaskedStr()
         return "$quantityStr$operator${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
     }
 }

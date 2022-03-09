@@ -57,7 +57,7 @@ class BillsViewHolderData(
     private fun toFormattedValue(model: ExpenseModel): String {
         val quantityStr = model.quantity.toString() + String.TIMES
         val unitaryPriceStr = model.unitaryValue.toCurrencyMaskedStr()
-        val totalPriceStr = ""//model.calculateTotalValue().toCurrencyMaskedStr()
+        val totalPriceStr = model.calculateTotalValue().toCurrencyMaskedStr()
         return "$quantityStr${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
     }
 }
