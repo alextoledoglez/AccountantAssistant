@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
@@ -39,11 +40,11 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     fun initHeader(header: TitlesBarsBinding) {
         with(header) {
-            //headerCardTitle.visibility = View.GONE
+            titlesBarTitle.visibility = View.GONE
             titleImage.setImageResource(R.drawable.ic_money)
             titlesBarSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
             titlesBarSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-            titleSwitch.setOnClickListener { titleSwitch.isChecked.let { } }
+            titleSwitch.setOnClickListener { /*viewModel.setAllExpensesActive(titleSwitch.isChecked)*/ }
             titleSearchView.setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(queryStr: String): Boolean {

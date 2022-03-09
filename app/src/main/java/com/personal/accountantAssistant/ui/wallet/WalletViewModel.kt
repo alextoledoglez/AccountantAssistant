@@ -7,6 +7,7 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.WalletModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel() {
@@ -15,7 +16,10 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     var wallet: LiveData<WalletModel> = _wallet
 
     fun loadCards() = launch {
-        repository?.getWallet()?.collect { _wallet.postValue(it) }
+        repository?.getWallet()?.onStart { setLoading() }?.collect {
+            _wallet.postValue(it)
+            setData()
+        }
     }
 
     fun restoreDefaultCards() = launch { repository?.setDefaultCards()?.collect() }

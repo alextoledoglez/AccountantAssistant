@@ -4,6 +4,7 @@ import com.personal.accountantAssistant.adapters.BuysListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
@@ -27,12 +28,15 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBuysOptions()
+        binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
         initHeader(binding.headerCardTitlesBar)
         binding.rvBuys.adapter = adapter
     }
 
     override fun initObservers() {
         with(viewModel) {
+            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
+            flipper.observe(viewLifecycleOwner) { binding.vfBuys.displayedChild = it.ordinal }
             buys.observe(viewLifecycleOwner) {
                 updateHeader(
                     binding.headerCardTitlesBar,

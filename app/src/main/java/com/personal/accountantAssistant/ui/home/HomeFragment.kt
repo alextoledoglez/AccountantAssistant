@@ -39,19 +39,22 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun initComponents() {
         MenuHelper.initializeHomeOptions()
         with(binding) {
-            rvDashboard.adapter = adapter
-            viewModel.calculateExpenses()
+            srlLoader.setOnRefreshListener { viewModel.calculateExpenses() }
             lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }
+            rvDashboard.adapter = adapter
         }
     }
 
     override fun initObservers() {
         with(viewModel) {
+            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
+            flipper.observe(viewLifecycleOwner) { binding.vfHome.displayedChild = it.ordinal }
             periodValue.observe(viewLifecycleOwner) {
                 binding.lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
+            viewModel.calculateExpenses()
         }
     }
 

@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constrain_layout"
+    android:id="@+id/vfBills"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
-    android:orientation="vertical">
+    android:background="@color/colorWhite">
 
-    <include
-        android:id="@+id/header_card_titles_bar"
-        layout="@layout/titles_bars" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvBills"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srlLoader"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/half_material_margin"
-        tools:listitem="@layout/bills_item_list" />
+        android:layout_height="match_parent">
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/constrain_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/backgroundColor"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/header_card_titles_bar"
+                layout="@layout/titles_bars" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBills"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/half_material_margin"
+                tools:listitem="@layout/bills_item_list" />
+
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</ViewFlipper>

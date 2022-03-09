@@ -51,6 +51,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         setHasOptionsMenu(true)
         MenuHelper.initializeWalletOptions()
         with(binding) {
+            srlLoader.setOnRefreshListener { viewModel.loadCards() }
             headerCardTitlesBar.apply {
                 titlesBarTitle.visibility = View.GONE
                 titleImage.setImageResource(R.drawable.ic_money)
@@ -75,6 +76,8 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun initObservers() {
         with(viewModel) {
+            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
+            flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
             wallet.observe(viewLifecycleOwner) {
                 binding.headerCardTitlesBar.titleSwitch.isChecked = it.isAllChecked.orFalse()
                 context?.getColor(

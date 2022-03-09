@@ -6,6 +6,7 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
         <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>

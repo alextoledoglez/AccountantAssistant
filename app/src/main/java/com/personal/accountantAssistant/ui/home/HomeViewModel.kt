@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
@@ -14,7 +13,6 @@ import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
 import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
-import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.util.*
@@ -51,7 +49,7 @@ class HomeViewModel(
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses() = launch {
-
+        setLoading()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
         val buysExpenses = BigDecimal.ZERO/*repository?.getExpensesTotalPriceUntil(
@@ -63,10 +61,9 @@ class HomeViewModel(
         )?.singleOrNull().orZero()*/
 
         val totalExpenses = buysExpenses.plus(billsExpenses)
-
         _availableMoney.postValue(localStorage?.getAvailableMoney())
         _expensesValues.postValue(ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses))
-
+        setData()
     }
 
     fun getSelectedPeriod() = toUtcPair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)

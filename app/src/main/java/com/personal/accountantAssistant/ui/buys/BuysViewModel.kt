@@ -7,12 +7,21 @@ import com.personal.accountantAssistant.domain.models.BuyModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
+
     private var _buys = MutableLiveData<BuyModel>()
     var buys: LiveData<BuyModel> = _buys
-    fun getBuys() = launch { repository?.getBuys()?.collect { _buys.postValue(it) } }
+
+    fun getBuys() = launch {
+        repository?.getBuys()?.onStart { setLoading() }?.collect {
+            _buys.postValue(it)
+            setData()
+        }
+    }
+
     fun setDefaultBuys() = launch { repository?.setDefaultBuys()?.collect() }
     fun updateExpense(model: ExpenseModel) = launch { repository?.updateExpense(model)?.collect() }
     fun deleteExpense(model: ExpenseModel) = launch { repository?.deleteExpense(model)?.collect() }

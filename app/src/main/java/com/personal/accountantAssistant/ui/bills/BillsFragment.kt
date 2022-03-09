@@ -4,6 +4,7 @@ import com.personal.accountantAssistant.adapters.BillsListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
@@ -22,11 +23,15 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()
+        binding.srlLoader.setOnRefreshListener { viewModel.getBills() }
         initHeader(binding.headerCardTitlesBar)
+        binding.rvBills.adapter = adapter
     }
 
     override fun initObservers() {
         with(viewModel) {
+            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
+            flipper.observe(viewLifecycleOwner) { binding.vfBills.displayedChild = it.ordinal }
             bills.observe(viewLifecycleOwner) {
                 updateHeader(
                     binding.headerCardTitlesBar,
