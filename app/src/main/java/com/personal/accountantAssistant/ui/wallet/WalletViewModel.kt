@@ -25,7 +25,9 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     fun restoreDefaultCards() = launch { repository?.setDefaultCards()?.collect() }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
-        repository?.setAllCardsActive(isActive)?.collect { loadCards() }
+        repository?.setAllCardsActive(isActive)?.onStart { setLoading() }?.collect {
+            setAllDataChecked(isActive)
+        }
     }
 
     fun updateCard(model: CardModel) = launch { repository?.updateCard(model)?.collect() }

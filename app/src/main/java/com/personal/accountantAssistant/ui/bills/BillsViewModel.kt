@@ -25,7 +25,9 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     fun setDefaultBills() = launch { repository?.setDefaultBills()?.collect() }
 
     fun setAllBillsActive(isActive: Boolean) = launch {
-        repository?.setAllBillsActive(isActive)?.collect { getBills() }
+        repository?.setAllBillsActive(isActive)?.onStart { setLoading() }?.collect {
+            setAllDataChecked(isActive)
+        }
     }
 
     fun updateExpense(model: ExpenseModel) = launch { repository?.updateExpense(model)?.collect() }

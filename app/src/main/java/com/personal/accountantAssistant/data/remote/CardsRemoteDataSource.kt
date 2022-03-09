@@ -45,10 +45,7 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         }
     }
 
-    suspend fun setAllCardsActive(isActive: Boolean) = getCardRecords().stream().forEach {
-        it.isActive = isActive
-        //cardDao.update(it.toEntity())
-    }
+    suspend fun setAllCardsActive(isActive: Boolean) = cardDao.activeAll(isActive.toString())
 
     suspend fun updateCard(model: CardModel) = cardDao.update(model.toEntity())
 

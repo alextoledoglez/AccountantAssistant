@@ -13,6 +13,9 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
 
     private val job = Job()
 
+    private var _isAllChecked = MutableLiveData(false)
+    var isAllChecked: LiveData<Boolean> = _isAllChecked
+
     private var _isLoading = MutableLiveData(false)
     var isLoading: LiveData<Boolean> = _isLoading
 
@@ -24,6 +27,11 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
     override fun onCleared() {
         super.onCleared()
         job.cancel()
+    }
+
+    fun setAllDataChecked(isChecked: Boolean) {
+        _isAllChecked.postValue(isChecked)
+        setData()
     }
 
     fun setLoading() {
