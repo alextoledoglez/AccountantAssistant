@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -32,17 +31,13 @@ class BillsListAdapter(
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence): FilterResults {
                 val filterStr = charSequence.toString()
-                val list = if (filterStr.isEmpty()) {
-                    currentList
-                } else {
+                val list = if (filterStr.isEmpty()) currentList else
                     currentList.stream().filter { contains(it.name, filterStr) }
                         ?.collect(Collectors.toList())
-                }
                 return FilterResults().also { it.values = list }
             }
 
             @Suppress("UNCHECKED_CAST")
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
                 submitList(filterResults?.values as MutableList<ExpenseModel>?)
             }
