@@ -26,13 +26,17 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
 
     fun setAllCardsActive(isActive: Boolean) = launch {
         repository?.setAllCardsActive(isActive)?.onStart { setLoading() }?.collect {
-            setAllDataChecked(isActive)
+            setAllCheckedData(isActive)
         }
     }
 
-    fun updateCard(model: CardModel) = launch { repository?.updateCard(model)?.collect() }
+    fun updateCard(model: CardModel) = launch {
+        repository?.updateCard(model)?.onStart { setLoading() }?.collect { setUpdatedData(true) }
+    }
 
-    fun deleteCard(model: CardModel) = launch { repository?.deleteCard(model)?.collect() }
+    fun deleteCard(model: CardModel) = launch {
+        repository?.deleteCard(model)?.onStart { setLoading() }?.collect { setDeletedData(true) }
+    }
 
     fun deleteAllCards() = launch { repository?.deleteAllCards()?.collect() }
 

@@ -37,7 +37,10 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             flipper.observe(viewLifecycleOwner) { binding.vfBills.displayedChild = it.ordinal }
             isAllChecked.observe(viewLifecycleOwner) {
                 binding.headerCardTitlesBar.titleSwitch.isChecked = it.orFalse()
+                getBills()
             }
+            isUpdated.observe(viewLifecycleOwner) { getBills() }
+            isDeleted.observe(viewLifecycleOwner) { getBills() }
             bills.observe(viewLifecycleOwner) {
                 updateHeader(
                     binding.headerCardTitlesBar,

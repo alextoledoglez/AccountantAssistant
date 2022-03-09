@@ -80,7 +80,10 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
             isAllChecked.observe(viewLifecycleOwner) {
                 binding.headerCardTitlesBar.titleSwitch.isChecked = it.orFalse()
+                loadCards()
             }
+            isUpdated.observe(viewLifecycleOwner) { loadCards() }
+            isDeleted.observe(viewLifecycleOwner) { loadCards() }
             wallet.observe(viewLifecycleOwner) {
                 binding.headerCardTitlesBar.titleSwitch.isChecked = it.isAllChecked.orFalse()
                 context?.getColor(

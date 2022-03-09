@@ -26,11 +26,17 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
 
     fun setAllBuysActive(isActive: Boolean) = launch {
         repository?.setAllBuysActive(isActive)?.onStart { setLoading() }?.collect {
-            setAllDataChecked(isActive)
+            setAllCheckedData(isActive)
         }
     }
 
-    fun updateExpense(model: ExpenseModel) = launch { repository?.updateExpense(model)?.collect() }
-    fun deleteExpense(model: ExpenseModel) = launch { repository?.deleteExpense(model)?.collect() }
+    fun updateExpense(model: ExpenseModel) = launch {
+        repository?.updateExpense(model)?.onStart { setLoading() }?.collect { setUpdatedData(true) }
+    }
+
+    fun deleteExpense(model: ExpenseModel) = launch {
+        repository?.deleteExpense(model)?.onStart { setLoading() }?.collect { setDeletedData(true) }
+    }
+
     fun deleteAllBuys() = launch { repository?.deleteAllBuys()?.collect() }
 }

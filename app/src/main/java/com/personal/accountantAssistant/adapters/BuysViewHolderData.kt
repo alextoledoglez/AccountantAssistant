@@ -23,14 +23,14 @@ class BuysViewHolderData(
             value.text = toFormattedValue(model)
             //ACTIONS
             activeAction.isChecked = model.isActive.orFalse()
-            activeAction.setOnClickListener { _ -> setCardActive(model, activeAction.isChecked) }
-            deleteAction.setOnClickListener { _ -> onDelete(model) }
-            itemView.setOnClickListener { _ -> onClick(model) }
+            activeAction.setOnClickListener { setActive(model, activeAction.isChecked) }
+            deleteAction.setOnClickListener { onDelete(model) }
+            itemView.setOnClickListener { onClick(model) }
             setRowForeground()
         }
     }
 
-    private fun setCardActive(model: ExpenseModel, isChecked: Boolean = true) {
+    private fun setActive(model: ExpenseModel, isChecked: Boolean = true) {
         model.apply {
             isActive = isChecked
             onUpdate(this)

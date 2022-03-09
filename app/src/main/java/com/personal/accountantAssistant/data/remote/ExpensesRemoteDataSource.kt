@@ -24,9 +24,6 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
             expenseDao.insert(it.toEntity())
     }
 
-    private suspend fun getExpenses(): List<ExpenseModel> =
-        expenseDao.selectAll().toList().toListModel()
-
     private fun isAllActiveFrom(list: List<ExpenseModel>) = list.stream().allMatch { it.isActive }
 
     private fun isAnyActiveFrom(list: List<ExpenseModel>) = list.stream().anyMatch { it.isActive }
@@ -39,7 +36,9 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
             .thenComparingDouble { it.totalValue.orZero().toDouble() }
     ).collect(Collectors.toList()).asReversed()
 
-    suspend fun getBuys() = getExpenses().let { list ->
+    suspend fun getBuys() = expenseDao.selectAll(
+        ExpensesType.BUY.name
+    ).toList().toListModel().let { list ->
         BuyModel(
             isAllChecked = isAllActiveFrom(list),
             isAnyChecked = isAnyActiveFrom(list),
@@ -48,7 +47,9 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         )
     }
 
-    suspend fun getBills() = getExpenses().let { list ->
+    suspend fun getBills() = expenseDao.selectAll(
+        ExpensesType.BILL.name
+    ).toList().toListModel().let { list ->
         BillModel(
             isAllChecked = isAllActiveFrom(list),
             isAnyChecked = isAnyActiveFrom(list),

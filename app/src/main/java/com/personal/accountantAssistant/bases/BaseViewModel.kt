@@ -16,6 +16,12 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
     private var _isAllChecked = MutableLiveData(false)
     var isAllChecked: LiveData<Boolean> = _isAllChecked
 
+    private var _isUpdated = MutableLiveData(false)
+    var isUpdated: LiveData<Boolean> = _isUpdated
+
+    private var _isDeleted = MutableLiveData(false)
+    var isDeleted: LiveData<Boolean> = _isDeleted
+
     private var _isLoading = MutableLiveData(false)
     var isLoading: LiveData<Boolean> = _isLoading
 
@@ -29,11 +35,6 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
         job.cancel()
     }
 
-    fun setAllDataChecked(isChecked: Boolean) {
-        _isAllChecked.postValue(isChecked)
-        setData()
-    }
-
     fun setLoading() {
         _flipper.postValue(FlipperViews.LOADER)
         _isLoading.postValue(true)
@@ -42,6 +43,21 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
     fun setData() {
         _flipper.postValue(FlipperViews.DATA)
         _isLoading.postValue(false)
+    }
+
+    fun setAllCheckedData(isChecked: Boolean) {
+        _isAllChecked.postValue(isChecked)
+        setData()
+    }
+
+    fun setUpdatedData(isUpdated: Boolean) {
+        _isUpdated.postValue(isUpdated)
+        setData()
+    }
+
+    fun setDeletedData(isDeleted: Boolean) {
+        _isDeleted.postValue(isDeleted)
+        setData()
     }
 
     fun setMessage() {

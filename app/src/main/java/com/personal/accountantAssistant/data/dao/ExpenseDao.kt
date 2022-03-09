@@ -11,8 +11,8 @@ import com.personal.accountantAssistant.data.entities.ExpenseEntity
 interface ExpenseDao : BaseDao<ExpenseEntity> {
 
     @Transaction
-    @Query("SELECT * FROM $PAYMENTS_TABLE")
-    suspend fun selectAll(): Array<ExpenseEntity>
+    @Query("SELECT * FROM $PAYMENTS_TABLE WHERE type ==:typeName")
+    suspend fun selectAll(typeName: String): Array<ExpenseEntity>
 
     @Query("UPDATE $PAYMENTS_TABLE SET active=:active WHERE type ==:typeName")
     suspend fun activeAll(active: String, typeName: String): Int
