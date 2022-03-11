@@ -74,7 +74,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     }
 
     override fun notifyActiveItems(isActive: Boolean) {
-        adapter.currentList.forEach { it.isActive = isActive }
         viewModel.setAllBuysActive(isActive)
     }
 

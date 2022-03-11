@@ -11,16 +11,16 @@ import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import java.util.stream.Collectors
 
 class BuysListAdapter(
-    private val onClick: (model: ExpenseModel) -> Unit,
-    private val notifyItemChanged: (position: Int, model: ExpenseModel) -> Unit,
-    private val notifyItemRemoved: (position: Int, model: ExpenseModel) -> Unit,
+    private val onItemClick: (model: ExpenseModel) -> Unit,
+    private val notifyChanged: (index: Int, model: ExpenseModel) -> Unit,
+    private val notifyRemoved: (index: Int, model: ExpenseModel) -> Unit,
 ) : ListAdapter<ExpenseModel, BuysViewHolderData>(ExpenseModel.DIFF_UTIL_CALLBACK), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BuysViewHolderData(
         BuysItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-        onClick,
-        notifyItemChanged,
-        notifyItemRemoved
+        onItemClick,
+        notifyChanged,
+        notifyRemoved
     )
 
     override fun onBindViewHolder(holder: BuysViewHolderData, position: Int) {

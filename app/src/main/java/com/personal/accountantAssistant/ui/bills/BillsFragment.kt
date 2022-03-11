@@ -71,7 +71,6 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     }
 
     override fun notifyActiveItems(isActive: Boolean) {
-        adapter.currentList.forEach { it.isActive = isActive }
         viewModel.setAllBillsActive(isActive)
     }
 

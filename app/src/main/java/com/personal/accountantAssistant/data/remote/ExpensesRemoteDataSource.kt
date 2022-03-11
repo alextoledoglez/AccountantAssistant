@@ -13,8 +13,8 @@ import com.personal.accountantAssistant.extensions.DEFAULT_UID
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
-    private suspend fun insertOrUpdateExpense(model: ExpenseModel?) = model?.let {
-        if (it.id >= 0)
+    private suspend fun insertOrUpdate(model: ExpenseModel?) = model?.let {
+        if (it.id > Int.DEFAULT_UID)
             expenseDao.update(it.toEntity())
         else
             expenseDao.insert(it.toEntity())
@@ -29,15 +29,13 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
     ).toList().toListModel().toBillsModel()
 
     suspend fun setDefaultBuys() {
-        if (expenseDao.deleteByType(ExpensesType.BUY.name) > Int.DEFAULT_UID) {
-            BuysEnum.values().forEach { insertOrUpdateExpense(ExpenseModel(it.value)) }
-        }
+        deleteAllBuys()
+        BuysEnum.values().forEach { insertOrUpdate(ExpenseModel(it.value, ExpensesType.BUY)) }
     }
 
     suspend fun setDefaultBills() {
-        if (expenseDao.deleteByType(ExpensesType.BILL.name) > Int.DEFAULT_UID) {
-            BillsEnum.values().forEach { insertOrUpdateExpense(ExpenseModel(it.value)) }
-        }
+        deleteAllBills()
+        BillsEnum.values().forEach { insertOrUpdate(ExpenseModel(it.value, ExpensesType.BILL)) }
     }
 
     suspend fun setAllBuysActive(isActive: Boolean) = expenseDao.activeAll(

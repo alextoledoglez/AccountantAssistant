@@ -25,12 +25,13 @@ data class ExpenseModel(
         totalValue = calculateTotalValue()
     }
 
-    constructor(product: String?) : this() {
+    constructor(product: String?, type: ExpensesType?) : this() {
         this.name = product
         quantity = Int.DEFAULT_QUANTITY_VALUE
         date = Date()
         unitaryValue = BigDecimal.ZERO
         totalValue = BigDecimal.ZERO
+        this.type = type
         isActive = Boolean.DEFAULT_ACTIVE_STATUS
     }
 

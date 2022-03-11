@@ -57,14 +57,14 @@
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/active_action"
+                    android:id="@+id/scActive"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/small_material_margin"
                     tools:ignore="UseSwitchCompatOrMaterialXml" />
 
                 <ImageButton
-                    android:id="@+id/delete_action"
+                    android:id="@+id/ibDelete"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/small_material_margin"

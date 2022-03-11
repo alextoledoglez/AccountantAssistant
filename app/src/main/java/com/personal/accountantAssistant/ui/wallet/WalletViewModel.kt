@@ -23,11 +23,14 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
         }
     }
 
-    fun restoreDefaultCards() = launch { repository?.setDefaultCards()?.collect() }
+    fun restoreDefaultCards() = launch {
+        repository?.setDefaultCards()?.collect { setListNotifier(ListNotifyTypes.INSERT_ALL) }
+    }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
+        _wallet.value?.cards?.forEach { it.isActive = isActive }
         repository?.setAllCardsActive(isActive)?.collect {
-            setListNotifier(ListNotifyTypes.UPDATE_ALL)
+            setListNotifier(ListNotifyTypes.ACTIVE_ALL)
         }
     }
 
@@ -36,11 +39,17 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     }
 
     fun deleteCard(position: Int, model: CardModel) = launch {
-        repository?.deleteCard(model)?.collect { setListNotifier(ListNotifyTypes.DELETE, position) }
+        repository?.deleteCard(model)?.collect {
+            _wallet.value?.cards?.remove(model)
+            setListNotifier(ListNotifyTypes.DELETE, position)
+        }
     }
 
     fun deleteAllCards() = launch {
-        repository?.deleteAllCards()?.collect { setListNotifier(ListNotifyTypes.DELETE_ALL) }
+        repository?.deleteAllCards()?.collect {
+            _wallet.value?.cards?.clear()
+            setListNotifier(ListNotifyTypes.DELETE_ALL)
+        }
     }
 
 }

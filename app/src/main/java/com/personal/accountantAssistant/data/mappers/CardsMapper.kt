@@ -28,14 +28,14 @@ fun CardModel.toEntity() = CardEntity(
     isActive = isActive.orFalse().toString()
 )
 
-fun List<CardModel>.toWalletModel() = WalletModel(
+fun ArrayList<CardModel>.toWalletModel() = WalletModel(
     isAllChecked = isAllCardsActive(),
     isAnyChecked = isAnyCardActive(),
     total = getTotalValue(),
-    cards = getSortedCards()
+    cards = getSortedCards().toMutableList() as ArrayList
 )
 
-fun List<CardEntity>.toListModel() = map { it.toModel() }
+fun List<CardEntity>.toListModel() = map { it.toModel() } as ArrayList
 
 fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
 
@@ -44,7 +44,7 @@ fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
 fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
-fun List<CardModel>.getSortedCards() = stream().sorted(
+fun ArrayList<CardModel>.getSortedCards() = stream().sorted(
     Comparator.comparing<CardModel?, Boolean?> {
         it.isActive
     }.thenComparingDouble { it.value.orZero().toDouble() }

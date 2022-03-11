@@ -23,11 +23,14 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
         }
     }
 
-    fun setDefaultBills() = launch { repository?.setDefaultBills()?.collect() }
+    fun setDefaultBills() = launch {
+        repository?.setDefaultBills()?.collect { setListNotifier(ListNotifyTypes.INSERT_ALL) }
+    }
 
     fun setAllBillsActive(isActive: Boolean) = launch {
+        _bills.value?.expenses?.forEach { it.isActive = isActive }
         repository?.setAllBillsActive(isActive)?.collect {
-            setListNotifier(ListNotifyTypes.UPDATE_ALL)
+            setListNotifier(ListNotifyTypes.ACTIVE_ALL)
         }
     }
 
@@ -39,11 +42,15 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
 
     fun deleteExpense(position: Int, model: ExpenseModel) = launch {
         repository?.deleteExpense(model)?.collect {
+            _bills.value?.expenses?.remove(model)
             setListNotifier(ListNotifyTypes.DELETE, position)
         }
     }
 
     fun deleteAllBills() = launch {
-        repository?.deleteAllBills()?.collect { setListNotifier(ListNotifyTypes.DELETE_ALL) }
+        repository?.deleteAllBills()?.collect {
+            _bills.value?.expenses?.clear()
+            setListNotifier(ListNotifyTypes.DELETE_ALL)
+        }
     }
 }

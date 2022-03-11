@@ -9,9 +9,9 @@ import com.personal.accountantAssistant.utils.MenuHelper
 
 class BuysViewHolderData(
     val binding: BuysItemListBinding,
-    private val onClick: (model: ExpenseModel) -> Unit,
-    private val notifyItemChanged: (position: Int, model: ExpenseModel) -> Unit,
-    private val notifyItemRemoved: (position: Int, model: ExpenseModel) -> Unit
+    private val onItemClick: (model: ExpenseModel) -> Unit,
+    private val notifyChanged: (index: Int, model: ExpenseModel) -> Unit,
+    private val notifyRemoved: (index: Int, model: ExpenseModel) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: ExpenseModel) {
@@ -22,23 +22,23 @@ class BuysViewHolderData(
             name.text = model.name
             value.text = toFormattedValue(model)
             //ACTIONS
-            activeAction.apply {
+            scActive.apply {
                 isChecked = model.isActive.orFalse()
-                setOnClickListener { setActive(model, isChecked) }
+                setOnClickListener { onActiveItemClick(bindingAdapterPosition, isChecked, model) }
             }
-            deleteAction.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
-            itemView.setOnClickListener { onClick(model) }
+            ibDelete.setOnClickListener { notifyRemoved(bindingAdapterPosition, model) }
+            itemView.setOnClickListener { onItemClick(model) }
             setRowForeground()
         }
     }
 
-    private fun setActive(model: ExpenseModel, isChecked: Boolean = true) {
-        model.apply { isActive = isChecked }
-        notifyItemChanged(bindingAdapterPosition, model)
+    private fun onActiveItemClick(position: Int, isActive: Boolean = true, model: ExpenseModel) {
+        model.apply { this.isActive = isActive }
+        notifyChanged(position, model)
     }
 
     private fun setRowForeground() {
-        val isActive = binding.activeAction.isChecked
+        val isActive = binding.scActive.isChecked
         val textColor = binding.root.context.getColor(
             if (isActive) R.color.fontColor else R.color.disableFontColor
         )

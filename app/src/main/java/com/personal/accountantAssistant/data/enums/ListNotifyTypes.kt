@@ -4,7 +4,7 @@ enum class ListNotifyTypes {
     INSERT,
     INSERT_ALL,
     UPDATE,
-    UPDATE_ALL,
+    ACTIVE_ALL,
     DELETE,
     DELETE_ALL;
 }

@@ -147,7 +147,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         ) {}
 
     private fun notifyActiveItems(isActive: Boolean) {
-        adapter.currentList.forEach { it.isActive = isActive }
         viewModel.setAllCardsActive(isActive)
     }
 

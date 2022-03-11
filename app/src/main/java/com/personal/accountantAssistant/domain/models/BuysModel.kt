@@ -7,5 +7,5 @@ data class BuysModel(
     val isAllChecked: Boolean = false,
     val isAnyChecked: Boolean = false,
     val total: BigDecimal = BigDecimal.ZERO,
-    val expenses: List<ExpenseModel>
+    val expenses: ArrayList<ExpenseModel>
 )

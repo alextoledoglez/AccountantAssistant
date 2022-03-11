@@ -27,11 +27,11 @@ class BillsViewHolderData(
             name.text = model.name
             value.text = toFormattedValue(model)
             //ACTIONS
-            activeAction.apply {
+            scActive.apply {
                 isChecked = model.isActive.orFalse()
                 setOnClickListener { setActive(model, isChecked) }
             }
-            deleteAction.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
+            ibDelete.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
             itemView.setOnClickListener { onClick(model) }
             setRowForeground()
         }
@@ -43,7 +43,7 @@ class BillsViewHolderData(
     }
 
     private fun setRowForeground() {
-        val isActive = binding.activeAction.isChecked
+        val isActive = binding.scActive.isChecked
         val textColor = binding.root.context.getColor(
             if (isActive) R.color.fontColor else R.color.disableFontColor
         )
