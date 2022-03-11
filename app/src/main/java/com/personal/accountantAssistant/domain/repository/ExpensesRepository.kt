@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface ExpensesRepository {
     fun getBuys(): Flow<BuysModel?>
     fun getBills(): Flow<BillsModel?>
+    fun saveExpense(model: ExpenseModel): Flow<Unit>
     fun setDefaultBuys(): Flow<Unit>
     fun setDefaultBills(): Flow<Unit>
     fun setAllBuysActive(isActive: Boolean): Flow<Unit>

@@ -13,6 +13,8 @@ class CardsDataRepository(
 
     override fun getWallet(): Flow<WalletModel> = flowEmit { dataSource.getWallet() }
 
+    override fun saveCard(model: CardModel): Flow<Unit> = flowEmit { dataSource.saveCard(model) }
+
     override fun setDefaultCards(): Flow<Unit> = flowEmit { dataSource.setDefaultCards() }
 
     override fun setAllCardsActive(isActive: Boolean): Flow<Unit> = flowEmit {

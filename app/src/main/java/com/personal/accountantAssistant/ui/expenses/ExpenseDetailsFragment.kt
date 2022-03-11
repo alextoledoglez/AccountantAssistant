@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.ui.expenses
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -18,10 +19,9 @@ import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import java.util.*
 
-class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
+class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<ExpensesDetailsViewModel>() {
 
     override val binding by viewBinding(FragmentExpensesDetailsBinding::inflate)
-    //val appDatabase: AppDatabase? by inject()
 
     override fun initComponents() {
         val model = getExpense()
@@ -91,19 +91,29 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun getExpense() = arguments?.getParcelable<ExpenseModel>(String.ENTITY)
 
     private fun save(model: ExpenseModel?) {
-        binding.apply {
-            model?.update(
-                name = etName.text,
-                quantity = etQuantity.text,
-                date = etDate.text,
-                unitaryValue = etValue.text,
-                isActive = scActive.isChecked
-            )
+        model?.let {
+            binding.apply {
+                it.update(
+                    name = etName.text,
+                    quantity = etQuantity.text,
+                    date = etDate.text,
+                    unitaryValue = etValue.text,
+                    isActive = scActive.isChecked
+                )
+                viewModel.saveExpense(it)
+                dismiss()
+            }
         }
-/*        appDatabase?.expensesDao()?.saveDataFrom(context, model) {
-            showLongText(context, R.string.record_successfully_save)
-            dismiss()
-        }*/
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        context?.showToastLongText(
+            if (viewModel.isSaved.value.orFalse())
+                R.string.record_successfully_save
+            else
+                R.string.error_saving_your_data
+        )
     }
 
     companion object {

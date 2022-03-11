@@ -34,6 +34,14 @@ data class CardModel(
         this.isActive = isActive
     }
 
+    fun updateWith(model: CardModel) {
+        this.company = model.company
+        this.name = model.name
+        this.password = model.password
+        this.value = model.value
+        this.isActive = model.isActive
+    }
+
     companion object {
         val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<CardModel>() {
             override fun areItemsTheSame(oldItem: CardModel, newItem: CardModel) =

@@ -14,6 +14,11 @@ class ExpensesDataRepository(
 
     override fun getBuys(): Flow<BuysModel?> = flowEmit { dataSource.getBuys() }
     override fun getBills(): Flow<BillsModel?> = flowEmit { dataSource.getBills() }
+
+    override fun saveExpense(model: ExpenseModel): Flow<Unit> = flowEmit {
+        dataSource.saveExpense(model)
+    }
+
     override fun setDefaultBuys(): Flow<Unit> = flowEmit { dataSource.setDefaultBuys() }
     override fun setDefaultBills(): Flow<Unit> = flowEmit { dataSource.setDefaultBills() }
 

@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.wallet
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -7,15 +8,11 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.extensions.ENTITY
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.*
 
-class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
+class WalletDetailsFragment : BaseBottomSheetDialogFragment<WalletDetailsViewModel>() {
 
     override val binding by viewBinding(ActivityWalletDetailsBinding::inflate)
-    //private val appDatabase: AppDatabase? by inject()
 
     override fun initComponents() {
         val model = getCard()
@@ -58,19 +55,29 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun getCard() = arguments?.getParcelable<CardModel>(String.ENTITY)
 
     private fun saveCard(model: CardModel?) {
-        binding.apply {
-            model?.update(
-                company = etCompany.text,
-                name = etName.text,
-                password = etPassword.text,
-                value = etValue.text,
-                isActive = scActive.isChecked
-            )
+        model?.let {
+            binding.apply {
+                it.update(
+                    company = etCompany.text,
+                    name = etName.text,
+                    password = etPassword.text,
+                    value = etValue.text,
+                    isActive = scActive.isChecked
+                )
+                viewModel.saveCard(it)
+                dismiss()
+            }
         }
-/*        appDatabase?.cardsDao()?.saveDataFrom(context, model) {
-            showLongText(context, R.string.record_successfully_save)
-            dismiss()
-        }*/
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        context?.showToastLongText(
+            if (viewModel.isSaved.value.orFalse())
+                R.string.record_successfully_save
+            else
+                R.string.error_saving_your_data
+        )
     }
 
     companion object {
