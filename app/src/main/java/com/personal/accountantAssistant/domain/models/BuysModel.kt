@@ -2,7 +2,7 @@ package com.personal.accountantAssistant.domain.models
 
 import java.math.BigDecimal
 
-data class BillModel(
+data class BuysModel(
     var uid: Long = 0,
     val isAllChecked: Boolean = false,
     val isAnyChecked: Boolean = false,

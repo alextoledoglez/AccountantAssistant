@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/header_card"
+    android:id="@+id/cvHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/half_material_margin"
@@ -20,7 +20,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/titles_bar_title"
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
             android:theme="@style/TitleTextView" />
@@ -31,15 +31,16 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/title_image"
+                android:id="@+id/ivMoney"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
                 android:layout_margin="@dimen/small_material_margin"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/ic_money" />
+                app:srcCompat="@drawable/ic_money"
+                tools:ignore="ContentDescription" />
 
             <TextView
-                android:id="@+id/titles_bar_subtitle"
+                android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
                 android:layout_margin="@dimen/small_material_margin"
@@ -47,7 +48,7 @@
                 android:theme="@style/SubTitleTextView" />
 
             <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/title_switch"
+                android:id="@+id/scActive"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
                 android:layout_margin="@dimen/small_material_margin"
@@ -62,7 +63,7 @@
             android:orientation="horizontal">
 
             <SearchView
-                android:id="@+id/title_search_view"
+                android:id="@+id/svSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_material_margin"

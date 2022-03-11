@@ -2,10 +2,15 @@ package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.ExpensesType
+import com.personal.accountantAssistant.domain.models.BillsModel
+import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
+import java.math.BigDecimal
+import java.util.stream.Collectors
 
 fun ExpenseEntity.toModel() = ExpenseModel(
     id = id?.toLong().orZero(),
@@ -29,6 +34,33 @@ fun ExpenseModel.toEntity() = ExpenseEntity(
     isActive = isActive.toString()
 )
 
+fun List<ExpenseModel>.toBuysModel() = BuysModel(
+    isAllChecked = isAllExpensesActive(),
+    isAnyChecked = isAnyExpenseActive(),
+    total = getTotalValue(),
+    expenses = getSortedExpenses()
+)
+
+fun List<ExpenseModel>.toBillsModel() = BillsModel(
+    isAllChecked = isAllExpensesActive(),
+    isAnyChecked = isAnyExpenseActive(),
+    total = getTotalValue(),
+    expenses = getSortedExpenses()
+)
+
 fun List<ExpenseEntity>.toListModel() = map { it.toModel() }
+
+fun List<ExpenseModel>.isAllExpensesActive() = stream().allMatch { it.isActive }
+
+fun List<ExpenseModel>.isAnyExpenseActive() = stream().anyMatch { it.isActive }
+
+fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().map { it.totalValue }.reduce(
+    BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum
+)
+
+fun List<ExpenseModel>.getSortedExpenses() = stream().sorted(
+    Comparator.comparing<ExpenseModel?, Boolean?> { it.isActive }
+        .thenComparingDouble { it.totalValue.orZero().toDouble() }
+).collect(Collectors.toList()).asReversed()
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()

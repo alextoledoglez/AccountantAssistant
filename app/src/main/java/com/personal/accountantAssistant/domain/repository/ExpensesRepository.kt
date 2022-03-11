@@ -1,13 +1,13 @@
 package com.personal.accountantAssistant.domain.repository
 
-import com.personal.accountantAssistant.domain.models.BillModel
-import com.personal.accountantAssistant.domain.models.BuyModel
+import com.personal.accountantAssistant.domain.models.BillsModel
+import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import kotlinx.coroutines.flow.Flow
 
 interface ExpensesRepository {
-    fun getBuys(): Flow<BuyModel?>
-    fun getBills(): Flow<BillModel?>
+    fun getBuys(): Flow<BuysModel?>
+    fun getBills(): Flow<BillsModel?>
     fun setDefaultBuys(): Flow<Unit>
     fun setDefaultBills(): Flow<Unit>
     fun setAllBuysActive(isActive: Boolean): Flow<Unit>

@@ -1,8 +1,8 @@
 package com.personal.accountantAssistant.data.repository
 
 import com.personal.accountantAssistant.data.remote.ExpensesRemoteDataSource
-import com.personal.accountantAssistant.domain.models.BillModel
-import com.personal.accountantAssistant.domain.models.BuyModel
+import com.personal.accountantAssistant.domain.models.BillsModel
+import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import com.personal.accountantAssistant.extensions.flowEmit
@@ -12,8 +12,8 @@ class ExpensesDataRepository(
     private val dataSource: ExpensesRemoteDataSource
 ) : ExpensesRepository {
 
-    override fun getBuys(): Flow<BuyModel?> = flowEmit { dataSource.getBuys() }
-    override fun getBills(): Flow<BillModel?> = flowEmit { dataSource.getBills() }
+    override fun getBuys(): Flow<BuysModel?> = flowEmit { dataSource.getBuys() }
+    override fun getBills(): Flow<BillsModel?> = flowEmit { dataSource.getBills() }
     override fun setDefaultBuys(): Flow<Unit> = flowEmit { dataSource.setDefaultBuys() }
     override fun setDefaultBills(): Flow<Unit> = flowEmit { dataSource.setDefaultBills() }
 

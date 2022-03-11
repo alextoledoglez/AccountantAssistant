@@ -1,19 +1,15 @@
 package com.personal.accountantAssistant.data.enums
 
-import com.personal.accountantAssistant.utils.ParserUtils.isNullObject
-
 enum class ExpensesType {
     BUY, BILL, NONE;
 
     companion object {
-        fun isBuy(name: String?) = (!isNullObject(name) && BUY.name == name)
+        fun isBuy(name: String?) = (!name.isNullOrEmpty() && BUY.name == name)
 
-        fun isBuy(expensesType: ExpensesType?) =
-            (!isNullObject(expensesType) && isBuy(expensesType?.name))
+        fun isBuy(type: ExpensesType?) = (type != null && isBuy(type.name))
 
-        fun isBill(name: String?) = (!isNullObject(name) && BILL.name == name)
+        fun isBill(name: String?) = (!name.isNullOrEmpty() && BILL.name == name)
 
-        fun isBill(expensesType: ExpensesType?) =
-            (!isNullObject(expensesType) && isBill(expensesType?.name))
+        fun isBill(type: ExpensesType?) = (type != null && isBill(type.name))
     }
 }

@@ -30,17 +30,6 @@ class EmailReader(user: String?, password: String?) : Authenticator() {
 
     init {
         val props = System.getProperties()
-        if (ParserUtils.isNullObject(props)) {
-            println("Properties are null !!")
-        } else {
-            props.setProperty("mail.store.protocol", "imaps")
-
-            /*Log.d(TAG, "Transport: " + props.getProperty("mail.transport.protocol"));
-            Log.d(TAG, "Store: " + props.getProperty("mail.store.protocol"));
-            Log.d(TAG, "Host: " + props.getProperty("mail.imap.host"));
-            Log.d(TAG, "Authentication: " + props.getProperty("mail.imap.auth"));
-            Log.d(TAG, "Port: " + props.getProperty("mail.imap.port"));*/
-        }
         try {
             session = Session.getDefaultInstance(props, null)
             store = session?.getStore("imaps")

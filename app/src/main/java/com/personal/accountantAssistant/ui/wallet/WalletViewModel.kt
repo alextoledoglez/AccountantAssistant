@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.ui.wallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
+import com.personal.accountantAssistant.data.enums.ListNotifyTypes
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.WalletModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
@@ -25,19 +26,21 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     fun restoreDefaultCards() = launch { repository?.setDefaultCards()?.collect() }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
-        repository?.setAllCardsActive(isActive)?.onStart { setLoading() }?.collect {
-            setAllCheckedData(isActive)
+        repository?.setAllCardsActive(isActive)?.collect {
+            setListNotifier(ListNotifyTypes.UPDATE_ALL)
         }
     }
 
-    fun updateCard(model: CardModel) = launch {
-        repository?.updateCard(model)?.onStart { setLoading() }?.collect { setUpdatedData(true) }
+    fun updateCard(position: Int, model: CardModel) = launch {
+        repository?.updateCard(model)?.collect { setListNotifier(ListNotifyTypes.UPDATE, position) }
     }
 
-    fun deleteCard(model: CardModel) = launch {
-        repository?.deleteCard(model)?.onStart { setLoading() }?.collect { setDeletedData(true) }
+    fun deleteCard(position: Int, model: CardModel) = launch {
+        repository?.deleteCard(model)?.collect { setListNotifier(ListNotifyTypes.DELETE, position) }
     }
 
-    fun deleteAllCards() = launch { repository?.deleteAllCards()?.collect() }
+    fun deleteAllCards() = launch {
+        repository?.deleteAllCards()?.collect { setListNotifier(ListNotifyTypes.DELETE_ALL) }
+    }
 
 }

@@ -11,16 +11,16 @@ import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import java.util.stream.Collectors
 
 class CardsListAdapter(
-    private val onUpdate: (model: CardModel) -> Unit,
-    private val onDelete: (model: CardModel) -> Unit,
     private val onClick: (model: CardModel) -> Unit,
+    private val notifyItemChanged: (position: Int, model: CardModel) -> Unit,
+    private val notifyItemRemoved: (position: Int, model: CardModel) -> Unit,
 ) : ListAdapter<CardModel, CardsViewHolderData>(CardModel.DIFF_UTIL_CALLBACK), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CardsViewHolderData(
         CardItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-        onUpdate,
-        onDelete,
-        onClick
+        onClick,
+        notifyItemChanged,
+        notifyItemRemoved
     )
 
     override fun onBindViewHolder(holder: CardsViewHolderData, position: Int) {

@@ -34,16 +34,17 @@ data class CardModel(
         this.isActive = isActive
     }
 
-    fun equalsTo(model: CardModel): Boolean = (id == model.id) && (company == model.company) &&
-            (name == model.name) && (password == model.password) && (value == model.value)
-
     companion object {
         val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<CardModel>() {
             override fun areItemsTheSame(oldItem: CardModel, newItem: CardModel) =
-                oldItem.company == newItem.company && oldItem.name == newItem.name
+                oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: CardModel, newItem: CardModel) =
-                oldItem == newItem
+                oldItem.company == newItem.company &&
+                        oldItem.name == newItem.name &&
+                        oldItem.password == newItem.password &&
+                        oldItem.value == newItem.value &&
+                        oldItem.isActive == newItem.isActive
         }
     }
 }

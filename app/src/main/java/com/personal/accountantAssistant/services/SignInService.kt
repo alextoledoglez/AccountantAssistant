@@ -19,8 +19,8 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.LocalStorage
+import com.personal.accountantAssistant.extensions.startMainActivity
 import com.personal.accountantAssistant.ui.login.LoginActivity
-import com.personal.accountantAssistant.utils.ActivityUtils
 import java.util.*
 
 class SignInService(val context: Context) {
@@ -106,7 +106,7 @@ class SignInService(val context: Context) {
                 if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
                     signInButton?.visibility = View.INVISIBLE
                 }
-                ActivityUtils.startMainActivity(context)
+                context.startMainActivity()
             }
             .addOnFailureListener { exception: Exception? ->
                 Log.e(TAG, "Unable to sign in.", exception)

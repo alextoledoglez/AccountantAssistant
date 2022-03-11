@@ -6,11 +6,10 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.enums.ExpensesFieldsEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
+import com.personal.accountantAssistant.data.enums.LocaleTypes
 import com.personal.accountantAssistant.data.mappers.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
 import jxl.Workbook
 import jxl.WorkbookSettings
@@ -35,7 +34,7 @@ object ImportExportUtils {
     fun xlsImport(context: Context?, type: ExpensesType?) {
         //TODO
         print(type)
-        ToastUtils.showShortText(context, R.string.excel_data_imported)
+        context?.showToastShortText(R.string.excel_data_imported)
     }
 
     fun xlsExport(context: Context, expenses: List<ExpenseModel>?, type: ExpensesType) {
@@ -67,7 +66,7 @@ object ImportExportUtils {
                 fillSheetFrom(expenses, sheet, type)
                 workbook.write()
                 workbook.close()
-                ToastUtils.showShortText(context, R.string.excel_data_exported)
+                context.showToastShortText(R.string.excel_data_exported)
             } catch (error: Exception) {
                 error.printStackTrace()
             }
@@ -88,9 +87,9 @@ object ImportExportUtils {
                     dst.transferFrom(src, 0, src.size())
                     src.close()
                     dst.close()
-                    ToastUtils.showLongText(context, R.string.db_successfully_imported)
+                    context.showToastLongText(R.string.db_successfully_imported)
                 } else {
-                    ToastUtils.showLongText(context, R.string.db_importing_failure)
+                    context.showToastLongText(R.string.db_importing_failure)
                 }
             } else {
                 requestStoragePermissionsFrom(context)
@@ -114,10 +113,10 @@ object ImportExportUtils {
                     dst.transferFrom(src, 0, src.size())
                     src.close()
                     dst.close()
-                    ToastUtils.showLongText(context, R.string.db_successfully_exported)
+                    context.showToastLongText(R.string.db_successfully_exported)
                     return backupDB
                 } else {
-                    ToastUtils.showLongText(context, R.string.db_exporting_failure)
+                    context.showToastLongText(R.string.db_exporting_failure)
                 }
             } else {
                 requestStoragePermissionsFrom(context)
@@ -176,10 +175,10 @@ object ImportExportUtils {
         cellFormat: WritableCellFormat? = null
     ) {
         try {
-            val cellLabel: Label = if (ParserUtils.isNullObject(cellFormat)) {
+            val cellLabel: Label = cellFormat?.let {
+                Label(colIndex, rowIndex, value, it)
+            } ?: run {
                 Label(colIndex, rowIndex, value)
-            } else {
-                Label(colIndex, rowIndex, value, cellFormat)
             }
             sheet.addCell(cellLabel)
         } catch (e: WriteException) {
@@ -189,7 +188,7 @@ object ImportExportUtils {
 
     private fun requestStoragePermissionsFrom(context: Context) {
         requestPermissions(
-            ActivityUtils.parse(context),
+            context.toActivity(),
             PermissionsUtils.STORAGE_PERMISSIONS,
             PermissionsUtils.STORAGE_PERMISSION_CODE
         )

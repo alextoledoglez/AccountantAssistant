@@ -3,7 +3,8 @@ package com.personal.accountantAssistant.ui.buys
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.domain.models.BuyModel
+import com.personal.accountantAssistant.data.enums.ListNotifyTypes
+import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import kotlinx.coroutines.flow.collect
@@ -12,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
 
-    private var _buys = MutableLiveData<BuyModel>()
-    var buys: LiveData<BuyModel> = _buys
+    private var _buys = MutableLiveData<BuysModel>()
+    var buys: LiveData<BuysModel> = _buys
 
     fun getBuys() = launch {
         repository?.getBuys()?.onStart { setLoading() }?.collect {
@@ -25,18 +26,24 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     fun setDefaultBuys() = launch { repository?.setDefaultBuys()?.collect() }
 
     fun setAllBuysActive(isActive: Boolean) = launch {
-        repository?.setAllBuysActive(isActive)?.onStart { setLoading() }?.collect {
-            setAllCheckedData(isActive)
+        repository?.setAllBuysActive(isActive)?.collect {
+            setListNotifier(ListNotifyTypes.UPDATE_ALL)
         }
     }
 
-    fun updateExpense(model: ExpenseModel) = launch {
-        repository?.updateExpense(model)?.onStart { setLoading() }?.collect { setUpdatedData(true) }
+    fun updateExpense(position: Int, model: ExpenseModel) = launch {
+        repository?.updateExpense(model)?.collect {
+            setListNotifier(ListNotifyTypes.UPDATE, position)
+        }
     }
 
-    fun deleteExpense(model: ExpenseModel) = launch {
-        repository?.deleteExpense(model)?.onStart { setLoading() }?.collect { setDeletedData(true) }
+    fun deleteExpense(position: Int, model: ExpenseModel) = launch {
+        repository?.deleteExpense(model)?.collect {
+            setListNotifier(ListNotifyTypes.DELETE, position)
+        }
     }
 
-    fun deleteAllBuys() = launch { repository?.deleteAllBuys()?.collect() }
+    fun deleteAllBuys() = launch {
+        repository?.deleteAllBuys()?.collect { setListNotifier(ListNotifyTypes.DELETE_ALL) }
+    }
 }

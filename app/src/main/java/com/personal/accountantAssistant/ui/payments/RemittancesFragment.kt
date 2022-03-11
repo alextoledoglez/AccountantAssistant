@@ -6,15 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.utils.ActivityUtils.startActivity
+import com.personal.accountantAssistant.extensions.startActivity
 import com.personal.accountantAssistant.utils.MenuHelper.initializeHomeOptions
 
 class RemittancesFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         initializeHomeOptions()
-        context?.let { startActivity(it, CheckoutActivity::class.java) }
+        context?.startActivity(CheckoutActivity::class.java)
         return inflater.inflate(R.layout.fragment_remittances, container, false)
     }
 }

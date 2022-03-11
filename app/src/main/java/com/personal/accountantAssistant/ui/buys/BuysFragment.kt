@@ -4,6 +4,7 @@ import com.personal.accountantAssistant.adapters.BuysListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.notify
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
@@ -15,9 +16,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override val binding by viewBinding(FragmentBuysBinding::inflate)
     override val adapter by lazy {
-        BuysListAdapter(
-            ::onUpdateExpense, ::onDeleteExpense, ::onExpenseClicked
-        )
+        BuysListAdapter(::onExpenseClicked, ::notifyItemChanged, ::notifyItemRemoved)
     }
 
     override fun onDestroy() {
@@ -29,9 +28,9 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         super.initComponents()
         MenuHelper.initializeBuysOptions()
         binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
-        binding.headerCardTitlesBar.apply {
-            initHeader(binding.headerCardTitlesBar)
-            titleSwitch.setOnClickListener { viewModel.setAllBuysActive(titleSwitch.isChecked) }
+        binding.lytHeader.apply {
+            initHeader(this)
+            scActive.setOnClickListener { notifyActiveItems(scActive.isChecked) }
         }
         binding.rvBuys.adapter = adapter
     }
@@ -40,15 +39,10 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         with(viewModel) {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfBuys.displayedChild = it.ordinal }
-            isAllChecked.observe(viewLifecycleOwner) {
-                binding.headerCardTitlesBar.titleSwitch.isChecked = it.orFalse()
-                getBuys()
-            }
-            isUpdated.observe(viewLifecycleOwner) { getBuys() }
-            isDeleted.observe(viewLifecycleOwner) { getBuys() }
+            notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
             buys.observe(viewLifecycleOwner) {
                 updateHeader(
-                    binding.headerCardTitlesBar,
+                    binding.lytHeader,
                     it.isAnyChecked,
                     it.isAllChecked,
                     it.total.toCurrencyMaskedStr()
@@ -79,12 +73,17 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         viewModel.setDefaultBuys()
     }
 
-    override fun onUpdateExpense(model: ExpenseModel) {
-        viewModel.updateExpense(model)
+    override fun notifyActiveItems(isActive: Boolean) {
+        adapter.currentList.forEach { it.isActive = isActive }
+        viewModel.setAllBuysActive(isActive)
     }
 
-    override fun onDeleteExpense(model: ExpenseModel) {
-        viewModel.deleteExpense(model)
+    override fun notifyItemChanged(position: Int, model: ExpenseModel) {
+        viewModel.updateExpense(position, model)
+    }
+
+    override fun notifyItemRemoved(position: Int, model: ExpenseModel) {
+        viewModel.deleteExpense(position, model)
     }
 
     companion object {

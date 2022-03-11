@@ -23,7 +23,9 @@ import org.koin.android.ext.android.inject
 class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
-    private val adapter by lazy { CardsListAdapter(::onUpdate, ::onDelete, ::onClick) }
+    private val adapter by lazy {
+        CardsListAdapter(::onClick, ::notifyItemChanged, ::notifyItemRemoved)
+    }
     private val localStorage: LocalStorage? by inject()
 
     override fun onDestroy() {
@@ -52,13 +54,13 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         MenuHelper.initializeWalletOptions()
         with(binding) {
             srlLoader.setOnRefreshListener { viewModel.loadCards() }
-            headerCardTitlesBar.apply {
-                titlesBarTitle.visibility = View.GONE
-                titleImage.setImageResource(R.drawable.ic_money)
-                titlesBarSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
-                titlesBarSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-                titleSwitch.setOnClickListener { viewModel.setAllCardsActive(titleSwitch.isChecked) }
-                titleSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            lytHeader.apply {
+                tvTitle.visibility = View.GONE
+                ivMoney.setImageResource(R.drawable.ic_money)
+                tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
+                tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+                scActive.setOnClickListener { notifyActiveItems(scActive.isChecked) }
+                svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(queryStr: String): Boolean {
                         recyclerViewAdapterFilterBy(queryStr)
                         return false
@@ -76,25 +78,22 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
-            flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
-            isAllChecked.observe(viewLifecycleOwner) {
-                binding.headerCardTitlesBar.titleSwitch.isChecked = it.orFalse()
-                loadCards()
+            isLoading.observe(viewLifecycleOwner) {
+                binding.srlLoader.isRefreshing = it.orFalse()
             }
-            isUpdated.observe(viewLifecycleOwner) { loadCards() }
-            isDeleted.observe(viewLifecycleOwner) { loadCards() }
+            flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
+            notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
             wallet.observe(viewLifecycleOwner) {
-                binding.headerCardTitlesBar.titleSwitch.isChecked = it.isAllChecked.orFalse()
+                binding.lytHeader.scActive.isChecked = it.isAllChecked.orFalse()
                 context?.getColor(
                     if (it.isAnyChecked.orFalse()) R.color.colorRed else R.color.colorPrimary
                 )?.let { color ->
-                    binding.headerCardTitlesBar.apply {
-                        titleImage.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
-                        titlesBarSubtitle.setTextColor(color)
+                    binding.lytHeader.apply {
+                        ivMoney.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
+                        tvSubtitle.setTextColor(color)
                     }
                 }
-                binding.headerCardTitlesBar.titlesBarSubtitle.text = it.total.toCurrencyMaskedStr()
+                binding.lytHeader.tvSubtitle.text = it.total.toCurrencyMaskedStr()
                 localStorage?.setAvailableMoney(it.total.orZero().toFloat())
                 adapter.submitList(it.cards)
             }
@@ -147,12 +146,17 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             ::restoreDefaultRecords
         ) {}
 
-    private fun onUpdate(model: CardModel) {
-        viewModel.updateCard(model)
+    private fun notifyActiveItems(isActive: Boolean) {
+        adapter.currentList.forEach { it.isActive = isActive }
+        viewModel.setAllCardsActive(isActive)
     }
 
-    private fun onDelete(model: CardModel) {
-        viewModel.deleteCard(model)
+    private fun notifyItemChanged(position: Int, model: CardModel) {
+        viewModel.updateCard(position, model)
+    }
+
+    private fun notifyItemRemoved(position: Int, model: CardModel) {
+        viewModel.deleteCard(position, model)
     }
 
     private fun onClick(model: CardModel) {

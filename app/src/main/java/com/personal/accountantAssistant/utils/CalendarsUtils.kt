@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
 import com.personal.accountantAssistant.data.mappers.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orValue
 import com.personal.accountantAssistant.extensions.orZero
 import java.util.*
 
@@ -75,16 +75,14 @@ object CalendarsUtils {
     }
 
     private fun getCalendarCursorFrom(
-        contentResolver: ContentResolver, model: ExpenseModel?
-    ): Cursor? {
-        return if (ParserUtils.isNullObject(contentResolver)) null else contentResolver.query(
-            CalendarContract.Events.CONTENT_URI,
-            PROJECTION,
-            selectionFields,
-            toSelectionArgs(model),
-            null
-        )
-    }
+        contentResolver: ContentResolver?, model: ExpenseModel?
+    ) = contentResolver?.query(
+        CalendarContract.Events.CONTENT_URI,
+        PROJECTION,
+        selectionFields,
+        toSelectionArgs(model),
+        null
+    )
 
     private fun alreadyExistCalendarEventFor(
         contentResolver: ContentResolver, model: ExpenseModel?
@@ -144,17 +142,11 @@ object CalendarsUtils {
         }
     }
 
-    private fun clearAllCalendarEvents(contentResolver: ContentResolver): Int {
-        var result = -1
-        if (!ParserUtils.isNullObject(contentResolver)) {
-            result = contentResolver.delete(
-                CalendarContract.Events.CONTENT_URI,
-                CalendarContract.Events.CALENDAR_ID + " = ?",
-                arrayOf(DEFAULT_CALENDAR_ID.toString())
-            )
-        }
-        return result
-    }
+    private fun clearAllCalendarEvents(contentResolver: ContentResolver?) = contentResolver?.delete(
+        CalendarContract.Events.CONTENT_URI,
+        CalendarContract.Events.CALENDAR_ID + " = ?",
+        arrayOf(DEFAULT_CALENDAR_ID.toString())
+    ).orValue(value = -1)
 
     private fun readCalendarEvent(
         contentResolver: ContentResolver, model: ExpenseModel?

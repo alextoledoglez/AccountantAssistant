@@ -9,9 +9,9 @@ import com.personal.accountantAssistant.utils.MenuHelper
 
 class BuysViewHolderData(
     val binding: BuysItemListBinding,
-    private val onUpdate: (model: ExpenseModel) -> Unit,
-    private val onDelete: (model: ExpenseModel) -> Unit,
-    private val onClick: (model: ExpenseModel) -> Unit
+    private val onClick: (model: ExpenseModel) -> Unit,
+    private val notifyItemChanged: (position: Int, model: ExpenseModel) -> Unit,
+    private val notifyItemRemoved: (position: Int, model: ExpenseModel) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: ExpenseModel) {
@@ -22,19 +22,19 @@ class BuysViewHolderData(
             name.text = model.name
             value.text = toFormattedValue(model)
             //ACTIONS
-            activeAction.isChecked = model.isActive.orFalse()
-            activeAction.setOnClickListener { setActive(model, activeAction.isChecked) }
-            deleteAction.setOnClickListener { onDelete(model) }
+            activeAction.apply {
+                isChecked = model.isActive.orFalse()
+                setOnClickListener { setActive(model, isChecked) }
+            }
+            deleteAction.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
             itemView.setOnClickListener { onClick(model) }
             setRowForeground()
         }
     }
 
     private fun setActive(model: ExpenseModel, isChecked: Boolean = true) {
-        model.apply {
-            isActive = isChecked
-            onUpdate(this)
-        }
+        model.apply { isActive = isChecked }
+        notifyItemChanged(bindingAdapterPosition, model)
     }
 
     private fun setRowForeground() {

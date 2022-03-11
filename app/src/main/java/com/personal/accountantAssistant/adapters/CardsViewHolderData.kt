@@ -10,9 +10,9 @@ import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
 
 class CardsViewHolderData(
     private val binding: CardItemListBinding,
-    private val onUpdate: (model: CardModel) -> Unit,
-    private val onDelete: (model: CardModel) -> Unit,
-    private val onClick: (model: CardModel) -> Unit
+    private val onClick: (model: CardModel) -> Unit,
+    private val notifyItemChanged: (position: Int, model: CardModel) -> Unit,
+    private val notifyItemRemoved: (position: Int, model: CardModel) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: CardModel) {
@@ -26,19 +26,17 @@ class CardsViewHolderData(
             //ACTIONS
             scActive.apply {
                 isChecked = model.isActive.orFalse()
-                setOnClickListener { setCardActive(model, scActive.isChecked) }
+                setOnClickListener { setActive(model, isChecked) }
             }
-            ibDelete.setOnClickListener { onDelete(model) }
+            ibDelete.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
             itemView.setOnClickListener { onClick(model) }
             setRowForeground()
         }
     }
 
-    private fun setCardActive(model: CardModel, isChecked: Boolean = true) {
-        model.apply {
-            isActive = isChecked
-            onUpdate(this)
-        }
+    private fun setActive(model: CardModel, isChecked: Boolean) {
+        model.apply { isActive = isChecked }
+        notifyItemChanged(bindingAdapterPosition, model)
     }
 
     private fun setRowForeground() {

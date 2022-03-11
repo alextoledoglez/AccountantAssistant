@@ -10,9 +10,9 @@ import com.personal.accountantAssistant.data.dao.CardDao
 import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
-import com.personal.accountantAssistant.utils.ActivityUtils
+import com.personal.accountantAssistant.extensions.showToastLongText
+import com.personal.accountantAssistant.extensions.toActivity
 import com.personal.accountantAssistant.utils.PermissionsUtils
-import com.personal.accountantAssistant.utils.ToastUtils
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -45,23 +45,21 @@ abstract class AppDatabase : RoomDatabase() {
             try {
                 if (PermissionsUtils.haveStoragePermissionGranted(context)) {
                     val sourceDirectory = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
-                    ToastUtils.showLongText(
-                        context,
-                        if (sourceDirectory?.canWrite() == true) {
-                            val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
-                            val currentDB = File(sourceDirectory, backupDBPath)
-                            val backupDB = context.getDatabasePath(DB_NAME)
-                            val src = FileInputStream(currentDB).channel
-                            FileOutputStream(backupDB).channel.apply {
-                                transferFrom(src, 0, src.size())
-                                src.close()
-                                close()
-                            }
-                            db_successful_imported
-                        } else {
-                            db_importing_failure
+                    val res = if (sourceDirectory?.canWrite() == true) {
+                        val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                        val currentDB = File(sourceDirectory, backupDBPath)
+                        val backupDB = context.getDatabasePath(DB_NAME)
+                        val src = FileInputStream(currentDB).channel
+                        FileOutputStream(backupDB).channel.apply {
+                            transferFrom(src, 0, src.size())
+                            src.close()
+                            close()
                         }
-                    )
+                        db_successful_imported
+                    } else {
+                        db_importing_failure
+                    }
+                    context.showToastLongText(res)
                 } else {
                     requestStoragePermissionsFrom(context)
                 }
@@ -88,11 +86,11 @@ abstract class AppDatabase : RoomDatabase() {
                             src.close()
                             close()
                         }
-                        ToastUtils.showLongText(context, db_successful_exported)
+                        context.showToastLongText(db_successful_exported)
                         return backupDB
-                    } else {
-                        ToastUtils.showLongText(context, db_exporting_failure)
-                    }
+                    } else
+                        context.showToastLongText(db_exporting_failure)
+
                 } else {
                     requestStoragePermissionsFrom(context)
                 }
@@ -104,7 +102,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private fun requestStoragePermissionsFrom(context: Context) {
             requestPermissions(
-                ActivityUtils.parse(context),
+                context.toActivity(),
                 PermissionsUtils.STORAGE_PERMISSIONS,
                 PermissionsUtils.STORAGE_PERMISSION_CODE
             )

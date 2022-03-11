@@ -25,8 +25,9 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     abstract override val binding: ViewBinding
     abstract val adapter: ListAdapter<*, *>
-    abstract fun onUpdateExpense(model: ExpenseModel)
-    abstract fun onDeleteExpense(model: ExpenseModel)
+    abstract fun notifyActiveItems(isActive: Boolean)
+    abstract fun notifyItemChanged(position: Int, model: ExpenseModel)
+    abstract fun notifyItemRemoved(position: Int, model: ExpenseModel)
 
     private val repository: ExpensesRepository? by inject()
     private val activity: Activity? = null
@@ -37,12 +38,11 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     fun initHeader(header: TitlesBarsBinding) {
         with(header) {
-            titlesBarTitle.visibility = View.GONE
-            titleImage.setImageResource(R.drawable.ic_money)
-            titlesBarSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
-            titlesBarSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-            titleSearchView.setOnQueryTextListener(object :
-                SearchView.OnQueryTextListener {
+            tvTitle.visibility = View.GONE
+            ivMoney.setImageResource(R.drawable.ic_money)
+            tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
+            tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(queryStr: String): Boolean {
                     recyclerViewAdapterFilterBy(queryStr)
                     return false
@@ -64,11 +64,11 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         )
         with(header) {
             color?.let {
-                titleImage.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
-                titlesBarSubtitle.setTextColor(it)
+                ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+                tvSubtitle.setTextColor(it)
             }
-            titlesBarSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
-            titleSwitch.isChecked = isAllChecked.orFalse()
+            tvSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
+            scActive.isChecked = isAllChecked.orFalse()
         }
     }
 

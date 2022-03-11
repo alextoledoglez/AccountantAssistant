@@ -4,16 +4,12 @@ import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.enums.BillsEnum
 import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
+import com.personal.accountantAssistant.data.mappers.toBillsModel
+import com.personal.accountantAssistant.data.mappers.toBuysModel
 import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
-import com.personal.accountantAssistant.domain.models.BillModel
-import com.personal.accountantAssistant.domain.models.BuyModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.utils.CalculatorUtils
-import java.math.BigDecimal
-import java.util.stream.Collectors
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
@@ -24,39 +20,13 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
             expenseDao.insert(it.toEntity())
     }
 
-    private fun isAllActiveFrom(list: List<ExpenseModel>) = list.stream().allMatch { it.isActive }
-
-    private fun isAnyActiveFrom(list: List<ExpenseModel>) = list.stream().anyMatch { it.isActive }
-
-    private fun getTotalValuesFrom(list: List<ExpenseModel>) = list.stream().map { it.totalValue }
-        .reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
-
-    private fun getSortedExpensesFrom(list: List<ExpenseModel>) = list.stream().sorted(
-        Comparator.comparing<ExpenseModel?, Boolean?> { it.isActive }
-            .thenComparingDouble { it.totalValue.orZero().toDouble() }
-    ).collect(Collectors.toList()).asReversed()
-
     suspend fun getBuys() = expenseDao.selectAll(
         ExpensesType.BUY.name
-    ).toList().toListModel().let { list ->
-        BuyModel(
-            isAllChecked = isAllActiveFrom(list),
-            isAnyChecked = isAnyActiveFrom(list),
-            total = getTotalValuesFrom(list),
-            expenses = getSortedExpensesFrom(list)
-        )
-    }
+    ).toList().toListModel().toBuysModel()
 
     suspend fun getBills() = expenseDao.selectAll(
         ExpensesType.BILL.name
-    ).toList().toListModel().let { list ->
-        BillModel(
-            isAllChecked = isAllActiveFrom(list),
-            isAnyChecked = isAnyActiveFrom(list),
-            total = getTotalValuesFrom(list),
-            expenses = getSortedExpensesFrom(list)
-        )
-    }
+    ).toList().toListModel().toBillsModel()
 
     suspend fun setDefaultBuys() {
         if (expenseDao.deleteByType(ExpensesType.BUY.name) > Int.DEFAULT_UID) {

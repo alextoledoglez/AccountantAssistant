@@ -4,6 +4,7 @@ import com.personal.accountantAssistant.adapters.BillsListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.notify
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
@@ -15,35 +16,30 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
     override val adapter by lazy {
-        BillsListAdapter(
-            ::onUpdateExpense, ::onDeleteExpense, ::onExpenseClicked
-        )
+        BillsListAdapter(::onExpenseClicked, ::notifyItemChanged, ::notifyItemRemoved)
     }
 
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()
         binding.srlLoader.setOnRefreshListener { viewModel.getBills() }
-        binding.headerCardTitlesBar.apply {
-            initHeader(binding.headerCardTitlesBar)
-            titleSwitch.setOnClickListener { viewModel.setAllBillsActive(titleSwitch.isChecked) }
+        binding.lytHeader.apply {
+            initHeader(this)
+            scActive.setOnClickListener { notifyActiveItems(scActive.isChecked) }
         }
         binding.rvBills.adapter = adapter
     }
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
-            flipper.observe(viewLifecycleOwner) { binding.vfBills.displayedChild = it.ordinal }
-            isAllChecked.observe(viewLifecycleOwner) {
-                binding.headerCardTitlesBar.titleSwitch.isChecked = it.orFalse()
-                getBills()
+            isLoading.observe(viewLifecycleOwner) {
+                binding.srlLoader.isRefreshing = it.orFalse()
             }
-            isUpdated.observe(viewLifecycleOwner) { getBills() }
-            isDeleted.observe(viewLifecycleOwner) { getBills() }
+            flipper.observe(viewLifecycleOwner) { binding.vfBills.displayedChild = it.ordinal }
+            notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
             bills.observe(viewLifecycleOwner) {
                 updateHeader(
-                    binding.headerCardTitlesBar,
+                    binding.lytHeader,
                     it.isAnyChecked,
                     it.isAllChecked,
                     it.total.toCurrencyMaskedStr()
@@ -74,12 +70,17 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         viewModel.setDefaultBills()
     }
 
-    override fun onUpdateExpense(model: ExpenseModel) {
-        viewModel.updateExpense(model)
+    override fun notifyActiveItems(isActive: Boolean) {
+        adapter.currentList.forEach { it.isActive = isActive }
+        viewModel.setAllBillsActive(isActive)
     }
 
-    override fun onDeleteExpense(model: ExpenseModel) {
-        viewModel.deleteExpense(model)
+    override fun notifyItemChanged(position: Int, model: ExpenseModel) {
+        viewModel.updateExpense(position, model)
+    }
+
+    override fun notifyItemRemoved(position: Int, model: ExpenseModel) {
+        viewModel.deleteExpense(position, model)
     }
 
     companion object {
