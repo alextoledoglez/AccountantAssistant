@@ -54,9 +54,8 @@ fun List<ExpenseModel>.isAllExpensesActive() = stream().allMatch { it.isActive }
 
 fun List<ExpenseModel>.isAnyExpenseActive() = stream().anyMatch { it.isActive }
 
-fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().map { it.totalValue }.reduce(
-    BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum
-)
+fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
+    .map { it.totalValue }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
 fun List<ExpenseModel>.getSortedExpenses() = stream().sorted(
     Comparator.comparing<ExpenseModel?, Boolean?> { it.isActive }

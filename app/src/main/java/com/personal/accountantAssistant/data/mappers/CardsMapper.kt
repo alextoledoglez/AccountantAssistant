@@ -41,9 +41,8 @@ fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
 
 fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
 
-fun List<CardModel>.getTotalValue(): BigDecimal = stream().map { it.value }.reduce(
-    BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum
-)
+fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
+    .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
 fun List<CardModel>.getSortedCards() = stream().sorted(
     Comparator.comparing<CardModel?, Boolean?> {
