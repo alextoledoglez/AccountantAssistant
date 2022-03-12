@@ -45,7 +45,7 @@ fun ArrayList<ExpenseModel>.toBillsModel() = BillsModel(
     isAllChecked = isAllExpensesActive(),
     isAnyChecked = isAnyExpenseActive(),
     total = getTotalValue(),
-    expenses = getSortedExpenses().toMutableList() as ArrayList
+    expenses = getSortedExpenses() as ArrayList
 )
 
 fun List<ExpenseEntity>.toListModel() = map { it.toModel() } as ArrayList
@@ -58,8 +58,7 @@ fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().filter { it.isActi
     .map { it.totalValue }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
 fun ArrayList<ExpenseModel>.getSortedExpenses() = stream().sorted(
-    Comparator.comparing<ExpenseModel?, Boolean?> { it.isActive }
-        .thenComparingDouble { it.totalValue.orZero().toDouble() }
-).collect(Collectors.toList()).asReversed()
+    Comparator.comparing(ExpenseModel::date)
+).collect(Collectors.toList()).toMutableList()
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()
