@@ -24,6 +24,11 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         binding.rvBuys.adapter = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getBuys()
+    }
+
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBuysOptions()

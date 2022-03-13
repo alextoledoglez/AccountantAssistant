@@ -19,6 +19,16 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         BillsListAdapter(::onExpenseClicked, ::notifyItemChanged, ::notifyItemRemoved)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.rvBills.adapter = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getBills()
+    }
+
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()

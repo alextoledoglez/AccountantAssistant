@@ -7,6 +7,7 @@ import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
 import java.math.BigDecimal
@@ -17,8 +18,8 @@ fun ExpenseEntity.toModel() = ExpenseModel(
     name = name,
     quantity = quantity?.toInt().orZero(),
     date = DateUtils.toDate(date.orEmpty()),
-    unitaryValue = unitaryValue?.toBigDecimal().orZero(),
-    totalValue = totalValue?.toBigDecimal().orZero(),
+    unitaryValue = unitaryValue?.toRoundedBigDecimal().orZero(),
+    totalValue = totalValue?.toRoundedBigDecimal().orZero(),
     type = ExpensesType.valueOf(type ?: ExpensesType.NONE.name),
     isActive = isActive.toBoolean().orFalse()
 )

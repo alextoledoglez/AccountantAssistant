@@ -33,6 +33,11 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         binding.rvCards.adapter = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadCards()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         MenuHelper.mainMenu = menu
         MenuHelper.enableMenuItemOptions(true)

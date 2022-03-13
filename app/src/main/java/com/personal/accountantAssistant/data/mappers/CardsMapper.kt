@@ -5,7 +5,7 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.WalletModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.rounded
+import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import java.math.BigDecimal
 import java.util.stream.Collectors
@@ -15,7 +15,7 @@ fun CardEntity.toModel() = CardModel(
     company = company.orEmpty(),
     name = name.orEmpty(),
     password = password?.toInt().orZero(),
-    value = BigDecimal(value).rounded(),
+    value = value?.toRoundedBigDecimal().orZero(),
     isActive = isActive.toBoolean().orFalse()
 )
 
