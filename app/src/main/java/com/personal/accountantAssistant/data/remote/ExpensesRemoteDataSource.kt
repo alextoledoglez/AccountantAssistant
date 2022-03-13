@@ -10,6 +10,12 @@ import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.rounded
+import com.personal.accountantAssistant.utils.CalculatorUtils.accumulatedDecimalSum
+import com.personal.accountantAssistant.utils.DateUtils
+import java.math.BigDecimal
+import java.util.*
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
@@ -27,6 +33,12 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
     suspend fun getBills() = expenseDao.selectAll(
         ExpensesType.BILL.name
     ).toList().toListModel().toBillsModel()
+
+    suspend fun getTotalPriceUntil(
+        type: ExpensesType, lastPeriodDate: Date?
+    ) = expenseDao.selectAll(type.name).toList().toListModel().stream().filter {
+        it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
+    }?.map { it.totalValue }?.reduce(BigDecimal.ZERO, accumulatedDecimalSum).orZero().rounded()
 
     suspend fun setDefaultBuys() {
         deleteAllBuys()

@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.data.repository
 
+import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.remote.ExpensesRemoteDataSource
 import com.personal.accountantAssistant.domain.models.BillsModel
 import com.personal.accountantAssistant.domain.models.BuysModel
@@ -7,6 +8,8 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import com.personal.accountantAssistant.extensions.flowEmit
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
+import java.util.*
 
 class ExpensesDataRepository(
     private val dataSource: ExpensesRemoteDataSource
@@ -14,6 +17,10 @@ class ExpensesDataRepository(
 
     override fun getBuys(): Flow<BuysModel?> = flowEmit { dataSource.getBuys() }
     override fun getBills(): Flow<BillsModel?> = flowEmit { dataSource.getBills() }
+
+    override fun getTotalPriceUntil(
+        type: ExpensesType, lastPeriodDate: Date?
+    ): Flow<BigDecimal?> = flowEmit { dataSource.getTotalPriceUntil(type, lastPeriodDate) }
 
     override fun saveExpense(model: ExpenseModel): Flow<Unit> = flowEmit {
         dataSource.saveExpense(model)

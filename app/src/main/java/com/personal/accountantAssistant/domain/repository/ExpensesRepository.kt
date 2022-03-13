@@ -1,13 +1,17 @@
 package com.personal.accountantAssistant.domain.repository
 
+import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.BillsModel
 import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
+import java.util.*
 
 interface ExpensesRepository {
     fun getBuys(): Flow<BuysModel?>
     fun getBills(): Flow<BillsModel?>
+    fun getTotalPriceUntil(type: ExpensesType, lastPeriodDate: Date?): Flow<BigDecimal?>
     fun saveExpense(model: ExpenseModel): Flow<Unit>
     fun setDefaultBuys(): Flow<Unit>
     fun setDefaultBills(): Flow<Unit>
