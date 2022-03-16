@@ -1,8 +1,6 @@
 package com.personal.accountantAssistant.ui.home
 
-import android.os.Build
 import androidx.annotation.ColorRes
-import androidx.annotation.RequiresApi
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.HomeListAdapter
@@ -16,7 +14,6 @@ import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.MenuHelper
 import java.math.BigDecimal
 
-@RequiresApi(Build.VERSION_CODES.P)
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
@@ -29,13 +26,11 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         binding.rvDashboard.adapter = null
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun onResume() {
         super.onResume()
         viewModel.calculateExpenses()
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun initComponents() {
         MenuHelper.initializeHomeOptions()
         with(binding) {
@@ -58,7 +53,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     private fun showRangePicker() {
         MaterialDatePicker.Builder.dateRangePicker()
             .setTitleText(getString(R.string.select_period))

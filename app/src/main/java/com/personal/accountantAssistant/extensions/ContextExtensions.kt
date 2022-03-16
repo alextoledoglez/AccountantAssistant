@@ -23,6 +23,8 @@ fun Context.startActivity(activityClass: Class<*>?) {
 
 fun Context.toActivity() = this as Activity
 
+fun Context.toMainActivity() = this as MainActivity
+
 fun Context.showToastLongText(text: String?) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }

@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.expenses
 
-import android.app.Activity
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
@@ -15,11 +14,9 @@ import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.databinding.TitlesBarsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.domain.repository.ExpensesRepository
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.MenuHelper
-import org.koin.android.ext.android.inject
 
 abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOptionsInterface {
 
@@ -28,9 +25,6 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
     abstract fun notifyActiveItems(isActive: Boolean)
     abstract fun notifyItemChanged(position: Int, model: ExpenseModel)
     abstract fun notifyItemRemoved(position: Int, model: ExpenseModel)
-
-    private val repository: ExpensesRepository? by inject()
-    private val activity: Activity? = null
 
     override fun initComponents() {
         setHasOptionsMenu(true)
@@ -80,7 +74,6 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.add_record -> addMenuItemClickListener()
             R.id.import_export -> importExportMenuItemClickListener()
             R.id.delete_all -> deleteAllMenuItemClickListener()
             R.id.restore_default -> restoreDefaultMenuItemClickListener()
@@ -113,7 +106,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             ::restoreDefaultRecords
         ) {}
 
-    fun onExpenseClicked(model: ExpenseModel) {
+    fun onItemClick(model: ExpenseModel) {
         ExpenseDetailsFragment.newInstance(model).show(
             requireActivity().supportFragmentManager, String.EMPTY
         )

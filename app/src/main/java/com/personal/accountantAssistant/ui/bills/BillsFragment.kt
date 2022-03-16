@@ -16,7 +16,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
     override val adapter by lazy {
-        BillsListAdapter(::onExpenseClicked, ::notifyItemChanged, ::notifyItemRemoved)
+        BillsListAdapter(::onItemClick, ::notifyItemChanged, ::notifyItemRemoved)
     }
 
     override fun onDestroy() {
@@ -58,10 +58,6 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             }
             getBills()
         }
-    }
-
-    override fun addMenuItemClickListener() {
-        onExpenseClicked(ExpenseModel())
     }
 
     override fun importMenuItemClickListener() {

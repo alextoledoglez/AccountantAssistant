@@ -24,7 +24,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
     private val adapter by lazy {
-        CardsListAdapter(::onClick, ::notifyItemChanged, ::notifyItemRemoved)
+        CardsListAdapter(::onItemClick, ::notifyItemChanged, ::notifyItemRemoved)
     }
     private val localStorage: LocalStorage? by inject()
 
@@ -46,7 +46,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.add_record -> addMenuItemClickListener()
             R.id.import_export -> importExportMenuItemClickListener()
             R.id.delete_all -> deleteAllMenuItemClickListener()
             R.id.restore_default -> restoreDefaultMenuItemClickListener()
@@ -106,10 +105,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         }
     }
 
-    override fun addMenuItemClickListener() {
-        onClick(CardModel())
-    }
-
     override fun importMenuItemClickListener() {
         ImportExportUtils.xlsImport(context, ExpensesType.BUY)
     }
@@ -163,7 +158,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         viewModel.deleteCard(position, model)
     }
 
-    private fun onClick(model: CardModel) {
+    fun onItemClick(model: CardModel) {
         WalletDetailsFragment.newInstance(model).show(
             requireActivity().supportFragmentManager, String.EMPTY
         )

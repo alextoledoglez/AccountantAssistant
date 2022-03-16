@@ -4,10 +4,9 @@ import android.view.Menu
 
 object MenuHelper {
     var mainMenu: Menu? = null
-    private const val add_option = 0
-    private const val import_export_option = 1
-    private const val delete_all_option = 2
-    private const val restore_default_option = 3
+    private const val import_export_option = 0
+    private const val delete_all_option = 1
+    private const val restore_default_option = 2
     private var isWalletViewSelected: Boolean = false
     private var isBuysViewSelected: Boolean = false
     private var isBillsViewSelected: Boolean = false
@@ -45,7 +44,6 @@ object MenuHelper {
     }
 
     fun enableMenuItemOptions(enable: Boolean) {
-        setItemEnabled(add_option, enable)
         setItemEnabled(import_export_option, enable)
         setItemEnabled(delete_all_option, enable)
         setItemEnabled(restore_default_option, enable)

@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_record"
-        android:icon="@drawable/ic_add_white"
-        android:title="@string/add_action"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/import_export"
         android:icon="@drawable/ic_import_export_white"
         android:title="@string/import_export"

@@ -36,4 +36,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/default_material_margin"
+        android:layout_marginBottom="@dimen/default_material_margin"
+        android:clickable="true"
+        android:contentDescription="@string/add_action"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_add_white"
+        app:tint="@color/colorWhite" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,7 +1,5 @@
 package com.personal.accountantAssistant.ui.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
@@ -49,7 +47,6 @@ class HomeViewModel(
     fun isExpensesMoreThanAvailable(value: BigDecimal?): Boolean =
         !isExpensesLessThanAvailable(value)
 
-    @RequiresApi(Build.VERSION_CODES.P)
     fun calculateExpenses() = launch {
         setLoading()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())

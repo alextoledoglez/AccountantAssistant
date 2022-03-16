@@ -62,4 +62,12 @@ fun ArrayList<ExpenseModel>.getSortedExpenses() = stream().sorted(
     Comparator.comparing(ExpenseModel::date)
 ).collect(Collectors.toList()).toMutableList()
 
+fun ExpenseModel.toBuy() = apply {
+    type = ExpensesType.BUY
+}
+
+fun ExpenseModel.toBill() = apply {
+    type = ExpensesType.BILL
+}
+
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()

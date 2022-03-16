@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ViewPagerAdapter : FragmentStateAdapter {
 
-    private var fragments: List<Fragment> = ArrayList()
+    var fragments: List<Fragment> = ArrayList()
 
     constructor(frag: Fragment, fragments: List<Fragment>) : super(frag) {
         this.fragments = fragments
