@@ -7,6 +7,7 @@ import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toEntityId
 import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
@@ -25,7 +26,7 @@ fun ExpenseEntity.toModel() = ExpenseModel(
 )
 
 fun ExpenseModel.toEntity() = ExpenseEntity(
-    id = id.toInt(),
+    id = id.toEntityId(),
     name = name,
     quantity = quantity.toString(),
     date = DateUtils.toString(date),

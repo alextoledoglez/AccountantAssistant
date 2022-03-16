@@ -62,17 +62,16 @@ data class ExpenseModel(
     companion object {
         val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<ExpenseModel>() {
             override fun areItemsTheSame(oldItem: ExpenseModel, newItem: ExpenseModel) =
-                oldItem.id == newItem.id &&
-                        oldItem.name == newItem.name &&
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: ExpenseModel, newItem: ExpenseModel) =
+                oldItem.name == newItem.name &&
                         oldItem.quantity == newItem.quantity &&
                         oldItem.date == newItem.date &&
                         oldItem.unitaryValue == newItem.unitaryValue &&
                         oldItem.totalValue == newItem.totalValue &&
                         oldItem.type == newItem.type &&
                         oldItem.isActive == newItem.isActive
-
-            override fun areContentsTheSame(oldItem: ExpenseModel, newItem: ExpenseModel) =
-                oldItem == newItem
         }
     }
 }

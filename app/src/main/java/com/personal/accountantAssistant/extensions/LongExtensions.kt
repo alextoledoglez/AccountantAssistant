@@ -7,3 +7,5 @@ fun Long?.orValue(value: Long) = this ?: value
 fun Long?.orZero(): Long = orValue(0)
 
 fun Long?.orOne(): Long = orValue(1)
+
+fun Long.toEntityId() = if (this > Int.DEFAULT_UID) this.toInt() else null

@@ -24,11 +24,6 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         binding.rvBills.adapter = null
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getBills()
-    }
-
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()
