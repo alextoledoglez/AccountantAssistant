@@ -26,11 +26,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         binding.rvDashboard.adapter = null
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.calculateExpenses()
-    }
-
     override fun initComponents() {
         MenuHelper.initializeHomeOptions()
         with(binding) {

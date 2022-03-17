@@ -1,7 +1,5 @@
 package com.personal.accountantAssistant.di
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
@@ -40,7 +38,6 @@ val dataModule = module {
     single<ExpensesRepository> { ExpensesDataRepository(get()) }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
 val storageModule = module {
     single { LocalStorage(get()) }
 }
