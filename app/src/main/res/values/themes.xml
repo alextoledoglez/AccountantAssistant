@@ -1,8 +1,6 @@
 <resources>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/Widget.AppTheme.ActionBar.Fullscreen</item>
-        <item name="android:windowActionBarOverlay">@color/colorPrimary</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
     </style>

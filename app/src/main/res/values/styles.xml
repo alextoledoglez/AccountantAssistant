@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -6,8 +6,6 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:windowBackground">@color/colorPrimaryDark</item>
-        <!--<item name="android:windowAnimationStyle">@style/activityTransitionsAnimations</item>-->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
@@ -15,19 +13,6 @@
         <item name="materialCalendarFullscreenTheme">
             @style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen
         </item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="Widget.AppTheme.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <!--Animations styles-->
@@ -89,6 +74,7 @@
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
@@ -102,7 +88,7 @@
         <item name="cornerSize">@dimen/default_material_margin</item>
     </style>
 
-    <style name="AlertDialogStyle" parent="MaterialAlertDialog.MaterialComponents">
+    <style name="AlertDialogStyle" parent="MaterialAlertDialog.MaterialComponents" tools:ignore="PrivateResource">
         <item name="shapeAppearance">@style/AlertDialogShapeAppearanceStyle</item>
     </style>
 
@@ -119,7 +105,7 @@
     </style>
 
     <style name="AlertDialogBuilderStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="alertDialogStyle">@style/AlertDialogStyle</item>
+        <item name="alertDialogStyle" tools:ignore="PrivateResource">@style/AlertDialogStyle</item>
         <item name="android:datePickerDialogTheme">@style/DatePickerTheme</item>
         <item name="materialAlertDialogBodyTextStyle">@style/AlertDialogBodyStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/AlertDialogPositiveTextStyle</item>

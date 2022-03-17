@@ -1,11 +1,8 @@
 package com.personal.accountantAssistant.ui
 
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -66,9 +63,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
         binding.vpContent.apply {
             registerOnPageChangeCallback(pageChangeCallback)

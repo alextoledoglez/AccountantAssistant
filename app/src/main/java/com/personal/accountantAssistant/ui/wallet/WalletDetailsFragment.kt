@@ -6,13 +6,13 @@ import android.text.InputFilter
 import android.text.InputFilter.AllCaps
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
-import com.personal.accountantAssistant.databinding.ActivityWalletDetailsBinding
+import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.*
 
 class WalletDetailsFragment : BaseBottomSheetDialogFragment<WalletDetailsViewModel>() {
 
-    override val binding by viewBinding(ActivityWalletDetailsBinding::inflate)
+    override val binding by viewBinding(FragmentWalletDetailsBinding::inflate)
 
     override fun initComponents() {
         val model = getCard()
