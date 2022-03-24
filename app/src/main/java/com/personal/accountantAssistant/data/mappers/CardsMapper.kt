@@ -38,7 +38,7 @@ fun List<CardEntity>.toListModel() = map { it.toModel() }.sortedWith(
     Comparator.comparing<CardModel?, Boolean?> { it.isActive }.thenComparingDouble {
         it.value.orZero().toDouble()
     }
-).toMutableList()
+).reversed().toMutableList()
 
 fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
 
