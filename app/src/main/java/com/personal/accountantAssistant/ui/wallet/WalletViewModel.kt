@@ -39,9 +39,7 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
-        val list = getCards()
-        list?.forEach { it.isActive = isActive }
-        repository?.setAllCardsActive(isActive)?.collect { _cards.postValue(list) }
+        repository?.setAllCardsActive(isActive)?.collect { _cards.postValue(it) }
     }
 
     fun updateCard(model: CardModel) = launch {

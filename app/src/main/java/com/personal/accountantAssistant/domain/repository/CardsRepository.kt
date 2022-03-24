@@ -7,7 +7,7 @@ interface CardsRepository {
     fun getCards(): Flow<MutableList<CardModel>?>
     fun saveCard(model: CardModel): Flow<Unit>
     fun setDefaultCards(): Flow<Unit>
-    fun setAllCardsActive(isActive: Boolean): Flow<Unit>
+    fun setAllCardsActive(isActive: Boolean): Flow<MutableList<CardModel>?>
     fun updateCard(model: CardModel): Flow<Unit>
     fun deleteCard(model: CardModel): Flow<Unit>
     fun deleteAllCards(): Flow<Unit>

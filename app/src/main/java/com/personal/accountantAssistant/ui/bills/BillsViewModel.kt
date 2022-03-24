@@ -39,9 +39,7 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     }
 
     fun setAllBillsActive(isActive: Boolean) = launch {
-        val expenses = getExpenses()
-        expenses?.forEach { it.isActive = isActive }
-        repository?.setAllBillsActive(isActive)?.collect { _bills.postValue(expenses) }
+        repository?.setAllBillsActive(isActive)?.collect { _bills.postValue(it) }
     }
 
     fun activeExpense(model: ExpenseModel) = launch {

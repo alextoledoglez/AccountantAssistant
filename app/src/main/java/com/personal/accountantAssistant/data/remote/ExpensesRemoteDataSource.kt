@@ -44,13 +44,13 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         BillsEnum.values().forEach { saveExpense(ExpenseModel(it.value, ExpensesType.BILL)) }
     }
 
-    suspend fun setAllBuysActive(isActive: Boolean) = expenseDao.activeAll(
-        isActive.toString(), ExpensesType.BUY.toString()
-    )
+    suspend fun setAllBuysActive(isActive: Boolean) = if (
+        expenseDao.activeAll(isActive.toString(), ExpensesType.BUY.toString()) > Int.DEFAULT_UID
+    ) expenseDao.selectAll(ExpensesType.BUY.name).toList().toListModel() else mutableListOf()
 
-    suspend fun setAllBillsActive(isActive: Boolean) = expenseDao.activeAll(
-        isActive.toString(), ExpensesType.BILL.toString()
-    )
+    suspend fun setAllBillsActive(isActive: Boolean) = if (
+        expenseDao.activeAll(isActive.toString(), ExpensesType.BILL.toString()) > Int.DEFAULT_UID
+    ) expenseDao.selectAll(ExpensesType.BILL.name).toList().toListModel() else mutableListOf()
 
     suspend fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
 

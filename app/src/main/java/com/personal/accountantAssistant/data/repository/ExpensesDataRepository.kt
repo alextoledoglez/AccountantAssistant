@@ -29,11 +29,11 @@ class ExpensesDataRepository(
 
     override fun setDefaultBills(): Flow<Unit> = flowEmit { dataSource.setDefaultBills() }
 
-    override fun setAllBuysActive(isActive: Boolean): Flow<Unit> = flowEmit {
+    override fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?> = flowEmit {
         dataSource.setAllBuysActive(isActive)
     }
 
-    override fun setAllBillsActive(isActive: Boolean): Flow<Unit> = flowEmit {
+    override fun setAllBillsActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?> = flowEmit {
         dataSource.setAllBillsActive(isActive)
     }
 

@@ -13,8 +13,8 @@ interface ExpensesRepository {
     fun saveExpense(model: ExpenseModel): Flow<Unit>
     fun setDefaultBuys(): Flow<Unit>
     fun setDefaultBills(): Flow<Unit>
-    fun setAllBuysActive(isActive: Boolean): Flow<Unit>
-    fun setAllBillsActive(isActive: Boolean): Flow<Unit>
+    fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
+    fun setAllBillsActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
     fun updateExpense(model: ExpenseModel): Flow<Long>
     fun deleteExpense(model: ExpenseModel): Flow<Long>
     fun deleteAllBuys(): Flow<Unit>

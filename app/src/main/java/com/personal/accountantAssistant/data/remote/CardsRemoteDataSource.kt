@@ -24,7 +24,9 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         DefaultCardsEnum.values().forEach { cardDao.insert(CardEntity(it.company, it.title)) }
     }
 
-    suspend fun setAllCardsActive(isActive: Boolean) = cardDao.activeAll(isActive.toString())
+    suspend fun setAllCardsActive(isActive: Boolean) = if (
+        cardDao.activeAll(isActive.toString()) > Int.DEFAULT_UID
+    ) cardDao.selectAll().toList().toListModel() else mutableListOf()
 
     suspend fun updateCard(model: CardModel) = cardDao.update(model.toEntity())
 

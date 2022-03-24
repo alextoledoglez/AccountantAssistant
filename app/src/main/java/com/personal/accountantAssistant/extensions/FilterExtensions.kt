@@ -20,6 +20,6 @@ fun <T> Filterable.settingFilter(
 
     @Suppress("UNCHECKED_CAST")
     override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
-        onResults(filterResults?.values as ArrayList<T>?)
+        onResults(filterResults?.values as? ArrayList<T>?)
     }
 }

@@ -16,7 +16,7 @@ class CardsDataRepository(
 
     override fun setDefaultCards(): Flow<Unit> = flowEmit { dataSource.setDefaultCards() }
 
-    override fun setAllCardsActive(isActive: Boolean): Flow<Unit> = flowEmit {
+    override fun setAllCardsActive(isActive: Boolean): Flow<MutableList<CardModel>?> = flowEmit {
         dataSource.setAllCardsActive(isActive)
     }
 
