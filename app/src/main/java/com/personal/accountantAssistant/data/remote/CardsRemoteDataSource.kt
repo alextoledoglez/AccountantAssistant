@@ -29,7 +29,9 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         cardDao.activeAll(isActive.toString()) > Int.DEFAULT_UID
     ) getCards() else mutableListOf()
 
-    suspend fun updateCard(model: CardModel) = cardDao.update(model.toEntity())
+    suspend fun switchActiveCard(model: CardModel) = if (
+        cardDao.update(model.toEntity()) > Int.DEFAULT_UID
+    ) getCards() else mutableListOf()
 
     suspend fun deleteCard(model: CardModel) = cardDao.delete(model.toEntity())
 

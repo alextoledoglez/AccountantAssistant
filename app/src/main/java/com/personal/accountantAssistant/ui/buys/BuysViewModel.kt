@@ -3,7 +3,6 @@ package com.personal.accountantAssistant.ui.buys
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.mappers.replaceActiveStateOf
 import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
@@ -42,9 +41,8 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
         repository?.setAllBuysActive(isActive)?.collect { _buys.postValue(it) }
     }
 
-    fun activeExpense(model: ExpenseModel) = launch {
-        val expenses = getExpenses()?.replaceActiveStateOf(model)
-        repository?.updateExpense(model)?.collect { _buys.postValue(expenses) }
+    fun switchActiveExpense(model: ExpenseModel) = launch {
+        repository?.switchActiveExpense(model)?.collect { _buys.postValue(it) }
     }
 
     fun deleteExpense(model: ExpenseModel) = launch {

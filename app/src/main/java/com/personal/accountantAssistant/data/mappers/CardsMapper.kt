@@ -46,10 +46,3 @@ fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
 
 fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
-
-fun MutableList<CardModel>.replaceActiveStateOf(model: CardModel) = apply {
-    val index = indexOf(model)
-    val current = removeAt(index)
-    current.updateWith(model.also { it.isActive = !it.isActive })
-    add(index, current)
-}

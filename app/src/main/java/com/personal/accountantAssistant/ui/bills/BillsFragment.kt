@@ -14,7 +14,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
     override val adapter by lazy {
-        BillsListAdapter(::onEditExpense, viewModel::activeExpense, viewModel::deleteExpense)
+        BillsListAdapter(::onEditExpense, viewModel::switchActiveExpense, viewModel::deleteExpense)
     }
 
     override fun onDestroy() {

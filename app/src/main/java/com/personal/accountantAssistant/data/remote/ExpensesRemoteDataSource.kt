@@ -54,7 +54,18 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.activeAll(isActive.toString(), ExpensesType.BILL.toString()) > Int.DEFAULT_UID
     ) getBills() else mutableListOf()
 
-    suspend fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
+    suspend fun switchActiveExpense(model: ExpenseModel): MutableList<ExpenseModel> {
+        val wasUpdated = expenseDao.update(
+            model.also { it.isActive = !it.isActive }.toEntity()
+        ).toLong() > Int.DEFAULT_UID
+        return if (wasUpdated) {
+            when (model.type) {
+                ExpensesType.BUY -> getBuys()
+                ExpensesType.BILL -> getBills()
+                else -> mutableListOf()
+            }
+        } else mutableListOf()
+    }
 
     suspend fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()
 

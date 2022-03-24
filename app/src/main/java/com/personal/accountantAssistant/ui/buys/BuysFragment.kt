@@ -14,7 +14,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override val binding by viewBinding(FragmentBuysBinding::inflate)
     override val adapter by lazy {
-        BuysListAdapter(::onEditExpense, viewModel::activeExpense, viewModel::deleteExpense)
+        BuysListAdapter(::onEditExpense, viewModel::switchActiveExpense, viewModel::deleteExpense)
     }
 
     override fun onDestroy() {
@@ -37,7 +37,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         with(viewModel) {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfBuys.displayedChild = it.ordinal }
-            //notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
             summary.observe(viewLifecycleOwner) {
                 updateHeader(
                     binding.lytHeader,

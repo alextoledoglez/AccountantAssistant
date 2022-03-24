@@ -3,7 +3,6 @@ package com.personal.accountantAssistant.ui.wallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.mappers.replaceActiveStateOf
 import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
@@ -42,9 +41,8 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
         repository?.setAllCardsActive(isActive)?.collect { _cards.postValue(it) }
     }
 
-    fun updateCard(model: CardModel) = launch {
-        val list = getCards()?.replaceActiveStateOf(model)
-        repository?.updateCard(model)?.collect { _cards.postValue(list) }
+    fun switchActiveCard(model: CardModel) = launch {
+        repository?.switchActiveCard(model)?.collect { _cards.postValue(it) }
     }
 
     fun deleteCard(model: CardModel) = launch {

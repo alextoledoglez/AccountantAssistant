@@ -58,10 +58,3 @@ fun ExpenseModel.toBill() = apply {
 }
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()
-
-fun MutableList<ExpenseModel>.replaceActiveStateOf(model: ExpenseModel) = apply {
-    val index = indexOf(model)
-    val current = removeAt(index)
-    current.updateWith(model.also { it.isActive = !it.isActive })
-    add(index, current)
-}

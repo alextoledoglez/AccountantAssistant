@@ -24,7 +24,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
     private val adapter by lazy {
-        CardsListAdapter(::onEditCard, viewModel::updateCard, viewModel::deleteCard)
+        CardsListAdapter(::onEditCard, viewModel::switchActiveCard, viewModel::deleteCard)
     }
     private val localStorage: LocalStorage? by inject()
 
@@ -58,7 +58,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
                 ivMoney.setImageResource(R.drawable.ic_money)
                 tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
                 tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-                scActive.setOnClickListener { notifyActiveItems(scActive.isChecked) }
+                scActive.setOnClickListener { viewModel.setAllCardsActive(scActive.isChecked) }
                 svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(queryStr: String): Boolean {
                         recyclerViewAdapterFilterBy(queryStr)
@@ -137,10 +137,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             R.string.restore_default_records_message,
             ::restoreDefaultRecords
         ) {}
-
-    private fun notifyActiveItems(isActive: Boolean) {
-        viewModel.setAllCardsActive(isActive)
-    }
 
     fun onEditCard(model: CardModel) {
         WalletDetailsFragment.newInstance(model).show(
