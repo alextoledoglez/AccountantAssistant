@@ -3,8 +3,6 @@ package com.personal.accountantAssistant.ui.buys
 import com.personal.accountantAssistant.adapters.BuysListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
-import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.notify
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
@@ -16,7 +14,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override val binding by viewBinding(FragmentBuysBinding::inflate)
     override val adapter by lazy {
-        BuysListAdapter(::onItemClick, ::notifyItemChanged, ::notifyItemRemoved)
+        BuysListAdapter(::onEditExpense, viewModel::activeExpense, viewModel::deleteExpense)
     }
 
     override fun onDestroy() {
@@ -30,7 +28,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
         binding.lytHeader.apply {
             initHeader(this)
-            scActive.setOnClickListener { notifyActiveItems(scActive.isChecked) }
+            scActive.setOnClickListener { viewModel.setAllBuysActive(scActive.isChecked) }
         }
         binding.rvBuys.adapter = adapter
     }
@@ -39,16 +37,16 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         with(viewModel) {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfBuys.displayedChild = it.ordinal }
-            notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
-            buys.observe(viewLifecycleOwner) {
+            //notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
+            summary.observe(viewLifecycleOwner) {
                 updateHeader(
                     binding.lytHeader,
                     it.isAnyChecked,
                     it.isAllChecked,
                     it.total.toCurrencyMaskedStr()
                 )
-                adapter.submitList(it.expenses)
             }
+            buys.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
             getBuys()
         }
     }
@@ -67,18 +65,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override fun restoreDefaultRecords() {
         viewModel.setDefaultBuys()
-    }
-
-    override fun notifyActiveItems(isActive: Boolean) {
-        viewModel.setAllBuysActive(isActive)
-    }
-
-    override fun notifyItemChanged(position: Int, model: ExpenseModel) {
-        viewModel.updateExpense(position, model)
-    }
-
-    override fun notifyItemRemoved(position: Int, model: ExpenseModel) {
-        viewModel.deleteExpense(position, model)
     }
 
     companion object {

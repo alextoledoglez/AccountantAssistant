@@ -7,41 +7,34 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.databinding.CardItemListBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
-import java.util.stream.Collectors
+import com.personal.accountantAssistant.extensions.settingFilter
+
+import com.personal.accountantAssistant.utils.EditableTextsUtils
+import java.util.function.Predicate
 
 class CardsListAdapter(
     private val onClick: (model: CardModel) -> Unit,
-    private val notifyItemChanged: (position: Int, model: CardModel) -> Unit,
-    private val notifyItemRemoved: (position: Int, model: CardModel) -> Unit,
-) : ListAdapter<CardModel, CardsViewHolderData>(CardModel.DIFF_UTIL_CALLBACK), Filterable {
+    private val onItemChanged: (model: CardModel) -> Unit,
+    private val onItemRemoved: (model: CardModel) -> Unit,
+) : ListAdapter<CardModel, CardsViewHolder>(CardModel.DIFF_UTIL_CALLBACK), Filterable {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CardsViewHolderData(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CardsViewHolder(
         CardItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
         onClick,
-        notifyItemChanged,
-        notifyItemRemoved
+        onItemChanged,
+        onItemRemoved
     )
 
-    override fun onBindViewHolder(holder: CardsViewHolderData, position: Int) {
+    override fun onBindViewHolder(holder: CardsViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
 
     override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): FilterResults {
-                val filterStr = charSequence.toString()
-                val list = if (filterStr.isEmpty()) currentList else
-                    currentList.stream().filter {
-                        contains(it.company, filterStr) || contains(it.name, filterStr)
-                    }?.collect(Collectors.toList())
-                return FilterResults().also { it.values = list }
-            }
+        return this.settingFilter(currentList, ::filter, ::submitList)
+    }
 
-            @Suppress("UNCHECKED_CAST")
-            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
-                submitList(filterResults?.values as ArrayList<CardModel>?)
-            }
-        }
+    private fun filter(text: String) = Predicate<CardModel> {
+        EditableTextsUtils.contains(it.company, text) ||
+                EditableTextsUtils.contains(it.name, text)
     }
 }

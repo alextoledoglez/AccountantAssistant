@@ -5,13 +5,12 @@ import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
-import com.personal.accountantAssistant.data.mappers.toWalletModel
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
 
 class CardsRemoteDataSource(private val cardDao: CardDao) {
 
-    suspend fun getWallet() = cardDao.selectAll().toList().toListModel().toWalletModel()
+    suspend fun getCards() = cardDao.selectAll().toList().toListModel()
 
     suspend fun saveCard(model: CardModel?) = model?.let {
         if (it.id > Int.DEFAULT_UID)

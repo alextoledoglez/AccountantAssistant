@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.databinding.HomeItemListBinding
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 
-class HomeListAdapter : ListAdapter<DashboardItemModel, HomeViewHolderData>(
+class HomeListAdapter : ListAdapter<DashboardItemModel, HomeViewHolder>(
     DashboardItemModel.DIFF_UTIL_CALLBACK
 ) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = HomeViewHolderData(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = HomeViewHolder(
         HomeItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
-    override fun onBindViewHolder(holder: HomeViewHolderData, position: Int) {
+    override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
 

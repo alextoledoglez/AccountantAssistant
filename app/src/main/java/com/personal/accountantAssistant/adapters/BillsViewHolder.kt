@@ -11,11 +11,11 @@ import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.MenuHelper
 
-class BillsViewHolderData(
+class BillsViewHolder(
     val binding: BillsItemListBinding,
-    private val onClick: (model: ExpenseModel) -> Unit,
-    private val notifyItemChanged: (position: Int, model: ExpenseModel) -> Unit,
-    private val notifyItemRemoved: (position: Int, model: ExpenseModel) -> Unit
+    private val onEditExpense: (model: ExpenseModel) -> Unit,
+    private val onActiveExpense: (model: ExpenseModel) -> Unit,
+    private val onRemoveExpense: (model: ExpenseModel) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: ExpenseModel) {
@@ -29,25 +29,23 @@ class BillsViewHolderData(
             //ACTIONS
             scActive.apply {
                 isChecked = model.isActive.orFalse()
-                setOnClickListener { setActive(model, isChecked) }
+                setOnClickListener {
+                    onActiveExpense(model)
+                    setActiveRow()
+                }
             }
-            ibDelete.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
-            itemView.setOnClickListener { onClick(model) }
-            setRowForeground()
+            itemView.setOnClickListener { onEditExpense(model) }
+            ibDelete.setOnClickListener { onRemoveExpense(model) }
         }
+        setActiveRow()
     }
 
-    private fun setActive(model: ExpenseModel, isChecked: Boolean = true) {
-        model.apply { isActive = isChecked }
-        notifyItemChanged(bindingAdapterPosition, model)
-    }
-
-    private fun setRowForeground() {
-        val isActive = binding.scActive.isChecked
-        val textColor = binding.root.context.getColor(
-            if (isActive) R.color.fontColor else R.color.disableFontColor
-        )
-        binding.apply {
+    private fun setActiveRow() {
+        with(binding) {
+            val isActive = scActive.isChecked
+            val textColor = root.context.getColor(
+                if (isActive) R.color.fontColor else R.color.disableFontColor
+            )
             name.setTextColor(textColor)
             date.setTextColor(textColor)
             value.setTextColor(textColor)

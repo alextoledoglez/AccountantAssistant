@@ -22,9 +22,6 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     abstract override val binding: ViewBinding
     abstract val adapter: ListAdapter<*, *>
-    abstract fun notifyActiveItems(isActive: Boolean)
-    abstract fun notifyItemChanged(position: Int, model: ExpenseModel)
-    abstract fun notifyItemRemoved(position: Int, model: ExpenseModel)
 
     override fun initComponents() {
         setHasOptionsMenu(true)
@@ -106,7 +103,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             ::restoreDefaultRecords
         ) {}
 
-    fun onItemClick(model: ExpenseModel) {
+    fun onEditExpense(model: ExpenseModel) {
         ExpenseDetailsFragment.newInstance(model).show(
             requireActivity().supportFragmentManager, String.EMPTY
         )

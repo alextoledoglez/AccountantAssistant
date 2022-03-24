@@ -12,7 +12,7 @@ import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 
-class HomeViewHolderData(
+class HomeViewHolder(
     private val binding: HomeItemListBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.personal.accountantAssistant.data.enums.FlipperViews
-import com.personal.accountantAssistant.data.enums.ListNotifyTypes
-import com.personal.accountantAssistant.domain.models.ListNotifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,9 +18,6 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
 
     private var _flipper = MutableLiveData<FlipperViews>()
     var flipper: LiveData<FlipperViews> = _flipper
-
-    private var _notify = MutableLiveData<ListNotifier>()
-    var notify: LiveData<ListNotifier> = _notify
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
 
@@ -46,8 +41,4 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
         _isLoading.postValue(false)
     }
 
-    fun setListNotifier(type: ListNotifyTypes, position: Int = 0) {
-        _notify.postValue(ListNotifier(type, position))
-        setData()
-    }
 }

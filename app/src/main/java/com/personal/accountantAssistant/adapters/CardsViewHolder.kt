@@ -8,11 +8,11 @@ import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
 
-class CardsViewHolderData(
+class CardsViewHolder(
     private val binding: CardItemListBinding,
     private val onClick: (model: CardModel) -> Unit,
-    private val notifyItemChanged: (position: Int, model: CardModel) -> Unit,
-    private val notifyItemRemoved: (position: Int, model: CardModel) -> Unit,
+    private val onItemChanged: (model: CardModel) -> Unit,
+    private val onItemRemoved: (model: CardModel) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: CardModel) {
@@ -26,32 +26,31 @@ class CardsViewHolderData(
             //ACTIONS
             scActive.apply {
                 isChecked = model.isActive.orFalse()
-                setOnClickListener { setActive(model, isChecked) }
+                setOnClickListener {
+                    onItemChanged(model)
+                    setActiveRow()
+                }
             }
-            ibDelete.setOnClickListener { notifyItemRemoved(bindingAdapterPosition, model) }
+            ibDelete.setOnClickListener { onItemRemoved(model) }
             itemView.setOnClickListener { onClick(model) }
-            setRowForeground()
+            setActiveRow()
         }
     }
 
-    private fun setActive(model: CardModel, isChecked: Boolean) {
-        model.apply { isActive = isChecked }
-        notifyItemChanged(bindingAdapterPosition, model)
-    }
-
-    private fun setRowForeground() {
+    private fun setActiveRow() {
+        val context = binding.root.context
         val isActive = binding.scActive.isChecked
-        val textColor = binding.root.context.getColor(
+        val textColor = context.getColor(
             if (isActive) R.color.fontColor else R.color.disableFontColor
+        )
+        val chipColor = context.getColor(
+            if (isActive) R.color.chipColor else R.color.disableChipColor
         )
         binding.apply {
             tvCompany.setTextColor(textColor)
             tvName.setTextColor(textColor)
             tvValue.setTextColor(textColor)
+            ivChip.setColorFilter(chipColor, android.graphics.PorterDuff.Mode.MULTIPLY)
         }
-        val chipColor = binding.root.context.getColor(
-            if (isActive) R.color.chipColor else R.color.disableChipColor
-        )
-        binding.ivChip.setColorFilter(chipColor, android.graphics.PorterDuff.Mode.MULTIPLY)
     }
 }

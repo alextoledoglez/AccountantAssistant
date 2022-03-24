@@ -42,9 +42,9 @@ class MainActivity : AppCompatActivity() {
             binding.fabAdd.apply {
                 isVisible = true
                 when (page) {
-                    is WalletFragment -> setOnClickListener { page.onItemClick(CardModel()) }
-                    is BuysFragment -> setOnClickListener { page.onItemClick(ExpenseModel().toBuy()) }
-                    is BillsFragment -> setOnClickListener { page.onItemClick(ExpenseModel().toBill()) }
+                    is WalletFragment -> setOnClickListener { page.onEditCard(CardModel()) }
+                    is BuysFragment -> setOnClickListener { page.onEditExpense(ExpenseModel().toBuy()) }
+                    is BillsFragment -> setOnClickListener { page.onEditExpense(ExpenseModel().toBill()) }
                     else -> isVisible = false
                 }
             }

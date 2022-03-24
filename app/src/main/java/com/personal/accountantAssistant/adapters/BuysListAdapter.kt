@@ -7,41 +7,30 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.settingFilter
 import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
-import java.util.stream.Collectors
+import java.util.function.Predicate
 
 class BuysListAdapter(
-    private val onItemClick: (model: ExpenseModel) -> Unit,
-    private val notifyChanged: (index: Int, model: ExpenseModel) -> Unit,
-    private val notifyRemoved: (index: Int, model: ExpenseModel) -> Unit,
-) : ListAdapter<ExpenseModel, BuysViewHolderData>(ExpenseModel.DIFF_UTIL_CALLBACK), Filterable {
+    private val onEditExpense: (model: ExpenseModel) -> Unit,
+    private val onActiveExpense: (model: ExpenseModel) -> Unit,
+    private val onRemoveExpense: (model: ExpenseModel) -> Unit,
+) : ListAdapter<ExpenseModel, BuysViewHolder>(ExpenseModel.DIFF_UTIL_CALLBACK), Filterable {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BuysViewHolderData(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BuysViewHolder(
         BuysItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-        onItemClick,
-        notifyChanged,
-        notifyRemoved
+        onEditExpense,
+        onActiveExpense,
+        onRemoveExpense
     )
 
-    override fun onBindViewHolder(holder: BuysViewHolderData, position: Int) {
+    override fun onBindViewHolder(holder: BuysViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
 
     override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(charSequence: CharSequence): FilterResults {
-                val filterStr = charSequence.toString()
-                val list = if (filterStr.isEmpty()) currentList else
-                    currentList.stream().filter { contains(it.name, filterStr) }
-                        ?.collect(Collectors.toList())
-                return FilterResults().also { it.values = list }
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            override fun publishResults(charSequence: CharSequence, filterResults: FilterResults?) {
-                submitList(filterResults?.values as MutableList<ExpenseModel>?)
-            }
-        }
+        return this.settingFilter(currentList, ::filter, ::submitList)
     }
 
+    private fun filter(text: String) = Predicate<ExpenseModel> { contains(it.name, text) }
 }

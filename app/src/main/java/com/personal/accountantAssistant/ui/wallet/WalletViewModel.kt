@@ -3,10 +3,10 @@ package com.personal.accountantAssistant.ui.wallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.enums.ListNotifyTypes
-import com.personal.accountantAssistant.data.mappers.toWalletModel
+import com.personal.accountantAssistant.data.mappers.replaceActiveStateOf
+import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.domain.models.WalletModel
+import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
 import com.personal.accountantAssistant.extensions.orFalse
 import kotlinx.coroutines.flow.collect
@@ -15,54 +15,53 @@ import kotlinx.coroutines.launch
 
 class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel() {
 
-    private var _wallet = MutableLiveData<WalletModel>()
-    var wallet: LiveData<WalletModel> = _wallet
+    private var _summary = MutableLiveData<SummaryModel>()
+    var summary: LiveData<SummaryModel> = _summary
 
-    private fun getCards() = _wallet.value?.cards
+    private var _cards = MutableLiveData<MutableList<CardModel>?>()
+    var cards: LiveData<MutableList<CardModel>?> = _cards
+
+    private fun getCards() = _cards.value
 
     fun loadCards() = launch {
-        repository?.getWallet()?.onStart { setLoading() }?.collect {
-            _wallet.postValue(it)
+        repository?.getCards()?.onStart { setLoading() }?.collect {
+            _cards.postValue(it)
             setData()
         }
     }
 
+    fun loadSummary(list: MutableList<CardModel>?) {
+        _summary.postValue(list?.toSummaryModel())
+    }
+
     fun restoreDefaultCards() = launch {
-        repository?.setDefaultCards()?.collect { setListNotifier(ListNotifyTypes.INSERT_ALL) }
+        repository?.setDefaultCards()?.collect { }
     }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
-        repository?.setAllCardsActive(isActive)?.collect {
-            val cards = getCards()
-            cards?.forEach { it.isActive = isActive }
-            _wallet.postValue(cards?.toWalletModel())
-            setListNotifier(ListNotifyTypes.ACTIVE_ALL)
-        }
+        val list = getCards()
+        list?.forEach { it.isActive = isActive }
+        repository?.setAllCardsActive(isActive)?.collect { _cards.postValue(list) }
     }
 
-    fun updateCard(position: Int, model: CardModel) = launch {
-        repository?.updateCard(model)?.collect {
-            val cards = getCards()
-            cards?.filter { it.id == model.id }?.map { it.updateWith(model) }
-            _wallet.postValue(cards?.toWalletModel())
-            setListNotifier(ListNotifyTypes.UPDATE, position)
-        }
+    fun updateCard(model: CardModel) = launch {
+        val list = getCards()?.replaceActiveStateOf(model)
+        repository?.updateCard(model)?.collect { _cards.postValue(list) }
     }
 
-    fun deleteCard(position: Int, model: CardModel) = launch {
+    fun deleteCard(model: CardModel) = launch {
+        val list = getCards()
         repository?.deleteCard(model)?.collect {
-            val cards = getCards()
-            if (cards?.remove(model).orFalse()) {
-                _wallet.postValue(cards?.toWalletModel())
-                setListNotifier(ListNotifyTypes.DELETE, position)
-            }
+            if (list?.remove(model).orFalse())
+                _cards.postValue(list)
         }
     }
 
     fun deleteAllCards() = launch {
+        val list = getCards()
         repository?.deleteAllCards()?.collect {
-            _wallet.value?.cards?.clear()
-            setListNotifier(ListNotifyTypes.DELETE_ALL)
+            list?.clear()
+            _cards.postValue(list)
         }
     }
 

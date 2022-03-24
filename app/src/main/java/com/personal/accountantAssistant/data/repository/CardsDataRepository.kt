@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.data.repository
 
 import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.domain.models.WalletModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
 import com.personal.accountantAssistant.extensions.flowEmit
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +10,7 @@ class CardsDataRepository(
     private val dataSource: CardsRemoteDataSource
 ) : CardsRepository {
 
-    override fun getWallet(): Flow<WalletModel> = flowEmit { dataSource.getWallet() }
+    override fun getCards(): Flow<MutableList<CardModel>?> = flowEmit { dataSource.getCards() }
 
     override fun saveCard(model: CardModel): Flow<Unit> = flowEmit { dataSource.saveCard(model) }
 

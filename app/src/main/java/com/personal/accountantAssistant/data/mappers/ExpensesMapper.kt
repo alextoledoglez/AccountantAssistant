@@ -2,9 +2,8 @@ package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.domain.models.BillsModel
-import com.personal.accountantAssistant.domain.models.BuysModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.toEntityId
@@ -12,7 +11,6 @@ import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
 import java.math.BigDecimal
-import java.util.stream.Collectors
 
 fun ExpenseEntity.toModel() = ExpenseModel(
     id = id?.toLong().orZero(),
@@ -36,21 +34,13 @@ fun ExpenseModel.toEntity() = ExpenseEntity(
     isActive = isActive.toString()
 )
 
-fun ArrayList<ExpenseModel>.toBuysModel() = BuysModel(
+fun MutableList<ExpenseModel>.toSummaryModel() = SummaryModel(
     isAllChecked = isAllExpensesActive(),
     isAnyChecked = isAnyExpenseActive(),
-    total = getTotalValue(),
-    expenses = getSortedExpenses().toMutableList() as ArrayList
+    total = getTotalValue()
 )
 
-fun ArrayList<ExpenseModel>.toBillsModel() = BillsModel(
-    isAllChecked = isAllExpensesActive(),
-    isAnyChecked = isAnyExpenseActive(),
-    total = getTotalValue(),
-    expenses = getSortedExpenses() as ArrayList
-)
-
-fun List<ExpenseEntity>.toListModel() = map { it.toModel() } as ArrayList
+fun List<ExpenseEntity>.toListModel() = map { it.toModel() }.sortedBy { it.date }.toMutableList()
 
 fun List<ExpenseModel>.isAllExpensesActive() = stream().allMatch { it.isActive }
 
@@ -58,10 +48,6 @@ fun List<ExpenseModel>.isAnyExpenseActive() = stream().anyMatch { it.isActive }
 
 fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.totalValue }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
-
-fun ArrayList<ExpenseModel>.getSortedExpenses() = stream().sorted(
-    Comparator.comparing(ExpenseModel::date)
-).collect(Collectors.toList()).toMutableList()
 
 fun ExpenseModel.toBuy() = apply {
     type = ExpensesType.BUY
@@ -72,3 +58,10 @@ fun ExpenseModel.toBill() = apply {
 }
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()
+
+fun MutableList<ExpenseModel>.replaceActiveStateOf(model: ExpenseModel) = apply {
+    val index = indexOf(model)
+    val current = removeAt(index)
+    current.updateWith(model.also { it.isActive = !it.isActive })
+    add(index, current)
+}

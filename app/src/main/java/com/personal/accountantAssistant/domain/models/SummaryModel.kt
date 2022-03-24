@@ -2,10 +2,9 @@ package com.personal.accountantAssistant.domain.models
 
 import java.math.BigDecimal
 
-data class BuysModel(
+data class SummaryModel(
     var uid: Long = 0,
     val isAllChecked: Boolean = false,
     val isAnyChecked: Boolean = false,
-    val total: BigDecimal = BigDecimal.ZERO,
-    val expenses: ArrayList<ExpenseModel>
+    val total: BigDecimal = BigDecimal.ZERO
 )

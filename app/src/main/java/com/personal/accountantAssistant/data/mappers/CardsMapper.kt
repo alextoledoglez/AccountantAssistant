@@ -2,14 +2,13 @@ package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.domain.models.WalletModel
+import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.toEntityId
 import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import java.math.BigDecimal
-import java.util.stream.Collectors
 
 fun CardEntity.toModel() = CardModel(
     id = id?.toLong().orZero(),
@@ -29,14 +28,17 @@ fun CardModel.toEntity() = CardEntity(
     isActive = isActive.orFalse().toString()
 )
 
-fun ArrayList<CardModel>.toWalletModel() = WalletModel(
+fun MutableList<CardModel>.toSummaryModel() = SummaryModel(
     isAllChecked = isAllCardsActive(),
     isAnyChecked = isAnyCardActive(),
-    total = getTotalValue(),
-    cards = getSortedCards().toMutableList() as ArrayList
+    total = getTotalValue()
 )
 
-fun List<CardEntity>.toListModel() = map { it.toModel() } as ArrayList
+fun List<CardEntity>.toListModel() = map { it.toModel() }.sortedWith(
+    Comparator.comparing<CardModel?, Boolean?> { it.isActive }.thenComparingDouble {
+        it.value.orZero().toDouble()
+    }
+).toMutableList()
 
 fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
 
@@ -45,8 +47,9 @@ fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
 fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
-fun ArrayList<CardModel>.getSortedCards() = stream().sorted(
-    Comparator.comparing<CardModel?, Boolean?> {
-        it.isActive
-    }.thenComparingDouble { it.value.orZero().toDouble() }
-).collect(Collectors.toList()).asReversed()
+fun MutableList<CardModel>.replaceActiveStateOf(model: CardModel) = apply {
+    val index = indexOf(model)
+    val current = removeAt(index)
+    current.updateWith(model.also { it.isActive = !it.isActive })
+    add(index, current)
+}

@@ -24,7 +24,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
     private val adapter by lazy {
-        CardsListAdapter(::onItemClick, ::notifyItemChanged, ::notifyItemRemoved)
+        CardsListAdapter(::onEditCard, viewModel::updateCard, viewModel::deleteCard)
     }
     private val localStorage: LocalStorage? by inject()
 
@@ -77,12 +77,9 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) {
-                binding.srlLoader.isRefreshing = it.orFalse()
-            }
+            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
-            notify.observe(viewLifecycleOwner) { adapter.notify(it.type, it.position) }
-            wallet.observe(viewLifecycleOwner) {
+            summary.observe(viewLifecycleOwner) {
                 binding.lytHeader.scActive.isChecked = it.isAllChecked.orFalse()
                 context?.getColor(
                     if (it.isAnyChecked.orFalse()) R.color.colorRed else R.color.colorPrimary
@@ -94,8 +91,8 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
                 }
                 binding.lytHeader.tvSubtitle.text = it.total.toCurrencyMaskedStr()
                 localStorage?.setAvailableMoney(it.total.orZero().toFloat())
-                adapter.submitList(it.cards)
             }
+            cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
             loadCards()
         }
     }
@@ -145,15 +142,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         viewModel.setAllCardsActive(isActive)
     }
 
-    private fun notifyItemChanged(position: Int, model: CardModel) {
-        viewModel.updateCard(position, model)
-    }
-
-    private fun notifyItemRemoved(position: Int, model: CardModel) {
-        viewModel.deleteCard(position, model)
-    }
-
-    fun onItemClick(model: CardModel) {
+    fun onEditCard(model: CardModel) {
         WalletDetailsFragment.newInstance(model).show(
             requireActivity().supportFragmentManager, String.EMPTY
         )

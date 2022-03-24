@@ -4,8 +4,6 @@ import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.enums.BillsEnum
 import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.data.mappers.toBillsModel
-import com.personal.accountantAssistant.data.mappers.toBuysModel
 import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
@@ -26,13 +24,9 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
             expenseDao.insert(it.toEntity())
     }
 
-    suspend fun getBuys() = expenseDao.selectAll(
-        ExpensesType.BUY.name
-    ).toList().toListModel().toBuysModel()
+    suspend fun getBuys() = expenseDao.selectAll(ExpensesType.BUY.name).toList().toListModel()
 
-    suspend fun getBills() = expenseDao.selectAll(
-        ExpensesType.BILL.name
-    ).toList().toListModel().toBillsModel()
+    suspend fun getBills() = expenseDao.selectAll(ExpensesType.BILL.name).toList().toListModel()
 
     suspend fun getTotalPriceUntil(
         type: ExpensesType, lastPeriodDate: Date?
