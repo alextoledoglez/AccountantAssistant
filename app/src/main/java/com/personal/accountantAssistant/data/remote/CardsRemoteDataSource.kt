@@ -19,18 +19,21 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
             cardDao.insert(it.toEntity())
     }
 
-    suspend fun setDefaultCards() {
+    suspend fun setDefaultCards(): MutableList<CardModel> {
         deleteAllCards()
-        DefaultCardsEnum.values().forEach { cardDao.insert(CardEntity(it.company, it.title)) }
+        val list = DefaultCardsEnum.values().map { CardEntity(it.company, it.title) }
+        return if (cardDao.insert(list).size > Int.DEFAULT_UID) list.toListModel() else mutableListOf()
     }
 
     suspend fun setAllCardsActive(isActive: Boolean) = if (
         cardDao.activeAll(isActive.toString()) > Int.DEFAULT_UID
-    ) cardDao.selectAll().toList().toListModel() else mutableListOf()
+    ) getCards() else mutableListOf()
 
     suspend fun updateCard(model: CardModel) = cardDao.update(model.toEntity())
 
     suspend fun deleteCard(model: CardModel) = cardDao.delete(model.toEntity())
 
-    suspend fun deleteAllCards() = cardDao.clearTable()
+    suspend fun deleteAllCards() = if (
+        cardDao.clearTable() > Int.DEFAULT_UID
+    ) getCards() else mutableListOf()
 }

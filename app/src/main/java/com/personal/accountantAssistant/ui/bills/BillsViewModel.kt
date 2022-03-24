@@ -35,7 +35,7 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     }
 
     fun setDefaultBills() = launch {
-        repository?.setDefaultBills()?.collect { }
+        repository?.setDefaultBills()?.collect { _bills.postValue(it) }
     }
 
     fun setAllBillsActive(isActive: Boolean) = launch {
@@ -57,10 +57,6 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     }
 
     fun deleteAllBills() = launch {
-        val expenses = getExpenses()
-        repository?.deleteAllBills()?.collect {
-            expenses?.clear()
-            _bills.postValue(expenses)
-        }
+        repository?.deleteAllBills()?.collect { _bills.postValue(it) }
     }
 }

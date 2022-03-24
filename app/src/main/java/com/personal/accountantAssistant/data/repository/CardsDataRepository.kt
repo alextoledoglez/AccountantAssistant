@@ -14,7 +14,9 @@ class CardsDataRepository(
 
     override fun saveCard(model: CardModel): Flow<Unit> = flowEmit { dataSource.saveCard(model) }
 
-    override fun setDefaultCards(): Flow<Unit> = flowEmit { dataSource.setDefaultCards() }
+    override fun setDefaultCards(): Flow<MutableList<CardModel>?> = flowEmit {
+        dataSource.setDefaultCards()
+    }
 
     override fun setAllCardsActive(isActive: Boolean): Flow<MutableList<CardModel>?> = flowEmit {
         dataSource.setAllCardsActive(isActive)
@@ -28,6 +30,8 @@ class CardsDataRepository(
         dataSource.deleteCard(model)
     }
 
-    override fun deleteAllCards(): Flow<Unit> = flowEmit { dataSource.deleteAllCards() }
+    override fun deleteAllCards(): Flow<MutableList<CardModel>?> = flowEmit {
+        dataSource.deleteAllCards()
+    }
 
 }

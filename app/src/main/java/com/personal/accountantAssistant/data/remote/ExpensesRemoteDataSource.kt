@@ -34,33 +34,35 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         it.isActive && DateUtils.isInRange(it.date, lastPeriodDate)
     }?.map { it.totalValue }?.reduce(BigDecimal.ZERO, accumulatedDecimalSum).orZero().rounded()
 
-    suspend fun setDefaultBuys() {
+    suspend fun setDefaultBuys(): MutableList<ExpenseModel> {
         deleteAllBuys()
-        BuysEnum.values().forEach { saveExpense(ExpenseModel(it.value, ExpensesType.BUY)) }
+        val list = BuysEnum.values().map { ExpenseModel(it.value, ExpensesType.BUY).toEntity() }
+        return if (expenseDao.insert(list).size > Int.DEFAULT_UID) list.toListModel() else mutableListOf()
     }
 
-    suspend fun setDefaultBills() {
+    suspend fun setDefaultBills(): MutableList<ExpenseModel> {
         deleteAllBills()
-        BillsEnum.values().forEach { saveExpense(ExpenseModel(it.value, ExpensesType.BILL)) }
+        val list = BillsEnum.values().map { ExpenseModel(it.value, ExpensesType.BILL).toEntity() }
+        return if (expenseDao.insert(list).size > Int.DEFAULT_UID) list.toListModel() else mutableListOf()
     }
 
     suspend fun setAllBuysActive(isActive: Boolean) = if (
         expenseDao.activeAll(isActive.toString(), ExpensesType.BUY.toString()) > Int.DEFAULT_UID
-    ) expenseDao.selectAll(ExpensesType.BUY.name).toList().toListModel() else mutableListOf()
+    ) getBuys() else mutableListOf()
 
     suspend fun setAllBillsActive(isActive: Boolean) = if (
         expenseDao.activeAll(isActive.toString(), ExpensesType.BILL.toString()) > Int.DEFAULT_UID
-    ) expenseDao.selectAll(ExpensesType.BILL.name).toList().toListModel() else mutableListOf()
+    ) getBills() else mutableListOf()
 
     suspend fun updateExpense(model: ExpenseModel) = expenseDao.update(model.toEntity()).toLong()
 
     suspend fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()
 
-    suspend fun deleteAllBuys() {
-        expenseDao.deleteByType(ExpensesType.BUY.name)
-    }
+    suspend fun deleteAllBuys() = if (
+        expenseDao.deleteByType(ExpensesType.BUY.name) > Int.DEFAULT_UID
+    ) getBuys() else mutableListOf()
 
-    suspend fun deleteAllBills() {
-        expenseDao.deleteByType(ExpensesType.BILL.name)
-    }
+    suspend fun deleteAllBills() = if (
+        expenseDao.deleteByType(ExpensesType.BILL.name) > Int.DEFAULT_UID
+    ) getBills() else mutableListOf()
 }

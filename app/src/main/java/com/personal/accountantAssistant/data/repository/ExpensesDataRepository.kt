@@ -25,9 +25,13 @@ class ExpensesDataRepository(
         dataSource.saveExpense(model)
     }
 
-    override fun setDefaultBuys(): Flow<Unit> = flowEmit { dataSource.setDefaultBuys() }
+    override fun setDefaultBuys(): Flow<MutableList<ExpenseModel>?> = flowEmit {
+        dataSource.setDefaultBuys()
+    }
 
-    override fun setDefaultBills(): Flow<Unit> = flowEmit { dataSource.setDefaultBills() }
+    override fun setDefaultBills(): Flow<MutableList<ExpenseModel>?> = flowEmit {
+        dataSource.setDefaultBills()
+    }
 
     override fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?> = flowEmit {
         dataSource.setAllBuysActive(isActive)
@@ -45,7 +49,11 @@ class ExpensesDataRepository(
         dataSource.deleteExpense(model)
     }
 
-    override fun deleteAllBuys(): Flow<Unit> = flowEmit { dataSource.deleteAllBuys() }
+    override fun deleteAllBuys(): Flow<MutableList<ExpenseModel>?> = flowEmit {
+        dataSource.deleteAllBuys()
+    }
 
-    override fun deleteAllBills(): Flow<Unit> = flowEmit { dataSource.deleteAllBills() }
+    override fun deleteAllBills(): Flow<MutableList<ExpenseModel>?> = flowEmit {
+        dataSource.deleteAllBills()
+    }
 }

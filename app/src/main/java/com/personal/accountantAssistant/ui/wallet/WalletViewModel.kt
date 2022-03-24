@@ -35,7 +35,7 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     }
 
     fun restoreDefaultCards() = launch {
-        repository?.setDefaultCards()?.collect { }
+        repository?.setDefaultCards()?.collect { _cards.postValue(it) }
     }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
@@ -56,11 +56,7 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     }
 
     fun deleteAllCards() = launch {
-        val list = getCards()
-        repository?.deleteAllCards()?.collect {
-            list?.clear()
-            _cards.postValue(list)
-        }
+        repository?.deleteAllCards()?.collect { _cards.postValue(it) }
     }
 
 }
