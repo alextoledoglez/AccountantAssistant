@@ -55,10 +55,8 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
     ) getBills() else mutableListOf()
 
     suspend fun switchActiveExpense(model: ExpenseModel): MutableList<ExpenseModel> {
-        val wasUpdated = expenseDao.update(
-            model.also { it.isActive = !it.isActive }.toEntity()
-        ).toLong() > Int.DEFAULT_UID
-        return if (wasUpdated) {
+        val entity = model.also { it.isActive = !it.isActive }.toEntity()
+        return if (expenseDao.update(entity).toLong() > Int.DEFAULT_UID) {
             when (model.type) {
                 ExpensesType.BUY -> getBuys()
                 ExpensesType.BILL -> getBills()
@@ -67,7 +65,15 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
         } else mutableListOf()
     }
 
-    suspend fun deleteExpense(model: ExpenseModel) = expenseDao.delete(model.toEntity()).toLong()
+    suspend fun deleteExpense(model: ExpenseModel): MutableList<ExpenseModel> {
+        return if (expenseDao.delete(model.toEntity()).toLong() > Int.DEFAULT_UID) {
+            when (model.type) {
+                ExpensesType.BUY -> getBuys()
+                ExpensesType.BILL -> getBills()
+                else -> mutableListOf()
+            }
+        } else mutableListOf()
+    }
 
     suspend fun deleteAllBuys() = if (
         expenseDao.deleteByType(ExpensesType.BUY.name) > Int.DEFAULT_UID

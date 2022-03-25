@@ -33,7 +33,9 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         cardDao.update(model.toEntity()) > Int.DEFAULT_UID
     ) getCards() else mutableListOf()
 
-    suspend fun deleteCard(model: CardModel) = cardDao.delete(model.toEntity())
+    suspend fun deleteCard(model: CardModel) = if (
+        cardDao.delete(model.toEntity()) > Int.DEFAULT_UID
+    ) getCards() else mutableListOf()
 
     suspend fun deleteAllCards() = if (
         cardDao.clearTable() > Int.DEFAULT_UID

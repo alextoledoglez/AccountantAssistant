@@ -26,7 +26,7 @@ class CardsDataRepository(
         dataSource.switchActiveCard(model)
     }
 
-    override fun deleteCard(model: CardModel): Flow<Unit> = flowEmit {
+    override fun deleteCard(model: CardModel): Flow<MutableList<CardModel>?> = flowEmit {
         dataSource.deleteCard(model)
     }
 

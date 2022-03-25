@@ -44,7 +44,7 @@ class ExpensesDataRepository(
     override fun switchActiveExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?> =
         flowEmit { dataSource.switchActiveExpense(model) }
 
-    override fun deleteExpense(model: ExpenseModel): Flow<Long> = flowEmit {
+    override fun deleteExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?> = flowEmit {
         dataSource.deleteExpense(model)
     }
 

@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
-import com.personal.accountantAssistant.extensions.orFalse
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -19,8 +18,6 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
 
     private var _cards = MutableLiveData<MutableList<CardModel>?>()
     var cards: LiveData<MutableList<CardModel>?> = _cards
-
-    private fun getCards() = _cards.value
 
     fun loadCards() = launch {
         repository?.getCards()?.onStart { setLoading() }?.collect {
@@ -46,11 +43,7 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     }
 
     fun deleteCard(model: CardModel) = launch {
-        val list = getCards()
-        repository?.deleteCard(model)?.collect {
-            if (list?.remove(model).orFalse())
-                _cards.postValue(list)
-        }
+        repository?.deleteCard(model)?.collect { _cards.postValue(it) }
     }
 
     fun deleteAllCards() = launch {

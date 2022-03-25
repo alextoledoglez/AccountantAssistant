@@ -16,7 +16,7 @@ interface ExpensesRepository {
     fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
     fun setAllBillsActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
     fun switchActiveExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
-    fun deleteExpense(model: ExpenseModel): Flow<Long>
+    fun deleteExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
     fun deleteAllBuys(): Flow<MutableList<ExpenseModel>?>
     fun deleteAllBills(): Flow<MutableList<ExpenseModel>?>
 }

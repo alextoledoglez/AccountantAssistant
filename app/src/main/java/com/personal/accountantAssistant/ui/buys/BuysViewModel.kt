@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.ExpensesRepository
-import com.personal.accountantAssistant.extensions.orFalse
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -19,8 +18,6 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
 
     private var _buys = MutableLiveData<MutableList<ExpenseModel>?>()
     var buys: LiveData<MutableList<ExpenseModel>?> = _buys
-
-    private fun getExpenses() = _buys.value
 
     fun getBuys() = launch {
         repository?.getBuys()?.onStart { setLoading() }?.collect {
@@ -46,12 +43,7 @@ class BuysViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
     }
 
     fun deleteExpense(model: ExpenseModel) = launch {
-        repository?.deleteExpense(model)?.collect {
-            val expenses = getExpenses()
-            if (expenses?.remove(model).orFalse()) {
-                _buys.postValue(expenses)
-            }
-        }
+        repository?.deleteExpense(model)?.collect { _buys.postValue(it) }
     }
 
     fun deleteAllBuys() = launch {
