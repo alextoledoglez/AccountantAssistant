@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
+class BillsViewModel(private val repository: ExpensesRepository?) : BaseViewModel() {
 
     private var _summary = MutableLiveData<SummaryModel>()
     var summary: LiveData<SummaryModel> = _summary
@@ -28,6 +28,13 @@ class BillsViewModel(val repository: ExpensesRepository?) : BaseViewModel() {
 
     fun loadSummary(list: MutableList<ExpenseModel>?) {
         _summary.postValue(list?.toSummaryModel())
+    }
+
+    fun saveExpense(model: ExpenseModel) = launch {
+        repository?.saveExpense(model)?.onStart { setLoading() }?.collect {
+            _bills.postValue(it)
+            setData()
+        }
     }
 
     fun setDefaultBills() = launch {

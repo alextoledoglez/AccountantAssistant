@@ -10,7 +10,7 @@ interface ExpensesRepository {
     fun getBuys(): Flow<MutableList<ExpenseModel>?>
     fun getBills(): Flow<MutableList<ExpenseModel>?>
     fun getTotalPriceUntil(type: ExpensesType, lastPeriodDate: Date?): Flow<BigDecimal?>
-    fun saveExpense(model: ExpenseModel): Flow<Unit>
+    fun saveExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
     fun setDefaultBuys(): Flow<MutableList<ExpenseModel>?>
     fun setDefaultBills(): Flow<MutableList<ExpenseModel>?>
     fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>

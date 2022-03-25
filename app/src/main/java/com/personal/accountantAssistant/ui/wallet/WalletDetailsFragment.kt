@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.wallet
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -8,11 +7,16 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.ENTITY
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.viewBinding
 
-class WalletDetailsFragment : BaseBottomSheetDialogFragment<WalletDetailsViewModel>() {
+class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     override val binding by viewBinding(FragmentWalletDetailsBinding::inflate)
+
+    var onEditListener: ((model: CardModel) -> Unit)? = null
 
     override fun initComponents() {
         val model = getCard()
@@ -64,20 +68,9 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<WalletDetailsViewMod
                     value = etValue.text,
                     isActive = scActive.isChecked
                 )
-                viewModel.saveCard(it)
-                dismiss()
+                onEditListener?.invoke(it).also { dismiss() }
             }
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        context?.showToastLongText(
-            if (viewModel.isSaved.value.orFalse())
-                R.string.record_successfully_save
-            else
-                R.string.error_saving_your_data
-        )
     }
 
     companion object {

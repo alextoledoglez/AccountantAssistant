@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CardsRepository {
     fun getCards(): Flow<MutableList<CardModel>?>
-    fun saveCard(model: CardModel): Flow<Unit>
+    fun saveCard(model: CardModel): Flow<MutableList<CardModel>?>
     fun setDefaultCards(): Flow<MutableList<CardModel>?>
     fun setAllCardsActive(isActive: Boolean): Flow<MutableList<CardModel>?>
     fun switchActiveCard(model: CardModel): Flow<MutableList<CardModel>?>

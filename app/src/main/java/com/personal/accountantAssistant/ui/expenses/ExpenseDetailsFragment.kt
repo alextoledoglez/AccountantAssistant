@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.expenses
 
 import android.app.DatePickerDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
@@ -19,9 +18,11 @@ import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.utils.DateUtils.toString
 import java.util.*
 
-class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<ExpensesDetailsViewModel>() {
+class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
     override val binding by viewBinding(FragmentExpensesDetailsBinding::inflate)
+
+    var onEditListener: ((model: ExpenseModel) -> Unit)? = null
 
     override fun initComponents() {
         val model = getExpense()
@@ -100,20 +101,9 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<ExpensesDetailsView
                     unitaryValue = etValue.text,
                     isActive = scActive.isChecked
                 )
-                viewModel.saveExpense(it)
-                dismiss()
+                onEditListener?.invoke(model).also { dismiss() }
             }
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        context?.showToastLongText(
-            if (viewModel.isSaved.value.orFalse())
-                R.string.record_successfully_save
-            else
-                R.string.error_saving_your_data
-        )
     }
 
     companion object {

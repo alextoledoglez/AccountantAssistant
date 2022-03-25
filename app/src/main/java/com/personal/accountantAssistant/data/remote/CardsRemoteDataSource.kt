@@ -12,11 +12,12 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
 
     suspend fun getCards() = cardDao.selectAll().toList().toListModel()
 
-    suspend fun saveCard(model: CardModel?) = model?.let {
-        if (it.id > Int.DEFAULT_UID)
-            cardDao.update(it.toEntity())
+    suspend fun saveCard(model: CardModel): MutableList<CardModel> {
+        val edited = if (model.id > Int.DEFAULT_UID)
+            cardDao.update(model.toEntity())
         else
-            cardDao.insert(it.toEntity())
+            cardDao.insert(model.toEntity())
+        return if (edited.toLong() > Int.DEFAULT_UID) getCards() else mutableListOf()
     }
 
     suspend fun setDefaultCards(): MutableList<CardModel> {

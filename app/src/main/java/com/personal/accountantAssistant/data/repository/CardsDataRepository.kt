@@ -12,7 +12,9 @@ class CardsDataRepository(
 
     override fun getCards(): Flow<MutableList<CardModel>?> = flowEmit { dataSource.getCards() }
 
-    override fun saveCard(model: CardModel): Flow<Unit> = flowEmit { dataSource.saveCard(model) }
+    override fun saveCard(model: CardModel): Flow<MutableList<CardModel>?> = flowEmit {
+        dataSource.saveCard(model)
+    }
 
     override fun setDefaultCards(): Flow<MutableList<CardModel>?> = flowEmit {
         dataSource.setDefaultCards()

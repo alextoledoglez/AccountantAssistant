@@ -17,11 +17,18 @@ import java.util.*
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
-    suspend fun saveExpense(model: ExpenseModel?) = model?.let {
-        if (it.id > Int.DEFAULT_UID)
-            expenseDao.update(it.toEntity())
+    suspend fun saveExpense(model: ExpenseModel): MutableList<ExpenseModel> {
+        val edited = if (model.id > Int.DEFAULT_UID)
+            expenseDao.update(model.toEntity())
         else
-            expenseDao.insert(it.toEntity())
+            expenseDao.insert(model.toEntity())
+        return if (edited.toLong() > Int.DEFAULT_UID) {
+            when (model.type) {
+                ExpensesType.BUY -> getBuys()
+                ExpensesType.BILL -> getBills()
+                else -> mutableListOf()
+            }
+        } else mutableListOf()
     }
 
     suspend fun getBuys() = expenseDao.selectAll(ExpensesType.BUY.name).toList().toListModel()
@@ -56,7 +63,7 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
     suspend fun switchActiveExpense(model: ExpenseModel): MutableList<ExpenseModel> {
         val entity = model.also { it.isActive = !it.isActive }.toEntity()
-        return if (expenseDao.update(entity).toLong() > Int.DEFAULT_UID) {
+        return if (expenseDao.update(entity) > Int.DEFAULT_UID) {
             when (model.type) {
                 ExpensesType.BUY -> getBuys()
                 ExpensesType.BILL -> getBills()

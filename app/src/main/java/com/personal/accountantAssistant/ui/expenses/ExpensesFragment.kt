@@ -103,9 +103,4 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             ::restoreDefaultRecords
         ) {}
 
-    fun onEditExpense(model: ExpenseModel) {
-        ExpenseDetailsFragment.newInstance(model).show(
-            requireActivity().supportFragmentManager, String.EMPTY
-        )
-    }
 }

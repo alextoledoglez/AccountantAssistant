@@ -139,7 +139,9 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         ) {}
 
     fun onEditCard(model: CardModel) {
-        WalletDetailsFragment.newInstance(model).show(
+        WalletDetailsFragment.newInstance(model).apply {
+            onEditListener = { this@WalletFragment.viewModel.saveCard(model) }
+        }.show(
             requireActivity().supportFragmentManager, String.EMPTY
         )
     }

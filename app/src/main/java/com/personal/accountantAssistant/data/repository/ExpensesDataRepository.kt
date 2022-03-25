@@ -21,7 +21,7 @@ class ExpensesDataRepository(
         type: ExpensesType, lastPeriodDate: Date?
     ): Flow<BigDecimal?> = flowEmit { dataSource.getTotalPriceUntil(type, lastPeriodDate) }
 
-    override fun saveExpense(model: ExpenseModel): Flow<Unit> = flowEmit {
+    override fun saveExpense(model: ExpenseModel): Flow<MutableList<ExpenseModel>?> = flowEmit {
         dataSource.saveExpense(model)
     }
 
