@@ -17,7 +17,7 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
             cardDao.update(model.toEntity())
         else
             cardDao.insert(model.toEntity())
-        return if (edited.toLong() > Int.DEFAULT_UID) getCards() else mutableListOf()
+        return getCardsBy(edited.toInt())
     }
 
     suspend fun setDefaultCards(): MutableList<CardModel> {
@@ -26,19 +26,18 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         return if (cardDao.insert(list).size > Int.DEFAULT_UID) list.toListModel() else mutableListOf()
     }
 
-    suspend fun setAllCardsActive(isActive: Boolean) = if (
-        cardDao.activeAll(isActive.toString()) > Int.DEFAULT_UID
-    ) getCards() else mutableListOf()
+    suspend fun setAllCardsActive(isActive: Boolean) = getCardsBy(
+        cardDao.activeAll(isActive.toString())
+    )
 
-    suspend fun switchActiveCard(model: CardModel) = if (
-        cardDao.update(model.toEntity()) > Int.DEFAULT_UID
-    ) getCards() else mutableListOf()
+    suspend fun switchActiveCard(model: CardModel) = getCardsBy(cardDao.update(model.toEntity()))
 
-    suspend fun deleteCard(model: CardModel) = if (
-        cardDao.delete(model.toEntity()) > Int.DEFAULT_UID
-    ) getCards() else mutableListOf()
+    suspend fun deleteCard(model: CardModel) = getCardsBy(cardDao.delete(model.toEntity()))
 
-    suspend fun deleteAllCards() = if (
-        cardDao.clearTable() > Int.DEFAULT_UID
-    ) getCards() else mutableListOf()
+    suspend fun deleteAllCards() = getCardsBy(cardDao.clearTable())
+
+    private suspend fun getCardsBy(result: Int) = if (result > Int.DEFAULT_UID)
+        getCards()
+    else
+        mutableListOf()
 }
