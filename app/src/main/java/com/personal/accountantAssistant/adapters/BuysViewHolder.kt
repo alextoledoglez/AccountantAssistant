@@ -38,8 +38,8 @@ class BuysViewHolder(
     private fun setActiveRow() {
         with(binding) {
             val isActive = scActive.isChecked
-            val textColor = root.context.getColor(
-                if (isActive) R.color.fontColor else R.color.disableFontColor
+            val textColor = root.context.getCompatColor(
+                isActive, R.color.fontColor, R.color.disableFontColor
             )
             name.setTextColor(textColor)
             value.setTextColor(textColor)

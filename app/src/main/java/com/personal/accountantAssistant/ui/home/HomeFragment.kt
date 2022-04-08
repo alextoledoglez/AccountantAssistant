@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.home
 
-import androidx.annotation.ColorRes
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.HomeListAdapter
@@ -43,7 +42,9 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
                 binding.lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
-            dashboardValues.observe(viewLifecycleOwner, adapter::submitList)
+            dashboardValues.observe(viewLifecycleOwner) {
+                adapter.submitList(it) { binding.srlLoader.stopRefreshing() }
+            }
             viewModel.calculateExpenses()
         }
     }
@@ -71,15 +72,16 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val total = values?.total.orZero().rounded()
         val result = available.minus(total).rounded()
 
-        //Colors
-        val buysColor = getExpenseColorResourceBy(buys)
-        val billsColor = getExpenseColorResourceBy(bills)
-        val totalColor = getExpenseColorResourceBy(total)
-        val availableColor = requireContext().getColor(
-            getColorResourceBy(viewModel.isExpensesLessThanAvailable(total))
-        )
+        //Expenses colors
+        val buysColor = getExpensesColorResourceBy(buys)
+        val billsColor = getExpensesColorResourceBy(bills)
+        val totalColor = getExpensesColorResourceBy(total)
 
-        //Result
+        //Available color
+        val isTotalLessThanAvailable = viewModel.isExpensesLessThanAvailable(total)
+        val availableColor = getColorResourceBy(isTotalLessThanAvailable)
+
+        //Results
         val isZeroLessThanResult = viewModel.isZeroLessThan(result)
         val resultTitle = if (isZeroLessThanResult) titleRes.gain else titleRes.missing
         val resultColor = getColorResourceBy(isZeroLessThanResult)
@@ -102,16 +104,12 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         )
     }
 
-    private fun getColorResourceBy(
-        isCondition: Boolean?,
-        @ColorRes trueResource: Int = colorRes.success,
-        @ColorRes falseResource: Int = colorRes.error
-    ) = if (isCondition == true) trueResource else falseResource
+    private fun getColorResourceBy(condition: Boolean?) = requireContext().getCompatColor(
+        condition, colorRes.success, colorRes.error
+    )
 
-    private fun getExpenseColorResourceBy(expense: BigDecimal?): Int = getColorResourceBy(
-        viewModel.isExpensesMoreThanAvailable(expense),
-        colorRes.error,
-        colorRes.success
+    private fun getExpensesColorResourceBy(expenses: BigDecimal) = requireContext().getCompatColor(
+        viewModel.isExpensesMoreThanAvailable(expenses), colorRes.error, colorRes.success
     )
 
     companion object {

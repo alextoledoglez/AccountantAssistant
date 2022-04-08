@@ -14,7 +14,7 @@ fun CardEntity.toModel() = CardModel(
     id = id?.toLong().orZero(),
     company = company.orEmpty(),
     name = name.orEmpty(),
-    password = password?.toInt().orZero(),
+    password = password.orEmpty(),
     value = value?.toRoundedBigDecimal().orZero(),
     isActive = isActive.toBoolean().orFalse()
 )
@@ -23,7 +23,7 @@ fun CardModel.toEntity() = CardEntity(
     id = id.toEntityId(),
     company = company,
     name = name,
-    password = password.toString(),
+    password = password,
     value = value.toString(),
     isActive = isActive.orFalse().toString()
 )

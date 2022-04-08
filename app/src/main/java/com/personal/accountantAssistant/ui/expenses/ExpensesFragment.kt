@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.R
@@ -13,7 +13,6 @@ import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.databinding.TitlesBarsBinding
-import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.MenuHelper
@@ -22,45 +21,10 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
 
     abstract override val binding: ViewBinding
     abstract val adapter: ListAdapter<*, *>
+    abstract fun listAdapterFilterBy(queryStr: String)
 
     override fun initComponents() {
         setHasOptionsMenu(true)
-    }
-
-    fun initHeader(header: TitlesBarsBinding) {
-        with(header) {
-            tvTitle.visibility = View.GONE
-            ivMoney.setImageResource(R.drawable.ic_money)
-            tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
-            tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-            svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(queryStr: String): Boolean {
-                    recyclerViewAdapterFilterBy(queryStr)
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    recyclerViewAdapterFilterBy(newText)
-                    return false
-                }
-            })
-        }
-    }
-
-    fun updateHeader(
-        header: TitlesBarsBinding, isAnyChecked: Boolean?, isAllChecked: Boolean?, text: String?
-    ) {
-        val color = context?.getColor(
-            if (isAnyChecked.orFalse()) R.color.colorRed else R.color.colorPrimary
-        )
-        with(header) {
-            color?.let {
-                ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
-                tvSubtitle.setTextColor(it)
-            }
-            tvSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
-            scActive.isChecked = isAllChecked.orFalse()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -76,10 +40,6 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             R.id.restore_default -> restoreDefaultMenuItemClickListener()
         }
         return super.onOptionsItemSelected(menuItem)
-    }
-
-    private fun recyclerViewAdapterFilterBy(queryStr: String) {
-        //adapter.filter?.filter(queryStr)
     }
 
     private fun importExportMenuItemClickListener() =
@@ -103,4 +63,39 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             ::restoreDefaultRecords
         ) {}
 
+    fun initHeader(header: TitlesBarsBinding) {
+        with(header) {
+            tvTitle.visibility = View.GONE
+            ivMoney.setImageResource(R.drawable.ic_money)
+            tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
+            tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(queryStr: String): Boolean {
+                    listAdapterFilterBy(queryStr)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    listAdapterFilterBy(newText)
+                    return false
+                }
+            })
+        }
+    }
+
+    fun updateHeader(
+        header: TitlesBarsBinding, isAnyChecked: Boolean?, isAllChecked: Boolean?, text: String?
+    ) {
+        val color = context?.getCompatColor(
+            isAnyChecked.orFalse(), R.color.colorRed, R.color.colorPrimary
+        )
+        with(header) {
+            color?.let {
+                ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+                tvSubtitle.setTextColor(it)
+            }
+            tvSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
+            scActive.isChecked = isAllChecked.orFalse()
+        }
+    }
 }

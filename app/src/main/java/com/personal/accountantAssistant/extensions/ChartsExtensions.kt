@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.LegendEntry
@@ -51,5 +50,5 @@ fun Legend.setCircularSettings() = apply {
 }
 
 fun newLegendEntry(context: Context, @ColorRes color: Int, label: String) = LegendEntry(
-        label, Legend.LegendForm.CIRCLE, 50f, 50f, null, ContextCompat.getColor(context, color)
+    label, Legend.LegendForm.CIRCLE, 50f, 50f, null, context.getCompatColor(color)
 )

@@ -9,7 +9,6 @@ import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.ENTITY
 import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.viewBinding
 
 class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
@@ -36,12 +35,12 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             //Value
             etValue.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.value.orZero().toString())
+                setText(model?.value.toString())
             }
             //Password
             etPassword.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.password.orZero().toString())
+                setText(model?.password.orEmpty())
             }
             //Value and switch
             scActive.isChecked = model?.isActive.orFalse()

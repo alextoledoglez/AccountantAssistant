@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.personal.accountantAssistant.R
@@ -24,6 +26,12 @@ fun Context.startActivity(activityClass: Class<*>?) {
 fun Context.toActivity() = this as Activity
 
 fun Context.toMainActivity() = this as MainActivity
+
+fun Context.getCompatColor(@ColorRes resColor: Int) = ContextCompat.getColor(this, resColor)
+
+fun Context.getCompatColor(
+    condition: Boolean?, @ColorRes trueResColor: Int, @ColorRes falseResColor: Int
+) = getCompatColor(if (condition.orFalse()) trueResColor else falseResColor)
 
 fun Context.showToastLongText(text: String?) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()

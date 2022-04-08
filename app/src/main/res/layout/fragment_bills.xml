@@ -34,7 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/half_material_margin"
+                android:clipToPadding="false"
                 android:orientation="vertical"
+                android:paddingBottom="@dimen/fab_button_size"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/bills_item_list" />
 

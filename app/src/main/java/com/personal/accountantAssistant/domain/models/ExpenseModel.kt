@@ -49,14 +49,6 @@ data class ExpenseModel(
         this.isActive = isActive
     }
 
-    fun updateWith(model: ExpenseModel) {
-        this.name = model.name
-        this.quantity = model.quantity
-        this.date = model.date
-        this.unitaryValue = model.unitaryValue
-        this.isActive = model.isActive
-    }
-
     fun calculateTotalValue(): BigDecimal = unitaryValue.multiply(quantity.toBigDecimal())
 
     companion object {

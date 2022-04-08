@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.CardItemListBinding
 import com.personal.accountantAssistant.domain.models.CardModel
+import com.personal.accountantAssistant.extensions.getCompatColor
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
@@ -40,11 +41,11 @@ class CardsViewHolder(
     private fun setActiveRow() {
         val context = binding.root.context
         val isActive = binding.scActive.isChecked
-        val textColor = context.getColor(
-            if (isActive) R.color.fontColor else R.color.disableFontColor
+        val textColor = context.getCompatColor(
+            isActive, R.color.fontColor, R.color.disableFontColor
         )
-        val chipColor = context.getColor(
-            if (isActive) R.color.chipColor else R.color.disableChipColor
+        val chipColor = context.getCompatColor(
+            isActive, R.color.chipColor, R.color.disableChipColor
         )
         binding.apply {
             tvCompany.setTextColor(textColor)

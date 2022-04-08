@@ -4,10 +4,7 @@ import com.personal.accountantAssistant.adapters.BillsListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
-import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 import com.personal.accountantAssistant.utils.ImportExportUtils
@@ -47,6 +44,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
                     it.isAllChecked,
                     it.total.toCurrencyMaskedStr()
                 )
+                binding.srlLoader.stopRefreshing()
             }
             bills.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
             getBills()
@@ -61,10 +59,11 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         //ImportExportUtils.xlsExport(requireContext(), appDatabase, ExpensesType.BILL)
     }
 
-    fun onEditExpense(model: ExpenseModel) {
-        ExpenseDetailsFragment.newInstance(model).apply {
-            onEditListener = { this@BillsFragment.viewModel.saveExpense(model) }
-        }.show(requireActivity().supportFragmentManager, String.EMPTY)
+    override fun listAdapterFilterBy(queryStr: String) {
+        if (queryStr.isNotBlank())
+            adapter.filter.filter(queryStr)
+        else
+            viewModel.getBills()
     }
 
     override fun deleteAllRecords() {
@@ -73,6 +72,12 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override fun restoreDefaultRecords() {
         viewModel.setDefaultBills()
+    }
+
+    fun onEditExpense(model: ExpenseModel) {
+        ExpenseDetailsFragment.newInstance(model).apply {
+            onEditListener = { this@BillsFragment.viewModel.saveExpense(model) }
+        }.show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
     companion object {

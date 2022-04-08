@@ -7,6 +7,7 @@
     <dimen name="text_field_height">30dp</dimen>
     <dimen name="image_button_size">48dp</dimen>
     <dimen name="icon_resource_size">24dp</dimen>
+    <dimen name="fab_button_size">64dp</dimen>
 
     <dimen name="full_layout_weight">1</dimen>
     <dimen name="end_layout_weight">0.3</dimen>

@@ -39,13 +39,11 @@ class HomeViewModel(
     private val _lastPeriodDate = MutableLiveData<Date?>(localStorage?.getLastDate())
     private val lastPeriodDate = _lastPeriodDate
 
-    fun isZeroLessThan(value: BigDecimal?) = (value.orZero() >= BigDecimal.ZERO)
+    fun isZeroLessThan(value: BigDecimal) = (value >= BigDecimal.ZERO)
 
-    fun isExpensesLessThanAvailable(value: BigDecimal?) =
-        (availableMoney.value.orZero() >= value.orZero())
+    fun isExpensesLessThanAvailable(value: BigDecimal) = (value <= availableMoney.value.orZero())
 
-    fun isExpensesMoreThanAvailable(value: BigDecimal?): Boolean =
-        !isExpensesLessThanAvailable(value)
+    fun isExpensesMoreThanAvailable(value: BigDecimal) = !isExpensesLessThanAvailable(value)
 
     fun calculateExpenses() = launch {
         setLoading()
@@ -86,7 +84,4 @@ class HomeViewModel(
         _dashboardValues.postValue(list)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

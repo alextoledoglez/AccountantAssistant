@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.CardsListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
@@ -61,12 +61,12 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
                 scActive.setOnClickListener { viewModel.setAllCardsActive(scActive.isChecked) }
                 svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(queryStr: String): Boolean {
-                        recyclerViewAdapterFilterBy(queryStr)
+                        listAdapterFilterBy(queryStr)
                         return false
                     }
 
                     override fun onQueryTextChange(newText: String): Boolean {
-                        recyclerViewAdapterFilterBy(newText)
+                        listAdapterFilterBy(newText)
                         return false
                     }
                 })
@@ -81,8 +81,8 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
             summary.observe(viewLifecycleOwner) {
                 binding.lytHeader.scActive.isChecked = it.isAllChecked.orFalse()
-                context?.getColor(
-                    if (it.isAnyChecked.orFalse()) R.color.colorRed else R.color.colorPrimary
+                context?.getCompatColor(
+                    it.isAnyChecked, R.color.colorRed, R.color.colorPrimary
                 )?.let { color ->
                     binding.lytHeader.apply {
                         ivMoney.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
@@ -91,6 +91,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
                 }
                 binding.lytHeader.tvSubtitle.text = it.total.toCurrencyMaskedStr()
                 localStorage?.setAvailableMoney(it.total.orZero().toFloat())
+                binding.srlLoader.stopRefreshing()
             }
             cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
             loadCards()
@@ -113,8 +114,11 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         viewModel.restoreDefaultCards()
     }
 
-    private fun recyclerViewAdapterFilterBy(queryStr: String) {
-        adapter.filter.filter(queryStr)
+    private fun listAdapterFilterBy(queryStr: String) {
+        if (queryStr.isNotBlank())
+            adapter.filter.filter(queryStr)
+        else
+            viewModel.loadCards()
     }
 
     private fun importExportMenuItemClickListener() =

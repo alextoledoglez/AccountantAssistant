@@ -34,7 +34,9 @@ class CardsListAdapter(
     }
 
     private fun filter(text: String) = Predicate<CardModel> {
-        EditableTextsUtils.contains(it.company, text) ||
+        EditableTextsUtils.contains(it.value.toString(), text) ||
+                EditableTextsUtils.contains(it.password, text) ||
+                EditableTextsUtils.contains(it.company, text) ||
                 EditableTextsUtils.contains(it.name, text)
     }
 }
