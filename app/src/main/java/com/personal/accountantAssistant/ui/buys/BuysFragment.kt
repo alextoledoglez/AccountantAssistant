@@ -4,7 +4,10 @@ import com.personal.accountantAssistant.adapters.BuysListAdapter
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.stopRefreshing
+import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
+import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 import com.personal.accountantAssistant.utils.ImportExportUtils
@@ -75,9 +78,9 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     }
 
     fun onEditExpense(model: ExpenseModel) {
-        ExpenseDetailsFragment.newInstance(model).apply {
-            onEditListener = { this@BuysFragment.viewModel.saveExpense(model) }
-        }.show(requireActivity().supportFragmentManager, String.EMPTY)
+        ExpenseDetailsFragment.showDialogFragment(
+            model, viewModel::editExpense, requireActivity().supportFragmentManager
+        )
     }
 
     companion object {

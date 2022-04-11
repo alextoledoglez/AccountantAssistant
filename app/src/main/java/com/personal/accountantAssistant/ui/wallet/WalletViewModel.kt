@@ -30,7 +30,7 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
         _summary.postValue(list?.toSummaryModel())
     }
 
-    fun saveCard(model: CardModel) = launch {
+    fun editCard(model: CardModel) = launch {
         repository?.saveCard(model)?.onStart { setLoading() }?.collect {
             _cards.postValue(it)
             setData()

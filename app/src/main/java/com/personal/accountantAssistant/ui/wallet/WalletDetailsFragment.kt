@@ -3,10 +3,12 @@ package com.personal.accountantAssistant.ui.wallet
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputFilter.AllCaps
+import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
+import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.ENTITY
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.viewBinding
@@ -73,8 +75,13 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     }
 
     companion object {
-        fun newInstance(model: CardModel?) = WalletDetailsFragment().apply {
+        fun showDialogFragment(
+            model: CardModel,
+            onEditCard: (model: CardModel) -> Unit,
+            fragmentManager: FragmentManager
+        ) = WalletDetailsFragment().apply {
             arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
-        }
+            onEditListener = { onEditCard(model) }
+        }.show(fragmentManager, String.EMPTY)
     }
 }

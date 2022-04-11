@@ -30,7 +30,7 @@ class BillsViewModel(private val repository: ExpensesRepository?) : BaseViewMode
         _summary.postValue(list?.toSummaryModel())
     }
 
-    fun saveExpense(model: ExpenseModel) = launch {
+    fun editExpense(model: ExpenseModel) = launch {
         repository?.saveExpense(model)?.onStart { setLoading() }?.collect {
             _bills.postValue(it)
             setData()

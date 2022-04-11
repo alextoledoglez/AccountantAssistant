@@ -6,6 +6,7 @@ import android.text.InputFilter
 import android.text.InputFilter.AllCaps
 import android.text.InputType
 import android.view.View
+import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
@@ -107,8 +108,13 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     }
 
     companion object {
-        fun newInstance(model: ExpenseModel?) = ExpenseDetailsFragment().apply {
+        fun showDialogFragment(
+            model: ExpenseModel,
+            onEditExpense: (model: ExpenseModel) -> Unit,
+            fragmentManager: FragmentManager
+        ) = ExpenseDetailsFragment().apply {
             arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
-        }
+            onEditListener = { onEditExpense(model) }
+        }.show(fragmentManager, String.EMPTY)
     }
 }
