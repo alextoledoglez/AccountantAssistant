@@ -1,5 +1,8 @@
 package com.personal.accountantAssistant.data.enums
 
+import com.personal.accountantAssistant.data.mappers.toEntity
+import com.personal.accountantAssistant.data.mappers.toExpenseModel
+
 enum class BuysEnum(var value: String) {
     RICE("ARROZ"),
     BEAN("FEIJÃO"),
@@ -28,4 +31,8 @@ enum class BuysEnum(var value: String) {
     BEER("CERVEJA"),
     ICE_CREAM("SORVETE"),
     SODA("REFRIGERANTE");
+
+    companion object {
+        fun toBuysEntities() = values().map { it.toExpenseModel().toEntity() }
+    }
 }

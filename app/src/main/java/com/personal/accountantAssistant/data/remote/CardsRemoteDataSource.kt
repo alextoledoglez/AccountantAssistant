@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.data.remote
 
 import com.personal.accountantAssistant.data.dao.CardDao
-import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
@@ -22,8 +21,7 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
 
     suspend fun setDefaultCards(): MutableList<CardModel> {
         deleteAllCards()
-        val list = DefaultCardsEnum.values().map { CardEntity(it.company, it.title) }
-        return if (cardDao.insert(list).size > Int.DEFAULT_UID) list.toListModel() else mutableListOf()
+        return getCardsBy(cardDao.insert(DefaultCardsEnum.toCardsEntities()).size)
     }
 
     suspend fun setAllCardsActive(isActive: Boolean) = getCardsBy(
@@ -31,7 +29,7 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
     )
 
     suspend fun switchActiveCard(model: CardModel): MutableList<CardModel> {
-        val entity = model.also { it.isActive = !it.isActive }.toEntity()
+        val entity = model.copy(isActive = !model.isActive).toEntity()
         return getCardsBy(cardDao.update(entity))
     }
 

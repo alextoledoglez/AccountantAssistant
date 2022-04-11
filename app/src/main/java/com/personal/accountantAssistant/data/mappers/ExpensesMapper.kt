@@ -1,6 +1,8 @@
 package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
+import com.personal.accountantAssistant.data.enums.BillsEnum
+import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
@@ -49,12 +51,12 @@ fun List<ExpenseModel>.isAnyExpenseActive() = stream().anyMatch { it.isActive }
 fun List<ExpenseModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.totalValue }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
-fun ExpenseModel.toBuy() = apply {
-    type = ExpensesType.BUY
-}
+fun ExpenseModel.toBuy() = this.copy(type = ExpensesType.BUY)
 
-fun ExpenseModel.toBill() = apply {
-    type = ExpensesType.BILL
-}
+fun ExpenseModel.toBill() = this.copy(type = ExpensesType.BILL)
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()
+
+fun BuysEnum.toExpenseModel() = ExpenseModel(value, ExpensesType.BILL)
+
+fun BillsEnum.toExpenseModel() = ExpenseModel(value, ExpensesType.BILL)

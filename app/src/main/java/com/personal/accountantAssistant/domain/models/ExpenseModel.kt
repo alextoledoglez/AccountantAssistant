@@ -1,53 +1,40 @@
 package com.personal.accountantAssistant.domain.models
 
 import android.os.Parcelable
-import android.text.Editable
 import androidx.recyclerview.widget.DiffUtil
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
+import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
+import com.personal.accountantAssistant.extensions.ZERO
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import java.util.*
 
 @Parcelize
 data class ExpenseModel(
-    var id: Long = 0,
-    var name: String? = null,
-    var quantity: Int = 0,
-    var date: Date? = null,
-    var unitaryValue: BigDecimal = BigDecimal.ZERO,
+    val id: Long = Long.ZERO,
+    val name: String? = null,
+    val quantity: Int = Int.ZERO,
+    val date: Date? = null,
+    val unitaryValue: BigDecimal = BigDecimal.ZERO,
     var totalValue: BigDecimal = BigDecimal.ZERO,
-    var type: ExpensesType? = null,
-    var isActive: Boolean = false
+    val type: ExpensesType? = null,
+    val isActive: Boolean = false
 ) : Parcelable {
 
     init {
         totalValue = calculateTotalValue()
     }
 
-    constructor(product: String?, type: ExpensesType?) : this() {
-        this.name = product
-        quantity = Int.DEFAULT_QUANTITY_VALUE
-        date = Date()
-        unitaryValue = BigDecimal.ZERO
-        totalValue = BigDecimal.ZERO
-        this.type = type
+    constructor(product: String?, type: ExpensesType?) : this(
+        name = product,
+        quantity = Int.DEFAULT_QUANTITY_VALUE,
+        date = Date(),
+        unitaryValue = BigDecimal.ZERO,
+        totalValue = BigDecimal.ZERO,
+        type = type,
         isActive = Boolean.DEFAULT_ACTIVE_STATUS
-    }
-
-    fun update(
-        name: Editable?,
-        quantity: Editable?,
-        date: Editable?,
-        unitaryValue: Editable?,
-        isActive: Boolean
-    ) {
-        this.name = name.toString()
-        this.quantity = quantity.toInt()
-        this.date = date.toDate()
-        this.unitaryValue = unitaryValue.toCurrencyBigDecimal()
-        this.isActive = isActive
-    }
+    )
 
     fun calculateTotalValue(): BigDecimal = unitaryValue.multiply(quantity.toBigDecimal())
 

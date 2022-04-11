@@ -37,14 +37,12 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
     suspend fun setDefaultBuys(): MutableList<ExpenseModel> {
         deleteAllBuys()
-        val list = BuysEnum.values().map { ExpenseModel(it.value, ExpensesType.BUY).toEntity() }
-        return getBuysBy(expenseDao.insert(list).size)
+        return getBuysBy(expenseDao.insert(BuysEnum.toBuysEntities()).size)
     }
 
     suspend fun setDefaultBills(): MutableList<ExpenseModel> {
         deleteAllBills()
-        val list = BillsEnum.values().map { ExpenseModel(it.value, ExpensesType.BILL).toEntity() }
-        return getBillsBy(expenseDao.insert(list).size)
+        return getBillsBy(expenseDao.insert(BillsEnum.toBillsEntities()).size)
     }
 
     suspend fun setAllBuysActive(isActive: Boolean) = getBuysBy(
@@ -56,7 +54,7 @@ class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
     )
 
     suspend fun switchActiveExpense(model: ExpenseModel): MutableList<ExpenseModel> {
-        val entity = model.also { it.isActive = !it.isActive }.toEntity()
+        val entity = model.copy(isActive = !model.isActive).toEntity()
         return getExpensesBy(expenseDao.update(entity), model.type)
     }
 

@@ -93,28 +93,26 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun getExpense() = arguments?.getParcelable<ExpenseModel>(String.ENTITY)
 
     private fun save(model: ExpenseModel?) {
-        model?.let {
-            binding.apply {
-                it.update(
-                    name = etName.text,
-                    quantity = etQuantity.text,
-                    date = etDate.text,
-                    unitaryValue = etValue.text,
-                    isActive = scActive.isChecked
-                )
-                onEditListener?.invoke(model).also { dismiss() }
-            }
+        binding.apply {
+            val updatedModel = model?.copy(
+                name = etName.text.toString(),
+                quantity = etQuantity.text.toInt(),
+                date = etDate.text.toDate(),
+                unitaryValue = etValue.text.toCurrencyBigDecimal(),
+                isActive = scActive.isChecked
+            )
+            updatedModel?.let { onEditListener?.invoke(it).also { dismiss() } }
         }
     }
 
     companion object {
         fun showDialogFragment(
-            model: ExpenseModel,
-            onEditExpense: (model: ExpenseModel) -> Unit,
-            fragmentManager: FragmentManager
-        ) = ExpenseDetailsFragment().apply {
-            arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
-            onEditListener = { onEditExpense(model) }
-        }.show(fragmentManager, String.EMPTY)
+            model: ExpenseModel, onEdit: (model: ExpenseModel) -> Unit, manager: FragmentManager
+        ) {
+            ExpenseDetailsFragment().apply {
+                arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
+                onEditListener = { onEdit(it) }
+            }.show(manager, String.EMPTY)
+        }
     }
 }

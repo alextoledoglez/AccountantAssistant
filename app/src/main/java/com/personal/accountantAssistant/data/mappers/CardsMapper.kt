@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.CardEntity
+import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.orFalse
@@ -46,3 +47,5 @@ fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
 
 fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
     .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
+
+fun DefaultCardsEnum.toCardEntity() = CardEntity(company, title)

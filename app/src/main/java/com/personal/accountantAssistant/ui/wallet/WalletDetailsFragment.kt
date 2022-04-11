@@ -8,10 +8,7 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.ENTITY
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.*
 
 class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
 
@@ -60,28 +57,26 @@ class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
     private fun getCard() = arguments?.getParcelable<CardModel>(String.ENTITY)
 
     private fun saveCard(model: CardModel?) {
-        model?.let {
-            binding.apply {
-                it.update(
-                    company = etCompany.text,
-                    name = etName.text,
-                    password = etPassword.text,
-                    value = etValue.text,
-                    isActive = scActive.isChecked
-                )
-                onEditListener?.invoke(it).also { dismiss() }
-            }
+        binding.apply {
+            val updatedModel = model?.copy(
+                company = etCompany.text.toString(),
+                name = etName.text.toString(),
+                password = etPassword.text.toString(),
+                value = etValue.text.toCurrencyBigDecimal(),
+                isActive = scActive.isChecked,
+            )
+            updatedModel?.let { onEditListener?.invoke(updatedModel).also { dismiss() } }
         }
     }
 
     companion object {
         fun showDialogFragment(
-            model: CardModel,
-            onEditCard: (model: CardModel) -> Unit,
-            fragmentManager: FragmentManager
-        ) = WalletDetailsFragment().apply {
-            arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
-            onEditListener = { onEditCard(model) }
-        }.show(fragmentManager, String.EMPTY)
+            model: CardModel, onEdit: (model: CardModel) -> Unit, manager: FragmentManager
+        ) {
+            WalletDetailsFragment().apply {
+                arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
+                onEditListener = { onEdit(it) }
+            }.show(manager, String.EMPTY)
+        }
     }
 }
