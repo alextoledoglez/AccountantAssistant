@@ -30,7 +30,10 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         cardDao.activeAll(isActive.toString())
     )
 
-    suspend fun switchActiveCard(model: CardModel) = getCardsBy(cardDao.update(model.toEntity()))
+    suspend fun switchActiveCard(model: CardModel): MutableList<CardModel> {
+        val entity = model.also { it.isActive = !it.isActive }.toEntity()
+        return getCardsBy(cardDao.update(entity))
+    }
 
     suspend fun deleteCard(model: CardModel) = getCardsBy(cardDao.delete(model.toEntity()))
 
