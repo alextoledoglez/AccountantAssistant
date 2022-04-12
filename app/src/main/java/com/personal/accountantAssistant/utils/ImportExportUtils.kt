@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.utils
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat.requestPermissions
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.AppDatabase
@@ -30,6 +31,70 @@ object ImportExportUtils {
     private const val HEADER_ROW = 0
     private const val BODY_ROW = HEADER_ROW + 1
     private const val TITLE_POINT_SIZE = 16
+
+    fun importDBFrom(
+        context: Context,
+        @StringRes db_successful_imported: Int,
+        @StringRes db_importing_failure: Int
+    ) {
+        try {
+            if (PermissionsUtils.haveStoragePermissionGranted(context)) {
+                val sourceDirectory = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
+                val res = if (sourceDirectory?.canWrite() == true) {
+                    val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val currentDB = File(sourceDirectory, backupDBPath)
+                    val backupDB = context.getDatabasePath(AppDatabase.DB_NAME)
+                    val src = FileInputStream(currentDB).channel
+                    FileOutputStream(backupDB).channel.apply {
+                        transferFrom(src, Long.ZERO, src.size())
+                        src.close()
+                        close()
+                    }
+                    db_successful_imported
+                } else {
+                    db_importing_failure
+                }
+                context.showToastLongText(res)
+            } else {
+                PermissionsUtils.requestStoragePermissionsFrom(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun exportDBFrom(
+        context: Context,
+        @StringRes db_successful_exported: Int,
+        @StringRes db_exporting_failure: Int
+    ): File? {
+        try {
+            if (PermissionsUtils.haveStoragePermissionGranted(context)) {
+                val currentDB: File = context.getDatabasePath(AppDatabase.DB_NAME)
+                val src: FileChannel = FileInputStream(currentDB).channel
+                val sourceDirectory: File? =
+                    context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
+                if (sourceDirectory?.canWrite() == true) {
+                    val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val backupDB = File(sourceDirectory, backupDBPath)
+                    FileOutputStream(backupDB).channel.apply {
+                        transferFrom(src, Long.ZERO, src.size())
+                        src.close()
+                        close()
+                    }
+                    context.showToastLongText(db_successful_exported)
+                    return backupDB
+                } else
+                    context.showToastLongText(db_exporting_failure)
+
+            } else {
+                PermissionsUtils.requestStoragePermissionsFrom(context)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
 
     fun xlsImport(context: Context?, type: ExpensesType?) {
         //TODO
@@ -79,12 +144,11 @@ object ImportExportUtils {
                 val sourceDirectory: File? = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
                 if (sourceDirectory?.canWrite() == true) {
                     val backupDB: File = context.getDatabasePath(DB_NAME)
-                    val backupDBPath: String =
-                        java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
                     val currentDB = File(sourceDirectory, backupDBPath)
                     val src: FileChannel = FileInputStream(currentDB).channel
                     val dst: FileChannel = FileOutputStream(backupDB).channel
-                    dst.transferFrom(src, 0, src.size())
+                    dst.transferFrom(src, Long.ZERO, src.size())
                     src.close()
                     dst.close()
                     context.showToastLongText(R.string.db_successfully_imported)
@@ -106,11 +170,10 @@ object ImportExportUtils {
                 val src: FileChannel = FileInputStream(currentDB).channel
                 val sourceDirectory: File? = context.getExternalFilesDir(FILE_DIRECTORY_TYPE)
                 if (sourceDirectory?.canWrite() == true) {
-                    val backupDBPath: String =
-                        java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
+                    val backupDBPath = java.lang.String.format(DB_BACKUP_FORMAT, DB_NAME)
                     val backupDB = File(sourceDirectory, backupDBPath)
                     val dst: FileChannel = FileOutputStream(backupDB).channel
-                    dst.transferFrom(src, 0, src.size())
+                    dst.transferFrom(src, Long.ZERO, src.size())
                     src.close()
                     dst.close()
                     context.showToastLongText(R.string.db_successfully_exported)

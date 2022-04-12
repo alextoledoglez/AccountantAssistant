@@ -5,7 +5,7 @@ import com.personal.accountantAssistant.data.entities.ExpenseEntity
 
 object ExpensesTableMigrations : BaseTableMigration() {
 
-    private const val TABLE_BACKUP = "${AppDatabase.EXPENSES_TABLE}_BACKUP"
+    private const val TABLE_BACKUP = "${AppDatabase.EXPENSES_TABLE_NAME}_BACKUP"
 
     private const val FIELDS_SCHEME_CHANGES = "${ExpenseEntity.ID} INTEGER PRIMARY KEY, " +
             "${ExpenseEntity.NAME} TEXT, " +
@@ -30,12 +30,12 @@ object ExpensesTableMigrations : BaseTableMigration() {
     )
     private val COPY_TABLE_DATA = copyFieldsFromTableToTable(
         fields = FIELDS_DEFINITIONS,
-        originTable = AppDatabase.EXPENSES_TABLE,
+        originTable = AppDatabase.EXPENSES_TABLE_NAME,
         destinyTable = TABLE_BACKUP
     )
-    private val DROP_TABLE = dropTable(AppDatabase.EXPENSES_TABLE)
+    private val DROP_TABLE = dropTable(AppDatabase.EXPENSES_TABLE_NAME)
     private val RENAME_TABLE_BACKUP_TO_TABLE = renameTableTo(
-        oldTable = TABLE_BACKUP, newTable = AppDatabase.EXPENSES_TABLE
+        oldTable = TABLE_BACKUP, newTable = AppDatabase.EXPENSES_TABLE_NAME
     )
 
     val MIGRATION_3_4 = setTableSchemaMigration(
@@ -49,7 +49,7 @@ object ExpensesTableMigrations : BaseTableMigration() {
     val MIGRATION_4_5 = renameTableMigration(
         startVersion = 4,
         endVersion = 5,
-        oldTable = "PAYMENTS_TABLE",
-        newTable = AppDatabase.EXPENSES_TABLE
+        oldTable = AppDatabase.PAYMENTS_TABLE_NAME,
+        newTable = AppDatabase.EXPENSES_TABLE_NAME
     )
 }
