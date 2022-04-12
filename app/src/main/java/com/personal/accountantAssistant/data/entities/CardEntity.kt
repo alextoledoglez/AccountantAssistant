@@ -14,7 +14,7 @@ data class CardEntity(
     @ColumnInfo(name = NAME) var name: String? = String.EMPTY,
     @ColumnInfo(name = PASSWORD) var password: String? = String.EMPTY,
     @ColumnInfo(name = VALUE) var value: String? = String.EMPTY,
-    @ColumnInfo(name = ACTIVE) var isActive: String? = String.EMPTY
+    @ColumnInfo(name = ACTIVE) var isActive: Boolean? = false
 ) {
     constructor(company: String?, name: String?) : this() {
         this.company = company.orEmpty()

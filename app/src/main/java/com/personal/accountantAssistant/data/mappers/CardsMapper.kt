@@ -17,7 +17,7 @@ fun CardEntity.toModel() = CardModel(
     name = name.orEmpty(),
     password = password.orEmpty(),
     value = value?.toRoundedBigDecimal().orZero(),
-    isActive = isActive.toBoolean().orFalse()
+    isActive = isActive.orFalse()
 )
 
 fun CardModel.toEntity() = CardEntity(
@@ -26,7 +26,7 @@ fun CardModel.toEntity() = CardEntity(
     name = name,
     password = password,
     value = value.toString(),
-    isActive = isActive.orFalse().toString()
+    isActive = isActive.orFalse()
 )
 
 fun MutableList<CardModel>.toSummaryModel() = SummaryModel(
@@ -35,11 +35,7 @@ fun MutableList<CardModel>.toSummaryModel() = SummaryModel(
     total = getTotalValue()
 )
 
-fun List<CardEntity>.toListModel() = map { it.toModel() }.sortedWith(
-    Comparator.comparing<CardModel?, Boolean?> { it.isActive }.thenComparingDouble {
-        it.value.orZero().toDouble()
-    }
-).reversed().toMutableList()
+fun List<CardEntity>.toListModel() = map { it.toModel() }.toMutableList()
 
 fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
 

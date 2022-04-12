@@ -10,11 +10,14 @@ import com.personal.accountantAssistant.data.entities.CardEntity
 @Dao
 interface CardDao : BaseDao<CardEntity> {
     @Transaction
-    @Query("SELECT * FROM $CARD_TABLE")
+    @Query("SELECT * FROM $CARD_TABLE ORDER BY value DESC")
     suspend fun selectAll(): Array<CardEntity>
 
-    @Query("UPDATE $CARD_TABLE SET active=:active")
-    suspend fun activeAll(active: String): Int
+    @Query("UPDATE $CARD_TABLE SET active=:isActive WHERE id=:id")
+    suspend fun setActive(id: Long, isActive: Boolean): Int
+
+    @Query("UPDATE $CARD_TABLE SET active=:isActive")
+    suspend fun activeAll(isActive: Boolean): Int
 
     @Query("DELETE FROM $CARD_TABLE")
     suspend fun clearTable(): Int

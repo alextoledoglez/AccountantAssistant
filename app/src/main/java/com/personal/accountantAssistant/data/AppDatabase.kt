@@ -10,6 +10,7 @@ import com.personal.accountantAssistant.data.dao.CardDao
 import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
+import com.personal.accountantAssistant.data.migrations.CardTableMigrations
 import com.personal.accountantAssistant.extensions.showToastLongText
 import com.personal.accountantAssistant.extensions.toActivity
 import com.personal.accountantAssistant.utils.PermissionsUtils
@@ -18,7 +19,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 
-@Database(entities = [CardEntity::class, ExpenseEntity::class], version = 1, exportSchema = false)
+@Database(entities = [CardEntity::class, ExpenseEntity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun cardsDao(): CardDao
@@ -26,16 +27,16 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        const val DB_NAME = "ACCOUNTANT_ASSISTANT"
         private const val FILE_DIRECTORY_TYPE = ""
         private const val DB_BACKUP_FORMAT = "%s"
+        const val DB_NAME = "ACCOUNTANT_ASSISTANT"
         const val CARD_TABLE = "CARD_TABLE"
         const val PAYMENTS_TABLE = "PAYMENTS_TABLE"
 
         @JvmStatic
         fun getInstance(context: Context) = Room.databaseBuilder(
             context.applicationContext, AppDatabase::class.java, DB_NAME
-        ).build()
+        ).addMigrations(CardTableMigrations.MIGRATION_1_2).build()
 
         fun importDBFrom(
             context: Context,
