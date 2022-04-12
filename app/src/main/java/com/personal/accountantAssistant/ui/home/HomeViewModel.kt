@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.repository.ExpensesRepository
+import com.personal.accountantAssistant.domain.repository.BuysRepository
+import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
@@ -18,7 +18,9 @@ import java.math.BigDecimal
 import java.util.*
 
 class HomeViewModel(
-    private val localStorage: LocalStorage?, private val repository: ExpensesRepository?
+    private val localStorage: LocalStorage?,
+    private val buysRepository: BuysRepository?,
+    private val billsRepository: BillsRepository?
 ) : BaseViewModel() {
 
     private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
@@ -49,12 +51,12 @@ class HomeViewModel(
         setLoading()
         setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
 
-        val buysExpenses = repository?.getTotalPriceUntil(
-            ExpensesType.BUY, localStorage?.getLastDate()
+        val buysExpenses = buysRepository?.getTotalPriceUntil(
+            localStorage?.getLastDate()
         )?.singleOrNull().orZero()
 
-        val billsExpenses = repository?.getTotalPriceUntil(
-            ExpensesType.BILL, localStorage?.getLastDate()
+        val billsExpenses = billsRepository?.getTotalPriceUntil(
+            localStorage?.getLastDate()
         )?.singleOrNull().orZero()
 
         val totalExpenses = buysExpenses.plus(billsExpenses)

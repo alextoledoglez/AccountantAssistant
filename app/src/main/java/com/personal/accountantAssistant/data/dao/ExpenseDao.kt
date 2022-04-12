@@ -14,6 +14,9 @@ interface ExpenseDao : BaseDao<ExpenseEntity> {
     @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE type ==:typeName")
     suspend fun selectAll(typeName: String): Array<ExpenseEntity>
 
+    @Query("UPDATE $EXPENSES_TABLE_NAME SET active=:isActive WHERE id=:id")
+    suspend fun setActive(id: Long, isActive: Boolean): Int
+
     @Query("UPDATE $EXPENSES_TABLE_NAME SET active=:active WHERE type ==:typeName")
     suspend fun activeAll(active: String, typeName: String): Int
 

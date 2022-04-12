@@ -17,7 +17,7 @@ import java.math.BigDecimal
 fun ExpenseEntity.toModel() = ExpenseModel(
     id = id?.toLong().orZero(),
     name = name,
-    quantity = quantity?.toInt().orZero(),
+    quantity = quantity.orZero(),
     date = DateUtils.toDate(date.orEmpty()),
     unitaryValue = unitaryValue?.toBigDecimal()?.rounded().orZero(),
     totalValue = totalValue?.toBigDecimal()?.rounded().orZero(),

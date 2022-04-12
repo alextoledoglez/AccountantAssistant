@@ -1,39 +1,36 @@
 package com.personal.accountantAssistant.data.repository
 
+import com.personal.accountantAssistant.data.mappers.toEntity
+import com.personal.accountantAssistant.data.mappers.toListModel
 import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
-import com.personal.accountantAssistant.extensions.flowEmit
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class CardsDataRepository(
     private val dataSource: CardsRemoteDataSource
 ) : CardsRepository {
 
-    override fun getCards(): Flow<MutableList<CardModel>?> = flowEmit { dataSource.getCards() }
+    override fun getCards() = dataSource.getCards().map { it.toListModel() }
 
-    override fun saveCard(model: CardModel): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.saveCard(model)
+    override fun saveCard(model: CardModel) = dataSource.saveCard(model.toEntity()).map {
+        it.toListModel()
     }
 
-    override fun setDefaultCards(): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.setDefaultCards()
+    override fun setDefaultCards() = dataSource.setDefaultCards().map { it.toListModel() }
+
+    override fun setAllCardsActive(isActive: Boolean) = dataSource.setAllCardsActive(isActive).map {
+        it.toListModel()
     }
 
-    override fun setAllCardsActive(isActive: Boolean): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.setAllCardsActive(isActive)
+    override fun switchActiveCard(model: CardModel) = dataSource.switchActiveCard(
+        model.id, !model.isActive
+    ).map { it.toListModel() }
+
+    override fun deleteCard(model: CardModel) = dataSource.deleteCard(model.toEntity()).map {
+        it.toListModel()
     }
 
-    override fun switchActiveCard(model: CardModel): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.switchActiveCard(model)
-    }
-
-    override fun deleteCard(model: CardModel): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.deleteCard(model)
-    }
-
-    override fun deleteAllCards(): Flow<MutableList<CardModel>?> = flowEmit {
-        dataSource.deleteAllCards()
-    }
+    override fun deleteAllCards() = dataSource.deleteAllCards().map { it.toListModel() }
 
 }
