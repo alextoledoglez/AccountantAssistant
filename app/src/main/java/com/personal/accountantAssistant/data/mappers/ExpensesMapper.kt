@@ -8,8 +8,8 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.rounded
 import com.personal.accountantAssistant.extensions.toEntityId
-import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import com.personal.accountantAssistant.utils.DateUtils
 import java.math.BigDecimal
@@ -19,21 +19,21 @@ fun ExpenseEntity.toModel() = ExpenseModel(
     name = name,
     quantity = quantity?.toInt().orZero(),
     date = DateUtils.toDate(date.orEmpty()),
-    unitaryValue = unitaryValue?.toRoundedBigDecimal().orZero(),
-    totalValue = totalValue?.toRoundedBigDecimal().orZero(),
+    unitaryValue = unitaryValue?.toBigDecimal()?.rounded().orZero(),
+    totalValue = totalValue?.toBigDecimal()?.rounded().orZero(),
     type = ExpensesType.valueOf(type ?: ExpensesType.NONE.name),
-    isActive = isActive.toBoolean().orFalse()
+    isActive = isActive.orFalse()
 )
 
 fun ExpenseModel.toEntity() = ExpenseEntity(
     id = id.toEntityId(),
     name = name,
-    quantity = quantity.toString(),
+    quantity = quantity,
     date = DateUtils.toString(date),
-    unitaryValue = unitaryValue.toString(),
-    totalValue = calculateTotalValue().toString(),
+    unitaryValue = unitaryValue.toDouble(),
+    totalValue = calculateTotalValue().toDouble(),
     type = type.toString(),
-    isActive = isActive.toString()
+    isActive = isActive
 )
 
 fun MutableList<ExpenseModel>.toSummaryModel() = SummaryModel(

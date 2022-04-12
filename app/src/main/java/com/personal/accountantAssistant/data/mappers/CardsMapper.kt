@@ -6,8 +6,8 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.rounded
 import com.personal.accountantAssistant.extensions.toEntityId
-import com.personal.accountantAssistant.extensions.toRoundedBigDecimal
 import com.personal.accountantAssistant.utils.CalculatorUtils
 import java.math.BigDecimal
 
@@ -16,7 +16,7 @@ fun CardEntity.toModel() = CardModel(
     company = company.orEmpty(),
     name = name.orEmpty(),
     password = password.orEmpty(),
-    value = value?.toRoundedBigDecimal().orZero(),
+    value = value?.toBigDecimal()?.rounded().orZero(),
     isActive = isActive.orFalse()
 )
 
@@ -25,7 +25,7 @@ fun CardModel.toEntity() = CardEntity(
     company = company,
     name = name,
     password = password,
-    value = value.toString(),
+    value = value.toDouble(),
     isActive = isActive.orFalse()
 )
 

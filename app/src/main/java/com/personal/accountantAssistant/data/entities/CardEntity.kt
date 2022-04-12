@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.personal.accountantAssistant.data.AppDatabase.Companion.CARD_TABLE
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
+import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.EMPTY
 
 @Entity(tableName = CARD_TABLE)
@@ -13,7 +14,7 @@ data class CardEntity(
     @ColumnInfo(name = COMPANY) var company: String? = String.EMPTY,
     @ColumnInfo(name = NAME) var name: String? = String.EMPTY,
     @ColumnInfo(name = PASSWORD) var password: String? = String.EMPTY,
-    @ColumnInfo(name = VALUE) var value: String? = String.EMPTY,
+    @ColumnInfo(name = VALUE) var value: Double? = Double.DEFAULT_VALUE,
     @ColumnInfo(name = ACTIVE) var isActive: Boolean? = false
 ) {
     constructor(company: String?, name: String?) : this() {
