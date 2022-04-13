@@ -12,7 +12,8 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.databinding.TitlesBarsBinding
+import com.personal.accountantAssistant.databinding.LayoutListSummaryBinding
+import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.MenuHelper
@@ -63,8 +64,8 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
             ::restoreDefaultRecords
         ) {}
 
-    fun initHeader(header: TitlesBarsBinding) {
-        with(header) {
+    fun initLayoutSummary(binding: LayoutListSummaryBinding) {
+        with(binding) {
             tvTitle.visibility = View.GONE
             ivMoney.setImageResource(R.drawable.ic_money)
             tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
@@ -83,19 +84,17 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         }
     }
 
-    fun updateHeader(
-        header: TitlesBarsBinding, isAnyChecked: Boolean?, isAllChecked: Boolean?, text: String?
-    ) {
-        val color = context?.getCompatColor(
-            isAnyChecked.orFalse(), R.color.colorRed, R.color.colorPrimary
-        )
-        with(header) {
-            color?.let {
+    fun updateLayoutSummary(binding: LayoutListSummaryBinding, model: SummaryModel) {
+        val isAnyActive = model.isAnyActive()
+        val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
+        val totalStr = model.total.toCurrencyMaskedStr()
+        with(binding) {
+            context?.getCompatColor(isAnyActive, R.color.colorRed, R.color.colorPrimary)?.let {
                 ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
                 tvSubtitle.setTextColor(it)
             }
-            tvSubtitle.text = text ?: String.STR_DEFAULT_MONETARY_VALUE
-            scActive.isChecked = isAllChecked.orFalse()
+            tvSubtitle.text = totalStr
+            scActive.isChecked = isAllActive
         }
     }
 }

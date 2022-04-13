@@ -2,9 +2,7 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.rounded
-import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.extensions.*
 import java.math.BigDecimal
 import java.util.*
 
@@ -34,19 +32,20 @@ class LocalStorage(val context: Context) {
 
     private fun setFirstStrDate(firstDate: Date?) {
         getDefaultSharedPreferences().edit()
-            .putString(FIRST_STR_DATE, DateUtils.toString(firstDate)).apply()
+            .putString(FIRST_STR_DATE, firstDate.toDateStr()).apply()
     }
 
-    fun getFirstDate(): Date = getDefaultSharedPreferences().getString(FIRST_STR_DATE, String.EMPTY)
-        ?.let { DateUtils.toDate(it) } ?: run { Date() }
+    fun getFirstDate() = getDefaultSharedPreferences().getString(
+        FIRST_STR_DATE, String.EMPTY
+    )?.toDate().orCurrent()
 
     private fun setLastStrDate(lastDate: Date?) {
-        getDefaultSharedPreferences().edit().putString(LAST_STR_DATE, DateUtils.toString(lastDate))
-            .apply()
+        getDefaultSharedPreferences().edit().putString(LAST_STR_DATE, lastDate.toDateStr()).apply()
     }
 
-    fun getLastDate(): Date = getDefaultSharedPreferences().getString(LAST_STR_DATE, String.EMPTY)
-        ?.let { DateUtils.toDate(it) } ?: run {
+    fun getLastDate(): Date = getDefaultSharedPreferences().getString(
+        LAST_STR_DATE, String.EMPTY
+    )?.toDate() ?: run {
         val nextMonth = Calendar.getInstance()
         nextMonth.add(Calendar.MONTH, 1)
         nextMonth.time
@@ -57,12 +56,7 @@ class LocalStorage(val context: Context) {
         setLastStrDate(lastDate)
     }
 
-    fun getPeriodDates(): List<Date> {
-        val dates: MutableList<Date> = ArrayList()
-        dates.add(getFirstDate())
-        dates.add(getLastDate())
-        return dates
-    }
+    fun getPeriodDates() = listOf(getFirstDate(), getLastDate())
 
     fun setSignedAccountName(accountName: String?) {
         getDefaultSharedPreferences().edit().putString(SIGNED_ACCOUNT_NAME, accountName).apply()

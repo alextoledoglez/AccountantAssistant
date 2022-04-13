@@ -17,6 +17,8 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
 
     fun getCards(): Flow<List<CardEntity>> = flowEmit { cardDao.selectAll().toList() }
 
+    fun getSummary(): Flow<CardEntity> = flowEmit { cardDao.getSummary() }
+
     fun saveCard(entity: CardEntity): Flow<List<CardEntity>> = flowEmit {
         val editedCards = if (entity.id.orZero() > Int.DEFAULT_UID)
             cardDao.update(entity)
@@ -31,13 +33,13 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         getCardsBy(insertedCards)
     }
 
-    fun setAllCardsActive(isActive: Boolean): Flow<List<CardEntity>> = flowEmit {
-        val activeCards = cardDao.activeAll(isActive)
+    fun setAllCardsActive(active: Int): Flow<List<CardEntity>> = flowEmit {
+        val activeCards = cardDao.activeAll(active)
         getCardsBy(activeCards)
     }
 
-    fun switchActiveCard(id: Long, isActive: Boolean): Flow<List<CardEntity>> = flowEmit {
-        val activeCard = cardDao.setActive(id, !isActive)
+    fun switchActiveCard(entity: CardEntity): Flow<List<CardEntity>> = flowEmit {
+        val activeCard = cardDao.setActive(entity.id.orZero(), entity.active.orZero())
         getCardsBy(activeCard)
     }
 

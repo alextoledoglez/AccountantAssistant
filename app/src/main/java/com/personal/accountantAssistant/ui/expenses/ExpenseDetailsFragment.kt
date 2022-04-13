@@ -16,7 +16,6 @@ import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBuy
 import com.personal.accountantAssistant.databinding.FragmentExpensesDetailsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.DateUtils.toString
 import java.util.*
 
 class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
@@ -56,10 +55,10 @@ class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
             else {
                 etDate.apply {
                     inputType = InputType.TYPE_NULL
-                    setText(toString(model?.date))
+                    setText(model?.date.toDateStr())
                     val dialog = AlertDialogBuilder(context)
                     val listener = DatePickerDialog.OnDateSetListener { _, y: Int, m: Int, d: Int ->
-                        setText(toString(Calendar.getInstance().also { it[y, m] = d }.time))
+                        setText(Calendar.getInstance().also { it[y, m] = d }.time.toDateStr())
                     }
                     setOnClickListener { dialog.showDatePickerFrom(model?.date, listener) }
                     onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus: Boolean ->

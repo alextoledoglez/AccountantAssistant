@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
                 isVisible = true
                 when (page) {
                     is WalletFragment -> setOnClickListener { page.onEditCard(CardModel()) }
-                    is BuysFragment -> setOnClickListener { page.onEditExpense(ExpenseModel().toBuy()) }
-                    is BillsFragment -> setOnClickListener { page.onEditExpense(ExpenseModel().toBill()) }
+                    is BuysFragment -> setOnClickListener { page.onEditBuy(ExpenseModel().toBuy()) }
+                    is BillsFragment -> setOnClickListener { page.onEditBill(ExpenseModel().toBill()) }
                     else -> isVisible = false
                 }
             }

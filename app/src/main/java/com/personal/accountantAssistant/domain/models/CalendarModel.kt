@@ -1,10 +1,10 @@
 package com.personal.accountantAssistant.domain.models
 
 import com.personal.accountantAssistant.extensions.DASH_SEPARATOR
-import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.extensions.toDateStr
 import java.util.*
 
-data class CalendarValuesModel(private var calendar: Calendar) {
+data class CalendarModel(private var calendar: Calendar = Calendar.getInstance()) {
 
     private var date: Date
     private var strDate: String? = null
@@ -15,7 +15,7 @@ data class CalendarValuesModel(private var calendar: Calendar) {
 
     init {
         date = calendar.time
-        strDate = DateUtils.toString(date)
+        strDate = date.toDateStr()
         year = calendar[Calendar.YEAR]
         month = calendar[Calendar.MONTH] + 1
         dayOfMonth = calendar[Calendar.DAY_OF_MONTH]

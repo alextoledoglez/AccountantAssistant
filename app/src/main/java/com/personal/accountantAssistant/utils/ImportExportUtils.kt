@@ -9,9 +9,9 @@ import com.personal.accountantAssistant.data.enums.ExpensesFieldsEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.LocaleTypes
 import com.personal.accountantAssistant.data.mappers.isBill
+import com.personal.accountantAssistant.domain.models.CalendarModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.DateUtils.toCurrentDateStr
 import jxl.Workbook
 import jxl.WorkbookSettings
 import jxl.write.*
@@ -121,7 +121,7 @@ object ImportExportUtils {
                     xlsFileName = BILLS
                     sheetName = BILLS
                 }
-                xlsFileName += "(" + toCurrentDateStr() + ").xls"
+                xlsFileName += "(" + CalendarModel().toCurrentDateStr() + ").xls"
                 sheetName += "_list"
                 val xlsFile = File(directory, xlsFileName)
                 val wbSettings = WorkbookSettings()
@@ -210,7 +210,7 @@ object ImportExportUtils {
     }
 
     private fun getConditionalDateValueFrom(model: ExpenseModel) =
-        if (model.isBill().orFalse()) model.date.toString() else String.DASH_SEPARATOR
+        if (model.isBill().orFalse()) model.date.toDateStr() else String.DASH_SEPARATOR
 
     private fun setHeaderCell(sheet: WritableSheet) {
         for ((colIndex, value) in ExpensesFieldsEnum.values().withIndex()) {

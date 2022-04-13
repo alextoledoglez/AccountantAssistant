@@ -26,8 +26,8 @@
             android:orientation="vertical">
 
             <include
-                android:id="@+id/lytHeader"
-                layout="@layout/titles_bars" />
+                android:id="@+id/lytSummary"
+                layout="@layout/layout_list_summary" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvBills"

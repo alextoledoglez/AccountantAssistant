@@ -6,12 +6,9 @@ import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.domain.repository.BillsRepository
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.utils.DateUtils
-import com.personal.accountantAssistant.utils.DateUtils.toUtcDate
-import com.personal.accountantAssistant.utils.DateUtils.toUtcPair
+import com.personal.accountantAssistant.domain.repository.BuysRepository
+import com.personal.accountantAssistant.extensions.*
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -49,32 +46,28 @@ class HomeViewModel(
 
     fun calculateExpenses() = launch {
         setLoading()
-        setPeriodDates(localStorage?.getFirstDate(), localStorage?.getLastDate())
-
-        val buysExpenses = buysRepository?.getTotalPriceUntil(
-            localStorage?.getLastDate()
-        )?.singleOrNull().orZero()
-
-        val billsExpenses = billsRepository?.getTotalPriceUntil(
-            localStorage?.getLastDate()
-        )?.singleOrNull().orZero()
-
+        val lastDate = localStorage?.getLastDate()
+        setPeriodDates(localStorage?.getFirstDate(), lastDate)
+        val buysExpenses = buysRepository?.getTotalValueUntil(lastDate)?.singleOrNull().orZero()
+        val billsExpenses = billsRepository?.getTotalValueUntil(lastDate)?.singleOrNull().orZero()
         val totalExpenses = buysExpenses.plus(billsExpenses)
         _availableMoney.postValue(localStorage?.getAvailableMoney())
         _expensesValues.postValue(ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses))
         setData()
     }
 
-    fun getSelectedPeriod() = toUtcPair(firstPeriodDate.value?.time, lastPeriodDate.value?.time)
+    fun getSelectedPeriod() = androidx.core.util.Pair(
+        firstPeriodDate.value?.time.toUtcTime(), lastPeriodDate.value?.time.toUtcTime()
+    )
 
     fun savePeriodDates(period: androidx.core.util.Pair<Long, Long>?) {
-        period?.let { savePeriodDates(toUtcDate(it.first), toUtcDate(it.second)) }
+        period?.let { savePeriodDates(it.first.toUtcDate(), it.second.toUtcDate()) }
     }
 
     private fun setPeriodDates(firstDate: Date?, lastDate: Date?) {
         _firstPeriodDate.postValue(firstDate)
         _lastPeriodDate.postValue(lastDate)
-        _periodValue.postValue(DateUtils.toPeriodStr(firstDate, lastDate))
+        _periodValue.postValue("${firstDate.toDateStr()}${String.DASH_SEPARATOR}${lastDate.toDateStr()}")
     }
 
     private fun savePeriodDates(firstDate: Date?, lastDate: Date?) {

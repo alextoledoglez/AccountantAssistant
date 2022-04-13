@@ -4,12 +4,11 @@ import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.CalculatorUtils.accumulatedDecimalSum
-import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.extensions.DEFAULT_UID
+import com.personal.accountantAssistant.extensions.flowEmit
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toDateStr
 import kotlinx.coroutines.flow.Flow
-import java.math.BigDecimal
 import java.util.*
 
 class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
@@ -23,12 +22,10 @@ class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.selectAll(ExpensesType.BUY.name).toList()
     }
 
-    fun getTotalPriceUntil(lastPeriodDate: Date?): Flow<BigDecimal> = flowEmit {
-        expenseDao.selectAll(ExpensesType.BUY.name).toList().stream().filter {
-            it.isActive.orFalse() && DateUtils.isInRange(DateUtils.toDate(it.date), lastPeriodDate)
-        }?.map {
-            it.totalValue?.toBigDecimal()
-        }?.reduce(BigDecimal.ZERO, accumulatedDecimalSum).orZero().rounded()
+    fun getSummary(): Flow<ExpenseEntity> = flowEmit { expenseDao.getSummary() }
+
+    fun getTotalValueUntil(date: Date?): Flow<ExpenseEntity> = flowEmit {
+        expenseDao.getTotalValueUntil(date.toDateStr())
     }
 
     fun saveBuy(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
@@ -45,13 +42,13 @@ class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
         getBuysBy(insertedBuys)
     }
 
-    fun setAllBuysActive(isActive: Boolean): Flow<List<ExpenseEntity>> = flowEmit {
-        val activeBuys = expenseDao.activeAll(isActive.toString(), ExpensesType.BUY.toString())
+    fun setAllBuysActive(active: Int): Flow<List<ExpenseEntity>> = flowEmit {
+        val activeBuys = expenseDao.activeAll(active, ExpensesType.BUY.toString())
         getBuysBy(activeBuys)
     }
 
-    fun switchActiveBuy(model: ExpenseModel): Flow<List<ExpenseEntity>> = flowEmit {
-        val activeBuy = expenseDao.setActive(model.id, !model.isActive)
+    fun switchActiveBuy(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
+        val activeBuy = expenseDao.setActive(entity.id.orZero(), entity.active.orZero())
         getBuysBy(activeBuy)
     }
 

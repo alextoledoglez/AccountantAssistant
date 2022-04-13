@@ -18,7 +18,7 @@ data class ExpenseEntity(
     @ColumnInfo(name = UNITARY_VALUE) var unitaryValue: Double? = Double.DEFAULT_VALUE,
     @ColumnInfo(name = TOTAL_VALUE) var totalValue: Double? = Double.DEFAULT_VALUE,
     @ColumnInfo(name = TYPE) var type: String? = String.EMPTY,
-    @ColumnInfo(name = ACTIVE) var isActive: Boolean? = false
+    @ColumnInfo(name = ACTIVE) var active: Int? = Int.ZERO
 ) {
     companion object {
         const val ID = "ID"

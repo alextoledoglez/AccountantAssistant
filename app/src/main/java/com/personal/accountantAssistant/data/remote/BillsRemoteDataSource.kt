@@ -4,18 +4,16 @@ import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.BillsEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.data.mappers.toEntity
-import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.CalculatorUtils.accumulatedDecimalSum
-import com.personal.accountantAssistant.utils.DateUtils
+import com.personal.accountantAssistant.extensions.flowEmit
+import com.personal.accountantAssistant.extensions.isMoreThanZero
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toDateStr
 import kotlinx.coroutines.flow.Flow
-import java.math.BigDecimal
 import java.util.*
 
 class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
 
-    private suspend fun getBillsBy(result: Int) = if (result > Int.DEFAULT_UID)
+    private suspend fun getBillsBy(result: Int) = if (result.isMoreThanZero())
         expenseDao.selectAll(ExpensesType.BILL.name).toList()
     else
         mutableListOf()
@@ -24,19 +22,17 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.selectAll(ExpensesType.BILL.name).toList()
     }
 
-    fun getTotalPriceUntil(lastPeriodDate: Date?): Flow<BigDecimal> = flowEmit {
-        expenseDao.selectAll(ExpensesType.BILL.name).toList().stream().filter {
-            it.isActive.orFalse() && DateUtils.isInRange(DateUtils.toDate(it.date), lastPeriodDate)
-        }?.map {
-            it.totalValue?.toBigDecimal()
-        }?.reduce(BigDecimal.ZERO, accumulatedDecimalSum).orZero().rounded()
+    fun getSummary(): Flow<ExpenseEntity> = flowEmit { expenseDao.getSummary() }
+
+    fun getTotalValueUntil(date: Date?): Flow<ExpenseEntity> = flowEmit {
+        expenseDao.getTotalValueUntil(date.toDateStr())
     }
 
-    fun saveBill(model: ExpenseModel): Flow<List<ExpenseEntity>> = flowEmit {
-        val edited = if (model.id > Int.DEFAULT_UID)
-            expenseDao.update(model.toEntity())
+    fun saveBill(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
+        val edited = if (entity.id.isMoreThanZero())
+            expenseDao.update(entity)
         else
-            expenseDao.insert(model.toEntity())
+            expenseDao.insert(entity)
         getBillsBy(edited.toInt())
     }
 
@@ -46,18 +42,18 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         getBillsBy(insertedBills)
     }
 
-    fun setAllBillsActive(isActive: Boolean): Flow<List<ExpenseEntity>> = flowEmit {
-        val activeBills = expenseDao.activeAll(isActive.toString(), ExpensesType.BILL.toString())
+    fun setAllBillsActive(active: Int): Flow<List<ExpenseEntity>> = flowEmit {
+        val activeBills = expenseDao.activeAll(active, ExpensesType.BILL.toString())
         getBillsBy(activeBills)
     }
 
-    fun switchActiveBill(model: ExpenseModel): Flow<List<ExpenseEntity>> = flowEmit {
-        val activeBill = expenseDao.setActive(model.id, !model.isActive)
+    fun switchActiveBill(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
+        val activeBill = expenseDao.setActive(entity.id.orZero(), entity.active.orZero())
         getBillsBy(activeBill)
     }
 
-    fun deleteBill(model: ExpenseModel): Flow<List<ExpenseEntity>> = flowEmit {
-        val deletedBill = expenseDao.delete(model.toEntity())
+    fun deleteBill(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
+        val deletedBill = expenseDao.delete(entity)
         getBillsBy(deletedBill)
     }
 

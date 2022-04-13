@@ -1,9 +1,14 @@
 package com.personal.accountantAssistant.data.repository
 
+import com.personal.accountantAssistant.data.mappers.toEntity
 import com.personal.accountantAssistant.data.mappers.toListModel
+import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.rounded
+import com.personal.accountantAssistant.extensions.toInt
 import kotlinx.coroutines.flow.map
 import java.util.*
 
@@ -11,23 +16,27 @@ class BillsDataRepository(private val dataSource: BillsRemoteDataSource) : Bills
 
     override fun getBills() = dataSource.getBills().map { it.toListModel() }
 
-    override fun getTotalPriceUntil(
-        lastPeriodDate: Date?
-    ) = dataSource.getTotalPriceUntil(lastPeriodDate)
+    override fun getSummary() = dataSource.getSummary().map { it.toSummaryModel() }
 
-    override fun saveBill(model: ExpenseModel) = dataSource.saveBill(model).map { it.toListModel() }
+    override fun getTotalValueUntil(date: Date?) = dataSource.getTotalValueUntil(date).map {
+        it.totalValue.orZero().toBigDecimal().rounded()
+    }
+
+    override fun saveBill(model: ExpenseModel) = dataSource.saveBill(model.toEntity()).map {
+        it.toListModel()
+    }
 
     override fun setDefaultBills() = dataSource.setDefaultBills().map { it.toListModel() }
 
-    override fun setAllBillsActive(isActive: Boolean) = dataSource.setAllBillsActive(isActive).map {
-        it.toListModel()
-    }
+    override fun setAllBillsActive(isActive: Boolean) = dataSource.setAllBillsActive(
+        isActive.toInt()
+    ).map { it.toListModel() }
 
-    override fun switchActiveBill(model: ExpenseModel) = dataSource.switchActiveBill(model).map {
-        it.toListModel()
-    }
+    override fun switchActiveBill(model: ExpenseModel) = dataSource.switchActiveBill(
+        model.toEntity()
+    ).map { it.toListModel() }
 
-    override fun deleteBill(model: ExpenseModel) = dataSource.deleteBill(model).map {
+    override fun deleteBill(model: ExpenseModel) = dataSource.deleteBill(model.toEntity()).map {
         it.toListModel()
     }
 

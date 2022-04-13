@@ -7,6 +7,7 @@ import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
 import com.personal.accountantAssistant.extensions.DEFAULT_VALUE
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.ZERO
 
 @Entity(tableName = AppDatabase.CARDS_TABLE_NAME)
 data class CardEntity(
@@ -15,7 +16,7 @@ data class CardEntity(
     @ColumnInfo(name = NAME) var name: String? = String.EMPTY,
     @ColumnInfo(name = PASSWORD) var password: String? = String.EMPTY,
     @ColumnInfo(name = VALUE) var value: Double? = Double.DEFAULT_VALUE,
-    @ColumnInfo(name = ACTIVE) var isActive: Boolean? = false
+    @ColumnInfo(name = ACTIVE) var active: Int? = Int.ZERO
 ) {
     constructor(company: String?, name: String?) : this() {
         this.company = company.orEmpty()

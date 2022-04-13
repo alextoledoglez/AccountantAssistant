@@ -6,7 +6,6 @@ import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.stopRefreshing
-import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
@@ -17,7 +16,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override val binding by viewBinding(FragmentBuysBinding::inflate)
     override val adapter by lazy {
-        BuysListAdapter(::onEditExpense, viewModel::switchActiveExpense, viewModel::deleteExpense)
+        BuysListAdapter(::onEditBuy, viewModel::switchActiveBuy, viewModel::deleteBuy)
     }
 
     override fun onDestroy() {
@@ -28,11 +27,11 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     override fun initComponents() {
         super.initComponents()
         MenuHelper.initializeBuysOptions()
-        binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
-        binding.lytHeader.apply {
-            initHeader(this)
+        binding.lytSummary.apply {
+            initLayoutSummary(this)
             scActive.setOnClickListener { viewModel.setAllBuysActive(scActive.isChecked) }
         }
+        binding.srlLoader.setOnRefreshListener { viewModel.getBuys() }
         binding.rvBuys.adapter = adapter
     }
 
@@ -41,15 +40,10 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfBuys.displayedChild = it.ordinal }
             summary.observe(viewLifecycleOwner) {
-                updateHeader(
-                    binding.lytHeader,
-                    it.isAnyChecked,
-                    it.isAllChecked,
-                    it.total.toCurrencyMaskedStr()
-                )
+                updateLayoutSummary(binding.lytSummary, it)
                 binding.srlLoader.stopRefreshing()
             }
-            buys.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
+            buys.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }
             getBuys()
         }
     }
@@ -77,9 +71,9 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         viewModel.setDefaultBuys()
     }
 
-    fun onEditExpense(model: ExpenseModel) {
+    fun onEditBuy(model: ExpenseModel) {
         ExpenseDetailsFragment.showDialogFragment(
-            model, viewModel::editExpense, requireActivity().supportFragmentManager
+            model, viewModel::saveBuy, requireActivity().supportFragmentManager
         )
     }
 

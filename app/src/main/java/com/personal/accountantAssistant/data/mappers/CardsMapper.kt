@@ -4,12 +4,12 @@ import com.personal.accountantAssistant.data.entities.CardEntity
 import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
-import com.personal.accountantAssistant.extensions.orFalse
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.rounded
-import com.personal.accountantAssistant.extensions.toEntityId
-import com.personal.accountantAssistant.utils.CalculatorUtils
-import java.math.BigDecimal
+import com.personal.accountantAssistant.extensions.*
+
+fun CardEntity.toSummaryModel() = SummaryModel(
+    activeCount = active.orZero(),
+    total = value?.toBigDecimal()?.rounded().orZero()
+)
 
 fun CardEntity.toModel() = CardModel(
     id = id?.toLong().orZero(),
@@ -17,7 +17,7 @@ fun CardEntity.toModel() = CardModel(
     name = name.orEmpty(),
     password = password.orEmpty(),
     value = value?.toBigDecimal()?.rounded().orZero(),
-    isActive = isActive.orFalse()
+    isActive = active.isMoreThanZero()
 )
 
 fun CardModel.toEntity() = CardEntity(
@@ -26,22 +26,9 @@ fun CardModel.toEntity() = CardEntity(
     name = name,
     password = password,
     value = value.toDouble(),
-    isActive = isActive.orFalse()
-)
-
-fun MutableList<CardModel>.toSummaryModel() = SummaryModel(
-    isAllChecked = isAllCardsActive(),
-    isAnyChecked = isAnyCardActive(),
-    total = getTotalValue()
+    active = isActive.toInt()
 )
 
 fun List<CardEntity>.toListModel() = map { it.toModel() }.toMutableList()
-
-fun List<CardModel>.isAllCardsActive() = stream().allMatch { it.isActive }
-
-fun List<CardModel>.isAnyCardActive() = stream().allMatch { it.isActive }
-
-fun List<CardModel>.getTotalValue(): BigDecimal = stream().filter { it.isActive }
-    .map { it.value }.reduce(BigDecimal.ZERO, CalculatorUtils.accumulatedDecimalSum)
 
 fun DefaultCardsEnum.toCardEntity() = CardEntity(company, title)

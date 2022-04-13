@@ -25,7 +25,8 @@ class BuysViewHolder(
             scActive.apply {
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
-                    onActiveExpense(model)
+                    val switchedModel = model.copy(isActive = !model.isActive)
+                    onActiveExpense(switchedModel)
                     setActiveRow()
                 }
             }

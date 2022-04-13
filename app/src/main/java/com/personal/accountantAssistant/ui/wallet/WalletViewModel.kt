@@ -3,12 +3,12 @@ package com.personal.accountantAssistant.ui.wallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 
 class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel() {
@@ -26,11 +26,11 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
         }
     }
 
-    fun loadSummary(list: MutableList<CardModel>?) {
-        _summary.postValue(list?.toSummaryModel())
+    fun loadSummary() = launch {
+        _summary.postValue(repository?.getSummary()?.singleOrNull())
     }
 
-    fun editCard(model: CardModel) = launch {
+    fun saveCard(model: CardModel) = launch {
         repository?.saveCard(model)?.onStart { setLoading() }?.collect {
             _cards.postValue(it)
             setData()

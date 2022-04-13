@@ -6,7 +6,6 @@ import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.stopRefreshing
-import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
@@ -17,7 +16,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
     override val adapter by lazy {
-        BillsListAdapter(::onEditExpense, viewModel::switchActiveExpense, viewModel::deleteExpense)
+        BillsListAdapter(::onEditBill, viewModel::switchActiveBill, viewModel::deleteBill)
     }
 
     override fun onDestroy() {
@@ -29,8 +28,8 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         super.initComponents()
         MenuHelper.initializeBillsOptions()
         binding.srlLoader.setOnRefreshListener { viewModel.getBills() }
-        binding.lytHeader.apply {
-            initHeader(this)
+        binding.lytSummary.apply {
+            initLayoutSummary(this)
             scActive.setOnClickListener { viewModel.setAllBillsActive(scActive.isChecked) }
         }
         binding.rvBills.adapter = adapter
@@ -41,15 +40,10 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfBills.displayedChild = it.ordinal }
             summary.observe(viewLifecycleOwner) {
-                updateHeader(
-                    binding.lytHeader,
-                    it.isAnyChecked,
-                    it.isAllChecked,
-                    it.total.toCurrencyMaskedStr()
-                )
+                updateLayoutSummary(binding.lytSummary, it)
                 binding.srlLoader.stopRefreshing()
             }
-            bills.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
+            bills.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }
             getBills()
         }
     }
@@ -77,9 +71,9 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         viewModel.setDefaultBills()
     }
 
-    fun onEditExpense(model: ExpenseModel) {
+    fun onEditBill(model: ExpenseModel) {
         ExpenseDetailsFragment.showDialogFragment(
-            model, viewModel::editExpense, requireActivity().supportFragmentManager
+            model, viewModel::saveBill, requireActivity().supportFragmentManager
         )
     }
 

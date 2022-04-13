@@ -11,6 +11,7 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.orValue
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toCalendarMillis
 import java.util.*
 
 @SuppressLint("MissingPermission")
@@ -33,7 +34,7 @@ object CalendarsUtils {
             arrayOf(
                 DEFAULT_CALENDAR_ID.toString(),
                 it.name,
-                DateUtils.toCalendarMillis(it.date).toString(),
+                it.date.toCalendarMillis().toString(),
                 it.totalValue.toString()
             )
         } ?: run { emptyArray() }
@@ -95,7 +96,7 @@ object CalendarsUtils {
 
     private fun addEventFrom(contentResolver: ContentResolver, model: ExpenseModel?): Uri? {
         val timeZone = TimeZone.getDefault()
-        val calendarMillis = DateUtils.toCalendarMillis(model?.date)
+        val calendarMillis = model?.date.toCalendarMillis()
         val event = ContentValues()
         event.put(CalendarContract.Events.CALENDAR_ID, DEFAULT_CALENDAR_ID)
         event.put(CalendarContract.Events.ALL_DAY, java.lang.Boolean.TRUE)

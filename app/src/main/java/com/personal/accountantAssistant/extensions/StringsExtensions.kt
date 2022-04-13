@@ -2,8 +2,11 @@ package com.personal.accountantAssistant.extensions
 
 import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 
 import java.util.*
+
+val String.Companion.DD_MM_YYYY get() = "dd/MM/yyyy"
 
 val String.Companion.EMPTY: String get() = ""
 
@@ -39,6 +42,17 @@ val String.Companion.STR_DEFAULT_MONETARY_VALUE: String get() = "00"
 
 val String.Companion.STR_DECIMAL_SEPARATOR: String
     get() = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
+
+fun String?.toDate(): Date? {
+    var date: Date? = Date()
+    val dateFormat = SimpleDateFormat(String.DD_MM_YYYY, Locale.getDefault())
+    try {
+        date = this?.let { if (it.isNotEmpty()) dateFormat.parse(it) else date } ?: date
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return date
+}
 
 fun String.toRoundedBigDecimal() = this.trim().toBigDecimal().rounded()
 

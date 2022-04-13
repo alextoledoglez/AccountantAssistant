@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.mappers.toBill
-import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 
 class BillsViewModel(private val repository: BillsRepository?) : BaseViewModel() {
@@ -27,11 +27,11 @@ class BillsViewModel(private val repository: BillsRepository?) : BaseViewModel()
         }
     }
 
-    fun loadSummary(list: MutableList<ExpenseModel>?) {
-        _summary.postValue(list?.toSummaryModel())
+    fun loadSummary() = launch {
+        _summary.postValue(repository?.getSummary()?.singleOrNull())
     }
 
-    fun editExpense(model: ExpenseModel) = launch {
+    fun saveBill(model: ExpenseModel) = launch {
         repository?.saveBill(model.toBill())?.onStart { setLoading() }?.collect {
             _bills.postValue(it)
             setData()
@@ -46,11 +46,11 @@ class BillsViewModel(private val repository: BillsRepository?) : BaseViewModel()
         repository?.setAllBillsActive(isActive)?.collect { _bills.postValue(it) }
     }
 
-    fun switchActiveExpense(model: ExpenseModel) = launch {
+    fun switchActiveBill(model: ExpenseModel) = launch {
         repository?.switchActiveBill(model.toBill())?.collect { _bills.postValue(it) }
     }
 
-    fun deleteExpense(model: ExpenseModel) = launch {
+    fun deleteBill(model: ExpenseModel) = launch {
         repository?.deleteBill(model.toBill())?.collect { _bills.postValue(it) }
     }
 

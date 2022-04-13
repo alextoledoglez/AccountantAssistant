@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.wallet
 
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,6 +13,7 @@ import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.domain.models.CardModel
+import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 import com.personal.accountantAssistant.utils.ImportExportUtils
@@ -51,26 +51,9 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     override fun initComponents() {
         setHasOptionsMenu(true)
         MenuHelper.initializeWalletOptions()
+        initLayoutSummary()
         with(binding) {
             srlLoader.setOnRefreshListener { viewModel.loadCards() }
-            lytHeader.apply {
-                tvTitle.visibility = View.GONE
-                ivMoney.setImageResource(R.drawable.ic_money)
-                tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
-                tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
-                scActive.setOnClickListener { viewModel.setAllCardsActive(scActive.isChecked) }
-                svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(queryStr: String): Boolean {
-                        listAdapterFilterBy(queryStr)
-                        return false
-                    }
-
-                    override fun onQueryTextChange(newText: String): Boolean {
-                        listAdapterFilterBy(newText)
-                        return false
-                    }
-                })
-            }
             rvCards.adapter = adapter
         }
     }
@@ -80,20 +63,11 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
             flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
             summary.observe(viewLifecycleOwner) {
-                binding.lytHeader.scActive.isChecked = it.isAllChecked.orFalse()
-                context?.getCompatColor(
-                    it.isAnyChecked, R.color.colorRed, R.color.colorPrimary
-                )?.let { color ->
-                    binding.lytHeader.apply {
-                        ivMoney.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
-                        tvSubtitle.setTextColor(color)
-                    }
-                }
-                binding.lytHeader.tvSubtitle.text = it.total.toCurrencyMaskedStr()
+                updateLayoutSummary(it)
                 localStorage?.setAvailableMoney(it.total.orZero().toFloat())
                 binding.srlLoader.stopRefreshing()
             }
-            cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary(it) } }
+            cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }
             loadCards()
         }
     }
@@ -112,6 +86,41 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun restoreDefaultRecords() {
         viewModel.restoreDefaultCards()
+    }
+
+    private fun initLayoutSummary() {
+        with(binding.lytSummary) {
+            tvTitle.visibility = View.GONE
+            ivMoney.setImageResource(R.drawable.ic_money)
+            tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
+            tvSubtitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 24f)
+            scActive.setOnClickListener { viewModel.setAllCardsActive(scActive.isChecked) }
+            svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(queryStr: String): Boolean {
+                    listAdapterFilterBy(queryStr)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    listAdapterFilterBy(newText)
+                    return false
+                }
+            })
+        }
+    }
+
+    private fun updateLayoutSummary(model: SummaryModel) {
+        val isAnyActive = model.isAnyActive()
+        val totalStr = model.total.toCurrencyMaskedStr()
+        val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
+        with(binding.lytSummary) {
+            context?.getCompatColor(isAnyActive, R.color.colorRed, R.color.colorPrimary)?.let {
+                ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
+                tvSubtitle.setTextColor(it)
+            }
+            tvSubtitle.text = totalStr
+            scActive.isChecked = isAllActive
+        }
     }
 
     private fun listAdapterFilterBy(queryStr: String) {
@@ -144,7 +153,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     fun onEditCard(model: CardModel) {
         WalletDetailsFragment.showDialogFragment(
-            model, viewModel::editCard, requireActivity().supportFragmentManager
+            model, viewModel::saveCard, requireActivity().supportFragmentManager
         )
     }
 

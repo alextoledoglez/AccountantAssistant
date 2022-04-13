@@ -5,7 +5,6 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.BillsItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.DateUtils
 import com.personal.accountantAssistant.utils.MenuHelper
 
 class BillsViewHolder(
@@ -19,7 +18,7 @@ class BillsViewHolder(
         with(binding) {
             //INITIALIZE
             MenuHelper.initializeBillsOptions()
-            date.text = DateUtils.toString(model.date)
+            date.text = model.date.toDateStr()
             //DETAILS
             name.text = model.name
             value.text = toFormattedValue(model)
@@ -27,7 +26,8 @@ class BillsViewHolder(
             scActive.apply {
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
-                    onActiveExpense(model)
+                    val switchedModel = model.copy(isActive = !model.isActive)
+                    onActiveExpense(switchedModel)
                     setActiveRow()
                 }
             }
