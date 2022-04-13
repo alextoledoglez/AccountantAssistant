@@ -22,16 +22,17 @@ interface ExpenseDao : BaseDao<ExpenseEntity> {
     @Transaction
     @Query(
         "SELECT *, SUM($TOTAL_VALUE) as $TOTAL_VALUE, COUNT() as $ACTIVE " +
-                "FROM $EXPENSES_TABLE_NAME WHERE $ACTIVE=1"
+                "FROM $EXPENSES_TABLE_NAME WHERE $TYPE ==:typeName AND $ACTIVE=1"
     )
-    suspend fun getSummary(): ExpenseEntity
+    suspend fun getSummary(typeName: String): ExpenseEntity
 
     @Transaction
     @Query(
         "SELECT SUM($TOTAL_VALUE) as $TOTAL_VALUE " +
-                "FROM $EXPENSES_TABLE_NAME WHERE ($DATE BETWEEN $DATE AND :dateStr) AND $ACTIVE=1"
+                "FROM $EXPENSES_TABLE_NAME " +
+                "WHERE ($DATE BETWEEN $DATE AND :dateStr) AND $TYPE ==:typeName AND $ACTIVE=1"
     )
-    suspend fun getTotalValueUntil(dateStr: String): ExpenseEntity
+    suspend fun getTotalValueUntil(dateStr: String, typeName: String): ExpenseEntity
 
     @Query("UPDATE $EXPENSES_TABLE_NAME SET $ACTIVE=:active WHERE $ID=:id")
     suspend fun setActive(id: Int, active: Int): Int

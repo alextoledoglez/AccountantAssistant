@@ -22,10 +22,12 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.selectAll(ExpensesType.BILL.name).toList()
     }
 
-    fun getSummary(): Flow<ExpenseEntity> = flowEmit { expenseDao.getSummary() }
+    fun getSummary(): Flow<ExpenseEntity> = flowEmit {
+        expenseDao.getSummary(ExpensesType.BILL.name)
+    }
 
     fun getTotalValueUntil(date: Date?): Flow<ExpenseEntity> = flowEmit {
-        expenseDao.getTotalValueUntil(date.toDateStr())
+        expenseDao.getTotalValueUntil(date.toDateStr(), ExpensesType.BILL.name)
     }
 
     fun saveBill(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
@@ -43,7 +45,7 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
     }
 
     fun setAllBillsActive(active: Int): Flow<List<ExpenseEntity>> = flowEmit {
-        val activeBills = expenseDao.activeAll(active, ExpensesType.BILL.toString())
+        val activeBills = expenseDao.activeAll(active, ExpensesType.BILL.name)
         getBillsBy(activeBills)
     }
 

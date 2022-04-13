@@ -32,9 +32,7 @@ fun Long?.toCalendar(): Calendar? {
     return calendar
 }
 
-fun Long?.toUtcTime() = this?.plus(
-    kotlin.math.abs(TimeZone.getDefault().getOffset(this))
-)
+fun Long?.toUtcTime() = this?.plus(kotlin.math.abs(TimeZone.getDefault().getOffset(this)))
 
 fun Long?.toUtcDate() = toUtcTime().toCalendar()?.time
 
@@ -48,10 +46,6 @@ fun Double?.orValue(value: Int): Double = this ?: value.toDouble()
 
 fun Double?.orZero(): Double = orValue(Int.ZERO)
 
-fun Double?.toCurrencyMaskedStr() = toString().toCurrencyMaskedStr()
-
-//fun Double?.toCurrencyBigDecimal() = toString().toCurrencyBigDecimal()
-
 fun BigDecimal.rounded(): BigDecimal = setScale(Int.DECIMAL_PLACES, RoundingMode.HALF_UP)
 
 fun BigDecimal?.orValue(value: Int): BigDecimal = this ?: value.toBigDecimal()
@@ -59,5 +53,3 @@ fun BigDecimal?.orValue(value: Int): BigDecimal = this ?: value.toBigDecimal()
 fun BigDecimal?.orZero(): BigDecimal = orValue(Int.ZERO)
 
 fun BigDecimal?.toCurrencyMaskedStr() = toString().toCurrencyMaskedStr()
-
-//fun BigDecimal?.toCurrencyBigDecimal() = toString().toCurrencyBigDecimal()
