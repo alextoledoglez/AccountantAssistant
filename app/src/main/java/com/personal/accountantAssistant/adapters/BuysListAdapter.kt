@@ -7,8 +7,8 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.settingFilter
-import com.personal.accountantAssistant.utils.EditableTextsUtils.contains
 import java.util.function.Predicate
 
 class BuysListAdapter(
@@ -32,5 +32,5 @@ class BuysListAdapter(
         return this.settingFilter(currentList, ::filter, ::submitList)
     }
 
-    private fun filter(text: String) = Predicate<ExpenseModel> { contains(it.name, text) }
+    private fun filter(text: String) = Predicate<ExpenseModel> { it.name.containStr(text) }
 }

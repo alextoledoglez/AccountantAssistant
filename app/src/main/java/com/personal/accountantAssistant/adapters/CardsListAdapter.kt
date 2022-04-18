@@ -7,9 +7,8 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.databinding.CardItemListBinding
 import com.personal.accountantAssistant.domain.models.CardModel
+import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.settingFilter
-
-import com.personal.accountantAssistant.utils.EditableTextsUtils
 import java.util.function.Predicate
 
 class CardsListAdapter(
@@ -34,9 +33,9 @@ class CardsListAdapter(
     }
 
     private fun filter(text: String) = Predicate<CardModel> {
-        EditableTextsUtils.contains(it.value.toString(), text) ||
-                EditableTextsUtils.contains(it.password, text) ||
-                EditableTextsUtils.contains(it.company, text) ||
-                EditableTextsUtils.contains(it.name, text)
+        it.value.toString().containStr(text) ||
+                it.password.containStr(text) ||
+                it.company.containStr(text) ||
+                it.name.containStr(text)
     }
 }

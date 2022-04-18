@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.extensions
 
 import java.text.DecimalFormatSymbols
+import java.text.Normalizer
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
@@ -42,6 +43,16 @@ val String.Companion.STR_DEFAULT_MONETARY_VALUE: String get() = "00"
 
 val String.Companion.STR_DECIMAL_SEPARATOR: String
     get() = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
+
+fun String?.toNormalizedStr(): String {
+    val regexTarget = "[^\\p{ASCII}]"
+    return Normalizer.normalize(this, Normalizer.Form.NFD)
+        .replace(regexTarget.toRegex(), String.EMPTY)
+}
+
+fun String?.containStr(str: String?) = toNormalizedStr()
+    .lowercase(Locale.ROOT)
+    .contains(str.toNormalizedStr().lowercase(Locale.ROOT))
 
 fun String?.toDate(): Date? {
     var date: Date? = Date()
