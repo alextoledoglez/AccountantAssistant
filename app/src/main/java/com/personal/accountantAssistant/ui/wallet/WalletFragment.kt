@@ -16,8 +16,6 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.utils.ImportExportUtils
-import com.personal.accountantAssistant.utils.MenuHelper
 import org.koin.android.ext.android.inject
 
 class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
@@ -34,8 +32,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        MenuHelper.mainMenu = menu
-        MenuHelper.enableMenuItemOptions(true)
+        menu.showMenuOptions()
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -50,7 +47,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun initComponents() {
         setHasOptionsMenu(true)
-        MenuHelper.initializeWalletOptions()
         initLayoutSummary()
         with(binding) {
             srlLoader.setOnRefreshListener { viewModel.loadCards() }
@@ -73,11 +69,11 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     }
 
     override fun importMenuItemClickListener() {
-        ImportExportUtils.xlsImport(context, ExpensesType.BUY)
+        context?.xlsImport(ExpensesType.BUY)
     }
 
     override fun exportMenuItemClickListener() {
-        //ImportExportUtils.xlsExport(requireContext(), appDatabase, ExpensesType.BUY)
+        //context?.xlsExport(appDatabase, ExpensesType.BUY)
     }
 
     override fun deleteAllRecords() {

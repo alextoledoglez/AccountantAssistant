@@ -19,10 +19,12 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
+        private const val DB_BACKUP_FORMAT = "%s"
         const val DB_NAME = "ACCOUNTANT_ASSISTANT"
         const val CARDS_TABLE_NAME = "CARD_TABLE"
         const val PAYMENTS_TABLE_NAME = "PAYMENTS_TABLE"
         const val EXPENSES_TABLE_NAME = "EXPENSES_TABLE"
+        val DB_BACKUP_PATH = String.format(DB_BACKUP_FORMAT, DB_NAME)
 
         private fun getMigrations() = arrayOf(
             CardTableMigrations.MIGRATION_1_2,

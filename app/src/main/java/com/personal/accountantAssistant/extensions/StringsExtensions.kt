@@ -4,7 +4,6 @@ import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-
 import java.util.*
 
 val String.Companion.DD_MM_YYYY get() = "dd/MM/yyyy"
@@ -41,28 +40,26 @@ val String.Companion.STR_DEFAULT_QUANTITY_VALUE: String get() = "00"
 
 val String.Companion.STR_DEFAULT_MONETARY_VALUE: String get() = "00"
 
+val String.Companion.FILE_DIRECTORY_TYPE: String get() = String.EMPTY
+
 val String.Companion.STR_DECIMAL_SEPARATOR: String
     get() = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
 
-fun String?.toNormalizedStr(): String {
-    val regexTarget = "[^\\p{ASCII}]"
-    return Normalizer.normalize(this, Normalizer.Form.NFD)
-        .replace(regexTarget.toRegex(), String.EMPTY)
-}
+fun String?.toNormalizedStr() = Normalizer.normalize(this, Normalizer.Form.NFD).replace(
+    "[^\\p{ASCII}]".toRegex(), String.EMPTY
+)
 
 fun String?.containStr(str: String?) = toNormalizedStr()
     .lowercase(Locale.ROOT)
     .contains(str.toNormalizedStr().lowercase(Locale.ROOT))
 
-fun String?.toDate(): Date? {
-    var date: Date? = Date()
-    val dateFormat = SimpleDateFormat(String.DD_MM_YYYY, Locale.getDefault())
+fun String?.toDate(): Date? = takeIf { it?.isNotEmpty().orFalse() }?.let {
     try {
-        date = this?.let { if (it.isNotEmpty()) dateFormat.parse(it) else date } ?: date
+        SimpleDateFormat(String.DD_MM_YYYY, Locale.getDefault()).parse(it)
     } catch (e: Exception) {
         e.printStackTrace()
+        Date()
     }
-    return date
 }
 
 fun String.toRoundedBigDecimal() = this.trim().toBigDecimal().rounded()

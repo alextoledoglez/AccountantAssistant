@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.utils
+package com.personal.accountantAssistant.services
 
 import android.util.Log
 import javax.mail.*

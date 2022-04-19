@@ -5,7 +5,6 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.MenuHelper
 
 class BuysViewHolder(
     val binding: BuysItemListBinding,
@@ -16,8 +15,6 @@ class BuysViewHolder(
 
     fun bind(model: ExpenseModel) {
         with(binding) {
-            //INITIALIZE
-            MenuHelper.initializeBuysOptions()
             //DETAILS
             name.text = model.name
             value.text = toFormattedValue(model)

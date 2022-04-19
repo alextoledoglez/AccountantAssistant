@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.getCompatColor
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
-import com.personal.accountantAssistant.utils.MenuHelper.initializeWalletOptions
 
 class CardsViewHolder(
     private val binding: CardItemListBinding,
@@ -18,8 +17,6 @@ class CardsViewHolder(
 
     fun bind(model: CardModel) {
         with(binding) {
-            //INITIALIZE
-            initializeWalletOptions()
             //DETAILS
             tvCompany.text = model.company
             tvName.text = model.name

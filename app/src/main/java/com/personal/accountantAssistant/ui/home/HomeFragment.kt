@@ -1,5 +1,7 @@
 package com.personal.accountantAssistant.ui.home
 
+import android.view.Menu
+import android.view.MenuInflater
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.HomeListAdapter
@@ -10,7 +12,6 @@ import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.models.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.MenuHelper
 import java.math.BigDecimal
 
 class HomeFragment : BaseFragment<HomeViewModel>() {
@@ -25,8 +26,12 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         binding.rvDashboard.adapter = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.hideMenuOptions()
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun initComponents() {
-        MenuHelper.initializeHomeOptions()
         with(binding) {
             srlLoader.setOnRefreshListener { viewModel.calculateExpenses() }
             lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }

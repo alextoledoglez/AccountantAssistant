@@ -7,10 +7,9 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.stopRefreshing
 import com.personal.accountantAssistant.extensions.viewBinding
+import com.personal.accountantAssistant.extensions.xlsImport
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
-import com.personal.accountantAssistant.utils.ImportExportUtils
-import com.personal.accountantAssistant.utils.MenuHelper
 
 class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
@@ -26,7 +25,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override fun initComponents() {
         super.initComponents()
-        MenuHelper.initializeBuysOptions()
         binding.lytSummary.apply {
             initLayoutSummary(this)
             scActive.setOnClickListener { viewModel.setAllBuysActive(scActive.isChecked) }
@@ -49,11 +47,11 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     }
 
     override fun importMenuItemClickListener() {
-        ImportExportUtils.xlsImport(context, ExpensesType.BUY)
+        context?.xlsImport(ExpensesType.BUY)
     }
 
     override fun exportMenuItemClickListener() {
-        // ImportExportUtils.xlsExport(requireContext(), appDatabase, ExpensesType.BUY)
+        //context?.xlsExport(appDatabase, ExpensesType.BUY)
     }
 
     override fun listAdapterFilterBy(queryStr: String) {

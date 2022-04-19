@@ -15,11 +15,11 @@ import com.personal.accountantAssistant.databinding.ActivityMainBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.extensions.hideMenuOptions
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
-import com.personal.accountantAssistant.utils.MenuHelper
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -27,14 +27,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private var pagerAdapter: ViewPagerAdapter? = null
     private var tabLayoutMediator: TabLayoutMediator? = null
-
-    private val icons = arrayOf(
-        R.drawable.ic_home, R.drawable.ic_wallet, R.drawable.ic_buys, R.drawable.ic_bills
-    )
-
-    private val titles = arrayOf(
-        R.string.menu_home, R.string.menu_wallet, R.string.menu_buys, R.string.menu_bills
-    )
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -77,10 +69,12 @@ class MainActivity : AppCompatActivity() {
             adapter = pagerAdapter
         }
 
+        val icons = resources.obtainTypedArray(R.array.tabs_icons)
+        val titles = resources.getStringArray(R.array.tabs_titles)
         tabLayoutMediator = TabLayoutMediator(binding.tabHeader, binding.vpContent) { tab, index ->
             tab.apply {
-                setIcon(icons[index])
-                setText(titles[index])
+                setIcon(icons.getResourceId(index, -1))
+                text = titles[index]
             }
         }
         tabLayoutMediator?.attach()
@@ -88,8 +82,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main, menu)
-        MenuHelper.mainMenu = menu
-        MenuHelper.enableMenuItemOptions(false)
+        menu?.hideMenuOptions()
         return true
     }
 

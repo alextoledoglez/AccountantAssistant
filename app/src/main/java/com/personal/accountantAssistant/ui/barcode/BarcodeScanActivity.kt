@@ -16,9 +16,8 @@ import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.utils.PermissionsUtils.isCameraPermissionGranted
+import com.personal.accountantAssistant.extensions.isCameraPermissionGranted
 import java.io.IOException
-import java.util.*
 
 class BarcodeScanActivity : AppCompatActivity() {
 
@@ -45,13 +44,13 @@ class BarcodeScanActivity : AppCompatActivity() {
 
         context?.display?.getRealMetrics(displayMetrics)
         val barcodeDetector = BarcodeDetector.Builder(this@BarcodeScanActivity)
-                .setBarcodeFormats(Barcode.PRODUCT).build()
+            .setBarcodeFormats(Barcode.PRODUCT).build()
         cameraSource = CameraSource.Builder(this@BarcodeScanActivity, barcodeDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(displayMetrics.widthPixels, displayMetrics.heightPixels)
-                .setRequestedFps(24.0f)
-                .build()
+            .setFacing(CameraSource.CAMERA_FACING_BACK)
+            .setAutoFocusEnabled(true)
+            .setRequestedPreviewSize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+            .setRequestedFps(24.0f)
+            .build()
         cameraPreviewSurface?.holder?.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(surfaceHolder: SurfaceHolder) {
                 cameraSourceStartFrom(surfaceHolder)
@@ -78,7 +77,7 @@ class BarcodeScanActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun cameraSourceStartFrom(surfaceHolder: SurfaceHolder) {
         try {
-            if (!isCameraPermissionGranted(this@BarcodeScanActivity)) return
+            if (!this@BarcodeScanActivity.isCameraPermissionGranted()) return
             cameraSource?.start(surfaceHolder)
         } catch (e: IOException) {
             e.printStackTrace()

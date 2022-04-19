@@ -5,7 +5,6 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.BillsItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.utils.MenuHelper
 
 class BillsViewHolder(
     val binding: BillsItemListBinding,
@@ -17,7 +16,6 @@ class BillsViewHolder(
     fun bind(model: ExpenseModel) {
         with(binding) {
             //INITIALIZE
-            MenuHelper.initializeBillsOptions()
             date.text = model.date.toDateStr()
             //DETAILS
             name.text = model.name

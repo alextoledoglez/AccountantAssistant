@@ -16,7 +16,6 @@ import com.personal.accountantAssistant.databinding.LayoutListSummaryBinding
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import com.personal.accountantAssistant.utils.MenuHelper
 
 abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOptionsInterface {
 
@@ -29,8 +28,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        MenuHelper.mainMenu = menu
-        MenuHelper.enableMenuItemOptions(true)
+        menu.showMenuOptions()
         super.onCreateOptionsMenu(menu, inflater)
     }
 

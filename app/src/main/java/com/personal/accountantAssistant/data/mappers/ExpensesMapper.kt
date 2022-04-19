@@ -35,6 +35,13 @@ fun ExpenseModel.toEntity() = ExpenseEntity(
     active = isActive.toInt()
 )
 
+fun ExpenseModel?.toCalendarSelectionArgs(): Array<String?> = arrayOf(
+    Int.DEFAULT_CALENDAR_ID.toString(),
+    this?.name.orEmpty(),
+    this?.date.toCalendarMillis().toString(),
+    this?.totalValue.toString()
+)
+
 fun List<ExpenseEntity>.toListModel() = map { it.toModel() }.sortedBy { it.date }.toMutableList()
 
 fun ExpenseModel.toBuy() = this.copy(type = ExpensesType.BUY)

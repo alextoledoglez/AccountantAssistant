@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="tabs_icons">
+        <item name="tab_home" type="drawable">@drawable/ic_home</item>
+        <item name="tab_wallet" type="drawable">@drawable/ic_wallet</item>
+        <item name="tab_buys" type="drawable">@drawable/ic_buys</item>
+        <item name="tab_bills" type="drawable">@drawable/ic_bills</item>
+    </array>
+</resources>
