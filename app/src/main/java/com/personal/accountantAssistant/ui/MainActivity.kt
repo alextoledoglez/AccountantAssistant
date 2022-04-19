@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.ui
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -69,15 +70,14 @@ class MainActivity : AppCompatActivity() {
             adapter = pagerAdapter
         }
 
-        val icons = resources.obtainTypedArray(R.array.tabs_icons)
-        val titles = resources.getStringArray(R.array.tabs_titles)
+        val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
+        val tabTitles = resources.getStringArray(R.array.tabs_titles)
         tabLayoutMediator = TabLayoutMediator(binding.tabHeader, binding.vpContent) { tab, index ->
-            tab.apply {
-                setIcon(icons.getResourceId(index, -1))
-                text = titles[index]
-            }
+            tab.setIcon(tabIcons.getResourceIdOrThrow(index))
+            tab.text = tabTitles[index]
         }
         tabLayoutMediator?.attach()
+        tabIcons.recycle()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
