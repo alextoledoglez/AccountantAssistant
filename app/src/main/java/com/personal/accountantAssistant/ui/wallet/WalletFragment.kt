@@ -21,6 +21,8 @@ import org.koin.android.ext.android.inject
 class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
+    private val lytSummary by lazy { binding.lytSummary }
+    private val lytContent by lazy { binding.lytContent }
     private val adapter by lazy {
         CardsListAdapter(::onEditCard, viewModel::switchActiveCard, viewModel::deleteCard)
     }
@@ -28,7 +30,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.rvCards.adapter = null
+        lytContent.rvContent.destroyAdapter()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -48,20 +50,24 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     override fun initComponents() {
         setHasOptionsMenu(true)
         initLayoutSummary()
-        with(binding) {
-            srlLoader.setOnRefreshListener { viewModel.loadCards() }
-            rvCards.adapter = adapter
+        with(lytContent) {
+            srlContent.setOnRefreshListener { viewModel.loadCards() }
+            rvContent.setGridLayoutAdapter(adapter)
         }
     }
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
-            flipper.observe(viewLifecycleOwner) { binding.vfWallet.displayedChild = it.ordinal }
+            isLoading.observe(viewLifecycleOwner) {
+                lytContent.srlContent.isRefreshing = it.orFalse()
+            }
+            flipper.observe(viewLifecycleOwner) {
+                lytContent.vfContent.displayedChild = it.ordinal
+            }
             summary.observe(viewLifecycleOwner) {
                 updateLayoutSummary(it)
                 localStorage?.setAvailableMoney(it.total.orZero().toFloat())
-                binding.srlLoader.stopRefreshing()
+                lytContent.srlContent.stopRefreshing()
             }
             cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }
             loadCards()
@@ -85,7 +91,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     }
 
     private fun initLayoutSummary() {
-        with(binding.lytSummary) {
+        with(lytSummary) {
             tvTitle.visibility = View.GONE
             ivMoney.setImageResource(R.drawable.ic_money)
             tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
@@ -109,7 +115,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         val isAnyActive = model.isAnyActive()
         val totalStr = model.total.toCurrencyMaskedStr()
         val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
-        with(binding.lytSummary) {
+        with(lytSummary) {
             context?.getCompatColor(isAnyActive, R.color.colorRed, R.color.colorPrimary)?.let {
                 ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
                 tvSubtitle.setTextColor(it)

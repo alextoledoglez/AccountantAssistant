@@ -1,47 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/vfBills"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite">
+    android:background="@color/backgroundColor"
+    android:orientation="vertical"
+    tools:context=".ui.bills.BillsFragment">
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true" />
+    <include
+        android:id="@+id/lytSummary"
+        layout="@layout/layout_list_summary" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/srlLoader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <include
+        android:id="@+id/lytContent"
+        layout="@layout/layout_list_content" />
 
-        <LinearLayout
-            android:id="@+id/constrain_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/backgroundColor"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/lytSummary"
-                layout="@layout/layout_list_summary" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvBills"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/half_material_margin"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/fab_button_size"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/bills_item_list" />
-
-        </LinearLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-</ViewFlipper>
+</LinearLayout>

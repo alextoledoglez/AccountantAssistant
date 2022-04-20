@@ -17,13 +17,15 @@ import java.math.BigDecimal
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
+    private val lytHeader by lazy { binding.lytHeader }
+    private val lytContent by lazy { binding.lytContent }
     private var titleRes: TitleResourcesModel = TitleResourcesModel()
     private var colorRes: ColorResourcesModel = ColorResourcesModel()
     private val adapter by lazy { HomeListAdapter() }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.rvDashboard.adapter = null
+        lytContent.rvContent.destroyAdapter()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -32,23 +34,27 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     }
 
     override fun initComponents() {
-        with(binding) {
-            srlLoader.setOnRefreshListener { viewModel.calculateExpenses() }
-            lytHeader.ibDateRangePicker.setOnClickListener { showRangePicker() }
-            rvDashboard.adapter = adapter
+        with(lytHeader) { ibDateRangePicker.setOnClickListener { showRangePicker() } }
+        with(lytContent) {
+            srlContent.setOnRefreshListener { viewModel.calculateExpenses() }
+            rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         }
     }
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { binding.srlLoader.isRefreshing = it.orFalse() }
-            flipper.observe(viewLifecycleOwner) { binding.vfHome.displayedChild = it.ordinal }
+            isLoading.observe(viewLifecycleOwner) {
+                lytContent.srlContent.isRefreshing = it.orFalse()
+            }
+            flipper.observe(viewLifecycleOwner) {
+                lytContent.vfContent.displayedChild = it.ordinal
+            }
             periodValue.observe(viewLifecycleOwner) {
-                binding.lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
+                lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
-                adapter.submitList(it) { binding.srlLoader.stopRefreshing() }
+                adapter.submitList(it) { lytContent.srlContent.stopRefreshing() }
             }
             viewModel.calculateExpenses()
         }
