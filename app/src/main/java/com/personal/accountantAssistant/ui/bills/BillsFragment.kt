@@ -37,10 +37,10 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     override fun initObservers() {
         with(viewModel) {
             isLoading.observe(viewLifecycleOwner) {
-                lytContent.srlContent.isRefreshing = it.orFalse()
+                lytContent.srlContent.updateRefreshing(it.orFalse())
             }
             flipper.observe(viewLifecycleOwner) {
-                lytContent.vfContent.displayedChild = it.ordinal
+                lytContent.vfContent.updateDisplayedChild(it.ordinal)
             }
             summary.observe(viewLifecycleOwner) {
                 updateLayoutSummary(lytSummary, it)
