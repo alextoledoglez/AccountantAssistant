@@ -5,12 +5,12 @@ import android.text.InputFilter
 import android.text.InputFilter.AllCaps
 import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
+import com.personal.accountantAssistant.bases.BottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.*
 
-class WalletDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
+class WalletDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     override val binding by viewBinding(FragmentWalletDetailsBinding::inflate)
 

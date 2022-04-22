@@ -9,7 +9,7 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
-import com.personal.accountantAssistant.bases.BaseBottomSheetDialogFragment
+import com.personal.accountantAssistant.bases.BottomSheetDialogFragment
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBill
 import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBuy
@@ -18,7 +18,7 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 import java.util.*
 
-class ExpenseDetailsFragment : BaseBottomSheetDialogFragment<Nothing>() {
+class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     override val binding by viewBinding(FragmentExpensesDetailsBinding::inflate)
 

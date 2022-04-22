@@ -11,7 +11,7 @@ import org.koin.android.viewmodel.ext.android.getViewModel
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
-abstract class BaseBottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogFragment() {
+abstract class BottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogFragment() {
 
     abstract val binding: ViewBinding
     abstract fun initComponents()
