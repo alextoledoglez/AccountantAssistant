@@ -81,7 +81,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val bills = values?.bills.orZero()
         val available = viewModel.availableMoney.value.orZero()
         val total = values?.total.orZero().rounded()
-        val result = available.minus(total).rounded()
+        val balance = available.minus(total).rounded()
 
         //Expenses colors
         val buysColor = getExpensesColorResourceBy(buys)
@@ -92,10 +92,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val isTotalLessThanAvailable = viewModel.isExpensesLessThanAvailable(total)
         val availableColor = getColorResourceBy(isTotalLessThanAvailable)
 
-        //Results
-        val isZeroLessThanResult = viewModel.isZeroLessThan(result)
-        val resultTitle = if (isZeroLessThanResult) titleRes.gain else titleRes.missing
-        val resultColor = getColorResourceBy(isZeroLessThanResult)
+        //Balance
+        val isZeroLessThanBalance = viewModel.isZeroLessThan(balance)
+        val balanceTitle = if (isZeroLessThanBalance) titleRes.gain else titleRes.missing
+        val balanceColor = getColorResourceBy(isZeroLessThanBalance)
 
         binding.lytHeader.apply {
             ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
@@ -109,7 +109,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             listOf(
                 DashboardItemModel(R.drawable.ic_buys, titleRes.buys, buysColor, buys),
                 DashboardItemModel(R.drawable.ic_bills, titleRes.bills, billsColor, bills),
-                DashboardItemModel(R.drawable.ic_money, resultTitle, resultColor, result),
+                DashboardItemModel(R.drawable.ic_money, balanceTitle, balanceColor, balance),
                 DashboardItemModel(R.drawable.ic_total, titleRes.total, totalColor, total)
             )
         )
