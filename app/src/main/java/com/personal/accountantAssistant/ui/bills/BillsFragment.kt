@@ -1,6 +1,8 @@
 package com.personal.accountantAssistant.ui.bills
 
+import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.BillsListAdapter
+import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
@@ -14,7 +16,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     override val adapter by lazy {
-        BillsListAdapter(::onEditBill, viewModel::switchActiveBill, viewModel::deleteBill)
+        BillsListAdapter(::onEditBill, viewModel::switchActiveBill, ::onDeleteBill)
     }
 
     override fun onDestroy() {
@@ -72,6 +74,14 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override fun restoreDefaultRecords() {
         viewModel.setDefaultBills()
+    }
+
+    private fun onDeleteBill(model: ExpenseModel) {
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
+            R.string.delete_record_title,
+            R.string.delete_record_message,
+            { viewModel.deleteBill(model) }
+        ) {}
     }
 
     fun onEditBill(model: ExpenseModel) {

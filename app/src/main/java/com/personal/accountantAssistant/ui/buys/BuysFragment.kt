@@ -1,6 +1,8 @@
 package com.personal.accountantAssistant.ui.buys
 
+import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.BuysListAdapter
+import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
@@ -14,7 +16,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     override val adapter by lazy {
-        BuysListAdapter(::onEditBuy, viewModel::switchActiveBuy, viewModel::deleteBuy)
+        BuysListAdapter(::onEditBuy, viewModel::switchActiveBuy, ::onDeleteBuy)
     }
 
     override fun onDestroy() {
@@ -72,6 +74,14 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
 
     override fun restoreDefaultRecords() {
         viewModel.setDefaultBuys()
+    }
+
+    private fun onDeleteBuy(model: ExpenseModel) {
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
+            R.string.delete_record_title,
+            R.string.delete_record_message,
+            { viewModel.deleteBuy(model) }
+        ) {}
     }
 
     fun onEditBuy(model: ExpenseModel) {

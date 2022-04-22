@@ -24,7 +24,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     private val adapter by lazy {
-        CardsListAdapter(::onEditCard, viewModel::switchActiveCard, viewModel::deleteCard)
+        CardsListAdapter(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
     }
     private val localStorage: LocalStorage? by inject()
 
@@ -152,6 +152,14 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             R.string.restore_default_records_message,
             ::restoreDefaultRecords
         ) {}
+
+    private fun onDeleteCard(model: CardModel) {
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
+            R.string.delete_record_title,
+            R.string.delete_record_message,
+            { viewModel.deleteCard(model) }
+        ) {}
+    }
 
     fun onEditCard(model: CardModel) {
         WalletDetailsFragment.showDialogFragment(
