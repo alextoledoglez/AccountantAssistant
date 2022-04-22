@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="@dimen/default_material_margin"
     android:orientation="vertical"
+    android:theme="@style/AppTheme"
     tools:context=".ui.expenses.ExpenseDetailsFragment"
     tools:ignore="PrivateResource">
 
