@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.CalendarContract
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -33,6 +34,8 @@ import java.util.*
 private fun Context.hasPermissionGranted(
     permission: String
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+
+fun Context.toLayoutInflater(): LayoutInflater = LayoutInflater.from(this)
 
 fun Context.startMainActivity() {
     Intent(this, MainActivity::class.java).apply {

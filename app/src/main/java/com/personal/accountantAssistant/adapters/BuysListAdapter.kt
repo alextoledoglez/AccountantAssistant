@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.adapters
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -9,6 +8,7 @@ import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.settingFilter
+import com.personal.accountantAssistant.extensions.toLayoutInflater
 import java.util.function.Predicate
 
 class BuysListAdapter(
@@ -18,7 +18,7 @@ class BuysListAdapter(
 ) : ListAdapter<ExpenseModel, BuysViewHolder>(ExpenseModel.DIFF_UTIL_CALLBACK), Filterable {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BuysViewHolder(
-        BuysItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+        BuysItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false),
         onEditExpense,
         onActiveExpense,
         onRemoveExpense
