@@ -9,16 +9,18 @@ import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.util.*
 
 class HomeViewModel(
+    analytics: AnalyticsProvider?,
     private val localStorage: LocalStorage?,
     private val buysRepository: BuysRepository?,
     private val billsRepository: BillsRepository?
-) : BaseViewModel() {
+) : BaseViewModel(analytics) {
 
     private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
     val dashboardValues = _dashboardValues
@@ -48,8 +50,12 @@ class HomeViewModel(
         setLoading()
         val lastDate = localStorage?.getLastDate()
         setPeriodDates(localStorage?.getFirstDate(), lastDate)
-        val buysExpenses = buysRepository?.getTotalValueUntil(lastDate)?.singleOrNull().orZero()
-        val billsExpenses = billsRepository?.getTotalValueUntil(lastDate)?.singleOrNull().orZero()
+        val buysExpenses = buysRepository?.getTotalValueUntil(lastDate)
+            ?.onError { setMessage(it.message) }
+            ?.singleOrNull().orZero()
+        val billsExpenses = billsRepository?.getTotalValueUntil(lastDate)
+            ?.onError { setMessage(it.message) }
+            ?.singleOrNull().orZero()
         val totalExpenses = buysExpenses.plus(billsExpenses)
         _availableMoney.postValue(localStorage?.getAvailableMoney())
         _expensesValues.postValue(ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses))

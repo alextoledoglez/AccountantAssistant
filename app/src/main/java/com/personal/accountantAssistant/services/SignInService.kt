@@ -20,57 +20,35 @@ import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.extensions.startMainActivity
+import com.personal.accountantAssistant.providers.AnalyticsProvider
+import com.personal.accountantAssistant.providers.CrashlyticsProvider
 import com.personal.accountantAssistant.ui.login.LoginActivity
-import java.util.*
 
-class SignInService(val context: Context) {
+class SignInService(
+    private val context: Context,
+    private val localStorage: LocalStorage,
+    private val analytics: AnalyticsProvider,
+    private val crashlytics: CrashlyticsProvider
+) {
 
-    private var driveService: Drive? = null
-    private var localStorage: LocalStorage? = null
     private var signInClient: GoogleSignInClient? = null
-    private var signInOptions: GoogleSignInOptions? = null
-    private var credential: GoogleAccountCredential? = null
-    private var accountName: String? = null
-    private var scopes: Collection<String> = Collections.singleton(DriveScopes.DRIVE_FILE)
+    private var accountName: String? = localStorage.getSignedAccountName()
+    private var scopes: Collection<String> = listOf(DriveScopes.DRIVE)
 
-    companion object {
-        private val TAG = SignInService::class.java.simpleName
-    }
-
-    init {
-        localStorage = LocalStorage(context)
-        accountName = localStorage?.getSignedAccountName()
-    }
-
-    private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder {
-        return GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
-    }
-
-    private fun getSignInClient(signInOptions: GoogleSignInOptions?): GoogleSignInClient? {
-        signInClient = signInOptions?.let { GoogleSignIn.getClient(context, it) }
-        return signInClient
-    }
-
-    private fun getSignInClientIntent(signInOptions: GoogleSignInOptions?): Intent? {
-        return getSignInClient(signInOptions)?.signInIntent
-    }
-
-    /**
-     * Request sign in intent from a provided account.
-     */
-    private fun getAccountNameSignInClient(): GoogleSignInClient? {
-        Log.d(TAG, "Requesting silent sign-in")
-        signInOptions = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
-        return getSignInClient(signInOptions)
-    }
+    private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder = GoogleSignInOptions
+        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestScopes(Scope(DriveScopes.DRIVE))
 
     /**
      * Request sign in intent from a provided account.
      */
     fun requestAccountNameSignIn(): Intent? {
-        return getAccountNameSignInClient()?.signInIntent
+        Log.d(TAG, "Requesting silent sign-in")
+        val signInOptions = accountName?.let {
+            getSignInOptionsBuilder().setAccountName(it).build()
+        }
+        signInClient = signInOptions?.let { GoogleSignIn.getClient(context, it) }
+        return signInClient?.signInIntent
     }
 
     /**
@@ -78,30 +56,33 @@ class SignInService(val context: Context) {
      */
     fun requestSignIn(): Intent? {
         Log.d(TAG, "Requesting sign-in picker")
-        signInOptions = getSignInOptionsBuilder().requestEmail().build()
-        return getSignInClientIntent(signInOptions)
+        val signInOptions = getSignInOptionsBuilder().requestEmail().build()
+        signInClient = GoogleSignIn.getClient(context, signInOptions)
+        return signInClient?.signInIntent
     }
 
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
     fun handleSignInResult(
-        result: Intent,
-        requestCode: Int,
-        signInButton: SignInButton?,
-        progressBar: ProgressBar?
+        result: Intent, requestCode: Int, signInButton: SignInButton?, progressBar: ProgressBar?
     ) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
             .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
                 setAccountName(googleAccount.email)
+
                 Log.d(TAG, "Signed in as $accountName")
-                // Use the authenticated account to sign in to the Drive service.
-                credential = GoogleAccountCredential.usingOAuth2(context, scopes)
+
+                val httpTransport = AndroidHttp.newCompatibleTransport()
+                val jsonFactory = GsonFactory()
+                val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
                 credential?.selectedAccount = googleAccount.account
-                driveService =
-                    Drive.Builder(AndroidHttp.newCompatibleTransport(), GsonFactory(), credential)
-                        .setApplicationName(context.getString(R.string.app_name))
-                        .build()
+                val appName = context.getString(R.string.app_name)
+
+                drive = Drive.Builder(httpTransport, jsonFactory, credential)
+                    .setApplicationName(appName)
+                    .build()
+
                 //Once time you are sign in
                 if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
                     signInButton?.visibility = View.INVISIBLE
@@ -135,12 +116,19 @@ class SignInService(val context: Context) {
 
     private fun setAccountName(accountName: String?) {
         this.accountName = accountName
-        localStorage?.setSignedAccountName(this.accountName)
+        localStorage.setSignedAccountName(accountName)
+        analytics.setUserEmail(accountName)
+        crashlytics.setUser(accountName)
     }
 
     private fun cleanData() {
         signInClient = null
-        driveService = null
+        drive = null
         setAccountName(null)
+    }
+
+    companion object {
+        private val TAG = SignInService::class.java.simpleName
+        var drive: Drive? = null
     }
 }

@@ -7,12 +7,16 @@ import com.personal.accountantAssistant.data.mappers.toBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
+import com.personal.accountantAssistant.extensions.onError
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 
-class BillsViewModel(private val repository: BillsRepository?) : BaseViewModel() {
+class BillsViewModel(
+    analytics: AnalyticsProvider?, private val repository: BillsRepository?
+) : BaseViewModel(analytics) {
 
     private var _summary = MutableLiveData<SummaryModel>()
     var summary: LiveData<SummaryModel> = _summary
@@ -21,40 +25,54 @@ class BillsViewModel(private val repository: BillsRepository?) : BaseViewModel()
     var bills: LiveData<MutableList<ExpenseModel>?> = _bills
 
     fun getBills() = launch {
-        repository?.getBills()?.onStart { setLoading() }?.collect {
-            _bills.postValue(it)
-            setData()
-        }
+        repository?.getBills()?.onStart { setLoading() }?.onError { setMessage(it.message) }
+            ?.collect {
+                _bills.postValue(it)
+                setData()
+            }
     }
 
     fun loadSummary() = launch {
-        _summary.postValue(repository?.getSummary()?.singleOrNull())
+        repository?.getSummary()
+            ?.onError { setMessage(it.message) }
+            ?.singleOrNull()
+            ?.let { _summary.postValue(it) }
     }
 
     fun saveBill(model: ExpenseModel) = launch {
-        repository?.saveBill(model.toBill())?.onStart { setLoading() }?.collect {
-            _bills.postValue(it)
-            setData()
-        }
+        repository?.saveBill(model.toBill())?.onStart { setLoading() }
+            ?.onError { setMessage(it.message) }
+            ?.collect {
+                _bills.postValue(it)
+                setData()
+            }
     }
 
     fun setDefaultBills() = launch {
-        repository?.setDefaultBills()?.collect { _bills.postValue(it) }
+        repository?.setDefaultBills()?.onError { setMessage(it.message) }
+            ?.collect { _bills.postValue(it) }
     }
 
     fun setAllBillsActive(isActive: Boolean) = launch {
-        repository?.setAllBillsActive(isActive)?.collect { _bills.postValue(it) }
+        repository?.setAllBillsActive(isActive)
+            ?.onError { setMessage(it.message) }
+            ?.collect { _bills.postValue(it) }
     }
 
     fun switchActiveBill(model: ExpenseModel) = launch {
-        repository?.switchActiveBill(model.toBill())?.collect { _bills.postValue(it) }
+        repository?.switchActiveBill(model.toBill())
+            ?.onError { setMessage(it.message) }
+            ?.collect { _bills.postValue(it) }
     }
 
     fun deleteBill(model: ExpenseModel) = launch {
-        repository?.deleteBill(model.toBill())?.collect { _bills.postValue(it) }
+        repository?.deleteBill(model.toBill())
+            ?.onError { setMessage(it.message) }
+            ?.collect { _bills.postValue(it) }
     }
 
     fun deleteAllBills() = launch {
-        repository?.deleteAllBills()?.collect { _bills.postValue(it) }
+        repository?.deleteAllBills()?.onError { setMessage(it.message) }
+            ?.collect { _bills.postValue(it) }
     }
 }

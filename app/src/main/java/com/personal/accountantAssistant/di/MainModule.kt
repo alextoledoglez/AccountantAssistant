@@ -11,6 +11,10 @@ import com.personal.accountantAssistant.data.repository.CardsDataRepository
 import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.domain.repository.CardsRepository
+import com.personal.accountantAssistant.providers.AnalyticsProvider
+import com.personal.accountantAssistant.providers.CrashlyticsProvider
+import com.personal.accountantAssistant.services.DriveService
+import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.home.HomeViewModel
@@ -21,10 +25,10 @@ import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { WalletViewModel(get()) }
-    viewModel { BuysViewModel(get()) }
-    viewModel { BillsViewModel(get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { WalletViewModel(get(), get()) }
+    viewModel { BuysViewModel(get(), get()) }
+    viewModel { BillsViewModel(get(), get()) }
 }
 
 val dataModule = module {
@@ -39,10 +43,22 @@ val dataModule = module {
     single<BillsRepository> { BillsDataRepository(get()) }
 }
 
+val firebaseModule = module {
+    single { AnalyticsProvider() }
+    single { CrashlyticsProvider() }
+}
+
 val storageModule = module {
     single { LocalStorage(get()) }
 }
 
+val servicesModule = module {
+    single { SignInService(get(), get(), get(), get()) }
+    single { DriveService() }
+}
+
 object MainModuleInitializer {
-    fun initialize() = loadKoinModules(listOf(viewModelModule, dataModule, storageModule))
+    fun initialize() = loadKoinModules(
+        listOf(viewModelModule, dataModule, firebaseModule, storageModule, servicesModule)
+    )
 }

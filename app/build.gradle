@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -98,6 +100,12 @@ dependencies {
         exclude group: 'org.apache.httcomponents'
         exclude module: 'guava-jdk5'
     }
+
+    //-------------Firebase dependencies-------------------------
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation 'com.google.firebase:firebase-perf-ktx:20.0.6'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.1.2'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.9'
 
     //------------Retrofit dependencies---------------
     implementation 'com.squareup.okhttp3:okhttp:4.8.0'

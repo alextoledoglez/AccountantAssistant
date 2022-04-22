@@ -7,12 +7,16 @@ import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.BuysRepository
+import com.personal.accountantAssistant.extensions.onError
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 
-class BuysViewModel(private val repository: BuysRepository?) : BaseViewModel() {
+class BuysViewModel(
+    analytics: AnalyticsProvider?, private val repository: BuysRepository?
+) : BaseViewModel(analytics) {
 
     private var _summary = MutableLiveData<SummaryModel>()
     var summary: LiveData<SummaryModel> = _summary
@@ -21,40 +25,54 @@ class BuysViewModel(private val repository: BuysRepository?) : BaseViewModel() {
     var buys: LiveData<MutableList<ExpenseModel>?> = _buys
 
     fun getBuys() = launch {
-        repository?.getBuys()?.onStart { setLoading() }?.collect {
-            _buys.postValue(it)
-            setData()
-        }
+        repository?.getBuys()?.onStart { setLoading() }?.onError { setMessage(it.message) }
+            ?.collect {
+                _buys.postValue(it)
+                setData()
+            }
     }
 
     fun loadSummary() = launch {
-        _summary.postValue(repository?.getSummary()?.singleOrNull())
+        repository?.getSummary()
+            ?.onError { setMessage(it.message) }
+            ?.singleOrNull()
+            ?.let { _summary.postValue(it) }
     }
 
     fun saveBuy(model: ExpenseModel) = launch {
-        repository?.saveBuy(model.toBuy())?.onStart { setLoading() }?.collect {
-            _buys.postValue(it)
-            setData()
-        }
+        repository?.saveBuy(model.toBuy())?.onStart { setLoading() }
+            ?.onError { setMessage(it.message) }
+            ?.collect {
+                _buys.postValue(it)
+                setData()
+            }
     }
 
     fun setDefaultBuys() = launch {
-        repository?.setDefaultBuys()?.collect { _buys.postValue(it) }
+        repository?.setDefaultBuys()?.onError { setMessage(it.message) }
+            ?.collect { _buys.postValue(it) }
     }
 
     fun setAllBuysActive(isActive: Boolean) = launch {
-        repository?.setAllBuysActive(isActive)?.collect { _buys.postValue(it) }
+        repository?.setAllBuysActive(isActive)
+            ?.onError { setMessage(it.message) }
+            ?.collect { _buys.postValue(it) }
     }
 
     fun switchActiveBuy(model: ExpenseModel) = launch {
-        repository?.switchActiveBuy(model.toBuy())?.collect { _buys.postValue(it) }
+        repository?.switchActiveBuy(model.toBuy())
+            ?.onError { setMessage(it.message) }
+            ?.collect { _buys.postValue(it) }
     }
 
     fun deleteBuy(model: ExpenseModel) = launch {
-        repository?.deleteBuy(model.toBuy())?.collect { _buys.postValue(it) }
+        repository?.deleteBuy(model.toBuy())
+            ?.onError { setMessage(it.message) }
+            ?.collect { _buys.postValue(it) }
     }
 
     fun deleteAllBuys() = launch {
-        repository?.deleteAllBuys()?.collect { _buys.postValue(it) }
+        repository?.deleteAllBuys()?.onError { setMessage(it.message) }
+            ?.collect { _buys.postValue(it) }
     }
 }

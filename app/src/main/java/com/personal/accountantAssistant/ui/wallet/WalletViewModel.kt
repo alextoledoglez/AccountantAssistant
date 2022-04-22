@@ -6,12 +6,16 @@ import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
+import com.personal.accountantAssistant.extensions.onError
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 
-class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel() {
+class WalletViewModel(
+    analytics: AnalyticsProvider?, private val repository: CardsRepository?
+) : BaseViewModel(analytics) {
 
     private var _summary = MutableLiveData<SummaryModel>()
     var summary: LiveData<SummaryModel> = _summary
@@ -20,41 +24,53 @@ class WalletViewModel(private val repository: CardsRepository?) : BaseViewModel(
     var cards: LiveData<MutableList<CardModel>?> = _cards
 
     fun loadCards() = launch {
-        repository?.getCards()?.onStart { setLoading() }?.collect {
-            _cards.postValue(it)
-            setData()
-        }
+        repository?.getCards()?.onStart { setLoading() }?.onError { setMessage(it.message) }
+            ?.collect {
+                _cards.postValue(it)
+                setData()
+            }
     }
 
     fun loadSummary() = launch {
-        _summary.postValue(repository?.getSummary()?.singleOrNull())
+        repository?.getSummary()
+            ?.onError { setMessage(it.message) }
+            ?.singleOrNull()
+            ?.let { _summary.postValue(it) }
     }
 
     fun saveCard(model: CardModel) = launch {
-        repository?.saveCard(model)?.onStart { setLoading() }?.collect {
-            _cards.postValue(it)
-            setData()
-        }
+        repository?.saveCard(model)?.onStart { setLoading() }?.onError { setMessage(it.message) }
+            ?.collect {
+                _cards.postValue(it)
+                setData()
+            }
     }
 
     fun restoreDefaultCards() = launch {
-        repository?.setDefaultCards()?.collect { _cards.postValue(it) }
+        repository?.setDefaultCards()?.onError { setMessage(it.message) }
+            ?.collect { _cards.postValue(it) }
     }
 
     fun setAllCardsActive(isActive: Boolean) = launch {
-        repository?.setAllCardsActive(isActive)?.collect { _cards.postValue(it) }
+        repository?.setAllCardsActive(isActive)
+            ?.onError { setMessage(it.message) }
+            ?.collect { _cards.postValue(it) }
     }
 
     fun switchActiveCard(model: CardModel) = launch {
-        repository?.switchActiveCard(model)?.collect { _cards.postValue(it) }
+        repository?.switchActiveCard(model)
+            ?.onError { setMessage(it.message) }
+            ?.collect { _cards.postValue(it) }
     }
 
     fun deleteCard(model: CardModel) = launch {
-        repository?.deleteCard(model)?.collect { _cards.postValue(it) }
+        repository?.deleteCard(model)?.onError { setMessage(it.message) }
+            ?.collect { _cards.postValue(it) }
     }
 
     fun deleteAllCards() = launch {
-        repository?.deleteAllCards()?.collect { _cards.postValue(it) }
+        repository?.deleteAllCards()?.onError { setMessage(it.message) }
+            ?.collect { _cards.postValue(it) }
     }
 
 }

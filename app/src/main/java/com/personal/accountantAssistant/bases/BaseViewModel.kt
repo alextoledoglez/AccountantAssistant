@@ -4,12 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.personal.accountantAssistant.data.enums.FlipperViews
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel : ViewModel(), CoroutineScope {
+abstract class BaseViewModel(
+    private val analytics: AnalyticsProvider?
+) : ViewModel(), CoroutineScope {
 
     private val job = Job()
 
@@ -36,9 +39,10 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
         _isLoading.postValue(false)
     }
 
-    fun setMessage() {
+    fun setMessage(message: String? = null) {
         _flipper.postValue(FlipperViews.MESSAGE)
         _isLoading.postValue(false)
+        analytics?.trackErrorEvent(message)
     }
 
 }
