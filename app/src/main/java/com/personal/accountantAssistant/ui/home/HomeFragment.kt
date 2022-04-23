@@ -44,7 +44,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             srlContent.setOnRefreshListener { viewModel.calculateExpenses() }
             rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         }
-        adProvider?.loadOn(binding.flAds)
     }
 
     override fun initObservers() {
@@ -60,7 +59,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
-                adapter.submitList(it) { lytContent.srlContent.stopRefreshing() }
+                adapter.submitList(it) {
+                    lytContent.srlContent.stopRefreshing()
+                    adProvider?.loadOn(binding.flAds)
+                }
             }
             viewModel.calculateExpenses()
         }
