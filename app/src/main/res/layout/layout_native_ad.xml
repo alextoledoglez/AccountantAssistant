@@ -1,45 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.gms.ads.nativead.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_material_margin"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/greenColor"
-                android:backgroundTint="@color/greenColor"
-                android:textColor="@color/whiteColor"
-                android:textSize="@dimen/default_text_size"
-                tools:text="Ad" />
-        </LinearLayout>
-
-        <LinearLayout
+    <!--    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="@dimen/small_material_margin"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/ivNativeAdIcon"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_more_options" />
+                    android:background="@color/greenColor"
+                    android:backgroundTint="@color/greenColor"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="@dimen/default_text_size"
+                    tools:text="Ad" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/ivNativeAdIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_more_options" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvNativeAdTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_material_margin"
+                        android:textColor="@color/blackColor"
+                        android:textSize="@dimen/medium_text_size"
+                        android:textStyle="bold"
+                        tools:text="Title" />
+
+                    <com.google.android.gms.ads.nativead.MediaView
+                        android:id="@+id/mvNativeAdMedia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tvNativeAdName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_material_margin"
+                        android:textColor="@color/blackColor"
+                        android:textSize="@dimen/small_text_size"
+                        tools:text="name" />
+
+                    <TextView
+                        android:id="@+id/tvNativeAdDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/half_material_margin"
+                        android:textColor="@color/blackColor"
+                        android:textSize="@dimen/default_text_size"
+                        tools:text="description" />
+
+                    <Button
+                        android:id="@+id/btnNativeAdAction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/half_material_margin"
+                        tools:text="Visit site" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/whiteColor"
+        android:minHeight="@dimen/min_layout_height"
+        android:orientation="vertical">
+
+        <TextView style="@style/AppTheme.AdAttribution" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/big_material_margin"
+            android:paddingTop="@dimen/small_material_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ad_app_icon"
+                    android:layout_width="@dimen/image_button_size"
+                    android:layout_height="@dimen/image_button_size"
+                    android:adjustViewBounds="true"
+                    android:paddingHorizontal="@dimen/small_material_margin"
+                    android:paddingBottom="@dimen/small_material_margin" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/ad_headline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/greenColor"
+                        android:textSize="@dimen/medium_text_size"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/ad_advertiser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="bottom"
+                            android:textSize="@dimen/default_text_size"
+                            android:textStyle="bold" />
+
+                        <RatingBar
+                            android:id="@+id/ad_stars"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:isIndicator="true"
+                            android:numStars="5"
+                            android:stepSize="0.5" />
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -49,44 +168,48 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvNativeAdTitle"
+                    android:id="@+id/ad_body"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_material_margin"
-                    android:textColor="@color/blackColor"
-                    android:textSize="@dimen/medium_text_size"
-                    android:textStyle="bold"
-                    tools:text="Title" />
+                    android:layout_marginHorizontal="@dimen/big_material_margin"
+                    android:textSize="@dimen/small_text_size" />
 
                 <com.google.android.gms.ads.nativead.MediaView
-                    android:id="@+id/mvNativeAdMedia"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:id="@+id/ad_media"
+                    android:layout_width="250dp"
+                    android:layout_height="175dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/small_material_margin" />
 
-                <TextView
-                    android:id="@+id/tvNativeAdName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_material_margin"
-                    android:textColor="@color/blackColor"
-                    android:textSize="@dimen/small_text_size"
-                    tools:text="name" />
-
-                <TextView
-                    android:id="@+id/tvNativeAdDescription"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/half_material_margin"
-                    android:textColor="@color/blackColor"
-                    android:textSize="@dimen/default_text_size"
-                    tools:text="description" />
+                    android:layout_gravity="end"
+                    android:orientation="horizontal"
+                    android:paddingVertical="@dimen/half_material_margin">
 
-                <Button
-                    android:id="@+id/btnNativeAdAction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/half_material_margin"
-                    tools:text="Visit site" />
+                    <TextView
+                        android:id="@+id/ad_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/small_material_margin"
+                        android:textSize="@dimen/small_text_size" />
+
+                    <TextView
+                        android:id="@+id/ad_store"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/small_material_margin"
+                        android:textSize="@dimen/small_text_size" />
+
+                    <Button
+                        android:id="@+id/ad_call_to_action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/small_text_size" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -8,6 +8,7 @@
     <dimen name="image_button_size">48dp</dimen>
     <dimen name="icon_resource_size">24dp</dimen>
     <dimen name="fab_button_size">64dp</dimen>
+    <dimen name="min_layout_height">50dp</dimen>
 
     <dimen name="full_layout_weight">1</dimen>
     <dimen name="end_layout_weight">0.3</dimen>
@@ -18,6 +19,7 @@
     <dimen name="small_material_margin">4dp</dimen>
     <dimen name="smallest_material_margin">2dp</dimen>
     <dimen name="default_material_margin">16dp</dimen>
+    <dimen name="big_material_margin">20dp</dimen>
 
     <!-- Text -->
     <dimen name="small_text_size">12sp</dimen>

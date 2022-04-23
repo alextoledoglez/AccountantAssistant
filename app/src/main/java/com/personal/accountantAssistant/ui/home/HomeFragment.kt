@@ -2,19 +2,18 @@ package com.personal.accountantAssistant.ui.home
 
 import android.view.Menu
 import android.view.MenuInflater
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.HomeListAdapter
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
-import com.personal.accountantAssistant.databinding.LayoutNativeAdBinding
 import com.personal.accountantAssistant.domain.models.ColorResourcesModel
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.models.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.providers.AdProvider
+import org.koin.android.ext.android.inject
 import java.math.BigDecimal
 
 
@@ -26,9 +25,11 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     private var titleRes: TitleResourcesModel = TitleResourcesModel()
     private var colorRes: ColorResourcesModel = ColorResourcesModel()
     private val adapter by lazy { HomeListAdapter() }
+    private val adProvider: AdProvider? by inject()
 
     override fun onDestroy() {
         super.onDestroy()
+        adProvider?.destroyCurrentAd()
         lytContent.rvContent.destroyAdapter()
     }
 
@@ -43,15 +44,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             srlContent.setOnRefreshListener { viewModel.calculateExpenses() }
             rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         }
-        context?.toAdLoaderBuilder()?.forNativeAd { nativeAd ->
-            val layout = LayoutNativeAdBinding.inflate(layoutInflater)
-            val adView = layout as NativeAdView
-            adView.fillNativeAdView(layout, nativeAd)
-            with(binding.flAds) {
-                removeAllViews()
-                addView(adView)
-            }
-        }?.build()?.loadAd(AdRequest.Builder().build())
+        adProvider?.loadOn(binding.flAds)
     }
 
     override fun initObservers() {

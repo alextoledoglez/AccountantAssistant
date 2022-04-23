@@ -16,16 +16,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "NATIVE_AD_Id", '"cca-app-pub-3940256099942544/2247696110"'
     }
     buildTypes {
         release {
             minifyEnabled false
-            buildConfigField "String", "NATIVE_AD_Id", '"ca-app-pub-5126697230667487/2004147933"'
+            buildConfigField "String", "ADMOB_TEST_DEVICE_ID", '""'
+            buildConfigField "String", "ADMOB_UNIT_ID", '"ca-app-pub-5126697230667487/2004147933"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "String", "NATIVE_AD_Id", '"cca-app-pub-3940256099942544/2247696110"'
+            buildConfigField "String", "ADMOB_TEST_DEVICE_ID", '"177762A9FBD7F7D82802649067D7DCFE"'
+            buildConfigField "String", "ADMOB_UNIT_ID", '"ca-app-pub-3940256099942544/2247696110"'
         }
     }
     buildFeatures {

@@ -12,10 +12,8 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.enums.ExpensesType
@@ -38,8 +36,6 @@ private fun Context.hasPermissionGranted(
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 fun Context.toLayoutInflater(): LayoutInflater = LayoutInflater.from(this)
-
-fun Context.toAdLoaderBuilder() = AdLoader.Builder(this, BuildConfig.NATIVE_AD_Id)
 
 fun Context.startMainActivity() {
     Intent(this, MainActivity::class.java).apply {

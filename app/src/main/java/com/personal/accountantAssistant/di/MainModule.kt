@@ -12,6 +12,7 @@ import com.personal.accountantAssistant.data.repository.CardsDataRepository
 import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.domain.repository.CardsRepository
+import com.personal.accountantAssistant.providers.AdProvider
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.CrashlyticsProvider
 import com.personal.accountantAssistant.services.DriveService
@@ -56,7 +57,8 @@ val storageModule = module {
 val servicesModule = module {
     single { SignInService(get(), get(), get(), get()) }
     single { DriveService() }
-    single { MobileAds.initialize(get()) }
+    single { MobileAds.initialize(get()) {} }
+    single { AdProvider(get(), get()) }
 }
 
 object MainModuleInitializer {
