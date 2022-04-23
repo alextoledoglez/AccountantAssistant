@@ -30,6 +30,7 @@
         android:name=".AccountantAssistant"
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -41,6 +42,7 @@
             android:name=".ui.login.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
+            android:hardwareAccelerated="false"
             android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,18 +53,21 @@
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation"
+            android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.barcode.BarcodeScanActivity"
             android:configChanges="orientation"
+            android:hardwareAccelerated="false"
             android:label="Barcode Scan"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.payments.CheckoutActivity"
             android:configChanges="orientation"
+            android:hardwareAccelerated="false"
             android:label="Checkout activity"
             android:screenOrientation="portrait" />
 

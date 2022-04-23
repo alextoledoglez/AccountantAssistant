@@ -29,7 +29,6 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        adProvider?.destroyCurrentAd()
         lytContent.rvContent.destroyAdapter()
     }
 
@@ -60,8 +59,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
                 adapter.submitList(it) {
-                    lytContent.srlContent.stopRefreshing()
                     adProvider?.loadOn(binding.flAds)
+                    lytContent.srlContent.stopRefreshing()
                 }
             }
             viewModel.calculateExpenses()

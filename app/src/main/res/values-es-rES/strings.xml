@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Accountant assistant</string>
     <string name="app_version">Versión: 1.0</string>
-    <string name="navigation_drawer_open">Abrir cajón de navegación</string>
+    <string name="open_action">Abrir</string>
     <string name="navigation_drawer_close">Cerrar cajón de navegación</string>
     <string name="nav_header_title">accountant.assistant@gmail.com</string>
     <string name="nav_header_subtitle">v1.0.0</string>
