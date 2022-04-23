@@ -71,6 +71,10 @@
             android:value="true" />
 
         <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5126697230667487~5993695533" />
+
+        <meta-data
             android:name="com.google.android.gsm.version"
             android:value="@integer/google_play_services_version" />
 

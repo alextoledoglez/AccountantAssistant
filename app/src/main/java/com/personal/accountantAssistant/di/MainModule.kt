@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.di
 
+import com.google.android.gms.ads.MobileAds
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
@@ -55,6 +56,7 @@ val storageModule = module {
 val servicesModule = module {
     single { SignInService(get(), get(), get(), get()) }
     single { DriveService() }
+    single { MobileAds.initialize(get()) }
 }
 
 object MainModuleInitializer {
