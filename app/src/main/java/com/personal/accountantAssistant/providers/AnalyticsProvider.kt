@@ -25,8 +25,8 @@ class AnalyticsProvider {
     }
 
     companion object {
-        const val EMAIL_KEY = "EMAIL_KEY"
-        const val ERROR_KEY = "ERROR_KEY"
-        const val ERROR_MESSAGE_KEY = "ERROR_MESSAGE_KEY"
+        const val EMAIL_KEY = "email_key"
+        const val ERROR_KEY = "error_key"
+        const val ERROR_MESSAGE_KEY = "error_message_key"
     }
 }

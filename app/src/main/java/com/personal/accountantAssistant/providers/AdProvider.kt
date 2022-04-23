@@ -7,29 +7,10 @@ import com.personal.accountantAssistant.BuildConfig
 
 class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
 
-    init {
-        if (BuildConfig.ADMOB_TEST_DEVICE_ID.isNotBlank()) {
-            val config = RequestConfiguration.Builder().setTestDeviceIds(
-                listOf(BuildConfig.ADMOB_TEST_DEVICE_ID)
-            ).build()
-            MobileAds.setRequestConfiguration(config)
-        }
-    }
-
-    private fun trackAdEvent(key: String = AD_KEY, event: String?) {
-        analytics.trackEvent(key, AD_MESSAGE_KEY, event.orEmpty())
-    }
-
-    fun loadOn(container: FrameLayout) {
-        val adView = AdView(context)
-        adView.adSize = AdSize.BANNER
-        adView.adUnitId = BuildConfig.ADMOB_UNIT_ID
-        with(container) {
-            removeAllViews()
-            addView(adView)
-        }
-        val request = AdRequest.Builder().build()
-        adView.adListener = object : AdListener() {
+    private val adView = AdView(context).apply {
+        adSize = AdSize.LARGE_BANNER
+        adUnitId = BuildConfig.ADMOB_UNIT_ID
+        adListener = object : AdListener() {
             override fun onAdClicked() {
                 super.onAdClicked()
                 trackAdEvent(AD_CLICKED_KEY, event = "AD was clicked.")
@@ -57,21 +38,52 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
 
             override fun onAdFailedToLoad(error: LoadAdError) {
                 analytics.trackErrorEvent(
-                    error = "Failed to load native ad : 'code: ${error.code}, message: ${error.message}'"
+                    error = "Failed to load ad : 'code: ${error.code}, message: ${error.message}'"
                 )
             }
         }
-        adView.loadAd(request)
+    }
 
+    init {
+        if (BuildConfig.ADMOB_TEST_DEVICE_ID.isNotBlank()) {
+            val config = RequestConfiguration.Builder().setTestDeviceIds(
+                listOf(BuildConfig.ADMOB_TEST_DEVICE_ID)
+            ).build()
+            MobileAds.setRequestConfiguration(config)
+        }
+    }
+
+    private fun trackAdEvent(key: String = AD_KEY, event: String?) {
+        analytics.trackEvent(key, AD_MESSAGE_KEY, event.orEmpty())
+    }
+
+    fun loadAdOn(container: FrameLayout) {
+        with(container) {
+            removeAllViews()
+            addView(adView)
+        }
+        adView.loadAd(AdRequest.Builder().build())
+    }
+
+    fun destroyAd() {
+        adView.destroy()
+    }
+
+    fun pauseAd() {
+        adView.pause()
+    }
+
+    fun resumeAd() {
+        adView.resume()
     }
 
     companion object {
-        const val AD_KEY = "AD_KEY"
-        const val AD_MESSAGE_KEY = "AD_MESSAGE_KEY"
-        const val AD_LOADED_KEY = "AD_LOADED_KEY"
-        const val AD_CLOSED_KEY = "AD_CLOSED_KEY"
-        const val AD_OPENED_KEY = "AD_OPENED_KEY"
-        const val AD_CLICKED_KEY = "AD_CLICKED_KEY"
-        const val AD_IMPRESSION_KEY = "AD_IMPRESSION_KEY"
+        const val AD_KEY = "ad_key"
+        const val AD_MESSAGE_KEY = "ad_message_key"
+        const val AD_LOADED_KEY = "ad_loaded_key"
+        const val AD_CLOSED_KEY = "ad_closed_key"
+        const val AD_OPENED_KEY = "ad_opened_key"
+        const val AD_CLICKED_KEY = "ad_clicked_key"
+        const val AD_IMPRESSION_KEY = "ad_impression_key"
     }
 }

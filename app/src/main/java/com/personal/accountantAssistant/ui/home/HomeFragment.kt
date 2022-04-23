@@ -29,7 +29,18 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
+        adProvider?.destroyAd()
         lytContent.rvContent.destroyAdapter()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adProvider?.pauseAd()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adProvider?.resumeAd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -43,6 +54,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             srlContent.setOnRefreshListener { viewModel.calculateExpenses() }
             rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         }
+        adProvider?.loadAdOn(binding.flAds)
     }
 
     override fun initObservers() {
@@ -58,10 +70,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
-                adapter.submitList(it) {
-                    adProvider?.loadOn(binding.flAds)
-                    lytContent.srlContent.stopRefreshing()
-                }
+                adapter.submitList(it) { lytContent.srlContent.stopRefreshing() }
             }
             viewModel.calculateExpenses()
         }
