@@ -107,4 +107,7 @@
     <string name="sign_in_canceled">Sign In canceled</string>
     <string name="sign_in_failed">Sign In failed</string>
     <string name="select_period">Select period</string>
+
+    <string name="ad_attribution_text">Ad</string>
+
 </resources>

@@ -186,10 +186,11 @@
         <item name="android:layout_gravity">left</item>
         <item name="android:textColor">@color/whiteColor</item>
         <item name="android:textSize">@dimen/small_text_size</item>
-        <item name="android:text">Ad</item>
-        <item name="android:background">@color/chipColor</item>
-        <item name="android:width">15dp</item>
-        <item name="android:height">15dp</item>
+        <item name="android:padding">@dimen/smallest_material_margin</item>
+        <item name="android:text">@string/ad_attribution_text</item>
+        <item name="android:background">@color/greenColor</item>
+        <item name="android:minWidth">@dimen/default_material_margin</item>
+        <item name="android:minHeight">@dimen/default_material_margin</item>
     </style>
 
 </resources>

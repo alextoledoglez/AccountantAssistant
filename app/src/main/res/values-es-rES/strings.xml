@@ -107,4 +107,7 @@
     <string name="sign_in_canceled">Iniciar de sesión cancelado</string>
     <string name="sign_in_failed">Error al iniciar sesión</string>
     <string name="select_period">Seleccionar período</string>
+
+    <string name="ad_attribution_text">Anuncio</string>
+
 </resources>
