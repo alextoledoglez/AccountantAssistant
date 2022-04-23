@@ -2,15 +2,16 @@
 <resources>
 
     //Base colors
-    <color name="colorPrimary">#4CAF50</color>
-    <color name="colorPrimaryLow">#66BB6A</color>
-    <color name="colorPrimaryDark">#388E3C</color>
-    <color name="colorPrimaryLight">#81C784</color>
+    <color name="primaryColor">#4CAF50</color>
+    <color name="primaryLowColor">#66BB6A</color>
+    <color name="primaryDarkColor">#388E3C</color>
+    <color name="primaryLightColor">#81C784</color>
 
     //Utils color
-    <color name="colorWhite">#FFFFFF</color>
-    <color name="colorBlack">#000000</color>
-    <color name="colorRed">#D50000</color>
+    <color name="redColor">#D50000</color>
+    <color name="greenColor">#2E7D32</color>
+    <color name="whiteColor">#FFFFFF</color>
+    <color name="blackColor">#000000</color>
 
     <color name="fontColor">#424242</color>
     <color name="backgroundColor">#F5F5F5</color>
@@ -18,16 +19,16 @@
     <!--<color name="disableThumbColor">#1c000000</color>-->
 
     //Disable colors
-    <color name="colorSilver">#DCDCDC</color>
+    <color name="silverColor">#DCDCDC</color>
 
     //Error colors
-    <color name="colorError">@color/colorRed</color>
+    <color name="errorColor">@color/redColor</color>
 
     //Success colors
-    <color name="colorSuccess">#32C16E</color>
+    <color name="successColor">#32C16E</color>
 
-    <color name="tabSelectedTextColor">@color/colorWhite</color>
-    <color name="tabTextColor">@color/colorSilver</color>
+    <color name="tabSelectedTextColor">@color/whiteColor</color>
+    <color name="tabTextColor">@color/silverColor</color>
 
     <color name="chipColor">#e7c63d</color>
     <color name="disableChipColor">#1c000000</color>

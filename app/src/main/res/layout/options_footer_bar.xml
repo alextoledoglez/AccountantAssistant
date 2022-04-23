@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/half_material_margin"
         android:layout_weight="@dimen/full_layout_weight"
-        android:backgroundTint="@color/colorRed"
+        android:backgroundTint="@color/redColor"
         android:gravity="center"
         android:text="@string/cancel"
         android:textColor="@color/design_default_color_background" />
@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/half_material_margin"
         android:layout_weight="@dimen/full_layout_weight"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/primaryColor"
         android:gravity="center"
         android:text="@string/save"
         android:textColor="@color/design_default_color_background" />

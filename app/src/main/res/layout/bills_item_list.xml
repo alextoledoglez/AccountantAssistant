@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/colorWhite"
+    app:cardBackgroundColor="@color/whiteColor"
     app:cardElevation="@dimen/card_view_elevation"
     app:cardUseCompatPadding="true"
     app:contentPadding="@dimen/card_view_content_padding">

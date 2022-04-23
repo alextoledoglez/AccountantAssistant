@@ -1,12 +1,12 @@
 <resources>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
-        <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowBackground">@color/primaryColor</item>
+        <item name="android:navigationBarColor">@color/primaryDarkColor</item>
     </style>
 
     <style name="ThemeOverlay.AccountantAssistant.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/colorPrimary</item>
-        <item name="fullscreenTextColor">@color/colorPrimary</item>
+        <item name="fullscreenBackgroundColor">@color/primaryColor</item>
+        <item name="fullscreenTextColor">@color/primaryColor</item>
     </style>
 </resources>

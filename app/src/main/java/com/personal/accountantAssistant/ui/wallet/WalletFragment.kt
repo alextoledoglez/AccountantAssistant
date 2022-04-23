@@ -116,7 +116,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         val totalStr = model.total.toCurrencyMaskedStr()
         val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
         with(lytSummary) {
-            context?.getCompatColor(isAnyActive, R.color.colorRed, R.color.colorPrimary)?.let {
+            context?.getCompatColor(isAnyActive, R.color.redColor, R.color.primaryColor)?.let {
                 ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
                 tvSubtitle.setTextColor(it)
             }

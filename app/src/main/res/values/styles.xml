@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar
@@ -30,7 +30,7 @@
         <item name="tabMode">fixed</item>
         <item name="tabGravity">fill</item>
         <item name="tabRippleColor">@null</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@color/primaryColor</item>
         <item name="tabBackground">@android:color/transparent</item>
         <item name="tabTextAppearance">@style/TabTextAppearance</item>
         <item name="tabIconTint">@color/selector_tab_icon_color</item>
@@ -99,7 +99,7 @@
     </style>
 
     <style name="AlertDialogButtonStyle" parent="">
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/primaryColor</item>
         <item name="textAllCaps">true</item>
         <item name="android:layout_margin">@dimen/half_material_margin</item>
     </style>
@@ -123,15 +123,15 @@
     <!--Date Picker Dialog Styles-->
 
     <style name="DatePickerTheme" parent="ThemeOverlay.MaterialComponents.Dialog">
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="android:datePickerStyle">@style/DatePickerStyle</item>
     </style>
 
     <style name="DatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
-        <item name="android:headerBackground">@color/colorPrimary</item>
-        <item name="android:yearListSelectorColor">@color/colorPrimary</item>
+        <item name="android:headerBackground">@color/primaryColor</item>
+        <item name="android:yearListSelectorColor">@color/primaryColor</item>
     </style>
 
     <!--Text view styles-->
@@ -140,8 +140,8 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">gravity</item>
-        <item name="android:textColor">@color/colorBlack</item>
-        <item name="android:background">@color/colorPrimaryLight</item>
+        <item name="android:textColor">@color/blackColor</item>
+        <item name="android:background">@color/primaryLightColor</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
 
@@ -150,7 +150,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:textColor">@color/fontColor</item>
-        <item name="android:background">@color/colorWhite</item>
+        <item name="android:background">@color/whiteColor</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
 
@@ -158,7 +158,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">gravity</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/whiteColor</item>
         <item name="android:background">@drawable/layout_top_rounded_shape</item>
         <item name="android:gravity">center|center_horizontal|center_vertical</item>
     </style>
@@ -176,8 +176,8 @@
 
     <style name="FocusEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorControlNormal">@color/fontColor</item>
-        <item name="colorControlActivated">@color/colorPrimary</item>
-        <item name="colorControlHighlight">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/primaryColor</item>
+        <item name="colorControlHighlight">@color/primaryColor</item>
     </style>
 
 </resources>

@@ -31,7 +31,7 @@ class HomeViewHolder(
             tvCardTitle.apply {
                 setTextColor(model.color)
                 text = root.context.getString(model.strResource)
-                setBackgroundColor(context.getCompatColor(R.color.colorWhite))
+                setBackgroundColor(context.getCompatColor(R.color.whiteColor))
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize.orZero())
             }
 

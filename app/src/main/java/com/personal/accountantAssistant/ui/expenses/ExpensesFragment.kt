@@ -87,7 +87,7 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
         val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
         val totalStr = model.total.toCurrencyMaskedStr()
         with(binding) {
-            context?.getCompatColor(isAnyActive, R.color.colorRed, R.color.colorPrimary)?.let {
+            context?.getCompatColor(isAnyActive, R.color.redColor, R.color.primaryColor)?.let {
                 ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
                 tvSubtitle.setTextColor(it)
             }

@@ -41,7 +41,7 @@ fun BarChart.drawFrom(dashboardModel: DashboardModel) {
     data = getBarDataBy(barDataSets)
     xAxis.setDefaultSettings(xAxisValues.toTypedArray())
     legend.setDefaultSettings().setCustom(
-            models.distinctBy { it.second }.map { newLegendEntry(context, R.color.colorBlack, it.second) }
+            models.distinctBy { it.second }.map { newLegendEntry(context, R.color.blackColor, it.second) }
     )
     invalidate()
 }

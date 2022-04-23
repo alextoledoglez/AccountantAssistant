@@ -36,10 +36,10 @@
         android:layout_marginBottom="@dimen/default_material_margin"
         android:clickable="true"
         android:contentDescription="@string/add_action"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/primaryColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_white"
-        app:tint="@color/colorWhite" />
+        app:tint="@color/whiteColor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
