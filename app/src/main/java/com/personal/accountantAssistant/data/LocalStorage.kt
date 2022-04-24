@@ -8,13 +8,6 @@ import java.util.*
 
 class LocalStorage(val context: Context) {
 
-    companion object {
-        private const val AVAILABLE_MONEY = "AVAILABLE_MONEY"
-        private const val FIRST_STR_DATE = "FIRST_STR_DATE"
-        private const val LAST_STR_DATE = "LAST_STR_DATE"
-        private const val SIGNED_ACCOUNT_NAME = "SIGNED_ACCOUNT_NAME"
-    }
-
     private fun getDefaultSharedPreferences(): SharedPreferences = context.getSharedPreferences(
         "${context.packageName}_preferences",
         Context.MODE_PRIVATE
@@ -54,11 +47,18 @@ class LocalStorage(val context: Context) {
         setLastStrDate(lastDate)
     }
 
-    fun setSignedAccountName(accountName: String?) {
-        getDefaultSharedPreferences().edit().putString(SIGNED_ACCOUNT_NAME, accountName).apply()
+    fun setSignedAccountName(name: String?) {
+        getDefaultSharedPreferences().edit().putString(SIGNED_ACCOUNT_NAME, name.orEmpty()).apply()
     }
 
     fun getSignedAccountName(): String? {
-        return getDefaultSharedPreferences().getString(SIGNED_ACCOUNT_NAME, null)
+        return getDefaultSharedPreferences().getString(SIGNED_ACCOUNT_NAME, String.EMPTY)
+    }
+
+    companion object {
+        private const val AVAILABLE_MONEY = "AVAILABLE_MONEY"
+        private const val FIRST_STR_DATE = "FIRST_STR_DATE"
+        private const val LAST_STR_DATE = "LAST_STR_DATE"
+        private const val SIGNED_ACCOUNT_NAME = "SIGNED_ACCOUNT_NAME"
     }
 }

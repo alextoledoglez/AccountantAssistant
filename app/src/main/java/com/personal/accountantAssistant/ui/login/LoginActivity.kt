@@ -2,12 +2,14 @@ package com.personal.accountantAssistant.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.ActivityLoginBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.extensions.ZERO
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.startMainActivity
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
 import org.koin.android.ext.android.inject
@@ -25,17 +27,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        binding.apply {
-            signInButton.apply {
-                setOnClickListener {
-                    progressBar.visibility = View.VISIBLE
-                    signInService?.requestSignIn()?.let {
-                        startActivityForResult(it, CHOOSER_SIGN_IN_REQUEST_CODE)
-                    } ?: run { progressBar.visibility = View.GONE }
-                }
-            }
-        }
-        signInService?.signOut()
+        binding.signInButton.setOnClickListener { signIn() }
     }
 
     override fun onStart() {
@@ -45,27 +37,21 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        signInService?.let { service ->
-            binding.progressBar.visibility = View.VISIBLE
-            service.requestAccountNameSignIn()
-                ?.let { startActivityForResult(it, ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) }
-                ?: run {
-                    binding.signInButton.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.GONE
-                }
-        }
+        setLoading()
+        startActivityForResult(
+            signInService?.requestAccountNameSignIn(), ACCOUNT_NAME_SIGN_IN_REQUEST_CODE
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
         if (resultCode == RESULT_OK) {
-            resultData?.let {
-                signInService?.handleSignInResult(
-                    it, requestCode, binding.signInButton, binding.progressBar
-                )
-            }
+            val wasSuccessful = signInService?.handleSignInResult(resultData).orFalse()
+            binding.signInButton.isVisible = wasSuccessful
+            if (wasSuccessful) startMainActivity() else setLoading(false)
         } else {
-            binding.progressBar.visibility = View.GONE
+            setLoading(false)
+            binding.signInButton.isVisible = (requestCode == ACCOUNT_NAME_SIGN_IN_REQUEST_CODE)
             analytics?.trackEvent(
                 LOGIN_CANCELLED,
                 LOGIN_CANCELLED,
@@ -76,12 +62,21 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.progressBar.visibility = View.GONE
+        setLoading(false)
     }
 
     override fun onBackPressed() {
         finishAffinity()
         exitProcess(Int.ZERO)
+    }
+
+    private fun signIn() {
+        setLoading()
+        startActivityForResult(signInService?.requestSignIn(), CHOOSER_SIGN_IN_REQUEST_CODE)
+    }
+
+    private fun setLoading(isLoading: Boolean = true) {
+        binding.progressBar.isVisible = isLoading
     }
 
     companion object {

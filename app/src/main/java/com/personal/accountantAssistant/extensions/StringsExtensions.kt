@@ -53,7 +53,7 @@ fun String?.containStr(str: String?) = toNormalizedStr()
     .lowercase(Locale.ROOT)
     .contains(str.toNormalizedStr().lowercase(Locale.ROOT))
 
-fun String?.toDate(): Date? = takeIf { it?.isNotEmpty().orFalse() }?.let {
+fun String?.toDate(): Date? = takeIfNotBlank()?.let {
     try {
         SimpleDateFormat(String.DD_MM_YYYY, Locale.getDefault()).parse(it)
     } catch (e: Exception) {
@@ -61,6 +61,8 @@ fun String?.toDate(): Date? = takeIf { it?.isNotEmpty().orFalse() }?.let {
         Date()
     }
 }
+
+fun String?.takeIfNotBlank() = takeIf { it?.isNotBlank().orFalse() }
 
 fun String.toRoundedBigDecimal() = this.trim().toBigDecimal().rounded()
 
