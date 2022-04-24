@@ -9,6 +9,7 @@
         android:id="@+id/ivPhoto"
         android:layout_width="@dimen/title_height"
         android:layout_height="@dimen/title_height"
+        android:padding="@dimen/smallest_material_margin"
         android:src="@drawable/ic_account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvUser"
@@ -16,7 +17,8 @@
         app:layout_constraintTop_toTopOf="@id/tvUser"
         app:shapeAppearance="?attr/actionButtonStyle"
         app:shapeAppearanceOverlay="@style/AppTheme.RoundedImage"
-        app:strokeColor="@android:color/white"
+        app:strokeColor="@color/primaryColor"
+        app:strokeWidth="@dimen/stroke_size"
         tools:ignore="ContentDescription" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -27,10 +29,11 @@
         android:gravity="center_horizontal|top"
         android:textAlignment="gravity"
         android:textAllCaps="true"
+        android:textColor="@color/blackColor"
         android:textSize="@dimen/default_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/tvEmail"
-        app:layout_constraintEnd_toStartOf="@id/ibLogout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivPhoto"
         app:layout_constraintTop_toBottomOf="@id/tvUser"
         tools:text="Jhon Doe" />
@@ -45,22 +48,9 @@
         android:textSize="@dimen/default_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ibLogout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ivPhoto"
         app:layout_constraintTop_toBottomOf="@id/tvUser"
         tools:text="jhon.doe@a.a" />
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/ibLogout"
-        android:layout_width="@dimen/title_height"
-        android:layout_height="@dimen/title_height"
-        android:backgroundTint="@color/backgroundColor"
-        android:src="@drawable/ic_logout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvUser"
-        app:layout_constraintTop_toTopOf="@id/tvUser"
-        app:tint="@color/primaryColor"
-        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

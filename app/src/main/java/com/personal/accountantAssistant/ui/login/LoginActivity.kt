@@ -16,7 +16,7 @@ import kotlin.system.exitProcess
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val signInService: SignInService by inject()
+    private val signInService: SignInService? by inject()
     private val analytics: AnalyticsProvider? by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,13 +29,13 @@ class LoginActivity : AppCompatActivity() {
             signInButton.apply {
                 setOnClickListener {
                     progressBar.visibility = View.VISIBLE
-                    signInService.requestSignIn()?.let {
+                    signInService?.requestSignIn()?.let {
                         startActivityForResult(it, CHOOSER_SIGN_IN_REQUEST_CODE)
                     } ?: run { progressBar.visibility = View.GONE }
                 }
             }
         }
-        signInService.signOut()
+        signInService?.signOut()
     }
 
     override fun onStart() {
@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        signInService.let { service ->
+        signInService?.let { service ->
             binding.progressBar.visibility = View.VISIBLE
             service.requestAccountNameSignIn()
                 ?.let { startActivityForResult(it, ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) }
@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, resultData)
         if (resultCode == RESULT_OK) {
             resultData?.let {
-                signInService.handleSignInResult(
+                signInService?.handleSignInResult(
                     it, requestCode, binding.signInButton, binding.progressBar
                 )
             }

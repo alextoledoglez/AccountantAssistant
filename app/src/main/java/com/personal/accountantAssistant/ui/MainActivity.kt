@@ -88,6 +88,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        closeApp()
+    }
+
+    fun closeApp() {
         finishAffinity()
         exitProcess(Int.ZERO)
     }

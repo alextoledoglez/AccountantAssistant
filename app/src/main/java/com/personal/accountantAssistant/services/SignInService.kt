@@ -95,14 +95,11 @@ class SignInService(
             }
     }
 
-    private fun signOutResult(): Task<Void>? {
+    fun signOut(onSuccessAction: (() -> Unit)? = null): Task<Void>? {
         return signInClient?.signOut()
-    }
-
-    fun signOut(): Task<Void>? {
-        return signOutResult()
             ?.addOnSuccessListener {
                 cleanData()
+                onSuccessAction?.invoke()
                 trackSignEvent(SIGN_OU_KEY, value = "'${account?.email.orEmpty()}' was signed out")
             }
             ?.addOnFailureListener { exception: Exception? ->
@@ -112,7 +109,7 @@ class SignInService(
 
     private fun setAccount(account: GoogleSignInAccount?) {
         SignInService.account = account
-        accountEmail = account?.email
+        accountEmail = account?.email.orEmpty()
         localStorage.setSignedAccountName(accountEmail)
         analytics.setUserAccount(account?.toUserModel())
         crashlytics.setUser(accountEmail)

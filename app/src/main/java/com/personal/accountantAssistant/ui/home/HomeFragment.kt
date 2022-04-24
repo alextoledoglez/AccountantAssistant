@@ -99,6 +99,11 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val total = values?.total.orZero().rounded()
         val balance = available.minus(total).rounded()
 
+        //Expenses texts
+        val buysText = getString(titleRes.buys)
+        val billsText = getString(titleRes.bills)
+        val totalText = getString(titleRes.total)
+
         //Expenses colors
         val buysColor = getExpensesColorResourceBy(buys)
         val billsColor = getExpensesColorResourceBy(bills)
@@ -110,7 +115,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
         //Balance
         val isZeroLessThanBalance = viewModel.isZeroLessThan(balance)
-        val balanceTitle = if (isZeroLessThanBalance) titleRes.gain else titleRes.missing
+        val balanceText = getString(if (isZeroLessThanBalance) titleRes.gain else titleRes.missing)
         val balanceColor = getColorResourceBy(isZeroLessThanBalance)
 
         binding.lytHeader.apply {
@@ -123,10 +128,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
         viewModel.postDashboardValues(
             listOf(
-                DashboardItemModel(R.drawable.ic_buys, titleRes.buys, buysColor, buys),
-                DashboardItemModel(R.drawable.ic_bills, titleRes.bills, billsColor, bills),
-                DashboardItemModel(R.drawable.ic_money, balanceTitle, balanceColor, balance),
-                DashboardItemModel(R.drawable.ic_total, titleRes.total, totalColor, total)
+                DashboardItemModel(R.drawable.ic_buys, buysText, buysColor, buys),
+                DashboardItemModel(R.drawable.ic_bills, billsText, billsColor, bills),
+                DashboardItemModel(R.drawable.ic_money, balanceText, balanceColor, balance),
+                DashboardItemModel(R.drawable.ic_total, totalText, totalColor, total)
             )
         )
     }

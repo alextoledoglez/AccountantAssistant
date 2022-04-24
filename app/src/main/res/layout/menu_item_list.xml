@@ -16,35 +16,26 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivCardImage"
-            android:layout_width="match_parent"
+            android:id="@+id/ivIcon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_material_margin"
-            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/small_material_margin"
+            android:padding="@dimen/smallest_material_margin"
             android:src="@drawable/ic_buys"
             tools:ignore="ContentDescription" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCardTitle"
-            android:layout_width="match_parent"
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/small_material_margin"
+            android:layout_gravity="center"
             android:gravity="center"
             android:textAlignment="gravity"
+            android:textColor="@color/blackColor"
             android:textSize="@dimen/card_title_text_size"
             android:textStyle="bold"
             tools:text="Expense type" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCardSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_material_margin"
-            android:gravity="center"
-            android:textAlignment="gravity"
-            android:textSize="@dimen/card_subTitle_text_size"
-            android:textStyle="bold"
-            tools:text="$ 1000000.00" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

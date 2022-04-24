@@ -2,13 +2,12 @@ package com.personal.accountantAssistant.domain.models
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import java.math.BigDecimal
 
 data class DashboardItemModel(
     @DrawableRes val drawableRes: Int,
-    @StringRes val strResource: Int,
+    val text: String,
     @ColorInt var color: Int,
     val value: BigDecimal
 ) {

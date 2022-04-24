@@ -4,35 +4,27 @@ import android.view.Menu
 import android.view.MenuInflater
 import com.bumptech.glide.Glide
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.adapters.MenuListAdapter
+import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentMenuBinding
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.providers.AdProvider
+import com.personal.accountantAssistant.services.SignInService
 import org.koin.android.ext.android.inject
 
 
 class MenuFragment : BaseFragment<MenuViewModel>() {
 
     override val binding by viewBinding(FragmentMenuBinding::inflate)
+    private val signInService: SignInService? by inject()
     private val lytUser by lazy { binding.lytUser }
     private val lytContent by lazy { binding.lytContent }
-    private val adProvider: AdProvider? by inject()
+    private val adapter by lazy { MenuListAdapter() }
 
     override fun onDestroy() {
         super.onDestroy()
-        adProvider?.destroyAd()
         lytContent.rvContent.destroyAdapter()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        adProvider?.pauseAd()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        adProvider?.resumeAd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -41,8 +33,11 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
     }
 
     override fun initComponents() {
-        with(lytUser) { ibLogout.setOnClickListener { logOutConfirmation() } }
-        //adProvider?.loadAdOn(binding.flAds)
+        with(lytContent) {
+            srlContent.setOnRefreshListener { viewModel.loadMenus() }
+            rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
+        }
+        binding.ibLogout.setOnClickListener { logOutConfirmation() }
     }
 
     override fun initObservers() {
@@ -54,7 +49,9 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
                 lytContent.vfContent.updateDisplayedChild(it.ordinal)
             }
             user.observe(viewLifecycleOwner) { setupUserLayout(it) }
-            getUser()
+            menus.observe(viewLifecycleOwner) { adapter.submitList(it) }
+            loadUser()
+            loadMenus()
         }
     }
 
@@ -70,6 +67,15 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
     }
 
     private fun logOutConfirmation() {
+        AlertDialogBuilder(requireContext()).showConfirmationFrom(
+            R.string.logout_confirmation_title,
+            R.string.logout_confirmation_message,
+            ::logOut
+        ) {}
+    }
+
+    private fun logOut() {
+        signInService?.signOut { activity?.toMainActivity()?.closeApp() }
     }
 
     companion object {

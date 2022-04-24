@@ -1,0 +1,20 @@
+package com.personal.accountantAssistant.adapters
+
+import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
+import com.personal.accountantAssistant.databinding.MenuItemListBinding
+import com.personal.accountantAssistant.domain.models.MenuItemModel
+import com.personal.accountantAssistant.extensions.toLayoutInflater
+
+class MenuListAdapter : ListAdapter<MenuItemModel, MenuViewHolder>(
+    MenuItemModel.DIFF_UTIL_CALLBACK
+) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuViewHolder(
+        MenuItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false)
+    )
+
+    override fun onBindViewHolder(holder: MenuViewHolder, position: Int) {
+        holder.bind(currentList[position])
+    }
+
+}

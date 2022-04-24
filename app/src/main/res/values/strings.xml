@@ -3,7 +3,9 @@
     <string name="app_name">Accountant assistant</string>
     <string name="app_version">Version: 1.0</string>
     <string name="open_action">Open</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="logout_action">Logout</string>
+    <string name="logout_confirmation_title">@string/logout_action</string>
+    <string name="logout_confirmation_message">Are you sure you want to logout and exit?</string>
     <string name="nav_header_title">accountant.assistant@gmail.com</string>
     <string name="nav_header_subtitle">v1.0.0</string>
     <string name="nav_header_desc">Navigation header</string>
