@@ -2,12 +2,13 @@ package com.personal.accountantAssistant.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.databinding.ActivityLoginBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
+import com.personal.accountantAssistant.extensions.ZERO
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
 import org.koin.android.ext.android.inject
 import kotlin.system.exitProcess
@@ -16,6 +17,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val signInService: SignInService by inject()
+    private val analytics: AnalyticsProvider? by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,11 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         signInService.signOut()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        analytics?.trackScreenViewEvent(this::class.simpleName)
     }
 
     override fun onResume() {
@@ -59,7 +66,11 @@ class LoginActivity : AppCompatActivity() {
             }
         } else {
             binding.progressBar.visibility = View.GONE
-            Log.d(TAG, getString(R.string.sign_in_canceled))
+            analytics?.trackEvent(
+                LOGIN_CANCELLED,
+                LOGIN_CANCELLED,
+                getString(R.string.sign_in_canceled)
+            )
         }
     }
 
@@ -70,13 +81,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         finishAffinity()
-        exitProcess(0)
+        exitProcess(Int.ZERO)
     }
 
     companion object {
         const val ACCOUNT_NAME_SIGN_IN_REQUEST_CODE = 1
         const val CHOOSER_SIGN_IN_REQUEST_CODE = 2
-        private val TAG = LoginActivity::class.java.simpleName
+        const val LOGIN_CANCELLED = "login_cancelled"
     }
 
 }

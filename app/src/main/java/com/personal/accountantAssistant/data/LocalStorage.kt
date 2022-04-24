@@ -28,8 +28,6 @@ class LocalStorage(val context: Context) {
         AVAILABLE_MONEY, BigDecimal.ZERO.toFloat()
     ).toBigDecimal().rounded()
 
-    fun getAvailableMoneyStr(): String = getAvailableMoney().toString()
-
     private fun setFirstStrDate(firstDate: Date?) {
         getDefaultSharedPreferences().edit()
             .putString(FIRST_STR_DATE, firstDate.toDateStr()).apply()
@@ -55,8 +53,6 @@ class LocalStorage(val context: Context) {
         setFirstStrDate(firstDate)
         setLastStrDate(lastDate)
     }
-
-    fun getPeriodDates() = listOf(getFirstDate(), getLastDate())
 
     fun setSignedAccountName(accountName: String?) {
         getDefaultSharedPreferences().edit().putString(SIGNED_ACCOUNT_NAME, accountName).apply()

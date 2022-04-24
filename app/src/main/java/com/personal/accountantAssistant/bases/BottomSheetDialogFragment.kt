@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.personal.accountantAssistant.providers.AnalyticsProvider
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.getViewModel
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
@@ -18,6 +20,7 @@ abstract class BottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogF
     abstract fun initObservers()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private val analytics: AnalyticsProvider? by inject()
     val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
 
     override fun onCreateView(
@@ -30,6 +33,7 @@ abstract class BottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogF
     override fun onStart() {
         super.onStart()
         bottomSheetBehavior = BottomSheetBehavior.from(binding.root.parent as View)
+        analytics?.trackScreenViewEvent(this::class.simpleName)
         initComponents()
         initObservers()
     }

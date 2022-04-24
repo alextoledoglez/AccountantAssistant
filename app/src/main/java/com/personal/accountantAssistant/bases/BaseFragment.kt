@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
+import com.personal.accountantAssistant.providers.AnalyticsProvider
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.getViewModel
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
@@ -19,7 +21,7 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
     abstract fun initObservers()
 
     val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
-
+    private val analytics: AnalyticsProvider? by inject()
     private val toolbarTitle = MutableLiveData<String>()
 
     open fun onActivityBackPressed(): Boolean = false
@@ -33,6 +35,7 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        analytics?.trackScreenViewEvent(this::class.simpleName)
         initComponents()
         initObservers()
     }

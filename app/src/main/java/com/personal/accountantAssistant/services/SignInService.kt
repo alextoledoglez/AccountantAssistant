@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.services
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -19,6 +18,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.LocalStorage
+import com.personal.accountantAssistant.data.mappers.toUserModel
 import com.personal.accountantAssistant.extensions.startMainActivity
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.CrashlyticsProvider
@@ -43,11 +43,9 @@ class SignInService(
      * Request sign in intent from a provided account.
      */
     fun requestAccountNameSignIn(): Intent? {
-        Log.d(TAG, "Requesting silent sign-in")
-        val signInOptions = accountName?.let {
-            getSignInOptionsBuilder().setAccountName(it).build()
-        }
-        signInClient = signInOptions?.let { GoogleSignIn.getClient(context, it) }
+        trackSignEvent(SIGN_IN_KEY, "Requesting silent sign-in")
+        val options = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
+        signInClient = options?.let { GoogleSignIn.getClient(context, it) }
         return signInClient?.signInIntent
     }
 
@@ -55,9 +53,9 @@ class SignInService(
      * Request sign in intent.
      */
     fun requestSignIn(): Intent? {
-        Log.d(TAG, "Requesting sign-in picker")
-        val signInOptions = getSignInOptionsBuilder().requestEmail().build()
-        signInClient = GoogleSignIn.getClient(context, signInOptions)
+        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in picker")
+        val options = getSignInOptionsBuilder().requestEmail().build()
+        signInClient = GoogleSignIn.getClient(context, options)
         return signInClient?.signInIntent
     }
 
@@ -69,33 +67,28 @@ class SignInService(
     ) {
         GoogleSignIn.getSignedInAccountFromIntent(result)
             .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
-                setAccountName(googleAccount.email)
-
-                Log.d(TAG, "Signed in as $accountName")
-
+                setAccount(googleAccount)
                 val httpTransport = AndroidHttp.newCompatibleTransport()
                 val jsonFactory = GsonFactory()
                 val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
                 credential?.selectedAccount = googleAccount.account
-                val appName = context.getString(R.string.app_name)
 
                 drive = Drive.Builder(httpTransport, jsonFactory, credential)
-                    .setApplicationName(appName)
+                    .setApplicationName(context.getString(R.string.app_name))
                     .build()
 
-                //Once time you are sign in
                 if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
                     signInButton?.visibility = View.INVISIBLE
                 }
                 context.startMainActivity()
             }
             .addOnFailureListener { exception: Exception? ->
-                Log.e(TAG, "Unable to sign in.", exception)
                 if (requestCode == LoginActivity.ACCOUNT_NAME_SIGN_IN_REQUEST_CODE) {
                     signInButton?.visibility = View.VISIBLE
                 }
                 progressBar?.visibility = View.GONE
                 cleanData()
+                trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
             }
     }
 
@@ -106,29 +99,35 @@ class SignInService(
     fun signOut(): Task<Void>? {
         return signOutResult()
             ?.addOnSuccessListener {
-                Log.d(TAG, "Signed out")
                 cleanData()
+                trackSignEvent(SIGN_OU_KEY, value = "'$accountName' was signed out")
             }
             ?.addOnFailureListener { exception: Exception? ->
-                Log.e(TAG, "Unable to sign out.", exception)
+                trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
             }
     }
 
-    private fun setAccountName(accountName: String?) {
-        this.accountName = accountName
+    private fun setAccount(account: GoogleSignInAccount?) {
+        this.accountName = account?.email
         localStorage.setSignedAccountName(accountName)
-        analytics.setUserEmail(accountName)
+        analytics.setUserAccount(account?.toUserModel())
         crashlytics.setUser(accountName)
+        trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$accountName'")
     }
 
     private fun cleanData() {
         signInClient = null
+        setAccount(null)
         drive = null
-        setAccountName(null)
+    }
+
+    private fun trackSignEvent(key: String, value: String) {
+        analytics.trackEvent(key, key, value)
     }
 
     companion object {
-        private val TAG = SignInService::class.java.simpleName
+        const val SIGN_IN_KEY = "sign_in_key"
+        const val SIGN_OU_KEY = "sign_out_key"
         var drive: Drive? = null
     }
 }
