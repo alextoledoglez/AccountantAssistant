@@ -193,4 +193,9 @@
         <item name="android:minHeight">@dimen/default_material_margin</item>
     </style>
 
+    <style name="AppTheme.RoundedImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

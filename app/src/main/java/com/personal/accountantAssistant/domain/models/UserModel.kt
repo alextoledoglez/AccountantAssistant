@@ -1,11 +1,13 @@
 package com.personal.accountantAssistant.domain.models
 
+import android.net.Uri
+
 data class UserModel(
     val name: String,
     val lastName: String,
     val fullName: String,
     val email: String,
-    val photoUrl: String
+    val photoUri: Uri?
 ) {
     companion object {
         const val USER_DISPLAY_NAME_KEY = "user_display_name_key"

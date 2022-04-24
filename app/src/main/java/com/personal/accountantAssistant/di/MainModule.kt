@@ -20,6 +20,7 @@ import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.home.HomeViewModel
+import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
@@ -31,6 +32,7 @@ val viewModelModule = module {
     viewModel { WalletViewModel(get(), get()) }
     viewModel { BuysViewModel(get(), get()) }
     viewModel { BillsViewModel(get(), get()) }
+    viewModel { MenuViewModel(get(), get()) }
 }
 
 val dataModule = module {

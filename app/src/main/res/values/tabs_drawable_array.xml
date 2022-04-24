@@ -5,5 +5,6 @@
         <item name="tab_wallet" type="drawable">@drawable/ic_wallet</item>
         <item name="tab_buys" type="drawable">@drawable/ic_buys</item>
         <item name="tab_bills" type="drawable">@drawable/ic_bills</item>
+        <item name="tab_menu" type="drawable">@drawable/ic_menu</item>
     </array>
 </resources>

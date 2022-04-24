@@ -32,8 +32,11 @@ class SignInService(
 ) {
 
     private var signInClient: GoogleSignInClient? = null
-    private var accountName: String? = localStorage.getSignedAccountName()
     private var scopes: Collection<String> = listOf(DriveScopes.DRIVE)
+
+    init {
+        accountEmail = localStorage.getSignedAccountName()
+    }
 
     private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder = GoogleSignInOptions
         .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -44,7 +47,7 @@ class SignInService(
      */
     fun requestAccountNameSignIn(): Intent? {
         trackSignEvent(SIGN_IN_KEY, "Requesting silent sign-in")
-        val options = accountName?.let { getSignInOptionsBuilder().setAccountName(it).build() }
+        val options = accountEmail?.let { getSignInOptionsBuilder().setAccountName(it).build() }
         signInClient = options?.let { GoogleSignIn.getClient(context, it) }
         return signInClient?.signInIntent
     }
@@ -100,7 +103,7 @@ class SignInService(
         return signOutResult()
             ?.addOnSuccessListener {
                 cleanData()
-                trackSignEvent(SIGN_OU_KEY, value = "'$accountName' was signed out")
+                trackSignEvent(SIGN_OU_KEY, value = "'${account?.email.orEmpty()}' was signed out")
             }
             ?.addOnFailureListener { exception: Exception? ->
                 trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
@@ -108,11 +111,12 @@ class SignInService(
     }
 
     private fun setAccount(account: GoogleSignInAccount?) {
-        this.accountName = account?.email
-        localStorage.setSignedAccountName(accountName)
+        SignInService.account = account
+        accountEmail = account?.email
+        localStorage.setSignedAccountName(accountEmail)
         analytics.setUserAccount(account?.toUserModel())
-        crashlytics.setUser(accountName)
-        trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$accountName'")
+        crashlytics.setUser(accountEmail)
+        trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$accountEmail'")
     }
 
     private fun cleanData() {
@@ -128,6 +132,8 @@ class SignInService(
     companion object {
         const val SIGN_IN_KEY = "sign_in_key"
         const val SIGN_OU_KEY = "sign_out_key"
+        var account: GoogleSignInAccount? = null
+        var accountEmail: String? = null
         var drive: Drive? = null
     }
 }

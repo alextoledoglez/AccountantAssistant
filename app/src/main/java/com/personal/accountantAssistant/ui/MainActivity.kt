@@ -21,6 +21,7 @@ import com.personal.accountantAssistant.extensions.hideMenuOptions
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
+import com.personal.accountantAssistant.ui.menu.MenuFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
 import kotlin.system.exitProcess
 
@@ -65,17 +66,16 @@ class MainActivity : AppCompatActivity() {
                     HomeFragment.newInstance(),
                     WalletFragment.newInstance(),
                     BuysFragment.newInstance(),
-                    BillsFragment.newInstance()
+                    BillsFragment.newInstance(),
+                    MenuFragment.newInstance()
                 )
             )
             adapter = pagerAdapter
         }
 
         val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
-        val tabTitles = resources.getStringArray(R.array.tabs_titles)
         tabLayoutMediator = TabLayoutMediator(binding.tabHeader, binding.vpContent) { tab, index ->
             tab.setIcon(tabIcons.getResourceIdOrThrow(index))
-            tab.text = tabTitles[index]
         }
         tabLayoutMediator?.attach()
         tabIcons.recycle()

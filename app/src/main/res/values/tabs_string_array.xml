@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="tabs_titles">
-        <item name="tab_home" type="string">@string/menu_home</item>
-        <item name="tab_wallet" type="string">@string/menu_wallet</item>
-        <item name="tab_buys" type="string">@string/menu_buys</item>
-        <item name="tab_bills" type="string">@string/menu_bills</item>
-    </string-array>
-</resources>
