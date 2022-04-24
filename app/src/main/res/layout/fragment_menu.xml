@@ -9,7 +9,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_horizontal"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.menu.MenuFragment">
 
     <include
         android:id="@+id/lytUser"
