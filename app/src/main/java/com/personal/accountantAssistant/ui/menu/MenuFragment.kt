@@ -14,7 +14,6 @@ import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.services.SignInService
 import org.koin.android.ext.android.inject
 
-
 class MenuFragment : BaseFragment<MenuViewModel>() {
 
     override val binding by viewBinding(FragmentMenuBinding::inflate)
@@ -51,6 +50,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
             }
             user.observe(viewLifecycleOwner) { setupUserLayout(it) }
             menus.observe(viewLifecycleOwner) { adapter.submitList(it) }
+            finished.observe(viewLifecycleOwner) { if (it.orFalse()) activity?.closeApp() }
             loadUser()
             loadMenus()
         }
@@ -76,7 +76,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
     }
 
     private fun logOut() {
-        signInService?.signOut { activity?.closeApp() }
+        signInService?.signOut { viewModel.clearUser() }
     }
 
     companion object {

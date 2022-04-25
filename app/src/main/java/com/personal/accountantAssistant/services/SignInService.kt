@@ -13,22 +13,18 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.mappers.toUserModel
-import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.takeIfNotBlank
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.CrashlyticsProvider
 
 class SignInService(
     private val context: Context,
-    private val localStorage: LocalStorage?,
     private val analytics: AnalyticsProvider?,
     private val crashlytics: CrashlyticsProvider?
 ) {
 
-    private var signInClient: GoogleSignInClient? = null
-    private var user: UserModel? = localStorage?.getSignedUser()
+    private var client: GoogleSignInClient? = null
+    private var account: GoogleSignInAccount? = null
     private var scopes: Collection<String> = listOf(DriveScopes.DRIVE)
 
     private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder = GoogleSignInOptions
@@ -38,13 +34,13 @@ class SignInService(
     /**
      * Request sign in intent from a provided account.
      */
-    fun requestSignInAccount(): Intent? {
+    fun requestSignInAccountName(email: String?): Intent? {
         trackSignEvent(SIGN_IN_KEY, "Requesting silent sign-in")
-        val options = user?.email.takeIfNotBlank()?.let {
+        val options = email.takeIfNotBlank()?.let {
             getSignInOptionsBuilder().setAccountName(it).build()
         }
-        signInClient = options?.let { GoogleSignIn.getClient(context, it) }
-        return signInClient?.signInIntent
+        client = options?.let { GoogleSignIn.getClient(context, it) }
+        return client?.signInIntent
     }
 
     /**
@@ -53,18 +49,19 @@ class SignInService(
     fun requestSignInPicker(): Intent? {
         trackSignEvent(SIGN_IN_KEY, "Requesting sign-in picker")
         val options = getSignInOptionsBuilder().requestEmail().build()
-        signInClient = GoogleSignIn.getClient(context, options)
-        return signInClient?.signInIntent
+        client = GoogleSignIn.getClient(context, options)
+        return client?.signInIntent
     }
 
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
     fun handleSignInResult(
-        result: Intent?, onSuccess: (() -> Unit)? = null, onFailure: (() -> Unit)? = null
+        result: Intent?,
+        onSuccess: ((account: GoogleSignInAccount?) -> Unit)?,
+        onFailure: (() -> Unit)? = null
     ) {
         GoogleSignIn.getSignedInAccountFromIntent(result).addOnSuccessListener {
-            setAccount(it)
             val httpTransport = AndroidHttp.newCompatibleTransport()
             val jsonFactory = GsonFactory()
             val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
@@ -72,39 +69,30 @@ class SignInService(
             drive = Drive.Builder(
                 httpTransport, jsonFactory, credential
             ).setApplicationName(context.getString(R.string.app_name)).build()
-            onSuccess?.invoke()
+            updateAccount(it)
+            onSuccess?.invoke(it)
         }.addOnFailureListener { exception: Exception? ->
-            cleanData()
             onFailure?.invoke()
-            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
+            trackSignEvent(SIGN_OUT_KEY, value = "Unable to sign out: ${exception?.message}")
         }
     }
 
-    fun signOut(onSuccessAction: (() -> Unit)? = null) {
-        signInClient?.signOut()?.addOnSuccessListener {
-            cleanData()
-            onSuccessAction?.invoke()
-            trackSignEvent(SIGN_OU_KEY, value = "'${user?.email.orEmpty()}' was signed out.")
+    fun signOut(onSuccess: (() -> Unit)? = null) {
+        client?.signOut()?.addOnSuccessListener {
+            updateAccount()
+            onSuccess?.invoke()
         }?.addOnFailureListener { exception: Exception? ->
-            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}.")
+            trackSignEvent(SIGN_OUT_KEY, value = "Unable to sign out: ${exception?.message}.")
         } ?: run {
-            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: Null signIn client.")
+            trackSignEvent(SIGN_OUT_KEY, value = "Unable to sign out: Null signIn client.")
         }
     }
 
-    private fun setAccount(account: GoogleSignInAccount?) {
-        user = account?.toUserModel()
-        localStorage?.setSignedUser(user)
-        analytics?.setUserAccount(user)
-        val email = user?.email.orEmpty()
+    private fun updateAccount(account: GoogleSignInAccount? = null) {
+        this.account = account
+        val email = account?.email.orEmpty()
         crashlytics?.setUser(email)
         trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$email'.")
-    }
-
-    private fun cleanData() {
-        setAccount(null)
-        signInClient = null
-        drive = null
     }
 
     private fun trackSignEvent(key: String, value: String) {
@@ -113,7 +101,7 @@ class SignInService(
 
     companion object {
         const val SIGN_IN_KEY = "sign_in_key"
-        const val SIGN_OU_KEY = "sign_out_key"
+        const val SIGN_OUT_KEY = "sign_out_key"
         var drive: Drive? = null
     }
 }

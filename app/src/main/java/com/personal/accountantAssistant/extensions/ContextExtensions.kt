@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.provider.CalendarContract
 import android.view.LayoutInflater
@@ -30,18 +31,16 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.util.*
-import kotlin.system.exitProcess
+
+fun Context.toSharedPreferences(): SharedPreferences = getSharedPreferences(
+    "${packageName}_preferences", Context.MODE_PRIVATE
+)
 
 private fun Context.hasPermissionGranted(
     permission: String
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 fun Context.toLayoutInflater(): LayoutInflater = LayoutInflater.from(this)
-
-fun Activity.closeApp() {
-    finishAffinity()
-    exitProcess(Int.ZERO)
-}
 
 fun Context.startMainActivity() {
     Intent(this, MainActivity::class.java).apply {

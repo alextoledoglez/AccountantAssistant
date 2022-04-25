@@ -9,14 +9,12 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.CardsListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
-import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
-import org.koin.android.ext.android.inject
 
 class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
@@ -26,7 +24,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     private val adapter by lazy {
         CardsListAdapter(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
     }
-    private val localStorage: LocalStorage? by inject()
 
     override fun onDestroy() {
         super.onDestroy()
@@ -66,7 +63,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             }
             summary.observe(viewLifecycleOwner) {
                 updateLayoutSummary(it)
-                localStorage?.setAvailableMoney(it.total.orZero().toFloat())
                 lytContent.srlContent.stopRefreshing()
             }
             cards.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }

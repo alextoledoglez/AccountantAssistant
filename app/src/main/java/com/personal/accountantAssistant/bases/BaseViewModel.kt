@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
 abstract class BaseViewModel(
-    private val analytics: AnalyticsProvider?
+    val analytics: AnalyticsProvider?
 ) : ViewModel(), CoroutineScope {
 
     private val job = Job()

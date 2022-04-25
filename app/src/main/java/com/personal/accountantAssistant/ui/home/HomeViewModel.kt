@@ -3,11 +3,14 @@ package com.personal.accountantAssistant.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.domain.repository.BuysRepository
+import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
+import com.personal.accountantAssistant.domain.useCases.GetFirstDateUseCase
+import com.personal.accountantAssistant.domain.useCases.GetLastDateUseCase
+import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.singleOrNull
@@ -17,7 +20,10 @@ import java.util.*
 
 class HomeViewModel(
     analytics: AnalyticsProvider?,
-    private val localStorage: LocalStorage?,
+    val getFirstDate: GetFirstDateUseCase,
+    val getLastDate: GetLastDateUseCase,
+    val setPeriodDates: SetPeriodDatesUseCase,
+    val getAvailableMoney: GetAvailableMoneyUseCase,
     private val buysRepository: BuysRepository?,
     private val billsRepository: BillsRepository?
 ) : BaseViewModel(analytics) {
@@ -34,10 +40,10 @@ class HomeViewModel(
     private val _availableMoney = MutableLiveData<BigDecimal>()
     val availableMoney: LiveData<BigDecimal> get() = _availableMoney
 
-    private val _firstPeriodDate = MutableLiveData<Date?>(localStorage?.getFirstDate())
+    private val _firstPeriodDate = MutableLiveData<Date?>()
     private val firstPeriodDate = _firstPeriodDate
 
-    private val _lastPeriodDate = MutableLiveData<Date?>(localStorage?.getLastDate())
+    private val _lastPeriodDate = MutableLiveData<Date?>()
     private val lastPeriodDate = _lastPeriodDate
 
     fun isZeroLessThan(value: BigDecimal) = (value >= BigDecimal.ZERO)
@@ -48,8 +54,8 @@ class HomeViewModel(
 
     fun calculateExpenses() = launch {
         setLoading()
-        val lastDate = localStorage?.getLastDate()
-        setPeriodDates(localStorage?.getFirstDate(), lastDate)
+        val lastDate = getLastDate().singleOrNull()
+        setPeriodDates(getFirstDate().singleOrNull(), lastDate)
         val buysExpenses = buysRepository?.getTotalValueUntil(lastDate)
             ?.onError { setMessage(it.message) }
             ?.singleOrNull().orZero()
@@ -57,7 +63,7 @@ class HomeViewModel(
             ?.onError { setMessage(it.message) }
             ?.singleOrNull().orZero()
         val totalExpenses = buysExpenses.plus(billsExpenses)
-        _availableMoney.postValue(localStorage?.getAvailableMoney())
+        _availableMoney.postValue(getAvailableMoney().singleOrNull())
         _expensesValues.postValue(ExpensesValuesModel(buysExpenses, billsExpenses, totalExpenses))
         setData()
     }
@@ -70,15 +76,12 @@ class HomeViewModel(
         period?.let { savePeriodDates(it.first.toUtcDate(), it.second.toUtcDate()) }
     }
 
-    private fun setPeriodDates(firstDate: Date?, lastDate: Date?) {
+    private fun savePeriodDates(firstDate: Date?, lastDate: Date?) {
         _firstPeriodDate.postValue(firstDate)
         _lastPeriodDate.postValue(lastDate)
-        _periodValue.postValue("${firstDate.toDateStr()}${String.DASH_SEPARATOR}${lastDate.toDateStr()}")
-    }
-
-    private fun savePeriodDates(firstDate: Date?, lastDate: Date?) {
+        val period = "${firstDate.toDateStr()}${String.DASH_SEPARATOR}${lastDate.toDateStr()}"
+        _periodValue.postValue(period)
         setPeriodDates(firstDate, lastDate)
-        localStorage?.setPeriodDates(firstDate, lastDate)
     }
 
     fun postDashboardValues(list: List<DashboardItemModel>) {

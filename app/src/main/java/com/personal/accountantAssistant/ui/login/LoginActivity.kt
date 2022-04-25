@@ -1,63 +1,56 @@
 package com.personal.accountantAssistant.ui.login
 
-import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.bases.BaseActivity
 import com.personal.accountantAssistant.databinding.ActivityLoginBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
-import com.personal.accountantAssistant.extensions.closeApp
-import com.personal.accountantAssistant.extensions.startMainActivity
+import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
 import org.koin.android.ext.android.inject
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity<LoginViewModel>() {
 
-    private lateinit var binding: ActivityLoginBinding
+    override val binding by viewBinding(ActivityLoginBinding::inflate)
     private val analytics: AnalyticsProvider? by inject()
     private val service: SignInService? by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainModuleInitializer.initialize()
-        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        binding.signInButton.setOnClickListener { signInChooser() }
-    }
-
-    override fun onStart() {
-        super.onStart()
         analytics?.trackScreenViewEvent(this::class.simpleName)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        signIn()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, resultData)
-        if (resultCode == RESULT_OK) {
-            service?.handleSignInResult(
-                resultData, ::startMainActivity, ::onSignInFail
-            ) ?: run { onSignInFail() }
-        } else onSignInFail()
+        binding.signInButton.setOnClickListener { signInChooser() }
+        with(viewModel) {
+            isProcessing.observe(this@LoginActivity) { setProcessing(it) }
+            isLogged.observe(this@LoginActivity) { if (it.orFalse()) startMainActivity() }
+            userEmail.observe(this@LoginActivity) {
+                if (it?.isNotBlank().orFalse() && !isLogged.value.orFalse())
+                    signIn(it)
+                else
+                    setLoginActionVisible()
+            }
+            getUser()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        setLoading(false)
+        setProcessing(false)
     }
 
     override fun onBackPressed() {
         closeApp()
     }
 
-    private fun setLoading(isLoading: Boolean = true) {
-        binding.progressBar.isVisible = isLoading
+    private fun setProcessing(isProcessing: Boolean = true) {
+        if (isProcessing)
+            setLoginActionVisible(false)
+        binding.progressBar.isVisible = isProcessing
     }
 
     private fun setLoginActionVisible(isVisible: Boolean = true) {
@@ -65,21 +58,21 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInChooser() {
-        setLoading()
-        service?.requestSignInPicker()?.let {
-            startActivityForResult(it, CHOOSER_SIGN_IN_REQUEST_CODE)
-        } ?: run { onSignInFail() }
+        setProcessing()
+        service?.requestSignInPicker()
+            ?.let { loginPickerLauncher.launch(it) }
+            ?: run { onSignInFail() }
     }
 
-    private fun signIn() {
-        setLoading()
-        service?.requestSignInAccount()?.let {
-            startActivityForResult(it, ACCOUNT_NAME_SIGN_IN_REQUEST_CODE)
-        } ?: run { onSignInFail() }
+    private fun signIn(email: String?) {
+        setProcessing()
+        service?.requestSignInAccountName(email)
+            ?.let { loginAccountLauncher.launch(it) }
+            ?: run { onSignInFail() }
     }
 
     private fun onSignInFail() {
-        setLoading(false)
+        setProcessing(false)
         setLoginActionVisible()
         analytics?.trackEvent(
             LOGIN_CANCELLED,
@@ -88,9 +81,25 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
+    private var loginPickerLauncher = setActivityForResult { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            service
+                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
+                ?: run { onSignInFail() }
+        } else
+            onSignInFail()
+    }
+
+    private var loginAccountLauncher = setActivityForResult { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            service
+                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
+                ?: run { onSignInFail() }
+        } else
+            onSignInFail()
+    }
+
     companion object {
-        const val ACCOUNT_NAME_SIGN_IN_REQUEST_CODE = 1
-        const val CHOOSER_SIGN_IN_REQUEST_CODE = 2
         const val LOGIN_CANCELLED = "login_cancelled"
     }
 

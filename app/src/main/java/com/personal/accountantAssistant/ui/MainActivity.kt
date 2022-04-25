@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.ui
 
 import android.os.Bundle
 import android.view.Menu
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -10,23 +9,24 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.ViewPagerAdapter
+import com.personal.accountantAssistant.bases.BaseActivity
 import com.personal.accountantAssistant.data.mappers.toBill
 import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.databinding.ActivityMainBinding
-import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.closeApp
 import com.personal.accountantAssistant.extensions.hideMenuOptions
+import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.menu.MenuFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<Nothing>() {
 
-    lateinit var binding: ActivityMainBinding
+    override val binding by viewBinding(ActivityMainBinding::inflate)
     private var pagerAdapter: ViewPagerAdapter? = null
     private var tabLayoutMediator: TabLayoutMediator? = null
 
@@ -53,9 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainModuleInitializer.initialize()
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.vpContent.apply {
