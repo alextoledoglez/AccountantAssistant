@@ -7,7 +7,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
-import com.google.android.gms.tasks.Task
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.gson.GsonFactory
@@ -16,6 +15,7 @@ import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.mappers.toUserModel
+import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.takeIfNotBlank
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.CrashlyticsProvider
@@ -27,8 +27,8 @@ class SignInService(
     private val crashlytics: CrashlyticsProvider?
 ) {
 
-    private var accountEmail: String? = null
     private var signInClient: GoogleSignInClient? = null
+    private var user: UserModel? = localStorage?.getSignedUser()
     private var scopes: Collection<String> = listOf(DriveScopes.DRIVE)
 
     private fun getSignInOptionsBuilder(): GoogleSignInOptions.Builder = GoogleSignInOptions
@@ -38,10 +38,9 @@ class SignInService(
     /**
      * Request sign in intent from a provided account.
      */
-    fun requestAccountNameSignIn(): Intent? {
+    fun requestSignInAccount(): Intent? {
         trackSignEvent(SIGN_IN_KEY, "Requesting silent sign-in")
-        accountEmail = localStorage?.getSignedAccountName()
-        val options = accountEmail?.takeIfNotBlank()?.let {
+        val options = user?.email.takeIfNotBlank()?.let {
             getSignInOptionsBuilder().setAccountName(it).build()
         }
         signInClient = options?.let { GoogleSignIn.getClient(context, it) }
@@ -51,7 +50,7 @@ class SignInService(
     /**
      * Request sign in intent.
      */
-    fun requestSignIn(): Intent? {
+    fun requestSignInPicker(): Intent? {
         trackSignEvent(SIGN_IN_KEY, "Requesting sign-in picker")
         val options = getSignInOptionsBuilder().requestEmail().build()
         signInClient = GoogleSignIn.getClient(context, options)
@@ -61,43 +60,45 @@ class SignInService(
     /**
      * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
      */
-    fun handleSignInResult(result: Intent?): Boolean {
-        return GoogleSignIn.getSignedInAccountFromIntent(result)
-            .addOnSuccessListener { googleAccount: GoogleSignInAccount ->
-                setAccount(googleAccount)
-                val httpTransport = AndroidHttp.newCompatibleTransport()
-                val jsonFactory = GsonFactory()
-                val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
-                credential?.selectedAccount = googleAccount.account
-                drive = Drive.Builder(
-                    httpTransport, jsonFactory, credential
-                ).setApplicationName(context.getString(R.string.app_name)).build()
-            }
-            .addOnFailureListener { exception: Exception? ->
-                cleanData()
-                trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
-            }.isSuccessful
+    fun handleSignInResult(
+        result: Intent?, onSuccess: (() -> Unit)? = null, onFailure: (() -> Unit)? = null
+    ) {
+        GoogleSignIn.getSignedInAccountFromIntent(result).addOnSuccessListener {
+            setAccount(it)
+            val httpTransport = AndroidHttp.newCompatibleTransport()
+            val jsonFactory = GsonFactory()
+            val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
+            credential?.selectedAccount = it.account
+            drive = Drive.Builder(
+                httpTransport, jsonFactory, credential
+            ).setApplicationName(context.getString(R.string.app_name)).build()
+            onSuccess?.invoke()
+        }.addOnFailureListener { exception: Exception? ->
+            cleanData()
+            onFailure?.invoke()
+            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
+        }
     }
 
-    fun signOut(onSuccessAction: (() -> Unit)? = null): Task<Void>? {
-        return signInClient?.signOut()
-            ?.addOnSuccessListener {
-                cleanData()
-                onSuccessAction?.invoke()
-                trackSignEvent(SIGN_OU_KEY, value = "'${account?.email.orEmpty()}' was signed out")
-            }
-            ?.addOnFailureListener { exception: Exception? ->
-                trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}")
-            }
+    fun signOut(onSuccessAction: (() -> Unit)? = null) {
+        signInClient?.signOut()?.addOnSuccessListener {
+            cleanData()
+            onSuccessAction?.invoke()
+            trackSignEvent(SIGN_OU_KEY, value = "'${user?.email.orEmpty()}' was signed out.")
+        }?.addOnFailureListener { exception: Exception? ->
+            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: ${exception?.message}.")
+        } ?: run {
+            trackSignEvent(SIGN_OU_KEY, value = "Unable to sign out: Null signIn client.")
+        }
     }
 
     private fun setAccount(account: GoogleSignInAccount?) {
-        SignInService.account = account
-        accountEmail = account?.email
-        localStorage?.setSignedAccountName(accountEmail)
-        analytics?.setUserAccount(account?.toUserModel())
-        crashlytics?.setUser(accountEmail)
-        trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$accountEmail'")
+        user = account?.toUserModel()
+        localStorage?.setSignedUser(user)
+        analytics?.setUserAccount(user)
+        val email = user?.email.orEmpty()
+        crashlytics?.setUser(email)
+        trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$email'.")
     }
 
     private fun cleanData() {
@@ -113,7 +114,6 @@ class SignInService(
     companion object {
         const val SIGN_IN_KEY = "sign_in_key"
         const val SIGN_OU_KEY = "sign_out_key"
-        var account: GoogleSignInAccount? = null
         var drive: Drive? = null
     }
 }

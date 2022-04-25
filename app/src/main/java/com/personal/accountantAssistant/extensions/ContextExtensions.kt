@@ -30,12 +30,18 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.util.*
+import kotlin.system.exitProcess
 
 private fun Context.hasPermissionGranted(
     permission: String
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 fun Context.toLayoutInflater(): LayoutInflater = LayoutInflater.from(this)
+
+fun Activity.closeApp() {
+    finishAffinity()
+    exitProcess(Int.ZERO)
+}
 
 fun Context.startMainActivity() {
     Intent(this, MainActivity::class.java).apply {

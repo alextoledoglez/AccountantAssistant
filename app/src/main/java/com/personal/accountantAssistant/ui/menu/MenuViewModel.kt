@@ -4,11 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.mappers.toUserModel
 import com.personal.accountantAssistant.domain.models.MenuItemModel
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.providers.AnalyticsProvider
-import com.personal.accountantAssistant.services.SignInService
+import kotlinx.coroutines.launch
 
 class MenuViewModel(
     analytics: AnalyticsProvider?,
@@ -22,9 +21,11 @@ class MenuViewModel(
     val menus: LiveData<List<MenuItemModel?>?> get() = _menus
 
     fun loadUser() {
-        setLoading()
-        _user.postValue(SignInService.account?.toUserModel())
-        setData()
+        launch {
+            setLoading()
+            localStorage?.getSignedUser()?.let { _user.postValue(it) }
+            setData()
+        }
     }
 
     fun loadMenus() {

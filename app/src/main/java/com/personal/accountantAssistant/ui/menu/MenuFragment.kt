@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.ui.menu
 
 import android.view.Menu
 import android.view.MenuInflater
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.adapters.MenuListAdapter
@@ -57,7 +58,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
 
     private fun setupUserLayout(user: UserModel?) {
         with(lytUser) {
-            Glide.with(requireContext()).load(user?.photoUri)
+            Glide.with(requireContext()).load(user?.photoPath?.toUri())
                 .placeholder(R.drawable.ic_account)
                 .error(R.drawable.ic_account)
                 .into(ivPhoto)
@@ -75,7 +76,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
     }
 
     private fun logOut() {
-        signInService?.signOut { activity?.toMainActivity()?.closeApp() }
+        signInService?.signOut { activity?.closeApp() }
     }
 
     companion object {

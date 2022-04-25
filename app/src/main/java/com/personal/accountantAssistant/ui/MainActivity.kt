@@ -16,14 +16,13 @@ import com.personal.accountantAssistant.databinding.ActivityMainBinding
 import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.ZERO
+import com.personal.accountantAssistant.extensions.closeApp
 import com.personal.accountantAssistant.extensions.hideMenuOptions
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.menu.MenuFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -89,11 +88,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         closeApp()
-    }
-
-    fun closeApp() {
-        finishAffinity()
-        exitProcess(Int.ZERO)
     }
 
 }

@@ -8,5 +8,5 @@ fun GoogleSignInAccount.toUserModel() = UserModel(
     lastName = familyName.orEmpty(),
     fullName = displayName.orEmpty(),
     email = email.orEmpty(),
-    photoUri = photoUrl
+    photoPath = photoUrl?.toString()
 )
