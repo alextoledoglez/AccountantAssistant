@@ -18,11 +18,6 @@ data class CardEntity(
     @ColumnInfo(name = VALUE) var value: Double? = Double.DEFAULT_VALUE,
     @ColumnInfo(name = ACTIVE) var active: Int? = Int.ZERO
 ) {
-    constructor(company: String?, name: String?) : this() {
-        this.company = company.orEmpty()
-        this.name = name.orEmpty()
-    }
-
     companion object {
         const val ID = "ID"
         const val COMPANY = "COMPANY"
@@ -30,5 +25,6 @@ data class CardEntity(
         const val VALUE = "VALUE"
         const val PASSWORD = "PASSWORD"
         const val ACTIVE = "ACTIVE"
+        val FIELDS = listOf(COMPANY, NAME, VALUE, PASSWORD, ACTIVE)
     }
 }

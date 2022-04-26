@@ -29,5 +29,6 @@ data class ExpenseEntity(
         const val TOTAL_VALUE = "TOTAL_VALUE"
         const val TYPE = "TYPE"
         const val ACTIVE = "ACTIVE"
+        val FIELDS = listOf(NAME, QUANTITY, DATE, UNITARY_VALUE, TOTAL_VALUE, TYPE, ACTIVE)
     }
 }

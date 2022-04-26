@@ -1,13 +1,13 @@
 package com.personal.accountantAssistant.extensions
 
-import com.personal.accountantAssistant.data.enums.ExpensesFieldsEnum
+import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import jxl.write.*
 import java.util.concurrent.atomic.AtomicInteger
 
-fun WritableSheet.addHeaderCellsValues(values: Array<ExpensesFieldsEnum>) {
-    values.forEachIndexed { index, indexedValue -> addHeaderCellValue(index, indexedValue.value) }
+fun WritableSheet.addHeaderCellsValues(values: List<String>) {
+    values.forEachIndexed { index, value -> addHeaderCellValue(index, value) }
 }
 
 private fun WritableSheet.addHeaderCellValue(colIndex: Int, cellValue: String) {
@@ -36,7 +36,7 @@ fun WritableSheet.addCell(
 }
 
 fun WritableSheet.fillSheetFrom(expenses: List<ExpenseModel>?, type: ExpensesType) {
-    addHeaderCellsValues(ExpensesFieldsEnum.values())
+    addHeaderCellsValues(ExpenseEntity.FIELDS)
     val rowIndex = AtomicInteger(Int.BODY_ROW)
     expenses?.stream()?.filter { type == it.type }?.forEach {
         val currentRowIndex = rowIndex.get()

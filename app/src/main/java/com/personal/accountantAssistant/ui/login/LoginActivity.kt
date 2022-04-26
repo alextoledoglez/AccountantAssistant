@@ -100,7 +100,6 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
     }
 
     companion object {
-        const val LOGIN_CANCELLED = "login_cancelled"
+        const val LOGIN_CANCELLED = "LOGIN_CANCELLED"
     }
-
 }

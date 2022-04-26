@@ -100,8 +100,8 @@ class SignInService(
     }
 
     companion object {
-        const val SIGN_IN_KEY = "sign_in_key"
-        const val SIGN_OUT_KEY = "sign_out_key"
         var drive: Drive? = null
+        const val SIGN_IN_KEY = "SIGN_IN_KEY"
+        const val SIGN_OUT_KEY = "SIGN_OUT_KEY"
     }
 }

@@ -78,12 +78,12 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
     }
 
     companion object {
-        const val AD_KEY = "ad_key"
-        const val AD_MESSAGE_KEY = "ad_message_key"
-        const val AD_LOADED_KEY = "ad_loaded_key"
-        const val AD_CLOSED_KEY = "ad_closed_key"
-        const val AD_OPENED_KEY = "ad_opened_key"
-        const val AD_CLICKED_KEY = "ad_clicked_key"
-        const val AD_IMPRESSION_KEY = "ad_impression_key"
+        const val AD_KEY = "AD_KEY"
+        const val AD_MESSAGE_KEY = "AD_MESSAGE_KEY"
+        const val AD_LOADED_KEY = "AD_LOADED_KEY"
+        const val AD_CLOSED_KEY = "AD_CLOSED_KEY"
+        const val AD_OPENED_KEY = "AD_OPENED_KEY"
+        const val AD_CLICKED_KEY = "AD_CLICKED_KEY"
+        const val AD_IMPRESSION_KEY = "AD_IMPRESSION_KEY"
     }
 }

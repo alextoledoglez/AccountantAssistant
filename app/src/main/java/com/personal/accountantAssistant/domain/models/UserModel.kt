@@ -8,9 +8,8 @@ data class UserModel(
     val photoPath: String? = null
 ) {
     companion object {
-        const val USER_DISPLAY_NAME_KEY = "user_display_name_key"
-        const val USER_FULL_NAME_KEY = "user_full_name_key"
-        const val USER_EMAIL_KEY = "user_email_key"
-        const val SIGNED_USER = "signed_user"
+        const val USER_DISPLAY_NAME_KEY = "USER_DISPLAY_NAME_KEY"
+        const val USER_FULL_NAME_KEY = "USER_FULL_NAME_KEY"
+        const val USER_EMAIL_KEY = "USER_EMAIL_KEY"
     }
 }

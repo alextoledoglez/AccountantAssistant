@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.fromJson
 import com.personal.accountantAssistant.extensions.toJson
 import com.personal.accountantAssistant.extensions.toSharedPreferences
@@ -44,7 +45,7 @@ class LocalStorage(val context: Context) : SharedPreferences {
     }
 
     fun <T : Any> getObject(key: String, clazz: KClass<T>): T? {
-        return getString(key, null)?.fromJson(clazz)
+        return getString(key, String.EMPTY)?.fromJson(clazz)
     }
 
     fun <T : Any> putObject(key: String, obj: T) {
@@ -52,9 +53,9 @@ class LocalStorage(val context: Context) : SharedPreferences {
     }
 
     companion object {
-        const val AVAILABLE_MONEY = "available_money"
-        const val FIRST_STR_DATE = "first_str_date"
-        const val LAST_STR_DATE = "last_str_date"
-        const val SIGNED_USER = "signed_user"
+        const val AVAILABLE_MONEY = "AVAILABLE_MONEY"
+        const val FIRST_STR_DATE = "FIRST_STR_DATE"
+        const val LAST_STR_DATE = "LAST_STR_DATE"
+        const val SIGNED_USER = "SIGNED_USER"
     }
 }
