@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.ui.login
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.result.ActivityResult
 import androidx.core.view.isVisible
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseActivity
@@ -24,7 +25,7 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         setContentView(binding.root)
         supportActionBar?.hide()
         analytics?.trackScreenViewEvent(this::class.simpleName)
-        binding.signInButton.setOnClickListener { signInChooser() }
+        binding.signInButton.setOnClickListener { signInPicker() }
         with(viewModel) {
             isProcessing.observe(this@LoginActivity) { setProcessing(it) }
             isLogged.observe(this@LoginActivity) { if (it.orFalse()) startMainActivity() }
@@ -57,18 +58,27 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         binding.signInButton.isVisible = isVisible
     }
 
-    private fun signInChooser() {
+    private fun signInPicker() {
         setProcessing()
-        service?.requestSignInPicker()
+        service?.getSignInClient()?.signInIntent
             ?.let { loginPickerLauncher.launch(it) }
             ?: run { onSignInFail() }
     }
 
     private fun signIn(email: String?) {
         setProcessing()
-        service?.requestSignInAccountName(email)
+        service?.getSignInClientBy(email)?.signInIntent
             ?.let { loginAccountLauncher.launch(it) }
             ?: run { onSignInFail() }
+    }
+
+    private fun onSignInResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            service
+                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
+                ?: run { onSignInFail() }
+        } else
+            onSignInFail()
     }
 
     private fun onSignInFail() {
@@ -81,23 +91,9 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         )
     }
 
-    private var loginPickerLauncher = setActivityForResult { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            service
-                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
-                ?: run { onSignInFail() }
-        } else
-            onSignInFail()
-    }
+    private var loginPickerLauncher = setActivityForResult(this::onSignInResult)
 
-    private var loginAccountLauncher = setActivityForResult { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            service
-                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
-                ?: run { onSignInFail() }
-        } else
-            onSignInFail()
-    }
+    private var loginAccountLauncher = setActivityForResult(this::onSignInResult)
 
     companion object {
         const val LOGIN_CANCELLED = "LOGIN_CANCELLED"

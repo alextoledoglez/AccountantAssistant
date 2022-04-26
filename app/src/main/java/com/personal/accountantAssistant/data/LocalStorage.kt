@@ -45,8 +45,8 @@ class LocalStorage(val context: Context) : SharedPreferences {
         return getString(key, String.EMPTY)?.takeIfNotBlank()?.fromJson(clazz)
     }
 
-    fun <T : Any> putObject(key: String, obj: T) {
-        edit().putString(key, obj.toJson()).apply()
+    fun <T : Any> putObject(key: String, obj: T?): Boolean {
+        return edit().putString(key, obj?.toJson().orEmpty()).commit()
     }
 
     companion object {

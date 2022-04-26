@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.mappers.toUserModel
 import com.personal.accountantAssistant.domain.repository.UserRepository
 import com.personal.accountantAssistant.extensions.onError
-import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
@@ -45,7 +44,7 @@ class LoginViewModel(
                     ?.onStart { _isProcessing.postValue(true) }
                     ?.onError { setMessage(it.message) }
                     ?.onCompletion { _isProcessing.postValue(false) }
-                    ?.collect { _isLogged.postValue(this?.email?.isNotBlank().orFalse()) }
+                    ?.collect { _isLogged.postValue(it) }
             }
         }
     }

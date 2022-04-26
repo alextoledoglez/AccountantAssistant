@@ -4,6 +4,6 @@ import com.personal.accountantAssistant.domain.models.UserModel
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun setSignedUser(user: UserModel?): Flow<Unit>
+    fun setSignedUser(user: UserModel?): Flow<Boolean?>
     fun getSignedUser(): Flow<UserModel?>
 }

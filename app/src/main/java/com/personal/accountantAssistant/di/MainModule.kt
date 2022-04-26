@@ -1,6 +1,12 @@
 package com.personal.accountantAssistant.di
 
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
@@ -27,10 +33,10 @@ import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
+import java.util.concurrent.Executors
 
 val viewModelModule = module {
     viewModel { LoginViewModel(get(), get()) }
@@ -52,7 +58,7 @@ val useCasesModule = module {
 }
 
 val dataModule = module {
-    single { AppDatabase.getInstance(androidContext()) }
+    single { AppDatabase.getInstance(get()) }
     single { get<AppDatabase>().cardsDao() }
     single { get<AppDatabase>().expensesDao() }
     single { CardsRemoteDataSource(get()) }
@@ -65,20 +71,28 @@ val dataModule = module {
     single<UserRepository> { UserDataRepository(get()) }
 }
 
-val firebaseModule = module {
+val providersModule = module {
     single { AnalyticsProvider() }
     single { CrashlyticsProvider() }
+    single { AdProvider(get(), get()) }
 }
 
-val storageModule = module {
+val utilsModule = module {
+    single { GsonFactory() }
     single { LocalStorage(get()) }
+    single { Scope(DriveScopes.DRIVE) }
+    single { listOf(DriveScopes.DRIVE) }
+    single { MobileAds.initialize(get()) {} }
+    single { GoogleSignInOptions.DEFAULT_SIGN_IN }
+    single { Executors.newSingleThreadExecutor() }
+    single { AndroidHttp.newCompatibleTransport() }
+    single { GoogleSignInOptions.Builder(get()).requestScopes(get()) }
+    single { GoogleAccountCredential.usingOAuth2(get(), get()) }
 }
 
 val servicesModule = module {
-    single { SignInService(get(), get(), get()) }
-    single { DriveService() }
-    single { MobileAds.initialize(get()) {} }
-    single { AdProvider(get(), get()) }
+    single { SignInService(get(), get(), get(), get()) }
+    single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
 }
 
 object MainModuleInitializer {
@@ -87,8 +101,8 @@ object MainModuleInitializer {
             viewModelModule,
             useCasesModule,
             dataModule,
-            firebaseModule,
-            storageModule,
+            providersModule,
+            utilsModule,
             servicesModule
         )
     )

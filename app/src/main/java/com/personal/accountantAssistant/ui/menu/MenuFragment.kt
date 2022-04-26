@@ -34,7 +34,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
 
     override fun initComponents() {
         with(lytContent) {
-            srlContent.setOnRefreshListener { viewModel.loadMenus() }
+            srlContent.setOnRefreshListener { viewModel.loadUser() }
             rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         }
         binding.ibLogout.setOnClickListener { logOutConfirmation() }
@@ -49,10 +49,8 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
                 lytContent.vfContent.updateDisplayedChild(it.ordinal)
             }
             user.observe(viewLifecycleOwner) { setupUserLayout(it) }
-            menus.observe(viewLifecycleOwner) { adapter.submitList(it) }
-            finished.observe(viewLifecycleOwner) { if (it.orFalse()) activity?.closeApp() }
+            isLoggedOut.observe(viewLifecycleOwner) { if (it.orFalse()) activity?.closeApp() }
             loadUser()
-            loadMenus()
         }
     }
 
@@ -76,7 +74,7 @@ class MenuFragment : BaseFragment<MenuViewModel>() {
     }
 
     private fun logOut() {
-        signInService?.signOut { viewModel.clearUser() }
+        signInService?.signOut(viewModel::clearUser)
     }
 
     companion object {
