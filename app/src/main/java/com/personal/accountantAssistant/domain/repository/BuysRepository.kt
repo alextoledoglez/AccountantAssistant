@@ -11,7 +11,6 @@ interface BuysRepository {
     fun getSummary(): Flow<SummaryModel?>
     fun getTotalValueUntil(date: Date?): Flow<BigDecimal?>
     fun saveBuy(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
-    fun setDefaultBuys(): Flow<MutableList<ExpenseModel>?>
     fun setAllBuysActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
     fun switchActiveBuy(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
     fun deleteBuy(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>

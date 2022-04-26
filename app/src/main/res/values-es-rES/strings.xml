@@ -14,7 +14,6 @@
     <string name="export_all">Exportar</string>
     <string name="import_export">Importar / Exportar</string>
     <string name="delete_all">Eliminar todo</string>
-    <string name="restore_default">Restaurar por defecto</string>
     <string name="money_format">###.###.###,##</string>
 
     <string name="menu_home">Inicio</string>
@@ -80,8 +79,6 @@
     <string name="delete_record_message">¿Está seguro de que desea eliminar el registro actual?\n\n¡Perderá el registro actual!</string>
     <string name="delete_all_records_title">Apagar todos los registros</string>
     <string name="delete_all_records_message">¿Está seguro de que desea eliminar todos los registros?\n\n¡Perderá todos los registros actuales!</string>
-    <string name="restore_default_records_title">Restaurar registros predeterminados</string>
-    <string name="restore_default_records_message">¿Está seguro de que desea restaurar los registros predeterminados?\n\n¡Perderá todos los registros actuales!</string>
     <string name="import_export_title">Importar / Exportar</string>
     <string name="import_export_message">Elija una opción para continuar:</string>
     <string name="barcode_scan_action">Lectura de código de barras</string>

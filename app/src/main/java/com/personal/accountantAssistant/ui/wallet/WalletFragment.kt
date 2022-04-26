@@ -39,7 +39,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         when (menuItem.itemId) {
             R.id.import_export -> importExportMenuItemClickListener()
             R.id.delete_all -> deleteAllMenuItemClickListener()
-            R.id.restore_default -> restoreDefaultMenuItemClickListener()
         }
         return super.onOptionsItemSelected(menuItem)
     }
@@ -80,10 +79,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
 
     override fun deleteAllRecords() {
         viewModel.deleteAllCards()
-    }
-
-    override fun restoreDefaultRecords() {
-        viewModel.restoreDefaultCards()
     }
 
     private fun initLayoutSummary() {
@@ -140,13 +135,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
             ::deleteAllRecords
-        ) {}
-
-    private fun restoreDefaultMenuItemClickListener() =
-        AlertDialogBuilder(requireContext()).showConfirmationFrom(
-            R.string.restore_default_records_title,
-            R.string.restore_default_records_message,
-            ::restoreDefaultRecords
         ) {}
 
     private fun onDeleteCard(model: CardModel) {

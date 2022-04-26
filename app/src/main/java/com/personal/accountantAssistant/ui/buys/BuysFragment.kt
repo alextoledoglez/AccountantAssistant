@@ -72,10 +72,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         viewModel.deleteAllBuys()
     }
 
-    override fun restoreDefaultRecords() {
-        viewModel.setDefaultBuys()
-    }
-
     private fun onDeleteBuy(model: ExpenseModel) {
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_record_title,

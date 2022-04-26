@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.data.remote
 
 import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
-import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
 import com.personal.accountantAssistant.extensions.flowEmit
@@ -36,12 +35,6 @@ class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
         else
             expenseDao.insert(entity)
         getBuysBy(edited.toInt())
-    }
-
-    fun setDefaultBuys(): Flow<List<ExpenseEntity>> = flowEmit {
-        deleteAllBuys()
-        val insertedBuys = expenseDao.insert(BuysEnum.toBuysEntities()).size
-        getBuysBy(insertedBuys)
     }
 
     fun setAllBuysActive(active: Int): Flow<List<ExpenseEntity>> = flowEmit {

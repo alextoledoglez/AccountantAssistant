@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.data.remote
 
 import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
-import com.personal.accountantAssistant.data.enums.BillsEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.extensions.flowEmit
 import com.personal.accountantAssistant.extensions.isMoreThanZero
@@ -36,12 +35,6 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         else
             expenseDao.insert(entity)
         getBillsBy(edited.toInt())
-    }
-
-    fun setDefaultBills(): Flow<List<ExpenseEntity>> = flowEmit {
-        deleteAllBills()
-        val insertedBills = expenseDao.insert(BillsEnum.toBillsEntities()).size
-        getBillsBy(insertedBills)
     }
 
     fun setAllBillsActive(active: Int): Flow<List<ExpenseEntity>> = flowEmit {

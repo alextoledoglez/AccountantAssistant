@@ -26,8 +26,6 @@ class BillsDataRepository(private val dataSource: BillsRemoteDataSource) : Bills
         it.toListModel()
     }
 
-    override fun setDefaultBills() = dataSource.setDefaultBills().map { it.toListModel() }
-
     override fun setAllBillsActive(isActive: Boolean) = dataSource.setAllBillsActive(
         isActive.toInt()
     ).map { it.toListModel() }

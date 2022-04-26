@@ -1,8 +1,6 @@
 package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
-import com.personal.accountantAssistant.data.enums.BillsEnum
-import com.personal.accountantAssistant.data.enums.BuysEnum
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
@@ -49,7 +47,3 @@ fun ExpenseModel.toBuy() = this.copy(type = ExpensesType.BUY)
 fun ExpenseModel.toBill() = this.copy(type = ExpensesType.BILL)
 
 fun ExpenseModel.isBill() = type?.let { ExpensesType.isBill(it) }.orFalse()
-
-fun BuysEnum.toExpenseModel() = ExpenseModel(value, ExpensesType.BILL)
-
-fun BillsEnum.toExpenseModel() = ExpenseModel(value, ExpensesType.BILL)

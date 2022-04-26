@@ -21,8 +21,6 @@ class CardsDataRepository(
         it.toListModel()
     }
 
-    override fun setDefaultCards() = dataSource.setDefaultCards().map { it.toListModel() }
-
     override fun setAllCardsActive(isActive: Boolean) = dataSource.setAllCardsActive(
         isActive.toInt()
     ).map { it.toListModel() }

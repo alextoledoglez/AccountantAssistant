@@ -61,14 +61,6 @@ class WalletViewModel(
         }
     }
 
-    fun restoreDefaultCards() {
-        launch {
-            repository?.setDefaultCards()
-                ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
-        }
-    }
-
     fun setAllCardsActive(isActive: Boolean) {
         launch {
             repository?.setAllCardsActive(isActive)

@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.data.remote
 
 import com.personal.accountantAssistant.data.dao.CardDao
 import com.personal.accountantAssistant.data.entities.CardEntity
-import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
 import com.personal.accountantAssistant.extensions.flowEmit
 import com.personal.accountantAssistant.extensions.orZero
@@ -25,12 +24,6 @@ class CardsRemoteDataSource(private val cardDao: CardDao) {
         else
             cardDao.insert(entity).toInt()
         getCardsBy(editedCards)
-    }
-
-    fun setDefaultCards(): Flow<List<CardEntity>> = flowEmit {
-        deleteAllCards()
-        val insertedCards = cardDao.insert(DefaultCardsEnum.toCardsEntities()).size
-        getCardsBy(insertedCards)
     }
 
     fun setAllCardsActive(active: Int): Flow<List<CardEntity>> = flowEmit {

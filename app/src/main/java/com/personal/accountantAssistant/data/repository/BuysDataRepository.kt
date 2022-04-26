@@ -26,8 +26,6 @@ class BuysDataRepository(private val dataSource: BuysRemoteDataSource) : BuysRep
         it.toListModel()
     }
 
-    override fun setDefaultBuys() = dataSource.setDefaultBuys().map { it.toListModel() }
-
     override fun setAllBuysActive(isActive: Boolean) = dataSource.setAllBuysActive(
         isActive.toInt()
     ).map { it.toListModel() }

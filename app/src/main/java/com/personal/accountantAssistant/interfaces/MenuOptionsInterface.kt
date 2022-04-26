@@ -4,5 +4,4 @@ interface MenuOptionsInterface {
     fun importMenuItemClickListener()
     fun exportMenuItemClickListener()
     fun deleteAllRecords()
-    fun restoreDefaultRecords()
 }

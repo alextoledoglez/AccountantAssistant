@@ -57,14 +57,6 @@ class BuysViewModel(
         }
     }
 
-    fun setDefaultBuys() {
-        launch {
-            repository?.setDefaultBuys()
-                ?.onError { setMessage(it.message) }
-                ?.collect { postBuysValues(it) }
-        }
-    }
-
     fun setAllBuysActive(isActive: Boolean) {
         launch {
             repository?.setAllBuysActive(isActive)

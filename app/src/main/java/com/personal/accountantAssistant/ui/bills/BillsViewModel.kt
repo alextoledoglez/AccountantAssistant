@@ -56,13 +56,6 @@ class BillsViewModel(
         }
     }
 
-    fun setDefaultBills() {
-        launch {
-            repository?.setDefaultBills()?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
-        }
-    }
-
     fun setAllBillsActive(isActive: Boolean) {
         launch {
             repository?.setAllBillsActive(isActive)

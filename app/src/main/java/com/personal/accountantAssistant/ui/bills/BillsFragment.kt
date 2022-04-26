@@ -72,10 +72,6 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         viewModel.deleteAllBills()
     }
 
-    override fun restoreDefaultRecords() {
-        viewModel.setDefaultBills()
-    }
-
     private fun onDeleteBill(model: ExpenseModel) {
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_record_title,

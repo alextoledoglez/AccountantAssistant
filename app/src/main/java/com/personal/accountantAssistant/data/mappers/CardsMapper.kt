@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.data.mappers
 
 import com.personal.accountantAssistant.data.entities.CardEntity
-import com.personal.accountantAssistant.data.enums.DefaultCardsEnum
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
@@ -30,5 +29,3 @@ fun CardModel.toEntity() = CardEntity(
 )
 
 fun List<CardEntity>.toListModel() = map { it.toModel() }.toMutableList()
-
-fun DefaultCardsEnum.toCardEntity() = CardEntity(company, title)

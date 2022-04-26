@@ -11,7 +11,6 @@ interface BillsRepository {
     fun getSummary(): Flow<SummaryModel?>
     fun getTotalValueUntil(date: Date?): Flow<BigDecimal?>
     fun saveBill(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
-    fun setDefaultBills(): Flow<MutableList<ExpenseModel>?>
     fun setAllBillsActive(isActive: Boolean): Flow<MutableList<ExpenseModel>?>
     fun switchActiveBill(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>
     fun deleteBill(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>

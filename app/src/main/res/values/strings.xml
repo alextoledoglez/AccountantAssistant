@@ -14,7 +14,6 @@
     <string name="export_all">Export</string>
     <string name="import_export">Import/Export</string>
     <string name="delete_all">Delete all</string>
-    <string name="restore_default">Restore default</string>
     <string name="money_format">###.###.###,##</string>
 
     <string name="menu_home">Home</string>
@@ -80,8 +79,6 @@
     <string name="delete_record_message">Are you sure you want to delete current record?\n\nYou\'ll will lose current record!</string>
     <string name="delete_all_records_title">Delete all records</string>
     <string name="delete_all_records_message">Are you sure you want to delete all records?\n\nYou\'ll will lose all current records!</string>
-    <string name="restore_default_records_title">Restore default records</string>
-    <string name="restore_default_records_message">Are you sure you want to restore default records?\n\nYou\'ll will lose all current records!</string>
     <string name="import_export_title">Import/Export</string>
     <string name="import_export_message">Choose an option to proceed:</string>
     <string name="barcode_scan_action">Barcode scan</string>
