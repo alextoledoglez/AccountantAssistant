@@ -2,10 +2,7 @@ package com.personal.accountantAssistant.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.personal.accountantAssistant.extensions.EMPTY
-import com.personal.accountantAssistant.extensions.fromJson
-import com.personal.accountantAssistant.extensions.toJson
-import com.personal.accountantAssistant.extensions.toSharedPreferences
+import com.personal.accountantAssistant.extensions.*
 import kotlin.reflect.KClass
 
 class LocalStorage(val context: Context) : SharedPreferences {
@@ -45,7 +42,7 @@ class LocalStorage(val context: Context) : SharedPreferences {
     }
 
     fun <T : Any> getObject(key: String, clazz: KClass<T>): T? {
-        return getString(key, String.EMPTY)?.fromJson(clazz)
+        return getString(key, String.EMPTY)?.takeIfNotBlank()?.fromJson(clazz)
     }
 
     fun <T : Any> putObject(key: String, obj: T) {
