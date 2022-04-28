@@ -20,8 +20,15 @@ import java.math.BigDecimal
 class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
+
     private val lytHeader by lazy { binding.lytHeader }
+    private val ibDateRangePicker by lazy { lytHeader.ibDateRangePicker }
+    private val tvPeriodValue by lazy { lytHeader.tvPeriodValue }
     private val lytContent by lazy { binding.lytContent }
+    private val srlContent by lazy { lytContent.srlContent }
+    private val vfContent by lazy { lytContent.vfContent }
+    private val rvContent by lazy { lytContent.rvContent }
+
     private var titleRes: TitleResourcesModel = TitleResourcesModel()
     private var colorRes: ColorResourcesModel = ColorResourcesModel()
     private val adapter by lazy { HomeListAdapter() }
@@ -30,7 +37,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
         adProvider?.destroyAd()
-        lytContent.rvContent.destroyAdapter()
+        rvContent.destroyAdapter()
     }
 
     override fun onPause() {
@@ -49,30 +56,24 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     }
 
     override fun initComponents() {
-        with(lytHeader) { ibDateRangePicker.setOnClickListener { showRangePicker() } }
-        with(lytContent) {
-            srlContent.setOnRefreshListener { viewModel.calculateExpenses() }
-            rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
-        }
+        ibDateRangePicker.setOnClickListener { showRangePicker() }
+        srlContent.setOnRefreshListener { viewModel.loadData() }
+        rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         adProvider?.loadAdOn(binding.flAds)
     }
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) {
-                lytContent.srlContent.updateRefreshing(it.orFalse())
-            }
-            flipper.observe(viewLifecycleOwner) {
-                lytContent.vfContent.updateDisplayedChild(it.ordinal)
-            }
-            periodValue.observe(viewLifecycleOwner) {
-                lytHeader.tvPeriodValue.text = it ?: String.DASH_SEPARATOR
-            }
+            isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
+            flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
+            periodDates.observe(viewLifecycleOwner) { tvPeriodValue.text = it.toPeriodDateStr() }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
-                adapter.submitList(it) { lytContent.srlContent.stopRefreshing() }
+                adapter.submitList(it)
+                srlContent.stopRefreshing()
+                rvContent.scrollToTop()
             }
-            viewModel.calculateExpenses()
+            loadData()
         }
     }
 
@@ -84,7 +85,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             .apply {
                 addOnPositiveButtonClickListener { period ->
                     viewModel.savePeriodDates(period)
-                    viewModel.calculateExpenses()
+                    viewModel.loadData()
                 }
             }
             .show(requireActivity().supportFragmentManager, String.EMPTY)
@@ -110,11 +111,11 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val totalColor = getExpensesColorResourceBy(total)
 
         //Available color
-        val isTotalLessThanAvailable = viewModel.isExpensesLessThanAvailable(total)
+        val isTotalLessThanAvailable = total.isLessThan(viewModel.availableMoney.value)
         val availableColor = getColorResourceBy(isTotalLessThanAvailable)
 
         //Balance
-        val isZeroLessThanBalance = viewModel.isZeroLessThan(balance)
+        val isZeroLessThanBalance = balance.isMoreThanZero()
         val balanceText = getString(if (isZeroLessThanBalance) titleRes.gain else titleRes.missing)
         val balanceColor = getColorResourceBy(isZeroLessThanBalance)
 
@@ -141,7 +142,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     )
 
     private fun getExpensesColorResourceBy(expenses: BigDecimal) = requireContext().getCompatColor(
-        viewModel.isExpensesMoreThanAvailable(expenses), colorRes.error, colorRes.success
+        expenses.isMoreThan(viewModel.availableMoney.value), colorRes.error, colorRes.success
     )
 
     companion object {

@@ -10,6 +10,7 @@ import com.personal.accountantAssistant.domain.repository.BillsRepository
 import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -23,17 +24,13 @@ class BillsViewModel(
     private var _bills = MutableLiveData<MutableList<ExpenseModel>?>()
     var bills: LiveData<MutableList<ExpenseModel>?> = _bills
 
-    private fun postBillsValues(list: MutableList<ExpenseModel>?) {
-        _bills.postValue(list)
-        setData()
-    }
-
     fun getBills() {
         launch {
             repository?.getBills()
                 ?.onStart { setLoading() }
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 
@@ -41,10 +38,8 @@ class BillsViewModel(
         launch {
             repository?.getSummary()
                 ?.onError { setMessage(it.message) }
-                ?.collect {
-                    _summary.postValue(it)
-                    setData()
-                }
+                ?.onCompletion { setData() }
+                ?.collect { _summary.postValue(it) }
         }
     }
 
@@ -52,7 +47,8 @@ class BillsViewModel(
         launch {
             repository?.saveBill(model.toBill())?.onStart { setLoading() }
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 
@@ -60,7 +56,8 @@ class BillsViewModel(
         launch {
             repository?.setAllBillsActive(isActive)
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 
@@ -68,7 +65,8 @@ class BillsViewModel(
         launch {
             repository?.switchActiveBill(model.toBill())
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 
@@ -76,7 +74,8 @@ class BillsViewModel(
         launch {
             repository?.deleteBill(model.toBill())
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 
@@ -84,7 +83,8 @@ class BillsViewModel(
         launch {
             repository?.deleteAllBills()
                 ?.onError { setMessage(it.message) }
-                ?.collect { postBillsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _bills.postValue(it) }
         }
     }
 }

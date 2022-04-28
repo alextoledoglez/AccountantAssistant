@@ -11,6 +11,7 @@ import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -26,17 +27,13 @@ class WalletViewModel(
     private var _cards = MutableLiveData<MutableList<CardModel>?>()
     var cards: LiveData<MutableList<CardModel>?> = _cards
 
-    private fun postCardsValues(list: MutableList<CardModel>?) {
-        _cards.postValue(list)
-        setData()
-    }
-
     fun loadCards() {
         launch {
             repository?.getCards()
                 ?.onStart { setLoading() }
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 
@@ -44,10 +41,10 @@ class WalletViewModel(
         launch {
             repository?.getSummary()
                 ?.onError { setMessage(it.message) }
+                ?.onCompletion { setData() }
                 ?.collect {
                     setAvailableMoney(it?.total.orZero().toFloat())
                     _summary.postValue(it)
-                    setData()
                 }
         }
     }
@@ -57,7 +54,8 @@ class WalletViewModel(
             repository?.saveCard(model)
                 ?.onStart { setLoading() }
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 
@@ -65,7 +63,8 @@ class WalletViewModel(
         launch {
             repository?.setAllCardsActive(isActive)
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 
@@ -73,7 +72,8 @@ class WalletViewModel(
         launch {
             repository?.switchActiveCard(model)
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 
@@ -81,7 +81,8 @@ class WalletViewModel(
         launch {
             repository?.deleteCard(model)
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 
@@ -89,7 +90,8 @@ class WalletViewModel(
         launch {
             repository?.deleteAllCards()
                 ?.onError { setMessage(it.message) }
-                ?.collect { postCardsValues(it) }
+                ?.onCompletion { setData() }
+                ?.collect { _cards.postValue(it) }
         }
     }
 

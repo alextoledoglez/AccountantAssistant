@@ -25,3 +25,7 @@ fun Date?.toCalendar(): Calendar {
 fun Date?.toCalendarMillis(): Long {
     return this.toCalendar().timeInMillis
 }
+
+fun Pair<Date?, Date?>.toPeriodDateStr(): String {
+    return "${first.toDateStr()}${String.DASH_SEPARATOR}${second.toDateStr()}"
+}

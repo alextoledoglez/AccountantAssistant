@@ -4,10 +4,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-
 fun RecyclerView.destroyAdapter() {
     adapter = null
 }
+
+fun RecyclerView.scrollToTop() = scrollToPosition(Int.ZERO)
 
 fun RecyclerView.setGridLayoutAdapter(listAdapter: ListAdapter<*, *>, spanCount: Int = 1) {
     adapter = listAdapter

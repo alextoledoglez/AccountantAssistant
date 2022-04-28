@@ -11,10 +11,15 @@ import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
 import com.personal.accountantAssistant.domain.useCases.GetFirstDateUseCase
 import com.personal.accountantAssistant.domain.useCases.GetLastDateUseCase
 import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.onError
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toUtcDate
+import com.personal.accountantAssistant.extensions.toUtcTime
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.util.*
@@ -29,14 +34,8 @@ class HomeViewModel(
     private val billsRepository: BillsRepository
 ) : BaseViewModel(analytics) {
 
-    private val _firstDate = MutableLiveData<Date?>()
-    private val firstDate = _firstDate
-
-    private val _lastDate = MutableLiveData<Date?>()
-    private val lastDate = _lastDate
-
-    private val _periodValue = MutableLiveData<String>()
-    val periodValue: LiveData<String> get() = _periodValue
+    private val _periodDates = MutableLiveData<Pair<Date?, Date?>>()
+    val periodDates: LiveData<Pair<Date?, Date?>> get() = _periodDates
 
     private val _availableMoney = MutableLiveData<BigDecimal>()
     val availableMoney: LiveData<BigDecimal> get() = _availableMoney
@@ -47,54 +46,58 @@ class HomeViewModel(
     private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
     val dashboardValues = _dashboardValues
 
-    fun isZeroLessThan(value: BigDecimal) = (value >= BigDecimal.ZERO)
-
-    fun isExpensesLessThanAvailable(value: BigDecimal) = (value <= availableMoney.value.orZero())
-
-    fun isExpensesMoreThanAvailable(value: BigDecimal) = !isExpensesLessThanAvailable(value)
-
-    fun calculateExpenses() {
+    private fun loadPeriodDates() {
         launch {
-            setLoading()
-
-            combine(getFirstDate(), getLastDate()) { init, end ->
-                val period = "${init.toDateStr()}${String.DASH_SEPARATOR}${end.toDateStr()}"
-                _firstDate.postValue(init)
-                _lastDate.postValue(end)
-                _periodValue.postValue(period)
-            }.onError { setMessage(it.message) }.collect()
-
-            getAvailableMoney()
+            combine(getFirstDate(), getLastDate()) { init, end -> Pair(init, end) }
+                .onStart { setLoading() }
                 .onError { setMessage(it.message) }
-                .collect { _availableMoney.postValue(it) }
-
-            combine(
-                buysRepository.getTotalValueUntil(lastDate.value),
-                billsRepository.getTotalValueUntil(lastDate.value)
-            ) { buys, bills ->
-                val total = buys?.plus(bills.orZero())
-                val expenses = ExpensesValuesModel(buys, bills, total)
-                _expensesValues.postValue(expenses)
-            }.onError { setMessage(it.message) }.collect()
-
-            setData()
+                .onCompletion { setData() }
+                .collect { _periodDates.postValue(it) }
         }
     }
 
-    fun getSelectedPeriod() = androidx.core.util.Pair(
-        firstDate.value?.time.toUtcTime(), lastDate.value?.time.toUtcTime()
-    )
+    private fun loadAvailableMoney() {
+        launch {
+            getAvailableMoney()
+                .onStart { setLoading() }
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect { _availableMoney.postValue(it) }
+        }
+    }
+
+    private fun loadExpenses() {
+        val lastDate = _periodDates.value?.second
+        launch {
+            combine(
+                buysRepository.getTotalValueUntil(lastDate),
+                billsRepository.getTotalValueUntil(lastDate)
+            ) { buys, bills ->
+                val total = buys?.plus(bills.orZero())
+                ExpensesValuesModel(buys, bills, total)
+            }.onStart { setLoading() }
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect { _expensesValues.postValue(it) }
+        }
+    }
+
+    fun loadData() {
+        loadPeriodDates()
+        loadAvailableMoney()
+        loadExpenses()
+    }
+
+    fun getSelectedPeriod(): androidx.core.util.Pair<Long?, Long?> = _periodDates.value.let {
+        androidx.core.util.Pair(it?.first?.time.toUtcTime(), it?.second?.time.toUtcTime())
+    }
 
     fun savePeriodDates(period: androidx.core.util.Pair<Long, Long>?) {
-        period?.let {
-            val init = it.first.toUtcDate()
-            val end = it.second.toUtcDate()
-            launch {
-                setPeriodDates(init, end).collect {
-                    _firstDate.postValue(init)
-                    _lastDate.postValue(end)
-                }
-            }
+        launch {
+            setPeriodDates(period?.first.toUtcDate(), period?.second.toUtcDate())
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect()
         }
     }
 

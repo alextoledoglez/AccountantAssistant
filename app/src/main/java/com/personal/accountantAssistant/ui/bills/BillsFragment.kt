@@ -13,15 +13,20 @@ import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 class BillsFragment : ExpensesFragment<BillsViewModel>() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
+
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
+    private val srlContent by lazy { lytContent.srlContent }
+    private val vfContent by lazy { lytContent.vfContent }
+    private val rvContent by lazy { lytContent.rvContent }
+
     override val adapter by lazy {
         BillsListAdapter(::onEditBill, viewModel::switchActiveBill, ::onDeleteBill)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        lytContent.rvContent.destroyAdapter()
+        rvContent.destroyAdapter()
     }
 
     override fun initComponents() {
@@ -30,25 +35,23 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             initLayoutSummary(this)
             scActive.setOnClickListener { viewModel.setAllBillsActive(scActive.isChecked) }
         }
-        with(lytContent) {
-            srlContent.setOnRefreshListener { viewModel.getBills() }
-            rvContent.setGridLayoutAdapter(adapter)
-        }
+        srlContent.setOnRefreshListener { viewModel.getBills() }
+        rvContent.setGridLayoutAdapter(adapter)
     }
 
     override fun initObservers() {
         with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) {
-                lytContent.srlContent.updateRefreshing(it.orFalse())
-            }
-            flipper.observe(viewLifecycleOwner) {
-                lytContent.vfContent.updateDisplayedChild(it.ordinal)
-            }
+            isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
+            flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
             summary.observe(viewLifecycleOwner) {
                 updateLayoutSummary(lytSummary, it)
-                lytContent.srlContent.stopRefreshing()
+                srlContent.stopRefreshing()
             }
-            bills.observe(viewLifecycleOwner) { adapter.submitList(it) { loadSummary() } }
+            bills.observe(viewLifecycleOwner) {
+                adapter.submitList(it) { loadSummary() }
+                srlContent.stopRefreshing()
+                rvContent.scrollToTop()
+            }
             getBills()
         }
     }
