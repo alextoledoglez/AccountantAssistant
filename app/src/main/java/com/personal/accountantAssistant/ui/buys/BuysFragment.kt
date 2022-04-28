@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.buys
 
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.BuysListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
@@ -58,11 +57,11 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         }
     }
 
-    override fun importMenuItemClickListener() {
+    override fun import() {
         context?.xlsImport(ExpensesType.BUY)
     }
 
-    override fun exportMenuItemClickListener() {
+    override fun export() {
         //context?.xlsExport(appDatabase, ExpensesType.BUY)
     }
 
@@ -73,7 +72,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
             viewModel.getBuys()
     }
 
-    override fun deleteAllRecords() {
+    override fun deleteAll() {
         viewModel.deleteAllBuys()
     }
 

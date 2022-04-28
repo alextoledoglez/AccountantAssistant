@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.adapters
+package com.personal.accountantAssistant.ui.buys
 
 import android.view.ViewGroup
 import android.widget.Filter

@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.ViewPagerAdapter
+import com.personal.accountantAssistant.bases.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.bases.BaseActivity
 import com.personal.accountantAssistant.data.mappers.toBill
 import com.personal.accountantAssistant.data.mappers.toBuy
@@ -27,12 +26,24 @@ import com.personal.accountantAssistant.ui.wallet.WalletFragment
 class MainActivity : BaseActivity<Nothing>() {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
-    private var pagerAdapter: ViewPagerAdapter? = null
-    private var tabLayoutMediator: TabLayoutMediator? = null
+    private val tabHeader by lazy { binding.tabHeader }
+    private val vpContent by lazy { binding.vpContent }
+    private var tlMediator: TabLayoutMediator? = null
+    private val pagerAdapter: ViewPagerAdapter? by lazy {
+        ViewPagerAdapter(
+            this@MainActivity, listOf(
+                HomeFragment.newInstance(),
+                WalletFragment.newInstance(),
+                BuysFragment.newInstance(),
+                BillsFragment.newInstance(),
+                MenuFragment.newInstance()
+            )
+        )
+    }
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            val page: Fragment? = pagerAdapter?.fragments?.get(position)
+            val page = pagerAdapter?.fragments?.get(position)
             binding.fabAdd.apply {
                 isVisible = true
                 when (page) {
@@ -47,33 +58,22 @@ class MainActivity : BaseActivity<Nothing>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.vpContent.unregisterOnPageChangeCallback(pageChangeCallback)
-        tabLayoutMediator?.detach()
+        vpContent.unregisterOnPageChangeCallback(pageChangeCallback)
+        tlMediator?.detach()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.vpContent.apply {
-            registerOnPageChangeCallback(pageChangeCallback)
-            pagerAdapter = ViewPagerAdapter(
-                this@MainActivity, listOf(
-                    HomeFragment.newInstance(),
-                    WalletFragment.newInstance(),
-                    BuysFragment.newInstance(),
-                    BillsFragment.newInstance(),
-                    MenuFragment.newInstance()
-                )
-            )
-            adapter = pagerAdapter
-        }
+        vpContent.registerOnPageChangeCallback(pageChangeCallback)
+        vpContent.adapter = pagerAdapter
 
         val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
-        tabLayoutMediator = TabLayoutMediator(binding.tabHeader, binding.vpContent) { tab, index ->
+        tlMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->
             tab.setIcon(tabIcons.getResourceIdOrThrow(index))
         }
-        tabLayoutMediator?.attach()
+        tlMediator?.attach()
         tabIcons.recycle()
     }
 

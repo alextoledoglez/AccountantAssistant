@@ -10,9 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel(
-    val analytics: AnalyticsProvider?
-) : ViewModel(), CoroutineScope {
+abstract class BaseViewModel(val analytics: AnalyticsProvider?) : ViewModel(), CoroutineScope {
 
     private val job = Job()
 

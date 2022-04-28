@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.bills
 
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.BillsListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
@@ -56,11 +55,11 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         }
     }
 
-    override fun importMenuItemClickListener() {
+    override fun import() {
         context?.xlsImport(ExpensesType.BILL)
     }
 
-    override fun exportMenuItemClickListener() {
+    override fun export() {
         //context?.xlsExport(appDatabase, ExpensesType.BILL)
     }
 
@@ -71,7 +70,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             viewModel.getBills()
     }
 
-    override fun deleteAllRecords() {
+    override fun deleteAll() {
         viewModel.deleteAllBills()
     }
 

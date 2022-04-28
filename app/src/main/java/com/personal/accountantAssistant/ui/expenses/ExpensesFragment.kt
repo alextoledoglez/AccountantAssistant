@@ -12,12 +12,12 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.bases.BaseViewModel
+import com.personal.accountantAssistant.bases.interfaces.MenuInterface
 import com.personal.accountantAssistant.databinding.LayoutListSummaryBinding
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 
-abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOptionsInterface {
+abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuInterface {
 
     abstract override val binding: ViewBinding
     abstract val adapter: ListAdapter<*, *>
@@ -43,15 +43,15 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuOpti
     private fun importExportMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showImportOrExportFrom(
             R.string.import_export_title,
-            this::importMenuItemClickListener,
-            this::exportMenuItemClickListener
+            this::import,
+            this::export
         )
 
     private fun deleteAllMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
-            ::deleteAllRecords
+            ::deleteAll
         ) {}
 
     fun initLayoutSummary(binding: LayoutListSummaryBinding) {

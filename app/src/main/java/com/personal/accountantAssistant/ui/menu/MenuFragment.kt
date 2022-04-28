@@ -5,7 +5,6 @@ import android.view.MenuInflater
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.MenuListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentMenuBinding

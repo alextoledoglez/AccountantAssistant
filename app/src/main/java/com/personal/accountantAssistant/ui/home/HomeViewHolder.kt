@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.adapters
+package com.personal.accountantAssistant.ui.home
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView

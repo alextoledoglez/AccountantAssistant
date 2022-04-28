@@ -4,7 +4,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.HomeListAdapter
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
 import com.personal.accountantAssistant.domain.models.ColorResourcesModel

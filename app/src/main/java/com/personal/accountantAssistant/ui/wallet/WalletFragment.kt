@@ -6,17 +6,16 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.adapters.CardsListAdapter
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
+import com.personal.accountantAssistant.bases.interfaces.MenuInterface
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.interfaces.MenuOptionsInterface
 
-class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
+class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
 
@@ -74,15 +73,15 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
         }
     }
 
-    override fun importMenuItemClickListener() {
+    override fun import() {
         context?.xlsImport(ExpensesType.BUY)
     }
 
-    override fun exportMenuItemClickListener() {
+    override fun export() {
         //context?.xlsExport(appDatabase, ExpensesType.BUY)
     }
 
-    override fun deleteAllRecords() {
+    override fun deleteAll() {
         viewModel.deleteAllCards()
     }
 
@@ -131,15 +130,15 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuOptionsInterface {
     private fun importExportMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showImportOrExportFrom(
             R.string.import_export_title,
-            this::importMenuItemClickListener,
-            this::exportMenuItemClickListener
+            this::import,
+            this::export
         )
 
     private fun deleteAllMenuItemClickListener() =
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
             R.string.delete_all_records_title,
             R.string.delete_all_records_message,
-            ::deleteAllRecords
+            ::deleteAll
         ) {}
 
     private fun onDeleteCard(model: CardModel) {

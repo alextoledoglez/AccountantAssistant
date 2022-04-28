@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.adapters
+package com.personal.accountantAssistant.ui.menu
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
