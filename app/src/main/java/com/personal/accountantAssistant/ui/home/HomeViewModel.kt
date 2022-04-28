@@ -46,7 +46,7 @@ class HomeViewModel(
     private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
     val dashboardValues = _dashboardValues
 
-    private fun loadPeriodDates() {
+    fun loadPeriodDates() {
         launch {
             combine(getFirstDate(), getLastDate()) { init, end -> Pair(init, end) }
                 .onStart { setLoading() }
@@ -56,7 +56,7 @@ class HomeViewModel(
         }
     }
 
-    private fun loadAvailableMoney() {
+    fun loadAvailableMoney() {
         launch {
             getAvailableMoney()
                 .onStart { setLoading() }
@@ -66,7 +66,7 @@ class HomeViewModel(
         }
     }
 
-    private fun loadExpenses() {
+    fun loadExpenses() {
         val lastDate = _periodDates.value?.second
         launch {
             combine(
@@ -80,12 +80,6 @@ class HomeViewModel(
                 .onCompletion { setData() }
                 .collect { _expensesValues.postValue(it) }
         }
-    }
-
-    fun loadData() {
-        loadPeriodDates()
-        loadAvailableMoney()
-        loadExpenses()
     }
 
     fun getSelectedPeriod(): androidx.core.util.Pair<Long?, Long?> = _periodDates.value.let {

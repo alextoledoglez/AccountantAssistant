@@ -56,7 +56,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     override fun initComponents() {
         ibDateRangePicker.setOnClickListener { showRangePicker() }
-        srlContent.setOnRefreshListener { viewModel.loadData() }
+        srlContent.setOnRefreshListener { loadData() }
         rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         adProvider?.loadAdOn(binding.flAds)
     }
@@ -72,8 +72,8 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
                 srlContent.stopRefreshing()
                 rvContent.scrollToTop()
             }
-            loadData()
         }
+        loadData()
     }
 
     private fun showRangePicker() {
@@ -84,7 +84,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             .apply {
                 addOnPositiveButtonClickListener { period ->
                     viewModel.savePeriodDates(period)
-                    viewModel.loadData()
+                    loadData()
                 }
             }
             .show(requireActivity().supportFragmentManager, String.EMPTY)
@@ -143,6 +143,12 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     private fun getExpensesColorResourceBy(expenses: BigDecimal) = requireContext().getCompatColor(
         expenses.isMoreThan(viewModel.availableMoney.value), colorRes.error, colorRes.success
     )
+
+    private fun loadData() {
+        viewModel.loadPeriodDates()
+        viewModel.loadAvailableMoney()
+        viewModel.loadExpenses()
+    }
 
     companion object {
         fun newInstance() = HomeFragment()
