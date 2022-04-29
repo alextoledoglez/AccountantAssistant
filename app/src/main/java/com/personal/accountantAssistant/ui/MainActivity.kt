@@ -7,8 +7,8 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.bases.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.bases.BaseActivity
+import com.personal.accountantAssistant.bases.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.data.mappers.toBill
 import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.databinding.ActivityMainBinding
@@ -70,8 +70,10 @@ class MainActivity : BaseActivity<Nothing>() {
         vpContent.adapter = pagerAdapter
 
         val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
+        val tabTitles = resources.getStringArray(R.array.tabs_titles)
         tlMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->
             tab.setIcon(tabIcons.getResourceIdOrThrow(index))
+            tab.text = tabTitles[index]
         }
         tlMediator?.attach()
         tabIcons.recycle()
