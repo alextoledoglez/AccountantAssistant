@@ -61,10 +61,11 @@ class WalletDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     private fun saveCard(model: CardModel?) {
         binding.apply {
-            val updatedModel = model?.update(
+            model?.update(
                 etCompany.text, etName.text, etPassword.text, etValue.text, scActive.isChecked
-            )
-            updatedModel?.let { onEditListener?.invoke(updatedModel).also { dismiss() } }
+            )?.let {
+                onEditListener?.invoke(it).also { dismiss() }
+            }
         }
     }
 
