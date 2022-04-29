@@ -10,7 +10,7 @@
     tools:context=".ui.wallet.WalletDetailsFragment"
     tools:ignore="PrivateResource">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvTitle"
         style="@style/TitleTopRoundedTextView"
         android:layout_width="match_parent"
@@ -79,7 +79,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytName">
 
-        <com.personal.accountantAssistant.ui.currency.CurrencyEditText
+        <com.personal.accountantAssistant.bases.currency.CurrencyEditText
             android:id="@+id/etValue"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
@@ -117,7 +117,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvActive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

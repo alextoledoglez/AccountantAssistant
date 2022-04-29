@@ -8,7 +8,7 @@
     android:theme="@style/ThemeOverlay.AccountantAssistant.FullscreenContainer"
     tools:context=".ui.login.LoginActivity">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_view_logo"
         android:layout_width="@dimen/big_logo_size"
         android:layout_height="@dimen/big_logo_size"

@@ -10,7 +10,7 @@
     tools:context=".ui.expenses.ExpenseDetailsFragment"
     tools:ignore="PrivateResource">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvTitle"
         style="@style/TitleTopRoundedTextView"
         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lytQuantity">
 
-        <com.personal.accountantAssistant.ui.currency.CurrencyEditText
+        <com.personal.accountantAssistant.bases.currency.CurrencyEditText
             android:id="@+id/etValue"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
@@ -117,7 +117,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/lytActive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
         app:layout_constraintStart_toEndOf="@id/lytDate"
         app:layout_constraintTop_toBottomOf="@id/lytValue">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -141,7 +141,7 @@
             android:layout_gravity="center"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include
         android:id="@+id/lytFooter"

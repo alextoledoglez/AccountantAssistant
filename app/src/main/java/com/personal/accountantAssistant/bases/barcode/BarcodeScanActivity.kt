@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.barcode
+package com.personal.accountantAssistant.bases.barcode
 
 import android.annotation.SuppressLint
 import android.content.Context

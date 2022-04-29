@@ -19,23 +19,24 @@ class BuysViewHolder(
             name.text = model.name
             value.text = toFormattedValue(model)
             //ACTIONS
-            scActive.apply {
+            lytActions.scActive.apply {
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
                     val switchedModel = model.copy(isActive = !model.isActive)
                     onActiveExpense(switchedModel)
                     setActiveRow()
                 }
+
             }
             itemView.setOnClickListener { onEditExpense(model) }
-            ibDelete.setOnClickListener { onRemoveExpense(model) }
+            lytActions.ibDelete.setOnClickListener { onRemoveExpense(model) }
         }
         setActiveRow()
     }
 
     private fun setActiveRow() {
         with(binding) {
-            val isActive = scActive.isChecked
+            val isActive = lytActions.scActive.isChecked
             val textColor = root.context.getCompatColor(
                 isActive, R.color.fontColor, R.color.disableFontColor
             )

@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:ignore="PrivateResource">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -47,6 +47,6 @@
             app:icon="@drawable/ic_today"
             app:iconGravity="textStart" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.cardview.widget.CardView>

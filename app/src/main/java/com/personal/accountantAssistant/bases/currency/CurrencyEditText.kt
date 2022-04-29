@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.currency
+package com.personal.accountantAssistant.bases.currency
 
 import android.content.Context
 import android.text.Editable

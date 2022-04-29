@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/default_material_margin">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvCompany"
             android:layout_width="@dimen/zero"
             android:layout_height="@dimen/title_height"
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Itau" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvName"
             android:layout_width="@dimen/zero"
             android:layout_height="@dimen/title_height"
@@ -42,7 +42,7 @@
             app:layout_constraintStart_toEndOf="@id/tvCompany"
             tools:text="Latam Pass" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivChip"
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
@@ -51,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvValue" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvValue"
             android:layout_width="@dimen/zero"
             android:layout_height="@dimen/title_height"
@@ -64,22 +64,11 @@
             app:layout_constraintTop_toBottomOf="@id/tvCompany"
             tools:text="R$ 1000,00" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/scActive"
+        <include
+            android:id="@+id/lytActions"
+            layout="@layout/list_item_actions"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@id/ibDelete"
-            app:layout_constraintTop_toBottomOf="@id/tvValue"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-        <ImageButton
-            android:id="@+id/ibDelete"
-            android:layout_width="@dimen/image_button_size"
-            android:layout_height="@dimen/image_button_size"
-            android:background="@null"
-            android:contentDescription="@string/delete"
-            android:minWidth="@dimen/image_button_size"
-            android:src="@drawable/ic_delete_red"
+            android:layout_height="@dimen/zero"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvValue" />
 

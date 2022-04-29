@@ -13,24 +13,24 @@
     app:cardUseCompatPadding="true"
     app:contentPadding="@dimen/card_view_content_padding">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/footer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_height"
             android:theme="@style/TitleTextView" />
 
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivMoney"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
@@ -39,7 +39,7 @@
                 app:srcCompat="@drawable/ic_money"
                 tools:ignore="ContentDescription" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvSubtitle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
@@ -55,9 +55,9 @@
                 android:layout_weight="1"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-        </LinearLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <LinearLayout
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -69,8 +69,8 @@
                 android:layout_margin="@dimen/small_material_margin"
                 app:iconifiedByDefault="false"
                 app:queryHint="@string/search_view_hint_message" />
-        </LinearLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.cardview.widget.CardView>

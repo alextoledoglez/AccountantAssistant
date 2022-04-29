@@ -22,7 +22,7 @@ class CardsViewHolder(
             tvName.text = model.name
             tvValue.text = model.value.toCurrencyMaskedStr()
             //ACTIONS
-            scActive.apply {
+            lytActions.scActive.apply {
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
                     val switchedModel = model.copy(isActive = !model.isActive)
@@ -31,21 +31,21 @@ class CardsViewHolder(
                 }
             }
             itemView.setOnClickListener { onEditCard(model) }
-            ibDelete.setOnClickListener { onRemoveCard(model) }
-            setActiveRow()
+            lytActions.ibDelete.setOnClickListener { onRemoveCard(model) }
         }
+        setActiveRow()
     }
 
     private fun setActiveRow() {
-        val context = binding.root.context
-        val isActive = binding.scActive.isChecked
-        val textColor = context.getCompatColor(
-            isActive, R.color.fontColor, R.color.disableFontColor
-        )
-        val chipColor = context.getCompatColor(
-            isActive, R.color.chipColor, R.color.disableChipColor
-        )
-        binding.apply {
+        with(binding) {
+            val context = root.context
+            val isActive = lytActions.scActive.isChecked
+            val textColor = context.getCompatColor(
+                isActive, R.color.fontColor, R.color.disableFontColor
+            )
+            val chipColor = context.getCompatColor(
+                isActive, R.color.chipColor, R.color.disableChipColor
+            )
             tvCompany.setTextColor(textColor)
             tvName.setTextColor(textColor)
             tvValue.setTextColor(textColor)

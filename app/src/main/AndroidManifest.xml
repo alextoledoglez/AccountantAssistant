@@ -58,7 +58,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.barcode.BarcodeScanActivity"
+            android:name="com.personal.accountantAssistant.bases.barcode.BarcodeScanActivity"
             android:configChanges="orientation"
             android:hardwareAccelerated="false"
             android:label="Barcode Scan"

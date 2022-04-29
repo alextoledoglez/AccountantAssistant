@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivAvailable"
         android:layout_width="@dimen/title_height"
         android:layout_height="@dimen/title_height"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="@id/tvPeriodTitle"
         tools:ignore="ContentDescription" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvPeriodTitle"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/period_to_expense" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvPeriodValue"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvPeriodTitle"
         tools:text="31/12/2021-31/12/2022" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvAvailable"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvPeriodValue"
         tools:text="Available: $ 1000000.00" />
 
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/ibDateRangePicker"
         android:layout_width="@dimen/title_height"
         android:layout_height="@dimen/title_height"

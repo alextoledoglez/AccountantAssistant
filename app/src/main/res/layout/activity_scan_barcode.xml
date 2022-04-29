@@ -23,7 +23,7 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/barcode_scan_layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +49,6 @@
 
         <include layout="@layout/options_footer_bar" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </RelativeLayout>
