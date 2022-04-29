@@ -1,11 +1,10 @@
 package com.personal.accountantAssistant.domain.models
 
 import android.os.Parcelable
+import android.text.Editable
 import androidx.recyclerview.widget.DiffUtil
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.extensions.DEFAULT_ACTIVE_STATUS
-import com.personal.accountantAssistant.extensions.DEFAULT_QUANTITY_VALUE
-import com.personal.accountantAssistant.extensions.ZERO
+import com.personal.accountantAssistant.extensions.*
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import java.util.*
@@ -26,14 +25,18 @@ data class ExpenseModel(
         totalValue = calculateTotalValue()
     }
 
-    constructor(product: String?, type: ExpensesType?) : this(
-        name = product,
-        quantity = Int.DEFAULT_QUANTITY_VALUE,
-        date = Date(),
-        unitaryValue = BigDecimal.ZERO,
-        totalValue = BigDecimal.ZERO,
-        type = type,
-        isActive = Boolean.DEFAULT_ACTIVE_STATUS
+    fun update(
+        name: Editable?,
+        quantity: Editable?,
+        date: Editable?,
+        value: Editable?,
+        isChecked: Boolean?
+    ) = copy(
+        name = name.toString(),
+        quantity = quantity.toInt(),
+        date = date.toDate(),
+        unitaryValue = value.toCurrencyBigDecimal(),
+        isActive = isChecked.orFalse()
     )
 
     fun calculateTotalValue(): BigDecimal = unitaryValue.multiply(quantity.toBigDecimal())

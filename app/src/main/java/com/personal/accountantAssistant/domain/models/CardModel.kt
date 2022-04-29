@@ -1,8 +1,11 @@
 package com.personal.accountantAssistant.domain.models
 
 import android.os.Parcelable
+import android.text.Editable
 import androidx.recyclerview.widget.DiffUtil
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
@@ -15,6 +18,20 @@ data class CardModel(
     val value: BigDecimal = BigDecimal.ZERO,
     val isActive: Boolean = false
 ) : Parcelable {
+
+    fun update(
+        company: Editable?,
+        name: Editable?,
+        password: Editable?,
+        value: Editable?,
+        isChecked: Boolean?
+    ) = copy(
+        company = company.toString(),
+        name = name.toString(),
+        password = password.toString(),
+        value = value.toCurrencyBigDecimal(),
+        isActive = isChecked.orFalse(),
+    )
 
     companion object {
         val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<CardModel>() {

@@ -8,7 +8,10 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BottomSheetDialogFragment
 import com.personal.accountantAssistant.databinding.FragmentWalletDetailsBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.ENTITY
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.viewBinding
 
 class WalletDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
@@ -58,12 +61,8 @@ class WalletDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     private fun saveCard(model: CardModel?) {
         binding.apply {
-            val updatedModel = model?.copy(
-                company = etCompany.text.toString(),
-                name = etName.text.toString(),
-                password = etPassword.text.toString(),
-                value = etValue.text.toCurrencyBigDecimal(),
-                isActive = scActive.isChecked,
+            val updatedModel = model?.update(
+                etCompany.text, etName.text, etPassword.text, etValue.text, scActive.isChecked
             )
             updatedModel?.let { onEditListener?.invoke(updatedModel).also { dismiss() } }
         }

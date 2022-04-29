@@ -93,12 +93,8 @@ class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     private fun save(model: ExpenseModel?) {
         binding.apply {
-            val updatedModel = model?.copy(
-                name = etName.text.toString(),
-                quantity = etQuantity.text.toInt(),
-                date = etDate.text.toDate(),
-                unitaryValue = etValue.text.toCurrencyBigDecimal(),
-                isActive = scActive.isChecked
+            val updatedModel = model?.update(
+                etName.text, etQuantity.text, etDate.text, etValue.text, scActive.isChecked
             )
             updatedModel?.let { onEditListener?.invoke(it).also { dismiss() } }
         }
