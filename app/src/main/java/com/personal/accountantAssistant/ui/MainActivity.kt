@@ -70,13 +70,12 @@ class MainActivity : BaseActivity<Nothing>() {
         vpContent.adapter = pagerAdapter
 
         val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
-        val tabTitles = resources.getStringArray(R.array.tabs_titles)
         tlMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->
             tab.setIcon(tabIcons.getResourceIdOrThrow(index))
-            tab.text = tabTitles[index]
+        }.apply {
+            attach()
+            tabIcons.recycle()
         }
-        tlMediator?.attach()
-        tabIcons.recycle()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

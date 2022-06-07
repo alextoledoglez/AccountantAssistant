@@ -31,7 +31,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     override fun initComponents() {
         super.initComponents()
         with(lytSummary) {
-            initLayoutSummary(this)
+            initLayoutSummary(binding = this, stringRes = R.string.menu_buys)
             scActive.setOnClickListener { viewModel.setAllBuysActive(scActive.isChecked) }
         }
         srlContent.setOnRefreshListener { viewModel.getBuys() }

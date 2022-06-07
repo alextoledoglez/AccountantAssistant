@@ -11,6 +11,16 @@
     android:gravity="center_horizontal"
     tools:context=".ui.menu.MenuFragment">
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="@dimen/zero"
+        android:layout_height="@dimen/title_height"
+        android:text="@string/menu_profile"
+        android:theme="@style/TitleTextView"
+        app:layout_constraintEnd_toEndOf="@id/glEnd"
+        app:layout_constraintStart_toStartOf="@id/glStart"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <include
         android:id="@+id/lytUser"
         layout="@layout/layout_user_data"
@@ -19,7 +29,7 @@
         android:layout_margin="@dimen/default_material_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
     <include
         android:id="@+id/lytContent"

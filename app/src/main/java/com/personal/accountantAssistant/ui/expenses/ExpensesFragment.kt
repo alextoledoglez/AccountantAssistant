@@ -4,7 +4,7 @@ import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
+import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
@@ -54,9 +54,9 @@ abstract class ExpensesFragment<V : BaseViewModel> : BaseFragment<V>(), MenuInte
             ::deleteAll
         ) {}
 
-    fun initLayoutSummary(binding: LayoutListSummaryBinding) {
+    fun initLayoutSummary(binding: LayoutListSummaryBinding, @StringRes stringRes: Int) {
         with(binding) {
-            tvTitle.visibility = View.GONE
+            tvTitle.text = getString(stringRes)
             ivMoney.setImageResource(R.drawable.ic_money)
             tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
             tvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)

@@ -31,7 +31,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     override fun initComponents() {
         super.initComponents()
         with(lytSummary) {
-            initLayoutSummary(this)
+            initLayoutSummary(binding = this, stringRes = R.string.menu_bills)
             scActive.setOnClickListener { viewModel.setAllBillsActive(scActive.isChecked) }
         }
         srlContent.setOnRefreshListener { viewModel.getBills() }

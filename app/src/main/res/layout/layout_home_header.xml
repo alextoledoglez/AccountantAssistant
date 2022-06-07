@@ -5,6 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:text="@string/menu_home"
+        android:theme="@style/TitleTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivAvailable"
         android:layout_width="@dimen/title_height"
@@ -20,6 +30,7 @@
         android:id="@+id/tvPeriodTitle"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_material_margin"
         android:gravity="center_horizontal|bottom"
         android:text="@string/period_to_expense"
         android:textAlignment="gravity"
@@ -30,7 +41,7 @@
         app:layout_constraintBottom_toTopOf="@id/tvPeriodValue"
         app:layout_constraintEnd_toStartOf="@id/ibDateRangePicker"
         app:layout_constraintStart_toEndOf="@id/ivAvailable"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
         tools:text="@string/period_to_expense" />
 
     <androidx.appcompat.widget.AppCompatTextView

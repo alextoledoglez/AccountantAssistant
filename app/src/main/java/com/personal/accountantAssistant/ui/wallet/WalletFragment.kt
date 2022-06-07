@@ -3,7 +3,6 @@ package com.personal.accountantAssistant.ui.wallet
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.widget.SearchView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
@@ -86,7 +85,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
 
     private fun initLayoutSummary() {
         with(lytSummary) {
-            tvTitle.visibility = View.GONE
+            tvTitle.text = getString(R.string.menu_wallet)
             ivMoney.setImageResource(R.drawable.ic_money)
             tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
             tvSubtitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 24f)
