@@ -20,7 +20,7 @@ class CardsViewHolder(
             //DETAILS
             tvCompany.text = model.company
             tvName.text = model.name
-            tvValue.text = model.value.toCurrencyMaskedStr()
+            tvValue.text = model.availableValue.toCurrencyMaskedStr()
             //ACTIONS
             lytActions.scActive.apply {
                 isChecked = model.isActive.orFalse()

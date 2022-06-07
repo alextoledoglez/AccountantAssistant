@@ -11,7 +11,7 @@ import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.migrations.CardTableMigrations
 import com.personal.accountantAssistant.data.migrations.ExpensesTableMigrations
 
-@Database(entities = [CardEntity::class, ExpenseEntity::class], version = 5, exportSchema = false)
+@Database(entities = [CardEntity::class, ExpenseEntity::class], version = 6, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun cardsDao(): CardDao
@@ -30,7 +30,8 @@ abstract class AppDatabase : RoomDatabase() {
             CardTableMigrations.MIGRATION_1_2,
             CardTableMigrations.MIGRATION_2_3,
             ExpensesTableMigrations.MIGRATION_3_4,
-            ExpensesTableMigrations.MIGRATION_4_5
+            ExpensesTableMigrations.MIGRATION_4_5,
+            CardTableMigrations.MIGRATION_5_6
         )
 
         @JvmStatic

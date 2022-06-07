@@ -1,32 +1,38 @@
 package com.personal.accountantAssistant.data.migrations
 
-import com.personal.accountantAssistant.data.AppDatabase
-import com.personal.accountantAssistant.data.entities.CardEntity
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.personal.accountantAssistant.data.AppDatabase.Companion.CARDS_TABLE_NAME
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.ACTIVE
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.AVAILABLE_VALUE
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.COMPANY
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.DATE
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.ID
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.LIMIT_VALUE
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.NAME
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.PASSWORD
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.USED_VALUE
+import com.personal.accountantAssistant.data.entities.CardEntity.Companion.VALUE
 
 object CardTableMigrations : BaseTableMigration() {
 
-    private const val TABLE_BACKUP = "${AppDatabase.CARDS_TABLE_NAME}_BACKUP"
+    private const val TABLE_BACKUP = "${CARDS_TABLE_NAME}_BACKUP"
 
-    private const val ACTIVE_FIELD_TYPE_SCHEMA_CHANGES = "${CardEntity.ID} INTEGER PRIMARY KEY, " +
-            "${CardEntity.COMPANY} TEXT, " +
-            "${CardEntity.NAME} TEXT, " +
-            "${CardEntity.PASSWORD} TEXT, " +
-            "${CardEntity.VALUE} TEXT, " +
-            "${CardEntity.ACTIVE} INTEGER"
+    private const val ACTIVE_FIELD_TYPE_SCHEMA_CHANGES = "$ID $INTEGER_TYPE PRIMARY KEY, " +
+            "$COMPANY $TEXT_TYPE, " +
+            "$NAME $TEXT_TYPE, " +
+            "$PASSWORD $TEXT_TYPE, " +
+            "$VALUE $TEXT_TYPE, " +
+            "$ACTIVE $INTEGER_TYPE"
 
-    private const val VALUE_FIELD_TYPE_SCHEMA_CHANGES = "${CardEntity.ID} INTEGER PRIMARY KEY, " +
-            "${CardEntity.COMPANY} TEXT, " +
-            "${CardEntity.NAME} TEXT, " +
-            "${CardEntity.PASSWORD} TEXT, " +
-            "${CardEntity.VALUE} REAL, " +
-            "${CardEntity.ACTIVE} INTEGER"
+    private const val VALUE_FIELD_TYPE_SCHEMA_CHANGES = "$ID $INTEGER_TYPE PRIMARY KEY, " +
+            "$COMPANY $TEXT_TYPE, " +
+            "$NAME $TEXT_TYPE, " +
+            "$PASSWORD $TEXT_TYPE, " +
+            "$VALUE $REAL_TYPE, " +
+            "$ACTIVE $INTEGER_TYPE"
 
-    private const val TABLE_FIELDS = "${CardEntity.ID}, " +
-            "${CardEntity.COMPANY}, " +
-            "${CardEntity.NAME}, " +
-            "${CardEntity.PASSWORD}, " +
-            "${CardEntity.VALUE}, " +
-            CardEntity.ACTIVE
+    private const val TABLE_FIELDS = "$ID, $COMPANY, $NAME, $PASSWORD, $VALUE, $ACTIVE"
 
     private val CREATE_TABLE_BACKUP_WITH_ACTIVE_FIELD_CHANGES = createTable(
         table = TABLE_BACKUP, fieldsDefinitions = ACTIVE_FIELD_TYPE_SCHEMA_CHANGES
@@ -36,12 +42,12 @@ object CardTableMigrations : BaseTableMigration() {
     )
     private val COPY_TABLE_DATA = copyFieldsFromTableToTable(
         fields = TABLE_FIELDS,
-        originTable = AppDatabase.CARDS_TABLE_NAME,
+        originTable = CARDS_TABLE_NAME,
         destinyTable = TABLE_BACKUP
     )
-    private val DROP_TABLE = dropTable(AppDatabase.CARDS_TABLE_NAME)
+    private val DROP_TABLE = dropTable(CARDS_TABLE_NAME)
     private val RENAME_TABLE_BACKUP_TO_TABLE = renameTableTo(
-        oldTable = TABLE_BACKUP, newTable = AppDatabase.CARDS_TABLE_NAME
+        oldTable = TABLE_BACKUP, newTable = CARDS_TABLE_NAME
     )
 
     val MIGRATION_1_2 = setTableSchemaMigration(
@@ -59,4 +65,13 @@ object CardTableMigrations : BaseTableMigration() {
         DROP_TABLE,
         RENAME_TABLE_BACKUP_TO_TABLE
     )
+
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(renameColumnTo(CARDS_TABLE_NAME, VALUE, AVAILABLE_VALUE))
+            database.execSQL(addColumn(CARDS_TABLE_NAME, DATE, TEXT_TYPE))
+            database.execSQL(addColumn(CARDS_TABLE_NAME, USED_VALUE, REAL_TYPE))
+            database.execSQL(addColumn(CARDS_TABLE_NAME, LIMIT_VALUE, REAL_TYPE))
+        }
+    }
 }

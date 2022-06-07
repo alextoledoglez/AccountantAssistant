@@ -50,7 +50,6 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
                 adapter.submitList(it) {
                     loadSummary()
                     srlContent.stopRefreshing()
-                    rvContent.scrollToTop()
                 }
             }
             getBuys()

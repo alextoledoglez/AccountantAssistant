@@ -1,41 +1,49 @@
 package com.personal.accountantAssistant.data.migrations
 
-import com.personal.accountantAssistant.data.AppDatabase
-import com.personal.accountantAssistant.data.entities.ExpenseEntity
+import com.personal.accountantAssistant.data.AppDatabase.Companion.EXPENSES_TABLE_NAME
+import com.personal.accountantAssistant.data.AppDatabase.Companion.PAYMENTS_TABLE_NAME
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.ACTIVE
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.DATE
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.ID
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.NAME
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.QUANTITY
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.TOTAL_VALUE
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.TYPE
+import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.UNITARY_VALUE
 
 object ExpensesTableMigrations : BaseTableMigration() {
 
-    private const val TABLE_BACKUP = "${AppDatabase.EXPENSES_TABLE_NAME}_BACKUP"
+    private const val TABLE_BACKUP = "${EXPENSES_TABLE_NAME}_BACKUP"
 
-    private const val FIELDS_SCHEME_CHANGES = "${ExpenseEntity.ID} INTEGER PRIMARY KEY, " +
-            "${ExpenseEntity.NAME} TEXT, " +
-            "${ExpenseEntity.QUANTITY} INTEGER, " +
-            "${ExpenseEntity.DATE} TEXT, " +
-            "${ExpenseEntity.UNITARY_VALUE} REAL, " +
-            "${ExpenseEntity.TOTAL_VALUE} REAL, " +
-            "${ExpenseEntity.TYPE} TEXT, " +
-            "${ExpenseEntity.ACTIVE} INTEGER"
+    private const val FIELDS_SCHEME_CHANGES = "$ID $INTEGER_TYPE PRIMARY KEY, " +
+            "$NAME $TEXT_TYPE, " +
+            "$QUANTITY $INTEGER_TYPE, " +
+            "$DATE $TEXT_TYPE, " +
+            "$UNITARY_VALUE $REAL_TYPE, " +
+            "$TOTAL_VALUE $REAL_TYPE, " +
+            "$TYPE $TEXT_TYPE, " +
+            "$ACTIVE $INTEGER_TYPE"
 
-    private const val FIELDS_DEFINITIONS = "${ExpenseEntity.ID}, " +
-            "${ExpenseEntity.NAME}, " +
-            "${ExpenseEntity.QUANTITY}, " +
-            "${ExpenseEntity.DATE}, " +
-            "${ExpenseEntity.UNITARY_VALUE}, " +
-            "${ExpenseEntity.TOTAL_VALUE}, " +
-            "${ExpenseEntity.TYPE}, " +
-            ExpenseEntity.ACTIVE
+    private const val FIELDS_DEFINITIONS = "$ID, " +
+            "$NAME, " +
+            "$QUANTITY, " +
+            "$DATE, " +
+            "$UNITARY_VALUE, " +
+            "$TOTAL_VALUE, " +
+            "$TYPE, " +
+            ACTIVE
 
     private val CREATE_TABLE_BACKUP_WITH_SCHEME_CHANGES = createTable(
         table = TABLE_BACKUP, fieldsDefinitions = FIELDS_SCHEME_CHANGES
     )
     private val COPY_TABLE_DATA = copyFieldsFromTableToTable(
         fields = FIELDS_DEFINITIONS,
-        originTable = AppDatabase.EXPENSES_TABLE_NAME,
+        originTable = EXPENSES_TABLE_NAME,
         destinyTable = TABLE_BACKUP
     )
-    private val DROP_TABLE = dropTable(AppDatabase.EXPENSES_TABLE_NAME)
+    private val DROP_TABLE = dropTable(EXPENSES_TABLE_NAME)
     private val RENAME_TABLE_BACKUP_TO_TABLE = renameTableTo(
-        oldTable = TABLE_BACKUP, newTable = AppDatabase.EXPENSES_TABLE_NAME
+        oldTable = TABLE_BACKUP, newTable = EXPENSES_TABLE_NAME
     )
 
     val MIGRATION_3_4 = setTableSchemaMigration(
@@ -49,7 +57,7 @@ object ExpensesTableMigrations : BaseTableMigration() {
     val MIGRATION_4_5 = renameTableMigration(
         startVersion = 4,
         endVersion = 5,
-        oldTable = AppDatabase.PAYMENTS_TABLE_NAME,
-        newTable = AppDatabase.EXPENSES_TABLE_NAME
+        oldTable = PAYMENTS_TABLE_NAME,
+        newTable = EXPENSES_TABLE_NAME
     )
 }

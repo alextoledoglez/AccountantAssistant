@@ -49,7 +49,6 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             bills.observe(viewLifecycleOwner) {
                 adapter.submitList(it) { loadSummary() }
                 srlContent.stopRefreshing()
-                rvContent.scrollToTop()
             }
             getBills()
         }

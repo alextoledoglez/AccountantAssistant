@@ -12,14 +12,14 @@ import java.util.*
 
 class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
 
+    private suspend fun getAllBills() = expenseDao.selectAll(ExpensesType.BILL.name).toList()
+
     private suspend fun getBillsBy(result: Int) = if (result.isMoreThanZero())
-        expenseDao.selectAll(ExpensesType.BILL.name).toList()
+        getAllBills()
     else
         mutableListOf()
 
-    fun getBills(): Flow<List<ExpenseEntity>> = flowEmit {
-        expenseDao.selectAll(ExpensesType.BILL.name).toList()
-    }
+    fun getBills(): Flow<List<ExpenseEntity>> = flowEmit { getAllBills() }
 
     fun getSummary(): Flow<ExpenseEntity> = flowEmit {
         expenseDao.getSummary(ExpensesType.BILL.name)

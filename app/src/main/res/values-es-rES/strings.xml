@@ -60,7 +60,10 @@
     <string name="price">Precio</string>
     <string name="active">Activo</string>
     <string name="date">Fecha</string>
+    <string name="payment_date">Fecha del pago</string>
     <string name="value">Valor</string>
+    <string name="available_card_value">Valor disponible</string>
+    <string name="limit_card_value">Valor límite</string>
     <string name="error_saving_your_data">Error al intentar guardar sus datos</string>
     <string name="error_deleting_records">Error al intentar eliminar los registros</string>
     <string name="successfully_deleted_record">Registro eliminado con éxito</string>

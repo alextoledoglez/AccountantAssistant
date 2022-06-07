@@ -12,14 +12,14 @@ import java.util.*
 
 class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
 
+    private suspend fun getAllBuys() = expenseDao.selectAll(ExpensesType.BUY.name).toList()
+
     private suspend fun getBuysBy(result: Int) = if (result > Int.DEFAULT_UID)
-        expenseDao.selectAll(ExpensesType.BUY.name).toList()
+        getAllBuys()
     else
         mutableListOf()
 
-    fun getBuys(): Flow<List<ExpenseEntity>> = flowEmit {
-        expenseDao.selectAll(ExpensesType.BUY.name).toList()
-    }
+    fun getBuys(): Flow<List<ExpenseEntity>> = flowEmit { getAllBuys() }
 
     fun getSummary(): Flow<ExpenseEntity> = flowEmit {
         expenseDao.getSummary(ExpensesType.BUY.name)

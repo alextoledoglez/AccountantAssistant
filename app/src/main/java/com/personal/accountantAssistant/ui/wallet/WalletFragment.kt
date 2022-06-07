@@ -66,7 +66,6 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
                 adapter.submitList(it) {
                     loadSummary()
                     srlContent.stopRefreshing()
-                    rvContent.scrollToTop()
                 }
             }
             loadCards()

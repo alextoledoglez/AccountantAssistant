@@ -17,6 +17,14 @@ abstract class BaseTableMigration {
         oldTable: String, newTable: String
     ) = "ALTER TABLE $oldTable RENAME TO $newTable"
 
+    fun renameColumnTo(
+        table: String, oldColumn: String, newColumn: String
+    ) = "ALTER TABLE $table RENAME COLUMN $oldColumn TO $newColumn"
+
+    fun addColumn(
+        table: String, column: String, columnType: String
+    ) = "ALTER TABLE $table ADD COLUMN $column $columnType"
+
     fun dropTable(table: String) = "DROP TABLE $table"
 
     fun setTableSchemaMigration(
@@ -41,5 +49,11 @@ abstract class BaseTableMigration {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL(renameTableTo(oldTable, newTable))
         }
+    }
+
+    companion object {
+        const val INTEGER_TYPE = "INTEGER"
+        const val TEXT_TYPE = "TEXT"
+        const val REAL_TYPE = "REAL"
     }
 }

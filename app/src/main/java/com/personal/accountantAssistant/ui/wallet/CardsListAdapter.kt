@@ -33,7 +33,9 @@ class CardsListAdapter(
     }
 
     private fun filter(text: String) = Predicate<CardModel> {
-        it.value.toString().containStr(text) ||
+        it.limitValue.toString().containStr(text) ||
+                it.availableValue.toString().containStr(text) ||
+                it.usedValue.toString().containStr(text) ||
                 it.password.containStr(text) ||
                 it.company.containStr(text) ||
                 it.name.containStr(text)
