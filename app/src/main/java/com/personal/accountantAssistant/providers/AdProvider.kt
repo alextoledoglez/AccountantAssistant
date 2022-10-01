@@ -8,7 +8,7 @@ import com.personal.accountantAssistant.BuildConfig
 class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
 
     private val adView = AdView(context).apply {
-        adSize = AdSize.LARGE_BANNER
+        setAdSize(AdSize.LARGE_BANNER)
         adUnitId = BuildConfig.ADMOB_UNIT_ID
         adListener = object : AdListener() {
             override fun onAdClicked() {

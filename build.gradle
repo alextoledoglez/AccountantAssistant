@@ -1,16 +1,34 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = "1.6.10"
+    ext {
+
+        // local.properties file variables
+        LOCAL_PROPERTIES = "local.properties"
+        STRING = "String"
+        ADMOB_TEST_DEVICE_ID = "ADMOB_TEST_DEVICE_ID"
+        ADMOB_UNIT_ID = "ADMOB_UNIT_ID"
+        ADMOB_DEBUG_TEST_DEVICE_ID = "ADMOB_DEBUG_TEST_DEVICE_ID"
+        ADMOB_DEBUG_UNIT_ID = "ADMOB_DEBUG_UNIT_ID"
+
+        // libraries versions
+        kotlin_version = "1.7.10"
+        koin_version = "2.2.3"
+        lifeCycleVersion = "2.5.1"
+        roomVersion = "2.4.3"
+        navigationVersion = "2.5.2"
+        googleHttpApiVersion = "1.26.0"
+        glideVersion = "4.12.0"
+    }
     repositories {
         google()
         maven { url 'https://jitpack.io' }
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.google.gms:google-services:4.3.14'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
