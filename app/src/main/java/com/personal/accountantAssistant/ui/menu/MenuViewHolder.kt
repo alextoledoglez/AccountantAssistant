@@ -20,7 +20,7 @@ class MenuViewHolder(private val binding: MenuItemListBinding) : RecyclerView.Vi
 
     companion object {
         fun newInstance(parent: ViewGroup) = MenuViewHolder(
-            binding = MenuItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false)
+            binding = MenuItemListBinding.inflate(parent.toLayoutInflater(), parent, false)
         )
     }
 }

@@ -2,9 +2,7 @@ package com.personal.accountantAssistant.ui.home
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.personal.accountantAssistant.databinding.HomeItemListBinding
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
-import com.personal.accountantAssistant.extensions.toLayoutInflater
 
 class HomeListAdapter : ListAdapter<DashboardItemModel, HomeViewHolder>(
     DashboardItemModel.DIFF_UTIL_CALLBACK

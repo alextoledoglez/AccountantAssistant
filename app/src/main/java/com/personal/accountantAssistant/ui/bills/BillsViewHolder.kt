@@ -56,9 +56,7 @@ class BillsViewHolder(
     companion object {
         fun newInstance(parent: ViewGroup, adapterChanges: ListAdapterChanges<ExpenseModel>) =
             BillsViewHolder(
-                binding = BillsItemListBinding.inflate(
-                    parent.context.toLayoutInflater(), parent, false
-                ),
+                binding = BillsItemListBinding.inflate(parent.toLayoutInflater(), parent, false),
                 adapterChanges = adapterChanges
             )
     }

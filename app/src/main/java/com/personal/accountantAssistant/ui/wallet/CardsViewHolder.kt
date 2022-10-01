@@ -57,11 +57,7 @@ class CardsViewHolder(
     companion object {
         fun newInstance(parent: ViewGroup, adapterChanges: ListAdapterChanges<CardModel>) =
             CardsViewHolder(
-                binding = CardItemListBinding.inflate(
-                    parent.context.toLayoutInflater(),
-                    parent,
-                    false
-                ),
+                binding = CardItemListBinding.inflate(parent.toLayoutInflater(), parent, false),
                 adapterChanges = adapterChanges
             )
     }

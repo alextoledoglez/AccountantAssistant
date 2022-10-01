@@ -56,7 +56,7 @@ class BuysViewHolder(
         fun newInstance(
             parent: ViewGroup, adapterChanges: ListAdapterChanges<ExpenseModel>
         ) = BuysViewHolder(
-            binding = BuysItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false),
+            binding = BuysItemListBinding.inflate(parent.toLayoutInflater(), parent, false),
             adapterChanges = adapterChanges
         )
     }

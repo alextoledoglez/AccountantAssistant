@@ -25,7 +25,7 @@ class HomeViewHolder(private val binding: HomeItemListBinding) : RecyclerView.Vi
 
     companion object {
         fun newInstance(parent: ViewGroup) = HomeViewHolder(
-            binding = HomeItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false)
+            binding = HomeItemListBinding.inflate(parent.toLayoutInflater(), parent, false)
         )
     }
 }

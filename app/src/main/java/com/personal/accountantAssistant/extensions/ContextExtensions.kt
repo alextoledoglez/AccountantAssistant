@@ -40,8 +40,6 @@ private fun Context.hasPermissionGranted(
     permission: String
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
-fun Context.toLayoutInflater(): LayoutInflater = LayoutInflater.from(this)
-
 fun Context.startMainActivity() {
     Intent(this, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK

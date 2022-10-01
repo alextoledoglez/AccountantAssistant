@@ -5,11 +5,9 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
 import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
-import com.personal.accountantAssistant.databinding.BillsItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.settingFilter
-import com.personal.accountantAssistant.extensions.toLayoutInflater
 import java.util.function.Predicate
 
 class BillsListAdapter(
