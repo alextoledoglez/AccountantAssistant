@@ -26,7 +26,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
     private val rvContent by lazy { lytContent.rvContent }
 
     private val adapterChanges by lazy {
-        ListAdapterChanges<CardModel>(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
+        ListAdapterChanges(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
     }
 
     private val adapter by lazy { CardsListAdapter(adapterChanges) }
@@ -62,6 +62,7 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
             flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
             summary.observe(viewLifecycleOwner) {
                 updateLayoutSummary(it)
+                setAvailableMoney(it.total)
                 srlContent.stopRefreshing()
             }
             cards.observe(viewLifecycleOwner) {

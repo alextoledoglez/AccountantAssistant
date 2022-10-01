@@ -8,12 +8,12 @@ import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.domain.repository.CardsRepository
 import com.personal.accountantAssistant.domain.useCases.SetAvailableMoneyUseCase
 import com.personal.accountantAssistant.extensions.onError
-import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class WalletViewModel(
     analytics: AnalyticsProvider?,
@@ -42,10 +42,16 @@ class WalletViewModel(
             repository?.getSummary()
                 ?.onError { setMessage(it.message) }
                 ?.onCompletion { setData() }
-                ?.collect {
-                    setAvailableMoney(it?.total.orZero().toFloat())
-                    _summary.postValue(it)
-                }
+                ?.collect { _summary.postValue(it) }
+        }
+    }
+
+    fun setAvailableMoney(availableMoney: BigDecimal) {
+        launch {
+            setAvailableMoney(availableMoney.toFloat())
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect()
         }
     }
 

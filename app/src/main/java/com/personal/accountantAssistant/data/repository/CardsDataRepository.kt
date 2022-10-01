@@ -9,9 +9,7 @@ import com.personal.accountantAssistant.domain.repository.CardsRepository
 import com.personal.accountantAssistant.extensions.toInt
 import kotlinx.coroutines.flow.map
 
-class CardsDataRepository(
-    private val dataSource: CardsRemoteDataSource
-) : CardsRepository {
+class CardsDataRepository(private val dataSource: CardsRemoteDataSource) : CardsRepository {
 
     override fun getCards() = dataSource.getCards().map { it.toListModel() }
 
