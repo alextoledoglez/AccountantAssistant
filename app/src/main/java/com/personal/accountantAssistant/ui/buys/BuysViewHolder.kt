@@ -1,16 +1,15 @@
 package com.personal.accountantAssistant.ui.buys
 
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 
 class BuysViewHolder(
-    val binding: BuysItemListBinding,
-    private val onEditExpense: (model: ExpenseModel) -> Unit,
-    private val onActiveExpense: (model: ExpenseModel) -> Unit,
-    private val onRemoveExpense: (model: ExpenseModel) -> Unit,
+    val binding: BuysItemListBinding, private val adapterChanges: ListAdapterChanges<ExpenseModel>
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: ExpenseModel) {
@@ -23,13 +22,13 @@ class BuysViewHolder(
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
                     val switchedModel = model.copy(isActive = !model.isActive)
-                    onActiveExpense(switchedModel)
+                    adapterChanges.onActive(switchedModel)
                     setActiveRow()
                 }
 
             }
-            itemView.setOnClickListener { onEditExpense(model) }
-            lytActions.ibDelete.setOnClickListener { onRemoveExpense(model) }
+            itemView.setOnClickListener { adapterChanges.onEdit(model) }
+            lytActions.ibDelete.setOnClickListener { adapterChanges.onRemove(model) }
         }
         setActiveRow()
     }
@@ -51,5 +50,14 @@ class BuysViewHolder(
         val unitaryPriceStr = model.unitaryValue.toCurrencyMaskedStr()
         val totalPriceStr = model.calculateTotalValue().toCurrencyMaskedStr()
         return "$quantityStr$operator${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
+    }
+
+    companion object {
+        fun newInstance(
+            parent: ViewGroup, adapterChanges: ListAdapterChanges<ExpenseModel>
+        ) = BuysViewHolder(
+            binding = BuysItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false),
+            adapterChanges = adapterChanges
+        )
     }
 }

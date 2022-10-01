@@ -7,6 +7,7 @@ import androidx.appcompat.widget.SearchView
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.bases.interfaces.MenuInterface
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentWalletBinding
@@ -24,9 +25,11 @@ class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
     private val vfContent by lazy { lytContent.vfContent }
     private val rvContent by lazy { lytContent.rvContent }
 
-    private val adapter by lazy {
-        CardsListAdapter(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
+    private val adapterChanges by lazy {
+        ListAdapterChanges<CardModel>(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
     }
+
+    private val adapter by lazy { CardsListAdapter(adapterChanges) }
 
     override fun onDestroy() {
         super.onDestroy()

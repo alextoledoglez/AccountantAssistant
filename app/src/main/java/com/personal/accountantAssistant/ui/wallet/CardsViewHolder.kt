@@ -1,18 +1,19 @@
 package com.personal.accountantAssistant.ui.wallet
 
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.databinding.CardItemListBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.getCompatColor
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
+import com.personal.accountantAssistant.extensions.toLayoutInflater
 
 class CardsViewHolder(
     private val binding: CardItemListBinding,
-    private val onEditCard: (model: CardModel) -> Unit,
-    private val onActiveCard: (model: CardModel) -> Unit,
-    private val onRemoveCard: (model: CardModel) -> Unit,
+    private val adapterChanges: ListAdapterChanges<CardModel>
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: CardModel) {
@@ -26,12 +27,12 @@ class CardsViewHolder(
                 isChecked = model.isActive.orFalse()
                 setOnClickListener {
                     val switchedModel = model.copy(isActive = !model.isActive)
-                    onActiveCard(switchedModel)
+                    adapterChanges.onActive(switchedModel)
                     setActiveRow()
                 }
             }
-            itemView.setOnClickListener { onEditCard(model) }
-            lytActions.ibDelete.setOnClickListener { onRemoveCard(model) }
+            itemView.setOnClickListener { adapterChanges.onEdit(model) }
+            lytActions.ibDelete.setOnClickListener { adapterChanges.onRemove(model) }
         }
         setActiveRow()
     }
@@ -51,5 +52,17 @@ class CardsViewHolder(
             tvValue.setTextColor(textColor)
             ivChip.setColorFilter(chipColor, android.graphics.PorterDuff.Mode.MULTIPLY)
         }
+    }
+
+    companion object {
+        fun newInstance(parent: ViewGroup, adapterChanges: ListAdapterChanges<CardModel>) =
+            CardsViewHolder(
+                binding = CardItemListBinding.inflate(
+                    parent.context.toLayoutInflater(),
+                    parent,
+                    false
+                ),
+                adapterChanges = adapterChanges
+            )
     }
 }

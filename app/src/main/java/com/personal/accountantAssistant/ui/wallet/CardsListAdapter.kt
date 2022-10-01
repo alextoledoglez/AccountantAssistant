@@ -4,25 +4,21 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.databinding.CardItemListBinding
 import com.personal.accountantAssistant.domain.models.CardModel
+import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.settingFilter
 import com.personal.accountantAssistant.extensions.toLayoutInflater
 import java.util.function.Predicate
 
 class CardsListAdapter(
-    private val onEditCard: (model: CardModel) -> Unit,
-    private val onActiveCard: (model: CardModel) -> Unit,
-    private val onRemoveCard: (model: CardModel) -> Unit,
+    private val adapterChanges: ListAdapterChanges<CardModel>
 ) : ListAdapter<CardModel, CardsViewHolder>(CardModel.DIFF_UTIL_CALLBACK), Filterable {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CardsViewHolder(
-        CardItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false),
-        onEditCard,
-        onActiveCard,
-        onRemoveCard
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        CardsViewHolder.newInstance(parent, adapterChanges)
 
     override fun onBindViewHolder(holder: CardsViewHolder, position: Int) {
         holder.bind(currentList[position])

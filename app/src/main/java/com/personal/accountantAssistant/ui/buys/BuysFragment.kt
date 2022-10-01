@@ -2,10 +2,12 @@ package com.personal.accountantAssistant.ui.buys
 
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.bills.BillsListAdapter
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 
@@ -19,9 +21,11 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
     private val vfContent by lazy { lytContent.vfContent }
     private val rvContent by lazy { lytContent.rvContent }
 
-    override val adapter by lazy {
-        BuysListAdapter(::onEditBuy, viewModel::switchActiveBuy, ::onDeleteBuy)
+    override val adapterChanges by lazy {
+        ListAdapterChanges(::onEditBuy, viewModel::switchActiveBuy, ::onDeleteBuy)
     }
+
+    override val adapter by lazy { BuysListAdapter(adapterChanges) }
 
     override fun onDestroy() {
         super.onDestroy()

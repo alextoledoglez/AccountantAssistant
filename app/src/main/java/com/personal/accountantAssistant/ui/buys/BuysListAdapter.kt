@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.ListAdapter
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.databinding.BuysItemListBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.containStr
@@ -12,17 +13,11 @@ import com.personal.accountantAssistant.extensions.toLayoutInflater
 import java.util.function.Predicate
 
 class BuysListAdapter(
-    private val onEditExpense: (model: ExpenseModel) -> Unit,
-    private val onActiveExpense: (model: ExpenseModel) -> Unit,
-    private val onRemoveExpense: (model: ExpenseModel) -> Unit,
+    private val adapterChanges: ListAdapterChanges<ExpenseModel>
 ) : ListAdapter<ExpenseModel, BuysViewHolder>(ExpenseModel.DIFF_UTIL_CALLBACK), Filterable {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BuysViewHolder(
-        BuysItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false),
-        onEditExpense,
-        onActiveExpense,
-        onRemoveExpense
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        BuysViewHolder.newInstance(parent, adapterChanges)
 
     override fun onBindViewHolder(holder: BuysViewHolder, position: Int) {
         holder.bind(currentList[position])

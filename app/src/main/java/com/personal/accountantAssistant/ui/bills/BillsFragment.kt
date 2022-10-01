@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.ui.bills
 
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
+import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
@@ -19,9 +20,11 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
     private val vfContent by lazy { lytContent.vfContent }
     private val rvContent by lazy { lytContent.rvContent }
 
-    override val adapter by lazy {
-        BillsListAdapter(::onEditBill, viewModel::switchActiveBill, ::onDeleteBill)
+    override val adapterChanges by lazy {
+        ListAdapterChanges(::onEditBill, viewModel::switchActiveBill, ::onDeleteBill)
     }
+
+    override val adapter by lazy { BillsListAdapter(adapterChanges) }
 
     override fun onDestroy() {
         super.onDestroy()

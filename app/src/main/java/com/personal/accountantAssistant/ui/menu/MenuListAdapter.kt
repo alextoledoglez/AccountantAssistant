@@ -9,9 +9,8 @@ import com.personal.accountantAssistant.extensions.toLayoutInflater
 class MenuListAdapter : ListAdapter<MenuItemModel, MenuViewHolder>(
     MenuItemModel.DIFF_UTIL_CALLBACK
 ) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MenuViewHolder(
-        MenuItemListBinding.inflate(parent.context.toLayoutInflater(), parent, false)
-    )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        MenuViewHolder.newInstance(parent)
 
     override fun onBindViewHolder(holder: MenuViewHolder, position: Int) {
         holder.bind(currentList[position])
