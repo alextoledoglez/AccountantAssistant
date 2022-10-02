@@ -65,7 +65,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         with(viewModel) {
             isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
             flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
-            periodDates.observe(viewLifecycleOwner) { tvPeriodValue.text = it.toPeriodDateStr() }
+            periodDates.observe(viewLifecycleOwner) {
+                tvPeriodValue.text = it.toPeriodDateStr()
+                loadExpenses(it.second)
+            }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
@@ -95,9 +98,19 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         //Values
         val buys = values?.buys.orZero()
         val bills = values?.bills.orZero()
-        val available = viewModel.availableMoney.value.orZero()
         val total = values?.total.orZero().rounded()
+        val available = values?.available.orZero()
         val balance = available.minus(total).rounded()
+        val availableColor = getColorResourceBy(values?.isTotalLessThanAvailable)
+
+        //Available money
+        binding.lytHeader.apply {
+            ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
+            tvAvailable.apply {
+                text = getString(R.string.available_value, available.abs().toCurrencyMaskedStr())
+                setTextColor(availableColor)
+            }
+        }
 
         //Expenses texts
         val buysText = getString(titleRes.buys)
@@ -109,22 +122,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val billsColor = getExpensesColorResourceBy(bills)
         val totalColor = getExpensesColorResourceBy(total)
 
-        //Available color
-        val isTotalLessThanAvailable = total.isLessThan(viewModel.availableMoney.value)
-        val availableColor = getColorResourceBy(isTotalLessThanAvailable)
-
         //Balance
         val isZeroLessThanBalance = balance.isMoreThanZero()
         val balanceText = getString(if (isZeroLessThanBalance) titleRes.gain else titleRes.missing)
         val balanceColor = getColorResourceBy(isZeroLessThanBalance)
-
-        binding.lytHeader.apply {
-            ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
-            tvAvailable.apply {
-                text = getString(R.string.available_value, available.abs().toCurrencyMaskedStr())
-                setTextColor(availableColor)
-            }
-        }
 
         viewModel.postDashboardValues(
             listOf(
@@ -145,9 +146,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     )
 
     private fun loadData() {
-        viewModel.loadPeriodDates()
-        viewModel.loadAvailableMoney()
-        viewModel.loadExpenses()
+        viewModel.apply {
+            loadPeriodDates()
+            loadAvailableMoney()
+        }
     }
 
     companion object {

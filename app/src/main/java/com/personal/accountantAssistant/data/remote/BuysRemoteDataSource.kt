@@ -6,9 +6,7 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.extensions.DEFAULT_UID
 import com.personal.accountantAssistant.extensions.flowEmit
 import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.toDateStr
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
 
@@ -25,8 +23,8 @@ class BuysRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.getSummary(ExpensesType.BUY.name)
     }
 
-    fun getTotalValueUntil(date: Date?): Flow<ExpenseEntity> = flowEmit {
-        expenseDao.getTotalValueUntil(date.toDateStr(), ExpensesType.BUY.name)
+    fun getTotalValue(): Flow<ExpenseEntity> = flowEmit {
+        expenseDao.getSummary(ExpensesType.BUY.name)
     }
 
     fun saveBuy(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {

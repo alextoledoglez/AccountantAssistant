@@ -10,7 +10,6 @@ import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.rounded
 import com.personal.accountantAssistant.extensions.toInt
 import kotlinx.coroutines.flow.map
-import java.util.*
 
 class BuysDataRepository(private val dataSource: BuysRemoteDataSource) : BuysRepository {
 
@@ -18,7 +17,7 @@ class BuysDataRepository(private val dataSource: BuysRemoteDataSource) : BuysRep
 
     override fun getSummary() = dataSource.getSummary().map { it.toSummaryModel() }
 
-    override fun getTotalValueUntil(date: Date?) = dataSource.getTotalValueUntil(date).map {
+    override fun getTotalValue() = dataSource.getTotalValue().map {
         it.totalValue.orZero().toBigDecimal().rounded()
     }
 

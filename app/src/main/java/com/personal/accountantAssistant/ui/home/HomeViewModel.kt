@@ -66,15 +66,17 @@ class HomeViewModel(
         }
     }
 
-    fun loadExpenses() {
-        val lastDate = _periodDates.value?.second
+    fun loadExpenses(lastDate: Date?) {
         launch {
-            combine(
-                buysRepository.getTotalValueUntil(lastDate),
-                billsRepository.getTotalValueUntil(lastDate)
-            ) { buys, bills ->
-                val total = buys?.plus(bills.orZero())
-                ExpensesValuesModel(buys, bills, total)
+            val buysFlow = buysRepository.getTotalValue()
+            val billsFlow = billsRepository.getTotalValueUntil(lastDate)
+            combine(buysFlow, billsFlow) { buys, bills ->
+                ExpensesValuesModel(
+                    buys = buys,
+                    bills = bills,
+                    total = buys?.plus(bills.orZero()),
+                    available = availableMoney.value
+                )
             }.onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
