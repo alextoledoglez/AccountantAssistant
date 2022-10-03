@@ -5,17 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.mappers.toUserModel
-import com.personal.accountantAssistant.domain.repository.UserRepository
+import com.personal.accountantAssistant.domain.useCases.GetNotificationTokenUseCase
+import com.personal.accountantAssistant.domain.useCases.GetSignedUserUseCase
+import com.personal.accountantAssistant.domain.useCases.SetLocalNotificationTokenUseCase
+import com.personal.accountantAssistant.domain.useCases.SetSignedUserUseCase
 import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.providers.AnalyticsProvider
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    analytics: AnalyticsProvider?, private val userRepository: UserRepository?
+    analytics: AnalyticsProvider?,
+    val getSignedUser: GetSignedUserUseCase,
+    val setSignedUser: SetSignedUserUseCase,
+    val getNotificationTokenUseCase: GetNotificationTokenUseCase,
+    val setLocalNotificationTokenUseCase: SetLocalNotificationTokenUseCase
 ) : BaseViewModel(analytics) {
+
+    private val _notificationToken = MutableLiveData<String?>()
+    val notificationToken: LiveData<String?> get() = _notificationToken
 
     private val _userEmail = MutableLiveData<String?>()
     val userEmail: LiveData<String?> get() = _userEmail
@@ -23,16 +32,19 @@ class LoginViewModel(
     private val _isProcessing = MutableLiveData(false)
     val isProcessing: LiveData<Boolean> get() = _isProcessing
 
+    private val _isNotificationTokenLoaded = MutableLiveData(false)
+    val isNotificationTokenLoaded: LiveData<Boolean> get() = _isNotificationTokenLoaded
+
     private val _isLogged = MutableLiveData(false)
     val isLogged: LiveData<Boolean> get() = _isLogged
 
     fun getUser() {
         launch {
-            userRepository?.getSignedUser()
-                ?.onStart { _isProcessing.postValue(true) }
-                ?.onError { setMessage(it.message) }
-                ?.onCompletion { _isProcessing.postValue(false) }
-                ?.collect { _userEmail.postValue(it?.email) }
+            getSignedUser()
+                .onStart { _isProcessing.postValue(true) }
+                .onError { setMessage(it.message) }
+                .onCompletion { _isProcessing.postValue(false) }
+                .collect { _userEmail.postValue(it?.email) }
         }
     }
 
@@ -40,12 +52,32 @@ class LoginViewModel(
         launch {
             account?.toUserModel().apply {
                 analytics?.setUserAccount(this)
-                userRepository?.setSignedUser(this)
-                    ?.onStart { _isProcessing.postValue(true) }
-                    ?.onError { setMessage(it.message) }
-                    ?.onCompletion { _isProcessing.postValue(false) }
-                    ?.collect { _isLogged.postValue(it) }
+                setSignedUser(this)
+                    .onStart { _isProcessing.postValue(true) }
+                    .onError { setMessage(it.message) }
+                    .onCompletion { _isProcessing.postValue(false) }
+                    .collect { _isLogged.postValue(it) }
             }
+        }
+    }
+
+    fun getNotificationToken() {
+        launch {
+            getNotificationTokenUseCase()
+                .onStart { _isProcessing.postValue(true) }
+                .onError { setMessage(it.message) }
+                .onCompletion { _isProcessing.postValue(false) }
+                .collect { _notificationToken.postValue(it) }
+        }
+    }
+
+    fun saveNotificationToken(token: String?) {
+        launch {
+            setLocalNotificationTokenUseCase(token)
+                .onStart { _isProcessing.postValue(true) }
+                .onError { setMessage(it.message) }
+                .onCompletion { _isProcessing.postValue(false) }
+                .collect { _isNotificationTokenLoaded.postValue(it) }
         }
     }
 

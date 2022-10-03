@@ -1,52 +1,19 @@
 package com.personal.accountantAssistant.data
 
 import android.content.Context
-import android.content.SharedPreferences
-import com.personal.accountantAssistant.extensions.*
-import kotlin.reflect.KClass
+import com.personal.accountantAssistant.bases.BasePreferences
+import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.flowEmit
+import com.personal.accountantAssistant.extensions.toSharedPreferences
 
-class LocalStorage(val context: Context) : SharedPreferences {
+class LocalStorage(val context: Context) : BasePreferences(context.toSharedPreferences()) {
 
-    private val preferences = context.toSharedPreferences()
-
-    override fun getAll(): MutableMap<String, *> = preferences.all
-
-    override fun getString(key: String?, default: String?) = preferences.getString(key, default)
-
-    override fun getStringSet(
-        key: String?, default: MutableSet<String>?
-    ): MutableSet<String>? = preferences.getStringSet(key, default)
-
-    override fun getInt(key: String?, default: Int) = preferences.getInt(key, default)
-
-    override fun getLong(key: String?, default: Long) = preferences.getLong(key, default)
-
-    override fun getFloat(key: String?, default: Float) = preferences.getFloat(key, default)
-
-    override fun getBoolean(key: String?, default: Boolean) = preferences.getBoolean(key, default)
-
-    override fun contains(value: String?): Boolean = preferences.contains(value)
-
-    override fun edit(): SharedPreferences.Editor = preferences.edit()
-
-    override fun registerOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?
-    ) {
-        preferences.registerOnSharedPreferenceChangeListener(listener)
+    fun setNotificationToken(token: String?) = flowEmit {
+        putObject(NOTIFICATION_TOKEN, token)
     }
 
-    override fun unregisterOnSharedPreferenceChangeListener(
-        listener: SharedPreferences.OnSharedPreferenceChangeListener?
-    ) {
-        preferences.unregisterOnSharedPreferenceChangeListener(listener)
-    }
-
-    fun <T : Any> getObject(key: String, clazz: KClass<T>): T? {
-        return getString(key, String.EMPTY)?.takeIfNotBlank()?.fromJson(clazz)
-    }
-
-    fun <T : Any> putObject(key: String, obj: T?): Boolean {
-        return edit().putString(key, obj?.toJson().orEmpty()).commit()
+    fun getNotificationToken() = flowEmit {
+        getString(NOTIFICATION_TOKEN, String.EMPTY)
     }
 
     companion object {
@@ -54,5 +21,6 @@ class LocalStorage(val context: Context) : SharedPreferences {
         const val FIRST_STR_DATE = "FIRST_STR_DATE"
         const val LAST_STR_DATE = "LAST_STR_DATE"
         const val SIGNED_USER = "SIGNED_USER"
+        const val NOTIFICATION_TOKEN = "NOTIFICATION_TOKEN"
     }
 }

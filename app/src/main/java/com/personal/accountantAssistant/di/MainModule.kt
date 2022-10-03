@@ -1,5 +1,7 @@
 package com.personal.accountantAssistant.di
 
+import android.app.NotificationManager
+import android.content.Context
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
@@ -13,19 +15,12 @@ import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
 import com.personal.accountantAssistant.data.remote.BuysRemoteDataSource
 import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
 import com.personal.accountantAssistant.data.remote.UserRemoteDataSource
-import com.personal.accountantAssistant.data.repository.BillsDataRepository
-import com.personal.accountantAssistant.data.repository.BuysDataRepository
-import com.personal.accountantAssistant.data.repository.CardsDataRepository
-import com.personal.accountantAssistant.data.repository.UserDataRepository
-import com.personal.accountantAssistant.domain.repository.BillsRepository
-import com.personal.accountantAssistant.domain.repository.BuysRepository
-import com.personal.accountantAssistant.domain.repository.CardsRepository
-import com.personal.accountantAssistant.domain.repository.UserRepository
+import com.personal.accountantAssistant.data.repository.*
+import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
-import com.personal.accountantAssistant.providers.AdProvider
-import com.personal.accountantAssistant.providers.AnalyticsProvider
-import com.personal.accountantAssistant.providers.CrashlyticsProvider
+import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.DriveService
+import com.personal.accountantAssistant.services.NotificationService
 import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
@@ -33,13 +28,14 @@ import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import java.util.concurrent.Executors
 
 val viewModelModule = module {
-    viewModel { LoginViewModel(get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { WalletViewModel(get(), get(), get()) }
     viewModel { BuysViewModel(get(), get()) }
@@ -55,6 +51,11 @@ val useCasesModule = module {
     single<SetPeriodDatesUseCase> { SetPeriodDatesUseCaseImpl(get()) }
     single<SetAvailableMoneyUseCase> { SetAvailableMoneyUseCaseImpl(get()) }
     single<GetAvailableMoneyUseCase> { GetAvailableMoneyUseCaseImpl(get()) }
+    single<GetSignedUserUseCase> { GetSignedUserUseCaseImpl(get()) }
+    single<SetSignedUserUseCase> { SetSignedUserUseCaseImpl(get()) }
+    single<GetNotificationTokenUseCase> { GetNotificationTokenUseCaseImpl(get()) }
+    single<GetLocalNotificationTokenUseCase> { GetLocalNotificationTokenUseCaseImpl(get()) }
+    single<SetLocalNotificationTokenUseCase> { SetLocalNotificationTokenUseCaseImpl(get()) }
 }
 
 val dataModule = module {
@@ -69,12 +70,15 @@ val dataModule = module {
     single<BuysRepository> { BuysDataRepository(get()) }
     single<BillsRepository> { BillsDataRepository(get()) }
     single<UserRepository> { UserDataRepository(get()) }
+    single<NotificationRepository> { NotificationDataRepository(get(), get()) }
 }
 
 val providersModule = module {
     single { AnalyticsProvider() }
     single { CrashlyticsProvider() }
     single { AdProvider(get(), get()) }
+    single { NotificationProvider() }
+    single { RemoteConfigProvider() }
 }
 
 val utilsModule = module {
@@ -91,6 +95,8 @@ val utilsModule = module {
 }
 
 val servicesModule = module {
+    single { androidContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    single { NotificationService() }
     single { SignInService(get(), get(), get(), get()) }
     single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
 }

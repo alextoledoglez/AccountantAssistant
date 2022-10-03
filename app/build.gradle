@@ -66,6 +66,7 @@ dependencies {
     //---Kotlin dependencies-----------------------------------------------
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1'
 
     //----------Core dependencies----------------------
     implementation 'androidx.core:core-ktx:1.9.0'
@@ -116,6 +117,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf-ktx:20.1.1'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.1.1'
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.13'
+    implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-messaging-directboot:23.0.8'
 
     //------------Retrofit dependencies---------------
     implementation 'com.squareup.okhttp3:okhttp:4.8.0'

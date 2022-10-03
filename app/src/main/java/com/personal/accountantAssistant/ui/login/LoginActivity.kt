@@ -28,14 +28,11 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         binding.signInButton.setOnClickListener { signInPicker() }
         with(viewModel) {
             isProcessing.observe(this@LoginActivity) { setProcessing(it) }
+            isNotificationTokenLoaded.observe(this@LoginActivity) { if (it.orFalse()) getUser() }
             isLogged.observe(this@LoginActivity) { if (it.orFalse()) startMainActivity() }
-            userEmail.observe(this@LoginActivity) {
-                if (it?.isNotBlank().orFalse() && !isLogged.value.orFalse())
-                    signIn(it)
-                else
-                    setLoginActionVisible()
-            }
-            getUser()
+            notificationToken.observe(this@LoginActivity) { saveNotificationToken(it) }
+            userEmail.observe(this@LoginActivity) { signIn(it, isLogged.value) }
+            getNotificationToken()
         }
     }
 
@@ -65,17 +62,19 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
             ?: run { onSignInFail() }
     }
 
-    private fun signIn(email: String?) {
-        setProcessing()
-        service?.getSignInClientBy(email)?.signInIntent
-            ?.let { loginAccountLauncher.launch(it) }
-            ?: run { onSignInFail() }
+    private fun signIn(email: String?, isLogged: Boolean?) {
+        if (email?.isNotBlank().orFalse() && !isLogged.orFalse()) {
+            setProcessing()
+            service?.getSignInClientBy(email)?.signInIntent
+                ?.let { loginAccountLauncher.launch(it) }
+                ?: run { onSignInFail() }
+        } else
+            setLoginActionVisible()
     }
 
     private fun onSignInResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
-            service
-                ?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
+            service?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
                 ?: run { onSignInFail() }
         } else
             onSignInFail()
