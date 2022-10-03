@@ -51,7 +51,9 @@
 
 # Gson specific classes
 -dontwarn sun.misc.**
-#-keep class com.google.gson.stream.** { *; }
+-keep class com.google.gson.stream.** { *; }
+-keep public class com.google.gson.**
+-keep public class com.google.gson.** {public private protected *;}
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.examples.android.model.** { <fields>; }
@@ -86,6 +88,7 @@
 
 ## ### GMS library ###
 -keep class com.google.android.gms.security.ProviderInstaller { *; }
+-keep public class com.google.android.gms.* { public *; }
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
 
@@ -113,3 +116,20 @@
 -keepclasseswithmembernames class com.microsoft.** { *; }
 
 -ignorewarnings
+
+-dontobfuscate
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+
+-dontwarn javax.**
+-keep class **$$ViewBinder { *; }
+-dontwarn java.lang.invoke**
+-dontwarn okhttp3.internal.**
+-dontwarn java.nio.file.**
+-dontwarn okio.**
+-dontwarn org.**
+
+-dontwarn android.support.**

@@ -29,6 +29,7 @@ android {
 
         release {
             minifyEnabled true
+            shrinkResources true
             buildConfigField STRING, ADMOB_TEST_DEVICE_ID, ADMOB_TEST_DEVICE_ID_VALUE
             buildConfigField STRING, ADMOB_UNIT_ID, ADMOB_UNIT_ID_VALUE
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
