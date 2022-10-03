@@ -74,6 +74,24 @@
 
 ##---------------End: proguard configuration for Gson  ----------
 
+## ### Google ###
+
+-keepattributes Signature
+-keepattributes *Annotation*
+
+-dontnote com.google.**
+
+-keep class persistence.** {
+  *;
+}
+
+-keep class com.firebase.** { *; }
+
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+##---------------End: proguard configuration for Google  ----------
+
 # Keep the annotations
 -keepattributes *Annotation*
 
