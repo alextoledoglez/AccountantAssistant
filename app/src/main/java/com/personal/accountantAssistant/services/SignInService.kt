@@ -20,18 +20,22 @@ class SignInService(
     private var account: GoogleSignInAccount? = null
 
     private fun getGoogleSignInClient(): GoogleSignInClient? {
-        return options?.let { GoogleSignIn.getClient(context, it) }
+        val accountName = options?.account?.name.orEmpty()
+        val googleSignInClient = options?.let { GoogleSignIn.getClient(context, it) }
+        val signInIntent = googleSignInClient?.signInIntent.toString()
+        trackSignInEvent(value = "optionsAccountName: $accountName and clientSignInIntent: $signInIntent")
+        return googleSignInClient
     }
 
     fun getSignInClientBy(email: String? = null): GoogleSignInClient? {
         options = email?.let { builder.setAccountName(it) }?.build()
-        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in with client: $email")
+        trackSignInEvent(value = "Requesting sign-in AccountName: $email")
         return getGoogleSignInClient()
     }
 
     fun getSignInClient(): GoogleSignInClient? {
         options = builder.requestEmail().build()
-        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in client")
+        trackSignInEvent(value = "Requesting sign-in client")
         return getGoogleSignInClient()
     }
 
@@ -47,32 +51,37 @@ class SignInService(
             account = it
             val email = it?.email.orEmpty()
             crashlytics?.setUser(email)
-            trackSignEvent(SIGN_IN_KEY, value = "Signed in as: '$email'.")
+            trackSignInEvent(value = "Signed in as: '$email'.")
             onSuccess?.invoke(it)
         }.addOnFailureListener { exception: Exception? ->
             onFailure?.invoke()
-            trackSignEvent(SIGN_OUT_KEY, value = "Unable to sign in: ${exception?.message}")
+            trackSigOutEvent(value = "Unable to sign in: ${exception?.message}")
         }
     }
 
     fun signOut(onSuccess: (() -> Unit)? = null) {
         getSignInClientBy(account?.email)?.signOut()?.addOnSuccessListener {
-            trackSignEvent(SIGN_OUT_KEY, value = "Successfully logout of: '${account?.email}'.")
+            trackSigOutEvent(value = "Successfully logout of: '${account?.email}'.")
             account = null
             onSuccess?.invoke()
         }?.addOnFailureListener { exception: Exception? ->
-            trackSignEvent(SIGN_OUT_KEY, value = "Unable to logout: ${exception?.message}.")
+            trackSigOutEvent(value = "Unable to logout: ${exception?.message}.")
         } ?: run {
-            trackSignEvent(SIGN_OUT_KEY, value = "Unable to logout: Null account client.")
+            trackSigOutEvent(value = "Unable to logout: Null account client.")
         }
     }
 
-    private fun trackSignEvent(key: String, value: String) {
-        analytics?.trackEvent(key, key, value)
+    private fun trackSignInEvent(value: String) {
+        analytics?.trackEvent(TAG, SIGN_IN_KEY, value)
+    }
+
+    private fun trackSigOutEvent(value: String) {
+        analytics?.trackEvent(TAG, SIGN_OUT_KEY, value)
     }
 
     companion object {
-        const val SIGN_IN_KEY = "SIGN_IN_KEY"
-        const val SIGN_OUT_KEY = "SIGN_OUT_KEY"
+        private val TAG: String = SignInService::class.java.simpleName
+        private const val SIGN_IN_KEY = "SIGN_IN_KEY"
+        private const val SIGN_OUT_KEY = "SIGN_OUT_KEY"
     }
 }

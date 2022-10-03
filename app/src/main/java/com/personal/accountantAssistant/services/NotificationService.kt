@@ -5,12 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.data.enums.NotificationTypes
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
@@ -21,30 +21,25 @@ class NotificationService : FirebaseMessagingService() {
     private val analytics: AnalyticsProvider? by inject()
     private val notificationManager: NotificationManager by inject()
 
-    enum class ListNotificationType(val id: Int) {
-        Summary(id = NOTIFICATION_ID)
-    }
-
     override fun onNewToken(token: String) {
-        Log.d(TAG, "Refreshed token: $token")
-        analytics?.trackOnNewToken(token)
+        trackNotificationEvent(event = "onNewToken", value = token)
         sendRegistrationToServer(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: ${remoteMessage.from}")
-        analytics?.trackOnMessageReceived(remoteMessage.from)
+        trackNotificationEvent(event = "onMessageReceived", value = "${remoteMessage.from}")
         remoteMessage.notification?.let { showNotification(it) }
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
-        analytics?.trackSendRegistrationToServer(token)
+        trackNotificationEvent(event = "sendRegistrationTokenToServer", value = token.orEmpty())
     }
 
     private fun showNotification(notification: RemoteMessage.Notification) {
-        analytics?.trackNotificationMessage(notification.title, notification.body)
-        createNotification(notification.title.orEmpty(), notification.body.orEmpty())
+        val title = notification.title.orEmpty()
+        val body = notification.body.orEmpty()
+        trackNotificationEvent(event = "showNotification", value = "title: $title and body: $body")
+        createNotification(title, body)
     }
 
     private fun createChannel(id: String, name: String, importance: Int): NotificationChannel {
@@ -77,10 +72,14 @@ class NotificationService : FirebaseMessagingService() {
         setGroup(groupOrServiceKey)
     }
 
+    private fun trackNotificationEvent(event: String, value: String) {
+        analytics?.trackEvent(TAG, event, value)
+    }
+
     fun createNotification(title: String, description: String) {
         createChannels()
         notificationManager.notify(
-            ListNotificationType.Summary.id,
+            NotificationTypes.Summary.id,
             defaultBuilder(title, description, groupOrServiceKey = GROUP_KEY).build()
         )
     }
@@ -91,15 +90,13 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     fun clearNotification() {
-        ListNotificationType.values().forEach { notificationManager.cancel(it.id) }
+        NotificationTypes.values().forEach { notificationManager.cancel(it.id) }
     }
 
     companion object {
         private val TAG = NotificationService::class.java.simpleName
-
-        private const val NOTIFICATION_ID = 1
-        private const val CHANNEL_ID = "AccountantAssistantService Kotlin"
         private const val CHANNEL_NAME = "Accountant Assistant"
+        private const val CHANNEL_ID = "AccountantAssistantNotificationService"
         private const val GROUP_KEY = "com.personal.accountantAssistant.notification"
         private const val SERVICE_KEY = "com.personal.accountantAssistant.notification.service"
     }
