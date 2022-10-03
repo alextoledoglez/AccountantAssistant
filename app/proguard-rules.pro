@@ -76,30 +76,27 @@
 
 ## ### Google ###
 
--keepattributes Signature
--keepattributes *Annotation*
-
 -dontnote com.google.**
 
 -keep class persistence.** {
   *;
 }
 
--keep class com.firebase.** { *; }
+##---------------End: proguard configuration for Google  ----------
 
+## ### GMS library ###
+-keep class com.google.android.gms.security.ProviderInstaller { *; }
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
 
-##---------------End: proguard configuration for Google  ----------
+# ### Firebase ###
+-keep class com.firebase.** { *; }
 
 # Keep the annotations
 -keepattributes *Annotation*
 
 # If you are using custom exceptions, add this line so that custom exception types are skipped during obfuscation:
 -keep public class * extends java.lang.Exception
-
-# ### AppsFlyer ###
-#-dontwarn com.android.installreferrer
 
 # ### Parcel ###
 -keepclassmembers class * implements android.os.Parcelable { static ** CREATOR; }
