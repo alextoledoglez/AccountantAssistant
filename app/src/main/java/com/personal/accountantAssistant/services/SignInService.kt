@@ -20,17 +20,18 @@ class SignInService(
     private var account: GoogleSignInAccount? = null
 
     private fun getGoogleSignInClient(): GoogleSignInClient? {
-        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in client")
         return options?.let { GoogleSignIn.getClient(context, it) }
     }
 
     fun getSignInClientBy(email: String? = null): GoogleSignInClient? {
         options = email?.let { builder.setAccountName(it) }?.build()
+        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in with client: $email")
         return getGoogleSignInClient()
     }
 
     fun getSignInClient(): GoogleSignInClient? {
         options = builder.requestEmail().build()
+        trackSignEvent(SIGN_IN_KEY, "Requesting sign-in client")
         return getGoogleSignInClient()
     }
 

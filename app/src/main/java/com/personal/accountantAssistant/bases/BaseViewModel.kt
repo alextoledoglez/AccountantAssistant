@@ -16,6 +16,9 @@ abstract class BaseViewModel(val analytics: AnalyticsProvider?) : ViewModel(), C
     private var _isLoading = MutableLiveData(false)
     var isLoading: LiveData<Boolean> = _isLoading
 
+    private var _errorMessage = MutableLiveData<String?>()
+    var errorMessage: LiveData<String?> = _errorMessage
+
     private var _flipper = MutableLiveData<FlipperViews>()
     var flipper: LiveData<FlipperViews> = _flipper
 
@@ -32,6 +35,7 @@ abstract class BaseViewModel(val analytics: AnalyticsProvider?) : ViewModel(), C
     fun setMessage(message: String? = null) {
         _flipper.postValue(FlipperViews.MESSAGE)
         _isLoading.postValue(false)
+        _errorMessage.postValue(message)
         analytics?.trackErrorEvent(message)
     }
 

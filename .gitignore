@@ -16,3 +16,6 @@ app/gradle/wrapper/gradle-wrapper.jar
 .idea/
 /gradle/wrapper/gradle-wrapper.jar
 /gradle/wrapper/gradle-wrapper.properties
+/app/release/app-release.apk
+/app/release/output-metadata.json
+/gradle/release.keystore.jks

@@ -26,12 +26,14 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         supportActionBar?.hide()
         analytics?.trackScreenViewEvent(this::class.simpleName)
         binding.signInButton.setOnClickListener { signInPicker() }
+        val context = this@LoginActivity
         with(viewModel) {
-            isProcessing.observe(this@LoginActivity) { setProcessing(it) }
-            isNotificationTokenLoaded.observe(this@LoginActivity) { if (it.orFalse()) getUser() }
-            isLogged.observe(this@LoginActivity) { if (it.orFalse()) startMainActivity() }
-            notificationToken.observe(this@LoginActivity) { saveNotificationToken(it) }
-            userEmail.observe(this@LoginActivity) { signIn(it, isLogged.value) }
+            isProcessing.observe(context) { setProcessing(it) }
+            isNotificationTokenLoaded.observe(context) { if (it.orFalse()) getUser() }
+            isLogged.observe(context) { if (it.orFalse()) startMainActivity() }
+            errorMessage.observe(context) { context.showToastLongText(it) }
+            notificationToken.observe(context) { saveNotificationToken(it) }
+            userEmail.observe(context) { signIn(it, isLogged.value) }
             getNotificationToken()
         }
     }
