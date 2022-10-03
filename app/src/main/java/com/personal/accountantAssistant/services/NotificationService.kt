@@ -12,11 +12,13 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
 
 class NotificationService : FirebaseMessagingService() {
 
     private val context: Context by inject()
+    private val analytics: AnalyticsProvider? by inject()
     private val notificationManager: NotificationManager by inject()
 
     enum class ListNotificationType(val id: Int) {
@@ -25,19 +27,23 @@ class NotificationService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
+        analytics?.trackOnNewToken(token)
         sendRegistrationToServer(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: ${remoteMessage.from}")
+        analytics?.trackOnMessageReceived(remoteMessage.from)
         remoteMessage.notification?.let { showNotification(it) }
     }
 
     private fun sendRegistrationToServer(token: String?) {
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        analytics?.trackSendRegistrationToServer(token)
     }
 
     private fun showNotification(notification: RemoteMessage.Notification) {
+        analytics?.trackNotificationMessage(notification.title, notification.body)
         createNotification(notification.title.orEmpty(), notification.body.orEmpty())
     }
 
