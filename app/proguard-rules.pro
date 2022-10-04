@@ -76,6 +76,17 @@
 
 ##---------------End: proguard configuration for Gson  ----------
 
+-keepclassmembers,allowoptimization enum * {
+public static **[] values();
+public static ** valueOf(java.lang.String);
+}
+
+-keep class Google.Impl.* { *; }
+-keep class Google.** { *; }
+-keep class com.google.unity.** {*;}
+
+-keepattributes Annotation
+
 ## ### Google ###
 
 -dontnote com.google.**
@@ -83,6 +94,15 @@
 -keepnames class com.google.googlesignin.* { *; }
 -keep class persistence.** {
   *;
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+@com.google.android.gms.common.annotation.KeepName *;
 }
 
 ##---------------End: proguard configuration for Google  ----------
@@ -93,6 +113,10 @@
 -keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
+
+## ### Ads ###
+-keep public class com.google.android.gms.ads.*{public *;}
+-keep public class com.google.ads.*{public *;}
 
 # ### Firebase ###
 -keep class com.firebase.** { *; }
