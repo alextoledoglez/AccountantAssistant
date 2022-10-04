@@ -79,7 +79,8 @@
 ## ### Google ###
 
 -dontnote com.google.**
-
+-keep class com.google.googlesignin.** { *; }
+-keepnames class com.google.googlesignin.* { *; }
 -keep class persistence.** {
   *;
 }
@@ -89,6 +90,7 @@
 ## ### GMS library ###
 -keep class com.google.android.gms.security.ProviderInstaller { *; }
 -keep public class com.google.android.gms.* { public *; }
+-keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
 
