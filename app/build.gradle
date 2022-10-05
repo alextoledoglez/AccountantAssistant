@@ -7,8 +7,19 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
+Properties localProperties = new Properties()
+localProperties.load(project.rootProject.file(localPropertiesFileName).newDataInputStream())
+
 android {
     compileSdkVersion 33
+    signingConfigs {
+        release {
+            storeFile file("${project.projectDir.getAbsolutePath()}/${localProperties['storeFileName']}")
+            storePassword localProperties["storePassword"]
+            keyAlias localProperties["keyAlias"]
+            keyPassword localProperties["keyPassword"]
+        }
+    }
     defaultConfig {
         applicationId "com.personal.accountantAssistant"
         minSdkVersion 26
@@ -18,25 +29,17 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-
-        Properties prop = new Properties()
-        prop.load(project.rootProject.file(LOCAL_PROPERTIES).newDataInputStream())
-
-        def ADMOB_TEST_DEVICE_ID_VALUE = "\"${prop.getProperty(ADMOB_TEST_DEVICE_ID)}\""
-        def ADMOB_UNIT_ID_VALUE = "\"${prop.getProperty(ADMOB_UNIT_ID)}\""
-        def ADMOB_DEBUG_TEST_DEVICE_ID_VALUE = "\"${prop.getProperty(ADMOB_DEBUG_TEST_DEVICE_ID)}\""
-        def ADMOB_DEBUG_UNIT_ID_VALUE = "\"${prop.getProperty(ADMOB_DEBUG_UNIT_ID)}\""
-
         release {
             minifyEnabled true
             shrinkResources true
-            buildConfigField STRING, ADMOB_TEST_DEVICE_ID, ADMOB_TEST_DEVICE_ID_VALUE
-            buildConfigField STRING, ADMOB_UNIT_ID, ADMOB_UNIT_ID_VALUE
+            buildConfigField stringType, admobUnitIdProperty, "\"${localProperties[admobUnitIdProperty]}\""
+            buildConfigField stringType, admobTestDeviceIdProperty, "\"${localProperties[admobTestDeviceIdProperty]}\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
-            buildConfigField STRING, ADMOB_TEST_DEVICE_ID, ADMOB_DEBUG_TEST_DEVICE_ID_VALUE
-            buildConfigField STRING, ADMOB_UNIT_ID, ADMOB_DEBUG_UNIT_ID_VALUE
+            buildConfigField stringType, admobDebugUnitIdProperty, "\"${localProperties[admobDebugUnitIdProperty]}\""
+            buildConfigField stringType, admobDebugTestDeviceIdProperty, "\"${localProperties[admobDebugTestDeviceIdProperty]}\""
         }
     }
     buildFeatures {
@@ -65,8 +68,8 @@ android {
 dependencies {
 
     //---Kotlin dependencies-----------------------------------------------
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1'
 
     //----------Core dependencies----------------------
@@ -78,8 +81,8 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.3'
 
     //Koin for dependency injection
-    implementation "io.insert-koin:koin-android:$koin_version"
-    implementation "io.insert-koin:koin-android-viewmodel:$koin_version"
+    implementation "io.insert-koin:koin-android:$koinVersion"
+    implementation "io.insert-koin:koin-android-viewmodel:$koinVersion"
 
     //----------LifeCycle dependencies----------------------
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"

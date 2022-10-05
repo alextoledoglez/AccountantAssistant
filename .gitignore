@@ -19,3 +19,4 @@ app/gradle/wrapper/gradle-wrapper.jar
 /app/release/app-release.apk
 /app/release/output-metadata.json
 /gradle/release.keystore.jks
+/app/release.keystore

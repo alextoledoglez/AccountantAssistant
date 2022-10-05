@@ -3,17 +3,21 @@
 buildscript {
     ext {
 
-        // local.properties file variables
-        LOCAL_PROPERTIES = "local.properties"
-        STRING = "String"
-        ADMOB_TEST_DEVICE_ID = "ADMOB_TEST_DEVICE_ID"
-        ADMOB_UNIT_ID = "ADMOB_UNIT_ID"
-        ADMOB_DEBUG_TEST_DEVICE_ID = "ADMOB_DEBUG_TEST_DEVICE_ID"
-        ADMOB_DEBUG_UNIT_ID = "ADMOB_DEBUG_UNIT_ID"
+        // Local.properties file variables
+        localPropertiesFileName = "local.properties"
+        stringType = "String"
 
-        // libraries versions
-        kotlin_version = "1.7.10"
-        koin_version = "2.2.3"
+        // ADMOB Release IDs
+        admobUnitIdProperty = "admobUnitId"
+        admobTestDeviceIdProperty = "admobTestDeviceId"
+
+        // ADMOB Debug IDs
+        admobDebugUnitIdProperty = "admobDebugUnitId"
+        admobDebugTestDeviceIdProperty = "admobDebugTestDeviceId"
+
+        // Libraries versions
+        kotlinVersion = "1.7.10"
+        koinVersion = "2.2.3"
         lifeCycleVersion = "2.5.1"
         roomVersion = "2.4.3"
         navigationVersion = "2.5.2"
@@ -29,7 +33,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.3.0'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
