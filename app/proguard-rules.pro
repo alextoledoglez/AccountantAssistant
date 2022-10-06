@@ -159,3 +159,5 @@ public static final *** NULL;
 -dontwarn org.**
 
 -dontwarn android.support.**
+
+-keep class androidx.work.** { *; }

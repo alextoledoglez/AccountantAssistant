@@ -28,89 +28,93 @@ import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import org.koin.android.ext.koin.androidContext
+import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.core.context.loadKoinModules
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import java.util.concurrent.Executors
 
-val viewModelModule = module {
-    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { WalletViewModel(get(), get(), get()) }
-    viewModel { BuysViewModel(get(), get()) }
-    viewModel { BillsViewModel(get(), get()) }
-    viewModel { MenuViewModel(get(), get()) }
-}
+object MainModule {
 
-val useCasesModule = module {
-    single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
-    single<GetFirstDateUseCase> { GetFirstDateUseCaseImpl(get()) }
-    single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }
-    single<GetLastDateUseCase> { GetLastDateUseCaseImpl(get()) }
-    single<SetPeriodDatesUseCase> { SetPeriodDatesUseCaseImpl(get()) }
-    single<SetAvailableMoneyUseCase> { SetAvailableMoneyUseCaseImpl(get()) }
-    single<GetAvailableMoneyUseCase> { GetAvailableMoneyUseCaseImpl(get()) }
-    single<GetSignedUserUseCase> { GetSignedUserUseCaseImpl(get()) }
-    single<SetSignedUserUseCase> { SetSignedUserUseCaseImpl(get()) }
-    single<GetNotificationTokenUseCase> { GetNotificationTokenUseCaseImpl(get()) }
-    single<GetLocalNotificationTokenUseCase> { GetLocalNotificationTokenUseCaseImpl(get()) }
-    single<SetLocalNotificationTokenUseCase> { SetLocalNotificationTokenUseCaseImpl(get()) }
-    single<SubscribeNotificationTopicUseCase> { SubscribeNotificationTopicUseCaseImpl(get()) }
-}
+    private val viewModelModule = module {
+        viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { WalletViewModel(get(), get(), get()) }
+        viewModel { BuysViewModel(get(), get()) }
+        viewModel { BillsViewModel(get(), get()) }
+        viewModel { MenuViewModel(get(), get()) }
+    }
 
-val dataModule = module {
-    single { AppDatabase.getInstance(get()) }
-    single { get<AppDatabase>().cardsDao() }
-    single { get<AppDatabase>().expensesDao() }
-    single { CardsRemoteDataSource(get()) }
-    single { BuysRemoteDataSource(get()) }
-    single { BillsRemoteDataSource(get()) }
-    single { UserRemoteDataSource(get()) }
-    single<CardsRepository> { CardsDataRepository(get()) }
-    single<BuysRepository> { BuysDataRepository(get()) }
-    single<BillsRepository> { BillsDataRepository(get()) }
-    single<UserRepository> { UserDataRepository(get()) }
-    single<NotificationRepository> { NotificationDataRepository(get(), get()) }
-}
+    private val useCasesModule = module {
+        single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
+        single<GetFirstDateUseCase> { GetFirstDateUseCaseImpl(get()) }
+        single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }
+        single<GetLastDateUseCase> { GetLastDateUseCaseImpl(get()) }
+        single<SetPeriodDatesUseCase> { SetPeriodDatesUseCaseImpl(get()) }
+        single<SetAvailableMoneyUseCase> { SetAvailableMoneyUseCaseImpl(get()) }
+        single<GetAvailableMoneyUseCase> { GetAvailableMoneyUseCaseImpl(get()) }
+        single<GetSignedUserUseCase> { GetSignedUserUseCaseImpl(get()) }
+        single<SetSignedUserUseCase> { SetSignedUserUseCaseImpl(get()) }
+        single<GetNotificationTokenUseCase> { GetNotificationTokenUseCaseImpl(get()) }
+        single<GetLocalNotificationTokenUseCase> { GetLocalNotificationTokenUseCaseImpl(get()) }
+        single<SetLocalNotificationTokenUseCase> { SetLocalNotificationTokenUseCaseImpl(get()) }
+        single<SubscribeNotificationTopicUseCase> { SubscribeNotificationTopicUseCaseImpl(get()) }
+    }
 
-val providersModule = module {
-    single { AnalyticsProvider() }
-    single { CrashlyticsProvider() }
-    single { AdProvider(get(), get()) }
-    single { NotificationProvider() }
-    single { RemoteConfigProvider() }
-}
+    private val dataModule = module {
+        single { AppDatabase.getInstance(get()) }
+        single { get<AppDatabase>().cardsDao() }
+        single { get<AppDatabase>().expensesDao() }
+        single { CardsRemoteDataSource(get()) }
+        single { BuysRemoteDataSource(get()) }
+        single { BillsRemoteDataSource(get()) }
+        single { UserRemoteDataSource(get()) }
+        single<CardsRepository> { CardsDataRepository(get()) }
+        single<BuysRepository> { BuysDataRepository(get()) }
+        single<BillsRepository> { BillsDataRepository(get()) }
+        single<UserRepository> { UserDataRepository(get()) }
+        single<NotificationRepository> { NotificationDataRepository(get(), get()) }
+    }
 
-val utilsModule = module {
-    single { GsonFactory() }
-    single { LocalStorage(get()) }
-    single { Scope(DriveScopes.DRIVE) }
-    single { listOf(DriveScopes.DRIVE) }
-    single { MobileAds.initialize(get()) {} }
-    single { GoogleSignInOptions.DEFAULT_SIGN_IN }
-    single { Executors.newSingleThreadExecutor() }
-    single { AndroidHttp.newCompatibleTransport() }
-    single { GoogleSignInOptions.Builder(get()).requestScopes(get()) }
-    single { GoogleAccountCredential.usingOAuth2(get(), get()) }
-}
+    private val providersModule = module {
+        single { AnalyticsProvider() }
+        single { CrashlyticsProvider() }
+        single { AdProvider(get(), get()) }
+        single { NotificationProvider() }
+        single { RemoteConfigProvider() }
+    }
 
-val servicesModule = module {
-    single { androidContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    single { NotificationService() }
-    single { SignInService(get(), get(), get(), get()) }
-    single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
-}
+    private val utilsModule = module {
+        single { GsonFactory() }
+        single { LocalStorage(get()) }
+        single { Scope(DriveScopes.DRIVE) }
+        single { listOf(DriveScopes.DRIVE) }
+        single { MobileAds.initialize(get()) {} }
+        single { GoogleSignInOptions.DEFAULT_SIGN_IN }
+        single { Executors.newSingleThreadExecutor() }
+        single { AndroidHttp.newCompatibleTransport() }
+        single { GoogleSignInOptions.Builder(get()).requestScopes(get()) }
+        single { GoogleAccountCredential.usingOAuth2(get(), get()) }
+    }
 
-object MainModuleInitializer {
-    fun initialize() = loadKoinModules(
-        listOf(
-            viewModelModule,
-            useCasesModule,
-            dataModule,
-            providersModule,
-            utilsModule,
-            servicesModule
-        )
+    private val servicesModule = module {
+        single { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+        single { NotificationService() }
+        single { SignInService(get(), get(), get(), get()) }
+        single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
+    }
+
+    private val workerModule = module {
+        worker { NotificationWorker(get(), get(), get(), get()) }
+    }
+
+    fun getModules() = listOf(
+        viewModelModule,
+        useCasesModule,
+        dataModule,
+        providersModule,
+        utilsModule,
+        servicesModule,
+        workerModule
     )
 }

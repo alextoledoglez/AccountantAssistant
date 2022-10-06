@@ -7,26 +7,28 @@ import androidx.core.view.isVisible
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseActivity
 import com.personal.accountantAssistant.databinding.ActivityLoginBinding
-import com.personal.accountantAssistant.di.MainModuleInitializer
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
+import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.ext.android.inject
+
 
 class LoginActivity : BaseActivity<LoginViewModel>() {
 
     override val binding by viewBinding(ActivityLoginBinding::inflate)
+    private val notificationWorker: NotificationWorker? by inject()
     private val analytics: AnalyticsProvider? by inject()
     private val service: SignInService? by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainModuleInitializer.initialize()
+        val context = this@LoginActivity
+        //notificationWorker?.setupPeriodicWork()
         setContentView(binding.root)
         supportActionBar?.hide()
         analytics?.trackScreenViewEvent(this::class.simpleName)
         binding.signInButton.setOnClickListener { signInPicker() }
-        val context = this@LoginActivity
         with(viewModel) {
             isProcessing.observe(context) { setProcessing(it) }
             isNotificationTokenLoaded.observe(context) { if (it.orFalse()) getUser() }

@@ -83,6 +83,7 @@ dependencies {
     //Koin for dependency injection
     implementation "io.insert-koin:koin-android:$koinVersion"
     implementation "io.insert-koin:koin-android-viewmodel:$koinVersion"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koinVersion"
 
     //----------LifeCycle dependencies----------------------
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
@@ -124,6 +125,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-messaging-directboot:23.0.8'
+
+    // WorkManager Android Job
+    implementation "androidx.work:work-runtime-ktx:$workManagerVersion"
 
     //------------Retrofit dependencies---------------
     implementation 'com.squareup.okhttp3:okhttp:4.8.0'

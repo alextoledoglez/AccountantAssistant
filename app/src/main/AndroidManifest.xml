@@ -47,6 +47,19 @@
             </intent-filter>
         </service>
 
+        <!-- WorkManager service -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="com.personal.accountantAssistant.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- If you are using androidx.startup to initialize other components -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
