@@ -4,23 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.personal.accountantAssistant.bases.BaseViewModel
+import com.personal.accountantAssistant.data.enums.NotificationTopics
 import com.personal.accountantAssistant.data.mappers.toUserModel
-import com.personal.accountantAssistant.domain.useCases.GetNotificationTokenUseCase
-import com.personal.accountantAssistant.domain.useCases.GetSignedUserUseCase
-import com.personal.accountantAssistant.domain.useCases.SetLocalNotificationTokenUseCase
-import com.personal.accountantAssistant.domain.useCases.SetSignedUserUseCase
+import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.providers.AnalyticsProvider
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
     analytics: AnalyticsProvider?,
-    val getSignedUser: GetSignedUserUseCase,
-    val setSignedUser: SetSignedUserUseCase,
-    val getNotificationTokenUseCase: GetNotificationTokenUseCase,
-    val setLocalNotificationTokenUseCase: SetLocalNotificationTokenUseCase
+    private val getSignedUser: GetSignedUserUseCase,
+    private val setSignedUser: SetSignedUserUseCase,
+    private val getNotificationToken: GetNotificationTokenUseCase,
+    private val setLocalNotificationToken: SetLocalNotificationTokenUseCase,
+    private val subscribeNotificationTopic: SubscribeNotificationTopicUseCase
 ) : BaseViewModel(analytics) {
 
     private val _notificationToken = MutableLiveData<String?>()
@@ -61,9 +61,9 @@ class LoginViewModel(
         }
     }
 
-    fun getNotificationToken() {
+    fun setNotification() {
         launch {
-            getNotificationTokenUseCase()
+            combine(getNotificationToken(), subscribeNotificationTopic()) { token, _ -> token }
                 .onStart { _isProcessing.postValue(true) }
                 .onError { setMessage(it.message) }
                 .onCompletion { _isProcessing.postValue(false) }
@@ -73,7 +73,7 @@ class LoginViewModel(
 
     fun saveNotificationToken(token: String?) {
         launch {
-            setLocalNotificationTokenUseCase(token)
+            setLocalNotificationToken(token)
                 .onStart { _isProcessing.postValue(true) }
                 .onError { setMessage(it.message) }
                 .onCompletion { _isProcessing.postValue(false) }

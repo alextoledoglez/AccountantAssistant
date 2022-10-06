@@ -6,4 +6,5 @@ interface NotificationRepository {
     fun setLocalNotificationToken(token: String?): Flow<Boolean?>
     fun getLocalNotificationToken(): Flow<String?>
     fun getNotificationToken(): Flow<String?>
+    fun subscribeNotificationTopic(): Flow<Void?>
 }

@@ -34,7 +34,7 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
             errorMessage.observe(context) { context.showToastLongText(it) }
             notificationToken.observe(context) { saveNotificationToken(it) }
             userEmail.observe(context) { signIn(it, isLogged.value) }
-            getNotificationToken()
+            setNotification()
         }
     }
 

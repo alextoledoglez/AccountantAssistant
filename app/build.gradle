@@ -38,8 +38,8 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            buildConfigField stringType, admobDebugUnitIdProperty, "\"${localProperties[admobDebugUnitIdProperty]}\""
-            buildConfigField stringType, admobDebugTestDeviceIdProperty, "\"${localProperties[admobDebugTestDeviceIdProperty]}\""
+            buildConfigField stringType, admobUnitIdProperty, "\"${localProperties[admobDebugUnitIdProperty]}\""
+            buildConfigField stringType, admobTestDeviceIdProperty, "\"${localProperties[admobDebugTestDeviceIdProperty]}\""
         }
     }
     buildFeatures {

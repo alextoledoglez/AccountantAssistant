@@ -35,7 +35,7 @@ import org.koin.dsl.module
 import java.util.concurrent.Executors
 
 val viewModelModule = module {
-    viewModel { LoginViewModel(get(), get(), get(), get(), get()) }
+    viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { WalletViewModel(get(), get(), get()) }
     viewModel { BuysViewModel(get(), get()) }
@@ -56,6 +56,7 @@ val useCasesModule = module {
     single<GetNotificationTokenUseCase> { GetNotificationTokenUseCaseImpl(get()) }
     single<GetLocalNotificationTokenUseCase> { GetLocalNotificationTokenUseCaseImpl(get()) }
     single<SetLocalNotificationTokenUseCase> { SetLocalNotificationTokenUseCaseImpl(get()) }
+    single<SubscribeNotificationTopicUseCase> { SubscribeNotificationTopicUseCaseImpl(get()) }
 }
 
 val dataModule = module {
