@@ -9,7 +9,7 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
 
     private val adView = AdView(context).apply {
         setAdSize(AdSize.LARGE_BANNER)
-        adUnitId = BuildConfig.ADMOB_UNIT_ID
+        adUnitId = BuildConfig.admobUnitId
         adListener = object : AdListener() {
             override fun onAdClicked() {
                 super.onAdClicked()
@@ -45,9 +45,9 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
     }
 
     init {
-        if (BuildConfig.ADMOB_TEST_DEVICE_ID.isNotBlank()) {
+        if (BuildConfig.admobTestDeviceId.isNotBlank()) {
             val config = RequestConfiguration.Builder().setTestDeviceIds(
-                listOf(BuildConfig.ADMOB_TEST_DEVICE_ID)
+                listOf(BuildConfig.admobTestDeviceId)
             ).build()
             MobileAds.setRequestConfiguration(config)
         }
