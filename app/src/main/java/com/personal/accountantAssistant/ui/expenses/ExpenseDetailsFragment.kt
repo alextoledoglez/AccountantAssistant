@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.expenses
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.InputFilter
@@ -16,11 +17,15 @@ import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBuy
 import com.personal.accountantAssistant.databinding.FragmentExpensesDetailsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.services.NotificationService
+import org.koin.android.ext.android.inject
 import java.util.*
 
 class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
 
     override val binding by viewBinding(FragmentExpensesDetailsBinding::inflate)
+    private val notificationService: NotificationService by inject()
+    private val alarmManager: AlarmManager by inject()
 
     var onEditListener: ((model: ExpenseModel) -> Unit)? = null
 
@@ -96,9 +101,18 @@ class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
             model?.update(
                 etName.text, etQuantity.text, etDate.text, etValue.text, scActive.isChecked
             )?.let {
-                onEditListener?.invoke(it).also { dismiss() }
+                val date = it.date.toScheduledTime()
+                onEditListener?.invoke(it).also {
+                    scheduleNotificationAt(date)
+                    dismiss()
+                }
             }
         }
+    }
+
+    private fun scheduleNotificationAt(time: Long) {
+        val pendingIntent = notificationService.getPendingIntent()
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, pendingIntent)
     }
 
     companion object {
@@ -107,7 +121,10 @@ class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
         ) {
             ExpenseDetailsFragment().apply {
                 arguments = Bundle().apply { putParcelable(String.ENTITY, model) }
-                onEditListener = { onEdit(it) }
+                onEditListener = {
+                    onEdit(it)
+                    scheduleNotificationAt(it.date.toScheduledTime())
+                }
             }.show(manager, String.EMPTY)
         }
     }

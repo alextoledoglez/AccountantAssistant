@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.di
 
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import com.google.android.gms.ads.MobileAds
@@ -97,8 +98,12 @@ object MainModule {
         single { GoogleAccountCredential.usingOAuth2(get(), get()) }
     }
 
-    private val servicesModule = module {
+    private val managersModule = module {
         single { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+        single { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
+    }
+
+    private val servicesModule = module {
         single { NotificationService() }
         single { SignInService(get(), get(), get(), get()) }
         single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
@@ -114,6 +119,7 @@ object MainModule {
         dataModule,
         providersModule,
         utilsModule,
+        managersModule,
         servicesModule,
         workerModule
     )

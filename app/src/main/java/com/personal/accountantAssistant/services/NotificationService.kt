@@ -3,14 +3,16 @@ package com.personal.accountantAssistant.services
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.data.enums.NotificationTypes
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
@@ -42,18 +44,13 @@ class NotificationService : FirebaseMessagingService() {
         createNotification(title, body)
     }
 
-    private fun createChannel(id: String, name: String, importance: Int): NotificationChannel {
-        return NotificationChannel(id, name, importance).apply {
-            setSound(null, null)
-            setShowBadge(false)
-        }
-    }
-
-    private fun createChannels() {
+    private fun createChannel(importance: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channels = ArrayList<NotificationChannel>()
-            channels.add(createChannel(CHANNEL_ID, CHANNEL_NAME, IMPORTANCE_LOW))
-            notificationManager.createNotificationChannels(channels)
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
+                setSound(null, null)
+                setShowBadge(false)
+            }
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -76,27 +73,40 @@ class NotificationService : FirebaseMessagingService() {
         analytics?.trackEvent(TAG, event, value)
     }
 
+    fun getPendingIntent(): PendingIntent {
+        createChannel(IMPORTANCE_DEFAULT)
+        val intent = Intent(context, NotificationService::class.java).apply {
+            putExtra(TITLE_EXTRA, "Expiring Bills")
+            putExtra(MESSAGE_EXTRA, "You have Bills expiring today!")
+        }
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        return PendingIntent.getBroadcast(context, NOTIFICATION_ID, intent, flags)
+    }
+
     fun createNotification(title: String, description: String) {
-        createChannels()
+        createChannel(IMPORTANCE_LOW)
         notificationManager.notify(
-            NotificationTypes.Summary.id,
+            NOTIFICATION_ID,
             defaultBuilder(title, description, groupOrServiceKey = GROUP_KEY).build()
         )
     }
 
     fun getNotification(): Notification {
-        createChannels()
+        createChannel(IMPORTANCE_LOW)
         return defaultBuilder(groupOrServiceKey = SERVICE_KEY).build()
     }
 
     fun clearNotification() {
-        NotificationTypes.values().forEach { notificationManager.cancel(it.id) }
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     companion object {
         private val TAG = NotificationService::class.java.simpleName
+        const val NOTIFICATION_ID = 1
+        const val TITLE_EXTRA = "TITLE_EXTRA"
+        const val MESSAGE_EXTRA = "MESSAGE_EXTRA"
+        const val CHANNEL_ID = "AccountantAssistantNotificationService"
         private const val CHANNEL_NAME = "Accountant Assistant"
-        private const val CHANNEL_ID = "AccountantAssistantNotificationService"
         private const val GROUP_KEY = "com.personal.accountantAssistant.notification"
         private const val SERVICE_KEY = "com.personal.accountantAssistant.notification.service"
     }

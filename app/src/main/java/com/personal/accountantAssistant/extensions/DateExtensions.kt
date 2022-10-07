@@ -22,10 +22,16 @@ fun Date?.toCalendar(): Calendar {
     return calendar
 }
 
-fun Date?.toCalendarMillis(): Long {
-    return this.toCalendar().timeInMillis
+fun Date?.toCalendarMillis(): Long = this.toCalendar().timeInMillis
+
+fun Date?.toScheduledTime(): Long {
+    val calendar = Calendar.getInstance()
+    return if (this?.toDateStr().equals(calendar.time.toDateStr())) {
+        val cal = toCalendar().updateWith(calendar).addFieldValue(Calendar.SECOND, value = 60)
+        cal.timeInMillis
+    } else
+        this?.time.orZero()
 }
 
-fun Pair<Date?, Date?>.toPeriodDateStr(): String {
-    return "${first.toDateStr()}${String.DASH_SEPARATOR}${second.toDateStr()}"
-}
+fun Pair<Date?, Date?>.toPeriodDateStr(): String =
+    "${first.toDateStr()}${String.DASH_SEPARATOR}${second.toDateStr()}"
