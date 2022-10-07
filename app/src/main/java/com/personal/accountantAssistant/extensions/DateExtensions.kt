@@ -27,8 +27,7 @@ fun Date?.toCalendarMillis(): Long = this.toCalendar().timeInMillis
 fun Date?.toScheduledTime(): Long {
     val calendar = Calendar.getInstance()
     return if (this?.toDateStr().equals(calendar.time.toDateStr())) {
-        val cal = toCalendar().updateWith(calendar).addFieldValue(Calendar.SECOND, value = 60)
-        cal.timeInMillis
+        toCalendar().updateWith(calendar).addFieldValue(Calendar.SECOND, value = 60).timeInMillis
     } else
         this?.time.orZero()
 }
