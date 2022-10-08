@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.di
 
-import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import com.google.android.gms.ads.MobileAds
@@ -29,9 +28,7 @@ import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import java.util.concurrent.Executors
 
@@ -100,17 +97,12 @@ object MainModule {
 
     private val managersModule = module {
         single { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-        single { get<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager }
     }
 
     private val servicesModule = module {
         single { NotificationService() }
         single { SignInService(get(), get(), get(), get()) }
         single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
-    }
-
-    private val workerModule = module {
-        worker { NotificationWorker(get(), get(), get(), get()) }
     }
 
     fun getModules() = listOf(
@@ -120,7 +112,6 @@ object MainModule {
         providersModule,
         utilsModule,
         managersModule,
-        servicesModule,
-        workerModule
+        servicesModule
     )
 }
