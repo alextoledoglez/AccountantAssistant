@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.activity.result.ActivityResult
 import androidx.core.view.isVisible
-import androidx.work.*
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseActivity
 import com.personal.accountantAssistant.databinding.ActivityLoginBinding
@@ -13,8 +12,6 @@ import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.ext.android.inject
-import java.util.concurrent.TimeUnit
-
 
 class LoginActivity : BaseActivity<LoginViewModel>() {
 
