@@ -37,10 +37,16 @@
     <string name="menu_bills">Bills</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_tickets">Tickets</string>
-    <string name="menu_remittances">Remittances</string>
-
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="menu_remittances">Remittances</string>
+
+    <!--Bills-->
+    <string name="bill">Bill</string>
+    <string name="bills_due_title">Bills due</string>
+    <string name="bills_due_soon_text">You have bills due soon!</string>
+    <string name="bills_due_today_text">You have bills due today!</string>
+
     <string name="calculate">Calculate</string>
     <string name="add_action">Add</string>
     <string name="cancel">Cancel</string>
@@ -52,7 +58,7 @@
     <string name="price_default_value">00.00</string>
     <string name="total_to_pay">Total to pay</string>
     <string name="default_total_value">00.00</string>
-    <string name="bill">Bill</string>
+
     <string name="one_time">1x</string>
     <string name="separator">-</string>
     <string name="name">Name</string>

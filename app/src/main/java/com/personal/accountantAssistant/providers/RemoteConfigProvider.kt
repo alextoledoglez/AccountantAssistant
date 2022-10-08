@@ -39,20 +39,6 @@ class RemoteConfigProvider {
 
     fun getByteArray(key: String) = remoteConfig.getValue(key).asByteArray()
 
-/*    inline fun <reified T> getObject(key: String): T? {
-        val type: Type = object : TypeToken<T>() {}.type
-        return Gson().fromJson(getString(key), type)
-    }
-
-    inline fun <reified T> getListOf(key: String): List<T> {
-        val type: Type = object : TypeToken<List<T>>() {}.type
-        return try {
-            Gson().fromJson(getString(key), type)
-        } catch (e: Exception) {
-            listOf()
-        }
-    }*/
-
     companion object {
         private const val FETCH_MINIMUM_DURATION = 12L
         private const val FETCH_MINIMUM_INTERVAL = 900L

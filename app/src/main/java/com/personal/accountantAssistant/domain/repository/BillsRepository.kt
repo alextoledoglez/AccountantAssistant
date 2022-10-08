@@ -8,6 +8,8 @@ import java.util.*
 
 interface BillsRepository {
     fun getBills(): Flow<MutableList<ExpenseModel>?>
+    fun getBillsDueSoon(): Flow<List<ExpenseModel>?>
+    fun getBillsDueToday(): Flow<List<ExpenseModel>?>
     fun getSummary(): Flow<SummaryModel?>
     fun getTotalValueUntil(date: Date?): Flow<BigDecimal?>
     fun saveBill(model: ExpenseModel): Flow<MutableList<ExpenseModel>?>

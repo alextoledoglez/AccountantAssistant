@@ -16,6 +16,10 @@ class BillsDataRepository(private val dataSource: BillsRemoteDataSource) : Bills
 
     override fun getBills() = dataSource.getBills().map { it.toListModel() }
 
+    override fun getBillsDueSoon() = dataSource.getBillsDueSoon().map { it.toListModel() }
+
+    override fun getBillsDueToday() = dataSource.getBillsDueToday().map { it.toListModel() }
+
     override fun getSummary() = dataSource.getSummary().map { it.toSummaryModel() }
 
     override fun getTotalValueUntil(date: Date?) = dataSource.getTotalValueUntil(date).map {

@@ -37,10 +37,16 @@
     <string name="menu_bills">Contas</string>
     <string name="menu_profile">Perfil</string>
     <string name="menu_tickets">Ingressos</string>
-    <string name="menu_remittances">Remessas</string>
-
     <string name="menu_share">Compartilhar</string>
     <string name="menu_send">Enviar</string>
+    <string name="menu_remittances">Remessas</string>
+
+    <!--Bills-->
+    <string name="bill">Conta</string>
+    <string name="bills_due_title">Contas vencendo</string>
+    <string name="bills_due_soon_text">Você tem contas a vencer em breve!</string>
+    <string name="bills_due_today_text">Você tem contas a vencer hoje!</string>
+
     <string name="calculate">Calcular</string>
     <string name="add_action">Adicionar</string>
     <string name="cancel">Cancelar</string>
@@ -52,7 +58,6 @@
     <string name="price_default_value">00.00</string>
     <string name="total_to_pay">Total a pagar</string>
     <string name="default_total_value">00.00</string>
-    <string name="bill">Conta</string>
     <string name="one_time">1x</string>
     <string name="separator">-</string>
     <string name="name">Nome</string>

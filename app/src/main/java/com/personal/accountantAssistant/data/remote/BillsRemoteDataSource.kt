@@ -21,6 +21,14 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
 
     fun getBills(): Flow<List<ExpenseEntity>> = flowEmit { getAllBills() }
 
+    fun getBillsDueSoon(): Flow<List<ExpenseEntity>> = flowEmit {
+        expenseDao.selectBillsDueSoon().toList()
+    }
+
+    fun getBillsDueToday(): Flow<List<ExpenseEntity>> = flowEmit {
+        expenseDao.selectBillsDueToday().toList()
+    }
+
     fun getSummary(): Flow<ExpenseEntity> = flowEmit {
         expenseDao.getSummary(ExpensesType.BILL.name)
     }

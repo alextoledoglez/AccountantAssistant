@@ -53,6 +53,8 @@ object MainModule {
         single<GetAvailableMoneyUseCase> { GetAvailableMoneyUseCaseImpl(get()) }
         single<GetSignedUserUseCase> { GetSignedUserUseCaseImpl(get()) }
         single<SetSignedUserUseCase> { SetSignedUserUseCaseImpl(get()) }
+        single<GetBillsDueSoonUseCase> { GetBillsDueSoonUseCaseImpl(get()) }
+        single<GetBillsDueTodayUseCase> { GetBillsDueTodayUseCaseImpl(get()) }
         single<GetNotificationTokenUseCase> { GetNotificationTokenUseCaseImpl(get()) }
         single<GetLocalNotificationTokenUseCase> { GetLocalNotificationTokenUseCaseImpl(get()) }
         single<SetLocalNotificationTokenUseCase> { SetLocalNotificationTokenUseCaseImpl(get()) }

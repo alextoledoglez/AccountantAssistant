@@ -18,6 +18,10 @@ class NotificationService : FirebaseMessagingService() {
     private val analytics: AnalyticsProvider? by inject()
     private val notificationManager: NotificationManager by inject()
 
+    val billsDueTitle = context.getString(R.string.bills_due_title)
+    val billsDueSoonText = context.getString(R.string.bills_due_soon_text)
+    val billsDueTodayText = context.getString(R.string.bills_due_today_text)
+
     override fun onNewToken(token: String) {
         trackNotificationEvent(event = "onNewToken", value = token)
         sendRegistrationToServer(token)
@@ -66,6 +70,18 @@ class NotificationService : FirebaseMessagingService() {
         val notification = notificationBuilder(title, text).build()
         trackNotificationEvent(event = "showNotification", value = "title: $title and text: $text")
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    fun showBillsDueSoonNotification() {
+        val billsDueTitle = context.getString(R.string.bills_due_title)
+        val billsDueSoonText = context.getString(R.string.bills_due_soon_text)
+        showNotification(billsDueTitle, billsDueSoonText)
+    }
+
+    fun showBillsDueTodayNotification() {
+        val billsDueTitle = context.getString(R.string.bills_due_title)
+        val billsDueTodayText = context.getString(R.string.bills_due_today_text)
+        showNotification(billsDueTitle, billsDueTodayText)
     }
 
     companion object {

@@ -11,6 +11,7 @@ import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.DA
 import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.ID
 import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.TOTAL_VALUE
 import com.personal.accountantAssistant.data.entities.ExpenseEntity.Companion.TYPE
+import com.personal.accountantAssistant.data.enums.ExpensesType
 
 @Dao
 interface ExpenseDao : BaseDao<ExpenseEntity> {
@@ -18,6 +19,14 @@ interface ExpenseDao : BaseDao<ExpenseEntity> {
     @Transaction
     @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE $TYPE ==:typeName")
     suspend fun selectAll(typeName: String): Array<ExpenseEntity>
+
+    @Transaction
+    @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE (date($DATE, '-72 hour') < $DATE) AND $TYPE ==:typeName")
+    suspend fun selectBillsDueSoon(typeName: String = ExpensesType.BILL.name): Array<ExpenseEntity>
+
+    @Transaction
+    @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE ($DATE BETWEEN $DATE AND date('now')) AND $TYPE ==:typeName")
+    suspend fun selectBillsDueToday(typeName: String = ExpensesType.BILL.name): Array<ExpenseEntity>
 
     @Transaction
     @Query(
