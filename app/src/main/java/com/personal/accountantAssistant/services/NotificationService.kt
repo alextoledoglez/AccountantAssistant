@@ -3,13 +3,16 @@ package com.personal.accountantAssistant.services
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_DEFAULT
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.providers.AnalyticsProvider
+import com.personal.accountantAssistant.ui.MainActivity
 import org.koin.android.ext.android.inject
 
 class NotificationService : FirebaseMessagingService() {
@@ -17,10 +20,6 @@ class NotificationService : FirebaseMessagingService() {
     private val context: Context by inject()
     private val analytics: AnalyticsProvider? by inject()
     private val notificationManager: NotificationManager by inject()
-
-    val billsDueTitle = context.getString(R.string.bills_due_title)
-    val billsDueSoonText = context.getString(R.string.bills_due_soon_text)
-    val billsDueTodayText = context.getString(R.string.bills_due_today_text)
 
     override fun onNewToken(token: String) {
         trackNotificationEvent(event = "onNewToken", value = token)
@@ -53,9 +52,18 @@ class NotificationService : FirebaseMessagingService() {
             setContentText(description)
             setShowWhen(false)
             setAutoCancel(true)
-            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             setGroup(GROUP_KEY)
+            setContentIntent(getPendingIntent())
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         }
+
+    private fun getPendingIntent(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        return PendingIntent.getActivity(context, 0, intent, flags)
+    }
 
     private fun trackNotificationEvent(event: String, value: String) {
         analytics?.trackEvent(TAG, event, value)
@@ -70,18 +78,6 @@ class NotificationService : FirebaseMessagingService() {
         val notification = notificationBuilder(title, text).build()
         trackNotificationEvent(event = "showNotification", value = "title: $title and text: $text")
         notificationManager.notify(NOTIFICATION_ID, notification)
-    }
-
-    fun showBillsDueSoonNotification() {
-        val billsDueTitle = context.getString(R.string.bills_due_title)
-        val billsDueSoonText = context.getString(R.string.bills_due_soon_text)
-        showNotification(billsDueTitle, billsDueSoonText)
-    }
-
-    fun showBillsDueTodayNotification() {
-        val billsDueTitle = context.getString(R.string.bills_due_title)
-        val billsDueTodayText = context.getString(R.string.bills_due_today_text)
-        showNotification(billsDueTitle, billsDueTodayText)
     }
 
     companion object {

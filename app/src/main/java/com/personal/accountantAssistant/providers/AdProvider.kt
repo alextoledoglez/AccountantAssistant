@@ -58,11 +58,13 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
     }
 
     fun loadAdOn(container: FrameLayout) {
-        with(container) {
-            removeAllViews()
-            addView(adView)
+        if (!adView.isShown) {
+            with(container) {
+                removeAllViews()
+                addView(adView)
+            }
+            adView.loadAd(AdRequest.Builder().build())
         }
-        adView.loadAd(AdRequest.Builder().build())
     }
 
     fun destroyAd() {

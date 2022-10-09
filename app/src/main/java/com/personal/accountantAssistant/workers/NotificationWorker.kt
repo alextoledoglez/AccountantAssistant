@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.workers
 
 import android.content.Context
 import androidx.work.*
+import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.useCases.GetBillsDueSoonUseCase
 import com.personal.accountantAssistant.domain.useCases.GetBillsDueTodayUseCase
 import com.personal.accountantAssistant.extensions.isMoreThanZero
@@ -23,13 +24,22 @@ class NotificationWorker(
 
     override suspend fun doWork(): Result {
         when {
-            getBillsDueTodayUseCase().singleOrNull()?.size.isMoreThanZero() ->
-                notificationService.showBillsDueTodayNotification()
-
-            getBillsDueSoonUseCase().singleOrNull()?.size.isMoreThanZero() ->
-                notificationService.showBillsDueSoonNotification()
+            getBillsDueTodayUseCase().singleOrNull()?.size.isMoreThanZero() -> showBillsDueTodayNotification()
+            getBillsDueSoonUseCase().singleOrNull()?.size.isMoreThanZero() -> showBillsDueSoonNotification()
         }
         return Result.success()
+    }
+
+    private fun showBillsDueSoonNotification() {
+        val billsDueTitle = context.getString(R.string.bills_due_title)
+        val billsDueSoonText = context.getString(R.string.bills_due_soon_text)
+        notificationService.showNotification(billsDueTitle, billsDueSoonText)
+    }
+
+    private fun showBillsDueTodayNotification() {
+        val billsDueTitle = context.getString(R.string.bills_due_title)
+        val billsDueTodayText = context.getString(R.string.bills_due_today_text)
+        notificationService.showNotification(billsDueTitle, billsDueTodayText)
     }
 
     companion object {
