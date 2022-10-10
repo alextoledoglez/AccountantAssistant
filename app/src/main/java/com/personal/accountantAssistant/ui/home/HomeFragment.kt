@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.ui.home
 import android.view.Menu
 import android.view.MenuInflater
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
@@ -24,6 +25,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
     private val ibDateRangePicker by lazy { lytHeader.ibDateRangePicker }
     private val tvPeriodValue by lazy { lytHeader.tvPeriodValue }
     private val lytContent by lazy { binding.lytContent }
+    private val tvVersion by lazy { binding.tvVersion }
     private val srlContent by lazy { lytContent.srlContent }
     private val vfContent by lazy { lytContent.vfContent }
     private val rvContent by lazy { lytContent.rvContent }
@@ -59,6 +61,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         srlContent.setOnRefreshListener { loadData() }
         rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
         adProvider?.loadAdOn(binding.flAds)
+        tvVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
     }
 
     override fun initObservers() {

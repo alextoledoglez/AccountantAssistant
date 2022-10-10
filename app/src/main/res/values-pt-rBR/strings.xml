@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Accountant assistant</string>
-    <string name="app_version">Versão: 1.0</string>
+    <string name="app_version">Versão: %1$s</string>
     <string name="open_action">Abrir</string>
     <string name="logout_action">Encerrar sessão</string>
     <string name="logout_confirmation_title">@string/logout_action</string>
     <string name="logout_confirmation_message">Tem certeza que deseja encerrar a sessão e sair?</string>
-    <string name="nav_header_title">accountant.assistant@gmail.com</string>
-    <string name="nav_header_subtitle">v1.0.0</string>
-    <string name="nav_header_desc">Cabeçalho de navegação</string>
+    <string name="nav_header_title">financial.assistant.app@gmail.com</string>
     <string name="action_settings">Configurações</string>
     <string name="import_all">Importar</string>
     <string name="export_all">Exportar</string>
     <string name="import_export">Importar / Exportar</string>
     <string name="delete_all">Apagar tudo</string>
-    <string name="money_format">###.###.###,##</string>
 
     <string name="menu_home">Início</string>
     <string name="money_to_expense">Dinheiro para gastar</string>
     <string name="period_to_expense">Período para despesa</string>
 
     <string name="available">Disponível</string>
-    <string name="available_value">Disponível : %1$s</string>
+    <string name="available_value">Disponível: %1$s</string>
     <string name="expenses">Despesas</string>
     <string name="total">Total</string>
     <string name="gain">Ganho</string>
