@@ -10,7 +10,7 @@ private fun Menu.setMenuItemVisible(index: Int, isVisible: Boolean) {
 }
 
 fun Menu.showMenuOptions(isVisible: Boolean = true) {
-    setMenuItemVisible(import_export_option, isVisible)
+    setMenuItemVisible(import_export_option, isVisible = false)
     setMenuItemVisible(delete_all_option, isVisible)
 }
 
