@@ -6,9 +6,7 @@ import com.personal.accountantAssistant.data.mappers.toSummaryModel
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.repository.BillsRepository
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.rounded
-import com.personal.accountantAssistant.extensions.toInt
+import com.personal.accountantAssistant.extensions.*
 import kotlinx.coroutines.flow.map
 import java.util.*
 
@@ -16,9 +14,13 @@ class BillsDataRepository(private val dataSource: BillsRemoteDataSource) : Bills
 
     override fun getBills() = dataSource.getBills().map { it.toListModel() }
 
-    override fun getBillsDueSoon() = dataSource.getBillsDueSoon().map { it.toListModel() }
+    override fun getBillsDueSoon() = dataSource.getActiveBills().map { entities ->
+        entities.toListModel().filter { it.date.isDueSoon() }
+    }
 
-    override fun getBillsDueToday() = dataSource.getBillsDueToday().map { it.toListModel() }
+    override fun getBillsDueToday() = dataSource.getActiveBills().map { entities ->
+        entities.toListModel().filter { it.date.isDueToday() }
+    }
 
     override fun getSummary() = dataSource.getSummary().map { it.toSummaryModel() }
 

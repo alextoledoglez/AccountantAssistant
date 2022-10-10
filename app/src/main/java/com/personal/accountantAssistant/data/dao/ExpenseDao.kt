@@ -21,12 +21,8 @@ interface ExpenseDao : BaseDao<ExpenseEntity> {
     suspend fun selectAll(typeName: String): Array<ExpenseEntity>
 
     @Transaction
-    @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE (date($DATE, '-72 hour') < $DATE) AND $TYPE ==:typeName AND $ACTIVE=1")
-    suspend fun selectBillsDueSoon(typeName: String = ExpensesType.BILL.name): Array<ExpenseEntity>
-
-    @Transaction
-    @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE ($DATE BETWEEN $DATE AND date('now')) AND $TYPE ==:typeName AND $ACTIVE=1")
-    suspend fun selectBillsDueToday(typeName: String = ExpensesType.BILL.name): Array<ExpenseEntity>
+    @Query("SELECT * FROM $EXPENSES_TABLE_NAME WHERE $TYPE ==:typeName AND $ACTIVE=1")
+    suspend fun selectActiveBills(typeName: String = ExpensesType.BILL.name): Array<ExpenseEntity>
 
     @Transaction
     @Query(

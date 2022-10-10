@@ -32,6 +32,8 @@ fun Int?.orZero(): Int = orValue(Int.ZERO)
 
 fun Int?.isMoreThanZero() = orZero() > Int.ZERO
 
+fun Int?.isLessThanZero() = orZero() < Int.ZERO
+
 fun Int?.isEqualToZero() = orZero() == Int.ZERO
 
 val Long.Companion.ZERO: Long get() = 0

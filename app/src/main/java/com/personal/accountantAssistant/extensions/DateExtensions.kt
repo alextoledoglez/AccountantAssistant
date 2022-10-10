@@ -22,15 +22,13 @@ fun Date?.toCalendar(): Calendar {
     return calendar
 }
 
-fun Date?.toCalendarMillis(): Long = this.toCalendar().timeInMillis
+fun Date?.toCalendarMillis(): Long = toCalendar().timeInMillis
 
-fun Date?.toScheduledTime(): Long {
-    val calendar = Calendar.getInstance()
-    return if (this?.toDateStr().equals(calendar.time.toDateStr())) {
-        toCalendar().updateWith(calendar).addFieldValue(Calendar.SECOND, value = 60).timeInMillis
-    } else
-        this?.time.orZero()
-}
+fun Date?.toThreeDaysBefore(): Date = toCalendar().toThreeDaysBefore()
+
+fun Date?.isDueSoon() = Calendar.getInstance().isDateBetween(toThreeDaysBefore(), this)
+
+fun Date?.isDueToday(): Boolean = this?.toDateStr().equals(Calendar.getInstance().time.toDateStr())
 
 fun Pair<Date?, Date?>.toPeriodDateStr(): String =
     "${first.toDateStr()}${String.DASH_SEPARATOR}${second.toDateStr()}"

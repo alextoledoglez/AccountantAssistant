@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.data.enums.NotificationTopics
 import com.personal.accountantAssistant.data.mappers.toUserModel
 import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.extensions.onError
