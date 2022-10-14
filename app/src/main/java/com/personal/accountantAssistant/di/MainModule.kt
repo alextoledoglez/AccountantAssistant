@@ -4,11 +4,9 @@ import android.app.NotificationManager
 import android.content.Context
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.Scope
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.DriveScopes
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
@@ -19,7 +17,6 @@ import com.personal.accountantAssistant.data.repository.*
 import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.providers.*
-import com.personal.accountantAssistant.services.DriveService
 import com.personal.accountantAssistant.services.NotificationService
 import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
@@ -87,13 +84,11 @@ object MainModule {
     private val utilsModule = module {
         single { GsonFactory() }
         single { LocalStorage(get()) }
-        single { Scope(DriveScopes.DRIVE) }
-        single { listOf(DriveScopes.DRIVE) }
         single { MobileAds.initialize(get()) {} }
         single { GoogleSignInOptions.DEFAULT_SIGN_IN }
         single { Executors.newSingleThreadExecutor() }
         single { AndroidHttp.newCompatibleTransport() }
-        single { GoogleSignInOptions.Builder(get()).requestScopes(get()) }
+        single { GoogleSignInOptions.Builder(get()) }
         single { GoogleAccountCredential.usingOAuth2(get(), get()) }
     }
 
@@ -104,7 +99,6 @@ object MainModule {
     private val servicesModule = module {
         single { NotificationService() }
         single { SignInService(get(), get(), get(), get()) }
-        single { DriveService(get(), get(), get(), get(), get(), get(), get()) }
     }
 
     fun getModules() = listOf(
