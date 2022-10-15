@@ -2,10 +2,8 @@
 <resources>
 
     //Base colors
-    <color name="primaryColor">#4CAF50</color>
-    <color name="primaryLowColor">#66BB6A</color>
+    <color name="primaryColor">#43A047</color>
     <color name="primaryDarkColor">#388E3C</color>
-    <color name="primaryLightColor">#81C784</color>
 
     //Utils color
     <color name="redColor">#D50000</color>

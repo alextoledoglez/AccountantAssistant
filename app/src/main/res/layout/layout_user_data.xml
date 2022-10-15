@@ -7,8 +7,10 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivPhoto"
-        android:layout_width="@dimen/title_height"
-        android:layout_height="@dimen/title_height"
+        android:layout_width="@dimen/image_button_size"
+        android:layout_height="@dimen/image_button_size"
+        android:minWidth="@dimen/image_button_size"
+        android:minHeight="@dimen/image_button_size"
         android:padding="@dimen/smallest_material_margin"
         android:src="@drawable/ic_account"
         app:layout_constraintBottom_toBottomOf="parent"

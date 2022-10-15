@@ -46,6 +46,8 @@
             android:id="@+id/ivChip"
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
+            android:minWidth="@dimen/image_button_size"
+            android:minHeight="@dimen/image_button_size"
             android:src="@drawable/ic_chip"
             app:layout_constraintBottom_toBottomOf="@id/tvValue"
             app:layout_constraintStart_toStartOf="parent"

@@ -44,10 +44,11 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ibLogout"
         android:layout_width="@dimen/zero"
-        android:layout_height="@dimen/title_height"
+        android:layout_height="@dimen/image_button_size"
         android:layout_marginBottom="@dimen/default_material_margin"
         android:backgroundTint="@color/primaryColor"
         android:contentDescription="@string/logout_action"
+        android:minHeight="@dimen/image_button_size"
         android:text="@string/logout_action"
         android:textColor="@color/design_default_color_background"
         app:icon="@drawable/ic_logout"
