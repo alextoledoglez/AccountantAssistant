@@ -35,7 +35,7 @@ abstract class BaseViewModel(val analytics: AnalyticsProvider?) : ViewModel(), C
     fun setMessage(message: String? = null) {
         _flipper.postValue(FlipperViews.MESSAGE)
         _isLoading.postValue(false)
-        _errorMessage.postValue(message)
+        _errorMessage.postValue(message.orEmpty())
         analytics?.trackErrorEvent(message)
     }
 

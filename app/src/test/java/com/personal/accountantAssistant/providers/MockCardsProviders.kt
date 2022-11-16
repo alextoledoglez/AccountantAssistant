@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.providers
 
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.ZERO
 import com.personal.accountantAssistant.extensions.flowEmit
 import java.math.BigDecimal
 import java.util.*
@@ -11,7 +12,7 @@ object MockCardsProviders {
     fun mockedFlowCards() = flowEmit {
         mutableListOf(
             CardModel(
-                id = 0L,
+                id = Long.ZERO,
                 company = "Bank abc",
                 name = "Credit card",
                 date = Date(),
