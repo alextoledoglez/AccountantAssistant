@@ -18,12 +18,17 @@ buildscript {
         // Libraries versions
         kotlinVersion = "1.7.10"
         koinVersion = "2.2.3"
+        coroutinesVersion = "1.5.2"
         lifeCycleVersion = "2.5.1"
         roomVersion = "2.4.3"
-        navigationVersion = "2.5.2"
+        navigationVersion = "2.5.3"
         googleHttpApiVersion = "1.26.0"
         glideVersion = "4.12.0"
         workManagerVersion = '2.7.1'
+        junitVersion = '4.13.2'
+        mockkVersion = '1.12.0'
+        coreTestingVersion = '2.1.0'
+        coreKtxTestVersion = "1.5.0"
     }
     repositories {
         google()
@@ -31,7 +36,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
