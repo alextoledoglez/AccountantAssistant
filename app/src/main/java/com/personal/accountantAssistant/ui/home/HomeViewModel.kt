@@ -5,19 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.repository.BillsRepository
-import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
-import com.personal.accountantAssistant.domain.useCases.GetFirstDateUseCase
-import com.personal.accountantAssistant.domain.useCases.GetLastDateUseCase
+import com.personal.accountantAssistant.domain.useCases.GetExpensesUseCase
+import com.personal.accountantAssistant.domain.useCases.GetPeriodDatesUseCase
 import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.extensions.onError
-import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.extensions.toUtcDate
 import com.personal.accountantAssistant.extensions.toUtcTime
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -26,12 +22,10 @@ import java.util.*
 
 class HomeViewModel(
     analytics: AnalyticsProvider?,
-    val getFirstDate: GetFirstDateUseCase,
-    val getLastDate: GetLastDateUseCase,
+    val getPeriodDates: GetPeriodDatesUseCase,
     val setPeriodDates: SetPeriodDatesUseCase,
     val getAvailableMoney: GetAvailableMoneyUseCase,
-    private val buysRepository: BuysRepository,
-    private val billsRepository: BillsRepository
+    val getExpenses: GetExpensesUseCase
 ) : BaseViewModel(analytics) {
 
     private val _periodDates = MutableLiveData<Pair<Date?, Date?>>()
@@ -48,7 +42,7 @@ class HomeViewModel(
 
     fun loadPeriodDates() {
         launch {
-            combine(getFirstDate(), getLastDate()) { init, end -> Pair(init, end) }
+            getPeriodDates()
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
@@ -66,18 +60,10 @@ class HomeViewModel(
         }
     }
 
-    fun loadExpenses(lastDate: Date?) {
+    fun loadExpenses(lastDate: Date?, availableMoney: BigDecimal?) {
         launch {
-            val buysFlow = buysRepository.getTotalValue()
-            val billsFlow = billsRepository.getTotalValueUntil(lastDate)
-            combine(buysFlow, billsFlow) { buys, bills ->
-                ExpensesValuesModel(
-                    buys = buys,
-                    bills = bills,
-                    total = buys?.plus(bills.orZero()),
-                    available = availableMoney.value
-                )
-            }.onStart { setLoading() }
+            getExpenses(lastDate, availableMoney)
+                .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
                 .collect { _expensesValues.postValue(it) }

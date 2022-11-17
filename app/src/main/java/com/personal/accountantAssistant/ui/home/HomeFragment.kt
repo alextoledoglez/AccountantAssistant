@@ -70,7 +70,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
             flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
             periodDates.observe(viewLifecycleOwner) {
                 tvPeriodValue.text = it.toPeriodDateStr()
-                loadExpenses(it.second)
+                loadExpenses(it.second, availableMoney.value)
             }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {

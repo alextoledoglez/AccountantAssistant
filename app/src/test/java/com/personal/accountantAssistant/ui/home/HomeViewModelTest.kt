@@ -1,67 +1,45 @@
 package com.personal.accountantAssistant.ui.home
 
 import com.personal.accountantAssistant.base.BaseTest
-import com.personal.accountantAssistant.domain.repository.BillsRepository
-import com.personal.accountantAssistant.domain.repository.BuysRepository
 import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
-import com.personal.accountantAssistant.domain.useCases.GetFirstDateUseCase
-import com.personal.accountantAssistant.domain.useCases.GetLastDateUseCase
+import com.personal.accountantAssistant.domain.useCases.GetExpensesUseCase
+import com.personal.accountantAssistant.domain.useCases.GetPeriodDatesUseCase
 import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockErrorProvider
 import com.personal.accountantAssistant.providers.MockHomeProviders
+import com.personal.accountantAssistant.providers.MockHomeProviders.mockedFlowAvailableMoney
+import com.personal.accountantAssistant.providers.MockHomeProviders.mockedFlowExpensesValues
+import com.personal.accountantAssistant.providers.MockHomeProviders.mockedPeriodDates
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.Ignore
 import org.junit.Test
 
 class HomeViewModelTest : BaseTest() {
 
     private lateinit var viewModel: HomeViewModel
     private val analytics = mockk<AnalyticsProvider>(relaxed = true)
-    private val getFirstDate = mockk<GetFirstDateUseCase>(relaxed = true)
-    private val getLastDate = mockk<GetLastDateUseCase>(relaxed = true)
+    private val getPeriodDates = mockk<GetPeriodDatesUseCase>(relaxed = true)
     private val setPeriodDates = mockk<SetPeriodDatesUseCase>(relaxed = true)
     private val getAvailableMoney = mockk<GetAvailableMoneyUseCase>(relaxed = true)
-    private val buysRepository = mockk<BuysRepository>(relaxed = true)
-    private val billsRepository = mockk<BillsRepository>(relaxed = true)
+    private val getExpenses = mockk<GetExpensesUseCase>(relaxed = true)
 
     override fun setup() {
         super.setup()
         viewModel = HomeViewModel(
             analytics = analytics,
-            getFirstDate = getFirstDate,
-            getLastDate = getLastDate,
+            getPeriodDates = getPeriodDates,
             setPeriodDates = setPeriodDates,
             getAvailableMoney = getAvailableMoney,
-            buysRepository = buysRepository,
-            billsRepository = billsRepository
+            getExpenses = getExpenses
         )
-    }
-
-    @Ignore
-    fun shouldLoadPeriodDates() {
-        viewModel.run {
-            coEvery { Any() } returns MockHomeProviders.mockedPeriodDates()
-            loadPeriodDates()
-            assertNotNull(periodDates.value)
-        }
-    }
-
-    @Ignore
-    fun shouldNotLoadPeriodDates() {
-        viewModel.run {
-            coEvery { Any() } returns MockErrorProvider.mockErrorFlow()
-            loadPeriodDates()
-            assertNotNull(errorMessage.value)
-        }
     }
 
     @Test
     fun shouldLoadAvailableMoney() {
         viewModel.run {
-            coEvery { getAvailableMoney() } returns MockHomeProviders.mockedAvailableMoney()
+            coEvery { getAvailableMoney() } returns mockedFlowAvailableMoney()
             loadAvailableMoney()
             coVerify { getAvailableMoney() }
             assertNotNull(availableMoney.value)
@@ -78,20 +56,46 @@ class HomeViewModelTest : BaseTest() {
         }
     }
 
-    @Ignore
+    @Test
+    fun shouldLoadPeriodDates() {
+        viewModel.run {
+            coEvery { getPeriodDates() } returns mockedPeriodDates()
+            loadPeriodDates()
+            coVerify { getPeriodDates() }
+            assertNotNull(periodDates.value)
+        }
+    }
+
+    @Test
+    fun shouldNotLoadPeriodDates() {
+        viewModel.run {
+            coEvery { getPeriodDates() } returns MockErrorProvider.mockErrorFlow()
+            loadPeriodDates()
+            coVerify { getPeriodDates() }
+            assertNotNull(errorMessage.value)
+        }
+    }
+
+    @Test
     fun shouldLoadExpenses() {
         viewModel.run {
-            coEvery { Any() } returns MockHomeProviders.mockedFlowExpensesValues()
-            loadExpenses(MockHomeProviders.mockedLastDate())
+            val lastDate = MockHomeProviders.mockedLastDate()
+            val available = MockHomeProviders.mockedAvailableMoney()
+            coEvery { getExpenses(lastDate, available) } returns mockedFlowExpensesValues()
+            loadExpenses(lastDate, available)
+            coVerify { getExpenses(lastDate, available) }
             assertNotNull(expensesValues.value)
         }
     }
 
-    @Ignore
+    @Test
     fun shouldNotLoadExpenses() {
         viewModel.run {
-            coEvery { Any() } returns MockErrorProvider.mockErrorFlow()
-            loadExpenses(MockHomeProviders.mockedLastDate())
+            val lastDate = MockHomeProviders.mockedLastDate()
+            val available = MockHomeProviders.mockedAvailableMoney()
+            coEvery { getExpenses(lastDate, available) } returns MockErrorProvider.mockErrorFlow()
+            loadExpenses(lastDate, available)
+            coVerify { getExpenses(lastDate, available) }
             assertNotNull(errorMessage.value)
         }
     }

@@ -9,10 +9,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.gson.GsonFactory
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.LocalStorage
-import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
-import com.personal.accountantAssistant.data.remote.BuysRemoteDataSource
-import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
-import com.personal.accountantAssistant.data.remote.UserRemoteDataSource
+import com.personal.accountantAssistant.data.remote.*
 import com.personal.accountantAssistant.data.repository.*
 import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
@@ -33,7 +30,7 @@ object MainModule {
 
     private val viewModelModule = module {
         viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
-        viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
         viewModel { WalletViewModel(get(), get(), get()) }
         viewModel { BuysViewModel(get(), get()) }
         viewModel { BillsViewModel(get(), get()) }
@@ -42,12 +39,12 @@ object MainModule {
 
     private val useCasesModule = module {
         single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
-        single<GetFirstDateUseCase> { GetFirstDateUseCaseImpl(get()) }
+        single<GetPeriodDatesUseCase> { GetPeriodDatesUseCaseImpl(get()) }
         single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }
-        single<GetLastDateUseCase> { GetLastDateUseCaseImpl(get()) }
         single<SetPeriodDatesUseCase> { SetPeriodDatesUseCaseImpl(get()) }
         single<SetAvailableMoneyUseCase> { SetAvailableMoneyUseCaseImpl(get()) }
         single<GetAvailableMoneyUseCase> { GetAvailableMoneyUseCaseImpl(get()) }
+        single<GetExpensesUseCase> { GetExpensesUseCaseImpl(get()) }
         single<GetSignedUserUseCase> { GetSignedUserUseCaseImpl(get()) }
         single<SetSignedUserUseCase> { SetSignedUserUseCaseImpl(get()) }
         single<GetBillsDueSoonUseCase> { GetBillsDueSoonUseCaseImpl(get()) }
@@ -65,10 +62,12 @@ object MainModule {
         single { CardsRemoteDataSource(get()) }
         single { BuysRemoteDataSource(get()) }
         single { BillsRemoteDataSource(get()) }
+        single { ExpensesRemoteDataSource(get()) }
         single { UserRemoteDataSource(get()) }
         single<CardsRepository> { CardsDataRepository(get()) }
         single<BuysRepository> { BuysDataRepository(get()) }
         single<BillsRepository> { BillsDataRepository(get()) }
+        single<ExpensesRepository> { ExpensesDataRepository(get()) }
         single<UserRepository> { UserDataRepository(get()) }
         single<NotificationRepository> { NotificationDataRepository(get(), get()) }
     }

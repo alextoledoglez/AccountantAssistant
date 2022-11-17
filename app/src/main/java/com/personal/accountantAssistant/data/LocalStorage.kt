@@ -4,7 +4,9 @@ import android.content.Context
 import com.personal.accountantAssistant.bases.BasePreferences
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.flowEmit
+import com.personal.accountantAssistant.extensions.rounded
 import com.personal.accountantAssistant.extensions.toSharedPreferences
+import java.math.BigDecimal
 
 class LocalStorage(val context: Context) : BasePreferences(context.toSharedPreferences()) {
 
@@ -14,6 +16,12 @@ class LocalStorage(val context: Context) : BasePreferences(context.toSharedPrefe
 
     fun getNotificationToken() = flowEmit {
         getString(NOTIFICATION_TOKEN, String.EMPTY)
+    }
+
+    fun getAvailableMoney() = flowEmit {
+        getFloat(AVAILABLE_MONEY, BigDecimal.ZERO.toFloat())
+            .toBigDecimal()
+            .rounded()
     }
 
     companion object {
