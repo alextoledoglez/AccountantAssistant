@@ -26,7 +26,7 @@ import com.personal.accountantAssistant.ui.wallet.WalletFragment
 class MainActivity : BaseActivity<Nothing>() {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
-    private val tabHeader by lazy { binding.tabHeader }
+    private val tabLayout by lazy { binding.tabLayout }
     private val vpContent by lazy { binding.vpContent }
     private var tlMediator: TabLayoutMediator? = null
     private val pagerAdapter: ViewPagerAdapter? by lazy {
@@ -70,7 +70,7 @@ class MainActivity : BaseActivity<Nothing>() {
         vpContent.adapter = pagerAdapter
 
         val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
-        tlMediator = TabLayoutMediator(tabHeader, vpContent) { tab, index ->
+        tlMediator = TabLayoutMediator(tabLayout, vpContent) { tab, index ->
             tab.setIcon(tabIcons.getResourceIdOrThrow(index))
         }.apply {
             attach()

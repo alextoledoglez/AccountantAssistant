@@ -25,7 +25,7 @@
     //Success colors
     <color name="successColor">#32C16E</color>
 
-    <color name="tabSelectedTextColor">@color/whiteColor</color>
+    <color name="tabSelectedTextColor">@color/primaryColor</color>
     <color name="tabTextColor">@color/silverColor</color>
 
     <color name="chipColor">#e7c63d</color>
