@@ -27,12 +27,18 @@ fun Date?.toCalendarMillis(): Long = toCalendar().timeInMillis
 fun Date?.toThreeDaysBefore(): Date = toCalendar().toThreeDaysBefore()
 
 fun Date?.isDateBetween(firstDate: Date?, lastDate: Date?) =
-    toCalendar().isDateBetween(after = firstDate, before = lastDate)
+    toCalendar().isDateBetween(after = firstDate, before = lastDate, inclusive = true)
 
 fun Date?.isDueSoon() =
     Calendar.getInstance().isDateBetween(after = toThreeDaysBefore(), before = this)
 
 fun Date?.isDueToday(): Boolean = this?.toDateStr().equals(Calendar.getInstance().time.toDateStr())
+
+fun Date?.isMoreOrEqualToZero(after: Date?) =
+    this?.compareTo(after).isMoreThanZero() || this?.compareTo(after).isEqualToZero()
+
+fun Date?.isLessOrEqualToZero(before: Date?) =
+    this?.compareTo(before).isLessThanZero() || this?.compareTo(before).isEqualToZero()
 
 fun Pair<Date?, Date?>.toPeriodDateStr(): String =
     "${first.toDateStr()}${String.DASH_SEPARATOR}${second.toDateStr()}"

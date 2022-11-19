@@ -11,7 +11,7 @@ object MockHomeProviders {
 
     fun mockedAvailableMoney(): BigDecimal = BigDecimal.ZERO
 
-    fun mockedPeriodDatesFlow() = flowEmit { Pair(Date(), Date()) }
+    fun mockedPeriodDatesFlow() = flowEmit { mockedPeriodDates() }
 
     fun mockedFlowAvailableMoney() = flowEmit { mockedAvailableMoney() }
 

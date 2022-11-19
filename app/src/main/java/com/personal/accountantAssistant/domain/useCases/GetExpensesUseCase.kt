@@ -7,7 +7,6 @@ import java.util.*
 
 interface GetExpensesUseCase {
     operator fun invoke(
-        period: Pair<Date?, Date?>,
-        availableMoney: BigDecimal?
+        period: Pair<Date?, Date?>, available: BigDecimal?
     ): Flow<ExpensesValuesModel>
 }
