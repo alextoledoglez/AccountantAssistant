@@ -10,12 +10,10 @@ import java.util.*
 
 class ExpensesRemoteDataSource(private val expenseDao: ExpenseDao) {
 
-    private suspend fun getAllBills() = expenseDao.selectAll(ExpensesType.BILL.name).toList()
-
     suspend fun getBuys() = expenseDao.getSummary(ExpensesType.BUY.name).totalValue
         .orZero().toBigDecimal().rounded()
 
-    suspend fun getBills(lastDate: Date?) = getAllBills()
+    suspend fun getBills(lastDate: Date?) = expenseDao.selectActiveBills().toList()
         .filter { it.date.toDate().isDateUntil(lastDate) }
         .sumOf { it.totalValue.orZero() }
         .orZero()
