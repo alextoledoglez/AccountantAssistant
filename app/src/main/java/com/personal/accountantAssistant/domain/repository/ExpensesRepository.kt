@@ -6,5 +6,5 @@ import java.math.BigDecimal
 import java.util.*
 
 interface ExpensesRepository {
-    fun getExpenses(lastDate: Date?, availableMoney: BigDecimal?): Flow<ExpensesValuesModel>
+    fun getExpenses(period: Pair<Date?, Date?>, availableMoney: BigDecimal?): Flow<ExpensesValuesModel>
 }

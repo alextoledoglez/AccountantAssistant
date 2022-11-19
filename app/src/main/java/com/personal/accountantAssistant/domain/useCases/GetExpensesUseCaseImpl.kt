@@ -8,6 +8,6 @@ class GetExpensesUseCaseImpl(
     private val expensesRepository: ExpensesRepository
 ) : GetExpensesUseCase {
 
-    override fun invoke(lastDate: Date?, availableMoney: BigDecimal?) =
-        expensesRepository.getExpenses(lastDate, availableMoney)
+    override fun invoke(period: Pair<Date?, Date?>, availableMoney: BigDecimal?) =
+        expensesRepository.getExpenses(period, availableMoney)
 }

@@ -26,8 +26,8 @@ fun Date?.toCalendarMillis(): Long = toCalendar().timeInMillis
 
 fun Date?.toThreeDaysBefore(): Date = toCalendar().toThreeDaysBefore()
 
-fun Date?.isDateUntil(lastDate: Date?) =
-    toCalendar().isDateBetween(after = Calendar.getInstance().time, before = lastDate)
+fun Date?.isDateBetween(firstDate: Date?, lastDate: Date?) =
+    toCalendar().isDateBetween(after = firstDate, before = lastDate)
 
 fun Date?.isDueSoon() =
     Calendar.getInstance().isDateBetween(after = toThreeDaysBefore(), before = this)

@@ -60,9 +60,9 @@ class HomeViewModel(
         }
     }
 
-    fun loadExpenses(lastDate: Date?, availableMoney: BigDecimal?) {
+    fun loadExpenses(period: Pair<Date?, Date?>, availableMoney: BigDecimal?) {
         launch {
-            getExpenses(lastDate, availableMoney)
+            getExpenses(period, availableMoney)
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }

@@ -24,9 +24,8 @@ class BillsDataRepository(private val dataSource: BillsRemoteDataSource) : Bills
 
     override fun getSummary() = dataSource.getSummary().map { it.toSummaryModel() }
 
-    override fun getTotalValueUntil(date: Date?) = dataSource.getTotalValueUntil(date).map {
-        it.orZero().toBigDecimal().rounded()
-    }
+    override fun getTotalValueUntil(period: Pair<Date?, Date?>) =
+        dataSource.getTotalValueUntil(period).map { it.orZero().toBigDecimal().rounded() }
 
     override fun saveBill(model: ExpenseModel) = dataSource.saveBill(model.toEntity()).map {
         it.toListModel()

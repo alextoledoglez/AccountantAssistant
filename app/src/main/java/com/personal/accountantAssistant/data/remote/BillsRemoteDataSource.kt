@@ -26,9 +26,9 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.getSummary(ExpensesType.BILL.name)
     }
 
-    fun getTotalValueUntil(date: Date?): Flow<Double> = flowEmit {
+    fun getTotalValueUntil(period: Pair<Date?, Date?>): Flow<Double> = flowEmit {
         expenseDao.selectActiveBills().toList()
-            .filter { it.date.toDate().isDateUntil(date) }
+            .filter { it.date.toDate().isDateBetween(period.first, period.second) }
             .sumOf { it.totalValue.orZero() }
     }
 

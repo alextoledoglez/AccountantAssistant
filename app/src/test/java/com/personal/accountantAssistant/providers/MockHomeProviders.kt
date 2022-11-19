@@ -7,11 +7,11 @@ import java.util.*
 
 object MockHomeProviders {
 
-    fun mockedLastDate() = Date()
+    fun mockedPeriodDates() = Pair(Date(), Date())
 
     fun mockedAvailableMoney(): BigDecimal = BigDecimal.ZERO
 
-    fun mockedPeriodDates() = flowEmit { Pair(Date(), mockedLastDate()) }
+    fun mockedPeriodDatesFlow() = flowEmit { Pair(Date(), Date()) }
 
     fun mockedFlowAvailableMoney() = flowEmit { mockedAvailableMoney() }
 

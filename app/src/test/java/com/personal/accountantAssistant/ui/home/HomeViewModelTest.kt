@@ -7,10 +7,11 @@ import com.personal.accountantAssistant.domain.useCases.GetPeriodDatesUseCase
 import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockErrorProvider
-import com.personal.accountantAssistant.providers.MockHomeProviders
+import com.personal.accountantAssistant.providers.MockHomeProviders.mockedAvailableMoney
 import com.personal.accountantAssistant.providers.MockHomeProviders.mockedFlowAvailableMoney
 import com.personal.accountantAssistant.providers.MockHomeProviders.mockedFlowExpensesValues
 import com.personal.accountantAssistant.providers.MockHomeProviders.mockedPeriodDates
+import com.personal.accountantAssistant.providers.MockHomeProviders.mockedPeriodDatesFlow
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -59,7 +60,7 @@ class HomeViewModelTest : BaseTest() {
     @Test
     fun shouldLoadPeriodDates() {
         viewModel.run {
-            coEvery { getPeriodDates() } returns mockedPeriodDates()
+            coEvery { getPeriodDates() } returns mockedPeriodDatesFlow()
             loadPeriodDates()
             coVerify { getPeriodDates() }
             assertNotNull(periodDates.value)
@@ -79,11 +80,11 @@ class HomeViewModelTest : BaseTest() {
     @Test
     fun shouldLoadExpenses() {
         viewModel.run {
-            val lastDate = MockHomeProviders.mockedLastDate()
-            val available = MockHomeProviders.mockedAvailableMoney()
-            coEvery { getExpenses(lastDate, available) } returns mockedFlowExpensesValues()
-            loadExpenses(lastDate, available)
-            coVerify { getExpenses(lastDate, available) }
+            val period = mockedPeriodDates()
+            val available = mockedAvailableMoney()
+            coEvery { getExpenses(period, available) } returns mockedFlowExpensesValues()
+            loadExpenses(period, available)
+            coVerify { getExpenses(period, available) }
             assertNotNull(expensesValues.value)
         }
     }
@@ -91,11 +92,11 @@ class HomeViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadExpenses() {
         viewModel.run {
-            val lastDate = MockHomeProviders.mockedLastDate()
-            val available = MockHomeProviders.mockedAvailableMoney()
-            coEvery { getExpenses(lastDate, available) } returns MockErrorProvider.mockErrorFlow()
-            loadExpenses(lastDate, available)
-            coVerify { getExpenses(lastDate, available) }
+            val period = mockedPeriodDates()
+            val available = mockedAvailableMoney()
+            coEvery { getExpenses(period, available) } returns MockErrorProvider.mockErrorFlow()
+            loadExpenses(period, available)
+            coVerify { getExpenses(period, available) }
             assertNotNull(errorMessage.value)
         }
     }

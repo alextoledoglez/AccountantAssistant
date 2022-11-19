@@ -12,11 +12,11 @@ class ExpensesDataRepository(
     private val dataSource: ExpensesRemoteDataSource
 ) : ExpensesRepository {
 
-    override fun getExpenses(lastDate: Date?, availableMoney: BigDecimal?) = flowEmit {
+    override fun getExpenses(period: Pair<Date?, Date?>, availableMoney: BigDecimal?) = flowEmit {
         ExpensesValuesModel(
             buys = dataSource.getBuys(),
-            bills = dataSource.getBills(lastDate),
-            total = dataSource.getTotal(lastDate),
+            bills = dataSource.getBillsOn(period),
+            total = dataSource.getTotalOn(period),
             available = availableMoney.orZero()
         )
     }
