@@ -74,7 +74,9 @@ fun BigDecimal?.toCurrencyMaskedStr() = toString().toCurrencyMaskedStr()
 
 fun BigDecimal?.isMoreThanZero() = this.orZero() > BigDecimal.ZERO
 
-fun BigDecimal?.isEqualToZero() = orZero() == BigDecimal.ZERO
+fun BigDecimal?.isEqualToZero() = orZero() == BigDecimal.ZERO.rounded()
+
+fun BigDecimal?.isMoreThanOrEqualToZero() = (isMoreThanZero() || isEqualToZero())
 
 fun BigDecimal?.isMoreThan(value: BigDecimal?) = (value.orZero() < this.orZero())
 

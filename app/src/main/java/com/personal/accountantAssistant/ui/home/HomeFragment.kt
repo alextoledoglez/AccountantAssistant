@@ -129,7 +129,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val totalColor = getExpensesColorResourceBy(total)
 
         //Balance
-        val isBalanceMoreThanOrEqualToZero = balance.isMoreThanZero() || balance.isEqualToZero()
+        val isBalanceMoreThanOrEqualToZero = balance.isMoreThanOrEqualToZero()
         val balanceTextRes = if (isBalanceMoreThanOrEqualToZero) titleRes.gain else titleRes.missing
         val balanceText = getString(balanceTextRes)
         val balanceColor = getColorResourceBy(isBalanceMoreThanOrEqualToZero)
