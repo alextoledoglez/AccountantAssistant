@@ -72,6 +72,9 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
                 tvPeriodValue.text = it.toPeriodDateStr()
                 loadExpenses(it.second, availableMoney.value)
             }
+            availableMoney.observe(viewLifecycleOwner) {
+                loadExpenses(periodDates.value?.second, it)
+            }
             expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
             dashboardValues.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
@@ -103,7 +106,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val bills = values?.bills.orZero()
         val total = values?.total.orZero().rounded()
         val available = values?.available.orZero()
-        val balance = available.minus(total).rounded()
+        val balance = values?.balance.orZero()
         val availableColor = getColorResourceBy(values?.isTotalLessThanAvailable)
 
         //Available money
@@ -126,9 +129,10 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         val totalColor = getExpensesColorResourceBy(total)
 
         //Balance
-        val isZeroLessThanBalance = balance.isMoreThanZero()
-        val balanceText = getString(if (isZeroLessThanBalance) titleRes.gain else titleRes.missing)
-        val balanceColor = getColorResourceBy(isZeroLessThanBalance)
+        val isBalanceMoreThanOrEqualToZero = balance.isMoreThanZero() || balance.isEqualToZero()
+        val balanceTextRes = if (isBalanceMoreThanOrEqualToZero) titleRes.gain else titleRes.missing
+        val balanceText = getString(balanceTextRes)
+        val balanceColor = getColorResourceBy(isBalanceMoreThanOrEqualToZero)
 
         viewModel.postDashboardValues(
             listOf(

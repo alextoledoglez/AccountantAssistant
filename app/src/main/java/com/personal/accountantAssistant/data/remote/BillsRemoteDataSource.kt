@@ -3,10 +3,7 @@ package com.personal.accountantAssistant.data.remote
 import com.personal.accountantAssistant.data.dao.ExpenseDao
 import com.personal.accountantAssistant.data.entities.ExpenseEntity
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.extensions.flowEmit
-import com.personal.accountantAssistant.extensions.isMoreThanZero
-import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.extensions.toDateStr
+import com.personal.accountantAssistant.extensions.*
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -29,8 +26,8 @@ class BillsRemoteDataSource(private val expenseDao: ExpenseDao) {
         expenseDao.getSummary(ExpensesType.BILL.name)
     }
 
-    fun getTotalValueUntil(date: Date?): Flow<ExpenseEntity> = flowEmit {
-        expenseDao.getTotalValueUntil(date.toDateStr(), ExpensesType.BILL.name)
+    fun getTotalValueUntil(date: Date?): Flow<Double> = flowEmit {
+        getAllBills().filter { it.date.toDate().isDateUntil(date) }.sumOf { it.totalValue.orZero() }
     }
 
     fun saveBill(entity: ExpenseEntity): Flow<List<ExpenseEntity>> = flowEmit {
