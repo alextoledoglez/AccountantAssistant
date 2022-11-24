@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.provider.CalendarContract
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -21,7 +20,6 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.LocaleTypes
 import com.personal.accountantAssistant.data.mappers.isBill
 import com.personal.accountantAssistant.data.mappers.toCalendarSelectionArgs
-import com.personal.accountantAssistant.domain.models.CalendarModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.ui.MainActivity
 import jxl.Workbook
@@ -194,7 +192,7 @@ fun Context.xlsExport(expenses: List<ExpenseModel>?, type: ExpensesType) {
                 xlsFileName = BILLS
                 sheetName = BILLS
             }
-            xlsFileName += "(" + CalendarModel().toCurrentDateStr() + ").xls"
+            xlsFileName += "(" + Calendar.getInstance().toCurrentDateStr() + ").xls"
             sheetName += "_list"
             val xlsFile = File(directory, xlsFileName)
             val wbSettings = WorkbookSettings()

@@ -53,13 +53,12 @@ fun AlertDialogBuilder.setupNumberPickerFrom(
 }
 
 fun AlertDialogBuilder.showDatePickerFrom(
-    date: Date?, listener: DatePickerDialog.OnDateSetListener
+    date: Date?,
+    listener: DatePickerDialog.OnDateSetListener
 ) = apply {
-    val calendar = Calendar.getInstance().also { it.time = date ?: Date() }
-    DatePickerDialog(
-        context, listener,
-        calendar[Calendar.YEAR],
-        calendar[Calendar.MONTH],
-        calendar[Calendar.DAY_OF_MONTH]
-    ).show()
+    date.toCalendar().let {
+        DatePickerDialog(context, listener, it.getYear(), it.getMonth(), it.getDayOfMonth())
+            .updateCalendarDate(it)
+            .show()
+    }
 }
