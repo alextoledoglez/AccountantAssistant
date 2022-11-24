@@ -28,12 +28,12 @@ fun DatePickerDialog.updateCalendarDate(calendar: Calendar) = apply {
     datePicker.findViewById<View>(getAnimatorId()).findViewById<View>(getCalendarId())
         .apply {
             findViewById<AppCompatImageButton>(getPrevDateViewId()).setOnClickListener {
-                calendar.add(Calendar.MONTH, -Int.ONE)
+                calendar.toPrevMonthCalendar()
                 updateDate(calendar.getYear(), calendar.getMonth(), calendar.getDayOfMonth())
             }
 
             findViewById<AppCompatImageButton>(getNextDateViewId()).setOnClickListener {
-                calendar.add(Calendar.MONTH, Int.ONE)
+                calendar.toNextMonthCalendar()
                 updateDate(calendar.getYear(), calendar.getMonth(), calendar.getDayOfMonth())
             }
         }
