@@ -3,6 +3,8 @@ package com.personal.accountantAssistant.bases.watchers
 import android.text.Editable
 import android.text.TextWatcher
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.ONE
+import com.personal.accountantAssistant.extensions.ZERO
 import com.personal.accountantAssistant.extensions.isNotEmptyAndLengthEqualTo
 
 class DateMaskWatcher : TextWatcher {
@@ -26,7 +28,7 @@ class DateMaskWatcher : TextWatcher {
         updatedText?.let {
             editable.apply {
                 clear()
-                editable.insert(0, it)
+                editable.insert(Int.ZERO, it)
             }
         }
     }
@@ -36,9 +38,9 @@ class DateMaskWatcher : TextWatcher {
     }
 
     private fun isDateText(text: CharSequence?) = text.toString().let {
-        it.isNotEmptyAndLengthEqualTo(DateLength.DATE.length) && it.filter { char ->
+        it.isNotEmptyAndLengthEqualTo(DateLength.DATE.length) && it.count { char ->
             char.toString() == DateFormat.SEPARATOR.value
-        }.count() == 1
+        } == Int.ONE
     }
 
     private fun toDayMonthStringFormat(text: CharSequence): String {
@@ -47,26 +49,25 @@ class DateMaskWatcher : TextWatcher {
     }
 
     private fun toDateStringFormat(text: CharSequence): String {
-        val separatorCount = 1
-        val values = DateValues(text, separatorCount)
+        val values = DateValues(text = text, separatorCount = Int.ONE)
         return String.format(DateFormat.DATE.value, values.day, values.month, values.year)
     }
 
     private enum class DateIndexes(val index: Int) {
-        START(0),
-        DAY(2),
-        MONTH(4)
+        START(index = 0),
+        DAY(index = 2),
+        MONTH(index = 4)
     }
 
     private enum class DateLength(val length: Int) {
-        DAY_MONTH(4),
-        DATE(9)
+        DAY_MONTH(length = 4),
+        DATE(length = 9)
     }
 
     private enum class DateFormat(val value: String) {
-        SEPARATOR("/"),
-        DAY_MONTH("%s${SEPARATOR.value}%s"),
-        DATE("${DAY_MONTH.value}${SEPARATOR.value}%s")
+        SEPARATOR(value = "/"),
+        DAY_MONTH(value = "%s${SEPARATOR.value}%s"),
+        DATE(value = "${DAY_MONTH.value}${SEPARATOR.value}%s")
     }
 
     private data class DateValues(
@@ -75,14 +76,15 @@ class DateMaskWatcher : TextWatcher {
         var month: String = String.EMPTY,
         var year: String = String.EMPTY
     ) {
-        constructor(text: CharSequence, separatorCount: Int = 0) : this(
+        constructor(text: CharSequence, separatorCount: Int = Int.ZERO) : this(
             text, String.EMPTY, String.EMPTY, String.EMPTY
         ) {
             this.day = text.substring(DateIndexes.START.index, DateIndexes.DAY.index)
             this.month = text.substring(
-                DateIndexes.DAY.index + separatorCount, DateIndexes.MONTH.index + separatorCount
+                DateIndexes.DAY.index.plus(separatorCount),
+                DateIndexes.MONTH.index.plus(separatorCount)
             )
-            this.year = text.substring(DateIndexes.MONTH.index + separatorCount)
+            this.year = text.substring(DateIndexes.MONTH.index.plus(separatorCount))
         }
     }
 }
