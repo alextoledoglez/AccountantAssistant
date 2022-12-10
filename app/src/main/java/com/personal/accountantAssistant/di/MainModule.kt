@@ -15,6 +15,7 @@ import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.domain.useCases.buys.*
+import com.personal.accountantAssistant.domain.useCases.home.*
 import com.personal.accountantAssistant.domain.useCases.wallet.*
 import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.NotificationService
@@ -33,7 +34,15 @@ object MainModule {
 
     private val viewModelModule = module {
         viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
-        viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+        viewModel {
+            HomeViewModel(
+                getPeriodDates = get(),
+                setPeriodDates = get(),
+                getAvailableMoney = get(),
+                getExpenses = get(),
+                analytics = get()
+            )
+        }
         viewModel { WalletViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { BuysViewModel(get(), get(), get(), get(), get()) }
         viewModel { BillsViewModel(get(), get(), get(), get(), get()) }

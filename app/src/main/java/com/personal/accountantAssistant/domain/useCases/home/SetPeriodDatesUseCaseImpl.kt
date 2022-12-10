@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.domain.useCases
+package com.personal.accountantAssistant.domain.useCases.home
 
 import com.personal.accountantAssistant.data.LocalStorage
 import com.personal.accountantAssistant.extensions.flowEmit

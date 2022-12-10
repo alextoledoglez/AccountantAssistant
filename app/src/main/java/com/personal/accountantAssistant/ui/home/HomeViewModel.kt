@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
-import com.personal.accountantAssistant.domain.useCases.GetExpensesUseCase
-import com.personal.accountantAssistant.domain.useCases.GetPeriodDatesUseCase
-import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetAvailableMoneyUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetExpensesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetPeriodDatesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.extensions.toUtcDate
 import com.personal.accountantAssistant.extensions.toUtcTime
@@ -21,11 +21,11 @@ import java.math.BigDecimal
 import java.util.*
 
 class HomeViewModel(
-    analytics: AnalyticsProvider?,
     val getPeriodDates: GetPeriodDatesUseCase,
     val setPeriodDates: SetPeriodDatesUseCase,
     val getAvailableMoney: GetAvailableMoneyUseCase,
-    val getExpenses: GetExpensesUseCase
+    val getExpenses: GetExpensesUseCase,
+    analytics: AnalyticsProvider? = null,
 ) : BaseViewModel(analytics) {
 
     private val _periodDates = MutableLiveData<Pair<Date?, Date?>>()

@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.domain.useCases
+package com.personal.accountantAssistant.domain.useCases.home
 
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import kotlinx.coroutines.flow.Flow

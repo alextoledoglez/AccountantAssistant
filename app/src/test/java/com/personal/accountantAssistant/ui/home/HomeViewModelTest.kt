@@ -1,10 +1,10 @@
 package com.personal.accountantAssistant.ui.home
 
 import com.personal.accountantAssistant.base.BaseTest
-import com.personal.accountantAssistant.domain.useCases.GetAvailableMoneyUseCase
-import com.personal.accountantAssistant.domain.useCases.GetExpensesUseCase
-import com.personal.accountantAssistant.domain.useCases.GetPeriodDatesUseCase
-import com.personal.accountantAssistant.domain.useCases.SetPeriodDatesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetAvailableMoneyUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetExpensesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.GetPeriodDatesUseCase
+import com.personal.accountantAssistant.domain.useCases.home.SetPeriodDatesUseCase
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockErrorProvider
 import com.personal.accountantAssistant.providers.MockHomeProviders.mockedAvailableMoney
@@ -29,11 +29,11 @@ class HomeViewModelTest : BaseTest() {
     override fun setup() {
         super.setup()
         viewModel = HomeViewModel(
-            analytics = analytics,
             getPeriodDates = getPeriodDates,
             setPeriodDates = setPeriodDates,
             getAvailableMoney = getAvailableMoney,
-            getExpenses = getExpenses
+            getExpenses = getExpenses,
+            analytics = analytics
         )
     }
 
