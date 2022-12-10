@@ -15,6 +15,7 @@ import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.domain.useCases.buys.*
+import com.personal.accountantAssistant.domain.useCases.wallet.*
 import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.NotificationService
 import com.personal.accountantAssistant.services.SignInService
@@ -33,13 +34,18 @@ object MainModule {
     private val viewModelModule = module {
         viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
-        viewModel { WalletViewModel(get(), get(), get()) }
+        viewModel { WalletViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { BuysViewModel(get(), get(), get(), get(), get()) }
         viewModel { BillsViewModel(get(), get(), get(), get(), get()) }
         viewModel { MenuViewModel(get(), get(), get()) }
     }
 
     private val useCasesModule = module {
+        single<GetCardsUseCase> { GetCardsUseCaseImpl(get()) }
+        single<GetCardsSummaryUseCase> { GetCardsSummaryUseCaseImpl(get()) }
+        single<SaveCardUseCase> { SaveCardUseCaseImpl(get()) }
+        single<ActiveCardsUseCase> { ActiveCardsUseCaseImpl(get()) }
+        single<DeleteCardsUseCase> { DeleteCardsUseCaseImpl(get()) }
         single<GetBuysUseCase> { GetBuysUseCaseImpl(get()) }
         single<GetBuysSummaryUseCase> { GetBuysSummaryUseCaseImpl(get()) }
         single<SaveBuyUseCase> { SaveBuyUseCaseImpl(get()) }

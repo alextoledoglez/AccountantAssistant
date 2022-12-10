@@ -2,8 +2,9 @@ package com.personal.accountantAssistant.ui.wallet
 
 import com.personal.accountantAssistant.base.BaseTest
 import com.personal.accountantAssistant.data.enums.FlipperViews
-import com.personal.accountantAssistant.domain.repository.CardsRepository
 import com.personal.accountantAssistant.domain.useCases.SetAvailableMoneyUseCase
+import com.personal.accountantAssistant.domain.useCases.wallet.*
+import com.personal.accountantAssistant.extensions.flowEmit
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedAllCardsActiveFlow
@@ -21,25 +22,33 @@ import org.junit.Test
 class WalletViewModelTest : BaseTest() {
 
     private lateinit var viewModel: WalletViewModel
+    private val getCardsUseCase = mockk<GetCardsUseCase>(relaxed = true)
+    private val getCardsSummaryUseCase = mockk<GetCardsSummaryUseCase>(relaxed = true)
+    private val setAvailableMoneyUseCase = mockk<SetAvailableMoneyUseCase>(relaxed = true)
+    private val saveCardUseCase = mockk<SaveCardUseCase>(relaxed = true)
+    private val activeCardsUseCase = mockk<ActiveCardsUseCase>(relaxed = true)
+    private val deleteCardsUseCase = mockk<DeleteCardsUseCase>(relaxed = true)
     private val analytics = mockk<AnalyticsProvider>(relaxed = true)
-    private val setAvailableMoney = mockk<SetAvailableMoneyUseCase>(relaxed = true)
-    private val repository = mockk<CardsRepository>(relaxed = true)
 
     override fun setup() {
         super.setup()
         viewModel = WalletViewModel(
-            analytics = analytics,
-            setAvailableMoney = setAvailableMoney,
-            repository = repository
+            getCardsUseCase = getCardsUseCase,
+            getCardsSummaryUseCase = getCardsSummaryUseCase,
+            setAvailableMoneyUseCase = setAvailableMoneyUseCase,
+            saveCardUseCase = saveCardUseCase,
+            activeCardsUseCase = activeCardsUseCase,
+            deleteCardsUseCase = deleteCardsUseCase,
+            analytics = analytics
         )
     }
 
     @Test
     fun shouldLoadCards() {
         viewModel.run {
-            coEvery { repository.getCards() } returns mockedCardsFlow()
+            coEvery { getCardsUseCase() } returns mockedCardsFlow()
             loadCards()
-            coVerify { repository.getCards() }
+            coVerify { getCardsUseCase() }
             assertTrue(cards.value?.isNotEmpty().orFalse())
         }
     }
@@ -47,9 +56,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadCards() {
         viewModel.run {
-            coEvery { repository.getCards() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { getCardsUseCase() } returns MockErrorProvider.mockErrorFlow()
             loadCards()
-            coVerify { repository.getCards() }
+            coVerify { getCardsUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -57,9 +66,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns mockedCardSummaryFlow()
+            coEvery { getCardsSummaryUseCase() } returns mockedCardSummaryFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getCardsSummaryUseCase() }
             assertNotNull(summary.value)
         }
     }
@@ -67,9 +76,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { getCardsSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getCardsSummaryUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -77,7 +86,7 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldSetAvailableMoney() {
         viewModel.run {
-            coEvery { setAvailableMoney(mockedAvailableValue()) } returns Unit
+            coEvery { setAvailableMoneyUseCase(any()) } returns flowEmit { }
             setAvailableMoney(mockedAvailableValue())
             assertNull(errorMessage.value)
             assertTrue(flipper.value == FlipperViews.DATA)
@@ -87,9 +96,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldSaveCard() {
         viewModel.run {
-            coEvery { repository.saveCard(any()) } returns mockedCardsFlow()
+            coEvery { saveCardUseCase(any()) } returns mockedCardsFlow()
             saveCard(mockedCard())
-            coVerify { repository.saveCard(any()) }
+            coVerify { saveCardUseCase(any()) }
             assertTrue(cards.value?.isNotEmpty().orFalse())
         }
     }
@@ -97,9 +106,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotSaveCard() {
         viewModel.run {
-            coEvery { repository.saveCard(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { saveCardUseCase(any()) } returns MockErrorProvider.mockErrorFlow()
             saveCard(mockedCard())
-            coVerify { repository.saveCard(any()) }
+            coVerify { saveCardUseCase(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -107,9 +116,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldSetAllCardsActive() {
         viewModel.run {
-            coEvery { repository.setAllCardsActive(any()) } returns mockedAllCardsActiveFlow()
+            coEvery { activeCardsUseCase.setAllCardsActive(any()) } returns mockedAllCardsActiveFlow()
             setAllCardsActive(isActive = true)
-            coVerify { repository.setAllCardsActive(any()) }
+            coVerify { activeCardsUseCase.setAllCardsActive(any()) }
             assertTrue(cards.value?.any { it.isActive }.orFalse())
         }
     }
@@ -117,9 +126,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllCardsInactive() {
         viewModel.run {
-            coEvery { repository.setAllCardsActive(any()) } returns mockedAllCardsInactiveFlow()
+            coEvery { activeCardsUseCase.setAllCardsActive(any()) } returns mockedAllCardsInactiveFlow()
             setAllCardsActive(isActive = false)
-            coVerify { repository.setAllCardsActive(any()) }
+            coVerify { activeCardsUseCase.setAllCardsActive(any()) }
             assertTrue(cards.value?.any { it.isActive.not() }.orFalse())
         }
     }
@@ -127,9 +136,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllCardsActive() {
         viewModel.run {
-            coEvery { repository.setAllCardsActive(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeCardsUseCase.setAllCardsActive(any()) } returns MockErrorProvider.mockErrorFlow()
             setAllCardsActive(isActive = false)
-            coVerify { repository.setAllCardsActive(any()) }
+            coVerify { activeCardsUseCase.setAllCardsActive(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -137,9 +146,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldSwitchActiveCard() {
         viewModel.run {
-            coEvery { repository.switchActiveCard(any()) } returns mockedCardsFlow()
+            coEvery { activeCardsUseCase.switchActiveCard(any()) } returns mockedCardsFlow()
             switchActiveCard(mockedCard())
-            coVerify { repository.switchActiveCard(any()) }
+            coVerify { activeCardsUseCase.switchActiveCard(any()) }
             assertTrue(cards.value?.isNotEmpty().orFalse())
         }
     }
@@ -147,9 +156,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotSwitchActiveCard() {
         viewModel.run {
-            coEvery { repository.switchActiveCard(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeCardsUseCase.switchActiveCard(any()) } returns MockErrorProvider.mockErrorFlow()
             switchActiveCard(mockedCard())
-            coVerify { repository.switchActiveCard(any()) }
+            coVerify { activeCardsUseCase.switchActiveCard(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -157,9 +166,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteCard() {
         viewModel.run {
-            coEvery { repository.deleteCard(any()) } returns mockedCardsFlow()
+            coEvery { deleteCardsUseCase.deleteCard(any()) } returns mockedCardsFlow()
             deleteCard(mockedCard())
-            coVerify { repository.deleteCard(any()) }
+            coVerify { deleteCardsUseCase.deleteCard(any()) }
             assertTrue(cards.value?.isNotEmpty().orFalse())
         }
     }
@@ -167,9 +176,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteCard() {
         viewModel.run {
-            coEvery { repository.deleteCard(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteCardsUseCase.deleteCard(any()) } returns MockErrorProvider.mockErrorFlow()
             deleteCard(mockedCard())
-            coVerify { repository.deleteCard(any()) }
+            coVerify { deleteCardsUseCase.deleteCard(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -177,9 +186,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteAllCards() {
         viewModel.run {
-            coEvery { repository.deleteAllCards() } returns mockedCardsFlow()
+            coEvery { deleteCardsUseCase.deleteAllCards() } returns mockedCardsFlow()
             deleteAllCards()
-            coVerify { repository.deleteAllCards() }
+            coVerify { deleteCardsUseCase.deleteAllCards() }
             assertTrue(cards.value?.isNotEmpty().orFalse())
         }
     }
@@ -187,9 +196,9 @@ class WalletViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteAllCards() {
         viewModel.run {
-            coEvery { repository.deleteAllCards() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteCardsUseCase.deleteAllCards() } returns MockErrorProvider.mockErrorFlow()
             deleteAllCards()
-            coVerify { repository.deleteAllCards() }
+            coVerify { deleteCardsUseCase.deleteAllCards() }
             assertNotNull(errorMessage.value)
         }
     }
