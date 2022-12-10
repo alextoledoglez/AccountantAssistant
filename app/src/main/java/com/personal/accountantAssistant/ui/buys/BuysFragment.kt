@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBuysBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.ui.bills.BillsListAdapter
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 
@@ -38,7 +37,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
             initLayoutSummary(binding = this, stringRes = R.string.menu_buys)
             scActive.setOnClickListener { viewModel.setAllBuysActive(scActive.isChecked) }
         }
-        srlContent.setOnRefreshListener { viewModel.getBuys() }
+        srlContent.setOnRefreshListener { viewModel.loadBuys() }
         rvContent.setGridLayoutAdapter(adapter)
     }
 
@@ -56,7 +55,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
                     srlContent.stopRefreshing()
                 }
             }
-            getBuys()
+            loadBuys()
         }
     }
 
@@ -72,7 +71,7 @@ class BuysFragment : ExpensesFragment<BuysViewModel>() {
         if (queryStr.isNotBlank())
             adapter.filter.filter(queryStr)
         else
-            viewModel.getBuys()
+            viewModel.loadBuys()
     }
 
     override fun deleteAll() {

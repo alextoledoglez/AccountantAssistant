@@ -13,6 +13,7 @@ import com.personal.accountantAssistant.data.remote.*
 import com.personal.accountantAssistant.data.repository.*
 import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
+import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.NotificationService
 import com.personal.accountantAssistant.services.SignInService
@@ -32,12 +33,17 @@ object MainModule {
         viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
         viewModel { WalletViewModel(get(), get(), get()) }
-        viewModel { BuysViewModel(get(), get()) }
+        viewModel { BuysViewModel(get(), get(), get(), get(), get()) }
         viewModel { BillsViewModel(get(), get()) }
-        viewModel { MenuViewModel(get(), get()) }
+        viewModel { MenuViewModel(get(), get(), get()) }
     }
 
     private val useCasesModule = module {
+        single<GetBuysUseCase> { GetBuysUseCaseImpl(get()) }
+        single<GetBuysSummaryUseCase> { GetBuysSummaryUseCaseImpl(get()) }
+        single<SaveBuyUseCase> { SaveBuyUseCaseImpl(get()) }
+        single<ActiveBuysUseCase> { ActiveBuysUseCaseImpl(get()) }
+        single<DeleteBuysUseCase> { DeleteBuysUseCaseImpl(get()) }
         single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
         single<GetPeriodDatesUseCase> { GetPeriodDatesUseCaseImpl(get()) }
         single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }

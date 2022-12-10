@@ -1,10 +1,9 @@
 package com.personal.accountantAssistant.ui.buys
 
 import com.personal.accountantAssistant.base.BaseTest
-import com.personal.accountantAssistant.domain.repository.BuysRepository
+import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.providers.AnalyticsProvider
-import com.personal.accountantAssistant.providers.MockBuysProviders
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedAllBuysActiveFlow
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedAllBuysInactiveFlow
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedBuy
@@ -19,20 +18,31 @@ import org.junit.Test
 class BuysViewModelTest : BaseTest() {
 
     private lateinit var viewModel: BuysViewModel
+    private val getBuysUseCase = mockk<GetBuysUseCase>(relaxed = true)
+    private val getBuysSummaryUseCase = mockk<GetBuysSummaryUseCase>(relaxed = true)
+    private val saveBuyUseCase = mockk<SaveBuyUseCase>(relaxed = true)
+    private val activeBuysUseCase = mockk<ActiveBuysUseCase>(relaxed = true)
+    private val deleteBuysUseCase = mockk<DeleteBuysUseCase>(relaxed = true)
     private val analytics = mockk<AnalyticsProvider>(relaxed = true)
-    private val repository = mockk<BuysRepository>(relaxed = true)
 
     override fun setup() {
         super.setup()
-        viewModel = BuysViewModel(analytics = analytics, repository = repository)
+        viewModel = BuysViewModel(
+            getBuysUseCase = getBuysUseCase,
+            getBuysSummaryUseCase = getBuysSummaryUseCase,
+            saveBuyUseCase = saveBuyUseCase,
+            activeBuysUseCase = activeBuysUseCase,
+            deleteBuysUseCase = deleteBuysUseCase,
+            analytics = analytics
+        )
     }
 
     @Test
     fun shouldLoadBuys() {
         viewModel.run {
-            coEvery { repository.getBuys() } returns MockBuysProviders.mockedBuysFlow()
-            getBuys()
-            coVerify { repository.getBuys() }
+            coEvery { getBuysUseCase() } returns mockedBuysFlow()
+            loadBuys()
+            coVerify { getBuysUseCase() }
             assertTrue(buys.value?.isNotEmpty().orFalse())
         }
     }
@@ -40,9 +50,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadBuys() {
         viewModel.run {
-            coEvery { repository.getBuys() } returns MockErrorProvider.mockErrorFlow()
-            getBuys()
-            coVerify { repository.getBuys() }
+            coEvery { getBuysUseCase() } returns MockErrorProvider.mockErrorFlow()
+            loadBuys()
+            coVerify { getBuysUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -50,9 +60,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns mockedBuysSummaryFlow()
+            coEvery { getBuysSummaryUseCase() } returns mockedBuysSummaryFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getBuysSummaryUseCase() }
             assertNotNull(summary.value)
         }
     }
@@ -60,9 +70,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { getBuysSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getBuysSummaryUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -70,9 +80,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldSaveBuy() {
         viewModel.run {
-            coEvery { repository.saveBuy(any()) } returns mockedBuysFlow()
+            coEvery { saveBuyUseCase(any()) } returns mockedBuysFlow()
             saveBuy(mockedBuy())
-            coVerify { repository.saveBuy(any()) }
+            coVerify { saveBuyUseCase(any()) }
             assertTrue(buys.value?.isNotEmpty().orFalse())
         }
     }
@@ -80,9 +90,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotSaveBuy() {
         viewModel.run {
-            coEvery { repository.saveBuy(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { saveBuyUseCase(any()) } returns MockErrorProvider.mockErrorFlow()
             saveBuy(mockedBuy())
-            coVerify { repository.saveBuy(any()) }
+            coVerify { saveBuyUseCase(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -90,9 +100,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldSetAllBuysActive() {
         viewModel.run {
-            coEvery { repository.setAllBuysActive(any()) } returns mockedAllBuysActiveFlow()
+            coEvery { activeBuysUseCase.setAllBuysActive(any()) } returns mockedAllBuysActiveFlow()
             setAllBuysActive(isActive = true)
-            coVerify { repository.setAllBuysActive(any()) }
+            coVerify { activeBuysUseCase.setAllBuysActive(any()) }
             assertTrue(buys.value?.any { it.isActive }.orFalse())
         }
     }
@@ -100,9 +110,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllBuysInactive() {
         viewModel.run {
-            coEvery { repository.setAllBuysActive(any()) } returns mockedAllBuysInactiveFlow()
+            coEvery { activeBuysUseCase.setAllBuysActive(any()) } returns mockedAllBuysInactiveFlow()
             setAllBuysActive(isActive = false)
-            coVerify { repository.setAllBuysActive(any()) }
+            coVerify { activeBuysUseCase.setAllBuysActive(any()) }
             assertTrue(buys.value?.any { it.isActive.not() }.orFalse())
         }
     }
@@ -110,9 +120,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllBuysActive() {
         viewModel.run {
-            coEvery { repository.setAllBuysActive(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeBuysUseCase.setAllBuysActive(any()) } returns MockErrorProvider.mockErrorFlow()
             setAllBuysActive(isActive = false)
-            coVerify { repository.setAllBuysActive(any()) }
+            coVerify { activeBuysUseCase.setAllBuysActive(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -120,9 +130,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldSwitchActiveBuy() {
         viewModel.run {
-            coEvery { repository.switchActiveBuy(any()) } returns mockedBuysFlow()
+            coEvery { activeBuysUseCase.switchActiveBuy(any()) } returns mockedBuysFlow()
             switchActiveBuy(mockedBuy())
-            coVerify { repository.switchActiveBuy(any()) }
+            coVerify { activeBuysUseCase.switchActiveBuy(any()) }
             assertTrue(buys.value?.isNotEmpty().orFalse())
         }
     }
@@ -130,9 +140,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotSwitchActiveBuy() {
         viewModel.run {
-            coEvery { repository.switchActiveBuy(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeBuysUseCase.switchActiveBuy(any()) } returns MockErrorProvider.mockErrorFlow()
             switchActiveBuy(mockedBuy())
-            coVerify { repository.switchActiveBuy(any()) }
+            coVerify { activeBuysUseCase.switchActiveBuy(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -140,9 +150,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteBuy() {
         viewModel.run {
-            coEvery { repository.deleteBuy(any()) } returns mockedBuysFlow()
+            coEvery { deleteBuysUseCase.deleteBuy(any()) } returns mockedBuysFlow()
             deleteBuy(mockedBuy())
-            coVerify { repository.deleteBuy(any()) }
+            coVerify { deleteBuysUseCase.deleteBuy(any()) }
             assertTrue(buys.value?.isNotEmpty().orFalse())
         }
     }
@@ -150,9 +160,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteBuy() {
         viewModel.run {
-            coEvery { repository.deleteBuy(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteBuysUseCase.deleteBuy(any()) } returns MockErrorProvider.mockErrorFlow()
             deleteBuy(mockedBuy())
-            coVerify { repository.deleteBuy(any()) }
+            coVerify { deleteBuysUseCase.deleteBuy(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -160,9 +170,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteAllBuys() {
         viewModel.run {
-            coEvery { repository.deleteAllBuys() } returns mockedBuysFlow()
+            coEvery { deleteBuysUseCase.deleteAllBuys() } returns mockedBuysFlow()
             deleteAllBuys()
-            coVerify { repository.deleteAllBuys() }
+            coVerify { deleteBuysUseCase.deleteAllBuys() }
             assertTrue(buys.value?.isNotEmpty().orFalse())
         }
     }
@@ -170,9 +180,9 @@ class BuysViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteAllBuys() {
         viewModel.run {
-            coEvery { repository.deleteAllBuys() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteBuysUseCase.deleteAllBuys() } returns MockErrorProvider.mockErrorFlow()
             deleteAllBuys()
-            coVerify { repository.deleteAllBuys() }
+            coVerify { deleteBuysUseCase.deleteAllBuys() }
             assertNotNull(errorMessage.value)
         }
     }
