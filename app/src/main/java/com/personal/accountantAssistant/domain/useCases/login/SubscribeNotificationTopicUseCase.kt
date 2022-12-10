@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.domain.useCases
+package com.personal.accountantAssistant.domain.useCases.login
 
 import kotlinx.coroutines.flow.Flow
 

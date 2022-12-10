@@ -5,7 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.data.mappers.toUserModel
-import com.personal.accountantAssistant.domain.useCases.*
+import com.personal.accountantAssistant.domain.useCases.GetSignedUserUseCase
+import com.personal.accountantAssistant.domain.useCases.SetSignedUserUseCase
+import com.personal.accountantAssistant.domain.useCases.login.GetNotificationTokenUseCase
+import com.personal.accountantAssistant.domain.useCases.login.SetLocalNotificationTokenUseCase
+import com.personal.accountantAssistant.domain.useCases.login.SubscribeNotificationTopicUseCase
 import com.personal.accountantAssistant.extensions.onError
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.combine
@@ -14,12 +18,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    analytics: AnalyticsProvider?,
     private val getSignedUser: GetSignedUserUseCase,
     private val setSignedUser: SetSignedUserUseCase,
     private val getNotificationToken: GetNotificationTokenUseCase,
     private val setLocalNotificationToken: SetLocalNotificationTokenUseCase,
-    private val subscribeNotificationTopic: SubscribeNotificationTopicUseCase
+    private val subscribeNotificationTopic: SubscribeNotificationTopicUseCase,
+    analytics: AnalyticsProvider? = null,
 ) : BaseViewModel(analytics) {
 
     private val _notificationToken = MutableLiveData<String?>()

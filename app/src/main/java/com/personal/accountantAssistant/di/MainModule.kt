@@ -16,6 +16,7 @@ import com.personal.accountantAssistant.domain.useCases.*
 import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.domain.useCases.home.*
+import com.personal.accountantAssistant.domain.useCases.login.*
 import com.personal.accountantAssistant.domain.useCases.wallet.*
 import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.NotificationService
@@ -33,7 +34,16 @@ import java.util.concurrent.Executors
 object MainModule {
 
     private val viewModelModule = module {
-        viewModel { LoginViewModel(get(), get(), get(), get(), get(), get()) }
+        viewModel {
+            LoginViewModel(
+                getSignedUser = get(),
+                setSignedUser = get(),
+                getNotificationToken = get(),
+                setLocalNotificationToken = get(),
+                subscribeNotificationTopic = get(),
+                analytics = get()
+            )
+        }
         viewModel {
             HomeViewModel(
                 getPeriodDates = get(),
