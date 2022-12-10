@@ -1,7 +1,7 @@
 package com.personal.accountantAssistant.ui.bills
 
 import com.personal.accountantAssistant.base.BaseTest
-import com.personal.accountantAssistant.domain.repository.BillsRepository
+import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockBillsProviders.mockedAllBillsActiveFlow
@@ -18,20 +18,31 @@ import org.junit.Test
 class BillsViewModelTest : BaseTest() {
 
     private lateinit var viewModel: BillsViewModel
+    private val getBillsUseCase = mockk<GetBillsUseCase>(relaxed = true)
+    private val getBillsSummaryUseCase = mockk<GetBillsSummaryUseCase>(relaxed = true)
+    private val saveBillUseCase = mockk<SaveBillUseCase>(relaxed = true)
+    private val activeBillsUseCase = mockk<ActiveBillsUseCase>(relaxed = true)
+    private val deleteBillsUseCase = mockk<DeleteBillsUseCase>(relaxed = true)
     private val analytics = mockk<AnalyticsProvider>(relaxed = true)
-    private val repository = mockk<BillsRepository>(relaxed = true)
 
     override fun setup() {
         super.setup()
-        viewModel = BillsViewModel(analytics = analytics, repository = repository)
+        viewModel = BillsViewModel(
+            getBillsUseCase = getBillsUseCase,
+            getBillsSummaryUseCase = getBillsSummaryUseCase,
+            saveBillUseCase = saveBillUseCase,
+            activeBillsUseCase = activeBillsUseCase,
+            deleteBillsUseCase = deleteBillsUseCase,
+            analytics = analytics
+        )
     }
 
     @Test
     fun shouldLoadBills() {
         viewModel.run {
-            coEvery { repository.getBills() } returns mockedBillsFlow()
-            getBills()
-            coVerify { repository.getBills() }
+            coEvery { getBillsUseCase() } returns mockedBillsFlow()
+            loadBills()
+            coVerify { getBillsUseCase() }
             assertTrue(bills.value?.isNotEmpty().orFalse())
         }
     }
@@ -39,9 +50,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadBills() {
         viewModel.run {
-            coEvery { repository.getBills() } returns MockErrorProvider.mockErrorFlow()
-            getBills()
-            coVerify { repository.getBills() }
+            coEvery { getBillsUseCase() } returns MockErrorProvider.mockErrorFlow()
+            loadBills()
+            coVerify { getBillsUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -49,9 +60,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns mockedBillsSummaryFlow()
+            coEvery { getBillsSummaryUseCase() } returns mockedBillsSummaryFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getBillsSummaryUseCase() }
             assertNotNull(summary.value)
         }
     }
@@ -59,9 +70,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotLoadSummary() {
         viewModel.run {
-            coEvery { repository.getSummary() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { getBillsSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
             loadSummary()
-            coVerify { repository.getSummary() }
+            coVerify { getBillsSummaryUseCase() }
             assertNotNull(errorMessage.value)
         }
     }
@@ -69,9 +80,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldSaveBill() {
         viewModel.run {
-            coEvery { repository.saveBill(any()) } returns mockedBillsFlow()
+            coEvery { saveBillUseCase(any()) } returns mockedBillsFlow()
             saveBill(mockedBill())
-            coVerify { repository.saveBill(any()) }
+            coVerify { saveBillUseCase(any()) }
             assertTrue(bills.value?.isNotEmpty().orFalse())
         }
     }
@@ -79,9 +90,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotSaveBill() {
         viewModel.run {
-            coEvery { repository.saveBill(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { saveBillUseCase(any()) } returns MockErrorProvider.mockErrorFlow()
             saveBill(mockedBill())
-            coVerify { repository.saveBill(any()) }
+            coVerify { saveBillUseCase(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -89,9 +100,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldSetAllBillsActive() {
         viewModel.run {
-            coEvery { repository.setAllBillsActive(any()) } returns mockedAllBillsActiveFlow()
+            coEvery { activeBillsUseCase.setAllBillsActive(any()) } returns mockedAllBillsActiveFlow()
             setAllBillsActive(isActive = true)
-            coVerify { repository.setAllBillsActive(any()) }
+            coVerify { activeBillsUseCase.setAllBillsActive(any()) }
             assertTrue(bills.value?.any { it.isActive }.orFalse())
         }
     }
@@ -99,9 +110,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllBillsInactive() {
         viewModel.run {
-            coEvery { repository.setAllBillsActive(any()) } returns mockedAllBillsInactiveFlow()
+            coEvery { activeBillsUseCase.setAllBillsActive(any()) } returns mockedAllBillsInactiveFlow()
             setAllBillsActive(isActive = false)
-            coVerify { repository.setAllBillsActive(any()) }
+            coVerify { activeBillsUseCase.setAllBillsActive(any()) }
             assertTrue(bills.value?.any { it.isActive.not() }.orFalse())
         }
     }
@@ -109,9 +120,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotSetAllBillsActive() {
         viewModel.run {
-            coEvery { repository.setAllBillsActive(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeBillsUseCase.setAllBillsActive(any()) } returns MockErrorProvider.mockErrorFlow()
             setAllBillsActive(isActive = false)
-            coVerify { repository.setAllBillsActive(any()) }
+            coVerify { activeBillsUseCase.setAllBillsActive(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -119,9 +130,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldSwitchActiveBill() {
         viewModel.run {
-            coEvery { repository.switchActiveBill(any()) } returns mockedBillsFlow()
+            coEvery { activeBillsUseCase.switchActiveBill(any()) } returns mockedBillsFlow()
             switchActiveBill(mockedBill())
-            coVerify { repository.switchActiveBill(any()) }
+            coVerify { activeBillsUseCase.switchActiveBill(any()) }
             assertTrue(bills.value?.isNotEmpty().orFalse())
         }
     }
@@ -129,9 +140,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotSwitchActiveBill() {
         viewModel.run {
-            coEvery { repository.switchActiveBill(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { activeBillsUseCase.switchActiveBill(any()) } returns MockErrorProvider.mockErrorFlow()
             switchActiveBill(mockedBill())
-            coVerify { repository.switchActiveBill(any()) }
+            coVerify { activeBillsUseCase.switchActiveBill(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -139,9 +150,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteBill() {
         viewModel.run {
-            coEvery { repository.deleteBill(any()) } returns mockedBillsFlow()
+            coEvery { deleteBillsUseCase.deleteBill(any()) } returns mockedBillsFlow()
             deleteBill(mockedBill())
-            coVerify { repository.deleteBill(any()) }
+            coVerify { deleteBillsUseCase.deleteBill(any()) }
             assertTrue(bills.value?.isNotEmpty().orFalse())
         }
     }
@@ -149,9 +160,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteBill() {
         viewModel.run {
-            coEvery { repository.deleteBill(any()) } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteBillsUseCase.deleteBill(any()) } returns MockErrorProvider.mockErrorFlow()
             deleteBill(mockedBill())
-            coVerify { repository.deleteBill(any()) }
+            coVerify { deleteBillsUseCase.deleteBill(any()) }
             assertNotNull(errorMessage.value)
         }
     }
@@ -159,9 +170,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldDeleteAllBills() {
         viewModel.run {
-            coEvery { repository.deleteAllBills() } returns mockedBillsFlow()
+            coEvery { deleteBillsUseCase.deleteAllBills() } returns mockedBillsFlow()
             deleteAllBills()
-            coVerify { repository.deleteAllBills() }
+            coVerify { deleteBillsUseCase.deleteAllBills() }
             assertTrue(bills.value?.isNotEmpty().orFalse())
         }
     }
@@ -169,9 +180,9 @@ class BillsViewModelTest : BaseTest() {
     @Test
     fun shouldNotDeleteAllBills() {
         viewModel.run {
-            coEvery { repository.deleteAllBills() } returns MockErrorProvider.mockErrorFlow()
+            coEvery { deleteBillsUseCase.deleteAllBills() } returns MockErrorProvider.mockErrorFlow()
             deleteAllBills()
-            coVerify { repository.deleteAllBills() }
+            coVerify { deleteBillsUseCase.deleteAllBills() }
             assertNotNull(errorMessage.value)
         }
     }

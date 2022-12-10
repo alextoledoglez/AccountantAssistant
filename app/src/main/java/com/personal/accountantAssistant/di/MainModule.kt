@@ -13,6 +13,7 @@ import com.personal.accountantAssistant.data.remote.*
 import com.personal.accountantAssistant.data.repository.*
 import com.personal.accountantAssistant.domain.repository.*
 import com.personal.accountantAssistant.domain.useCases.*
+import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.providers.*
 import com.personal.accountantAssistant.services.NotificationService
@@ -34,7 +35,7 @@ object MainModule {
         viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
         viewModel { WalletViewModel(get(), get(), get()) }
         viewModel { BuysViewModel(get(), get(), get(), get(), get()) }
-        viewModel { BillsViewModel(get(), get()) }
+        viewModel { BillsViewModel(get(), get(), get(), get(), get()) }
         viewModel { MenuViewModel(get(), get(), get()) }
     }
 
@@ -44,6 +45,11 @@ object MainModule {
         single<SaveBuyUseCase> { SaveBuyUseCaseImpl(get()) }
         single<ActiveBuysUseCase> { ActiveBuysUseCaseImpl(get()) }
         single<DeleteBuysUseCase> { DeleteBuysUseCaseImpl(get()) }
+        single<GetBillsUseCase> { GetBillsUseCaseImpl(get()) }
+        single<GetBillsSummaryUseCase> { GetBillsSummaryUseCaseImpl(get()) }
+        single<SaveBillUseCase> { SaveBillUseCaseImpl(get()) }
+        single<ActiveBillsUseCase> { ActiveBillsUseCaseImpl(get()) }
+        single<DeleteBillsUseCase> { DeleteBillsUseCaseImpl(get()) }
         single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
         single<GetPeriodDatesUseCase> { GetPeriodDatesUseCaseImpl(get()) }
         single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }

@@ -37,7 +37,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
             initLayoutSummary(binding = this, stringRes = R.string.menu_bills)
             scActive.setOnClickListener { viewModel.setAllBillsActive(scActive.isChecked) }
         }
-        srlContent.setOnRefreshListener { viewModel.getBills() }
+        srlContent.setOnRefreshListener { viewModel.loadBills() }
         rvContent.setGridLayoutAdapter(adapter)
     }
 
@@ -53,7 +53,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
                 adapter.submitList(it) { loadSummary() }
                 srlContent.stopRefreshing()
             }
-            getBills()
+            loadBills()
         }
     }
 
@@ -69,7 +69,7 @@ class BillsFragment : ExpensesFragment<BillsViewModel>() {
         if (queryStr.isNotBlank())
             adapter.filter.filter(queryStr)
         else
-            viewModel.getBills()
+            viewModel.loadBills()
     }
 
     override fun deleteAll() {
