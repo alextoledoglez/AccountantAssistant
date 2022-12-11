@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class MenuViewModel(
-    analytics: AnalyticsProvider?,
     private val getSignedUser: GetSignedUserUseCase,
-    private val setSignedUser: SetSignedUserUseCase
+    private val setSignedUser: SetSignedUserUseCase,
+    analytics: AnalyticsProvider? = null
 ) : BaseViewModel(analytics) {
 
     private val _user = MutableLiveData<UserModel?>()
