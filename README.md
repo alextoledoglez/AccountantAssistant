@@ -1,20 +1,20 @@
 ## Intro
-
+![](../../IMGs/SCREENSHOTs/Accountant Assistant v1 (preview)/RELEASEs/En/Accountant assistant - Overview.png)
 * All do you need to organize your finances: cards, purchases, bills to pay...etc.
 
 ## Home feature
-
+![](../../IMGs/SCREENSHOTs/Accountant Assistant v1 (preview)/RELEASEs/En/Accountant Assistant - Home.png)
 * Financial state summary: you can consult simples stats (but useful) based on: your incomes,
   expenses period and total expenses. The goal is you know if with that budget you can pay your
   expenses (purchases, bills,...), according to the chosen period.
 
 ## Wallet feature
-
+![](../../IMGs/SCREENSHOTs/Accountant Assistant v1 (preview)/RELEASEs/En/Accountant Assistant - Wallet.png)
 * Digital wallet: where you define your credit/debit cards or your incoming in general. Saving your
   available budget to show an assertive financial state summary at Home screen.
 
 ## Buys feature
-
+![](../../IMGs/SCREENSHOTs/Accountant Assistant v1 (preview)/RELEASEs/En/Accountant Assistant - Buys.png)
 * When the person goes to the market to buy, they usually carry a paper list with the things they
   needed and that list, most of times, is very similar, it does not vary much, so, he always has to
   write everything on a piece of paper and then, as he picks up the products at the market, he
@@ -31,7 +31,7 @@
   product you carry and what not.
 
 ## Bills feature
-
+![](../../IMGs/SCREENSHOTs/Accountant Assistant v1 (preview)/RELEASEs/En/Accountant Assistant - Bills.png)
 * Periodically bills: water bills, electricity, internet ...This functionality is very similar to
   the shopping list, with smalls differences, since bills have an expiration date and, so as not to
   forget them, the app notify to you before the expiration of a bill. You can switch on/off bills
