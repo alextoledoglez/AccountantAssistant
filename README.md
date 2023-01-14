@@ -1,7 +1,7 @@
 ## Intro
 
 <p align="center"> 
-  <img src="app/screenshoots/Accountant assistant - Overview.png"/>
+  <img src="app/screenshots/Accountant assistant - Overview.png"/>
 </p>
 
 All do you need to organize your finances: cards, purchases, bills to pay...etc.
@@ -9,7 +9,7 @@ All do you need to organize your finances: cards, purchases, bills to pay...etc.
 ## Home feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshoots/Accountant Assistant - Home.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Home.png"/>
 </p>
 
 Financial state summary: you can consult simples stats (but useful) based on: your incomes,
@@ -19,7 +19,7 @@ expenses (purchases, bills,...), according to the chosen period.
 ## Wallet feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshoots/Accountant Assistant - Wallet.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Wallet.png"/>
 </p>
 
 Digital wallet: where you define your credit/debit cards or your incoming in general. Saving your
@@ -28,7 +28,7 @@ available budget to show an assertive financial state summary at Home screen.
 ## Buys feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshoots/Accountant Assistant - Buys.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Buys.png"/>
 </p>
 
 When the person goes to the market to buy, they usually carry a paper list with the things they
@@ -49,7 +49,7 @@ product you carry and what not.
 ## Bills feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshoots/Accountant Assistant - Bills.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Bills.png"/>
 </p>
 
 Periodically bills: water bills, electricity, internet ...This functionality is very similar to
