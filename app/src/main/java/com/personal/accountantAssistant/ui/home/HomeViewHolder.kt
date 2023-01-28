@@ -10,9 +10,10 @@ import com.personal.accountantAssistant.extensions.setupImageWithColor
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.extensions.toLayoutInflater
 
-class HomeViewHolder(private val binding: HomeItemListBinding) : RecyclerView.ViewHolder(
-    binding.root
-) {
+class HomeViewHolder(
+    private val binding: HomeItemListBinding,
+    private val onClickListener: (drawableRes: Int) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: DashboardItemModel) {
         with(binding) {
@@ -20,12 +21,17 @@ class HomeViewHolder(private val binding: HomeItemListBinding) : RecyclerView.Vi
             ivCardImage.isVisible = true
             tvCardTitle.setup(model.text, model.color)
             tvCardSubtitle.setup(model.value.abs().toCurrencyMaskedStr(), model.color)
+            binding.root.setOnClickListener { onClickListener(model.drawableRes) }
         }
     }
 
     companion object {
-        fun newInstance(parent: ViewGroup) = HomeViewHolder(
-            binding = HomeItemListBinding.inflate(parent.toLayoutInflater(), parent, false)
+        fun newInstance(
+            parent: ViewGroup,
+            onClickListener: (drawableRes: Int) -> Unit
+        ) = HomeViewHolder(
+            binding = HomeItemListBinding.inflate(parent.toLayoutInflater(), parent, false),
+            onClickListener = onClickListener
         )
     }
 }

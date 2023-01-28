@@ -2,17 +2,20 @@ package com.personal.accountantAssistant.ui.home
 
 import android.view.Menu
 import android.view.MenuInflater
+import androidx.annotation.DrawableRes
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseFragment
 import com.personal.accountantAssistant.databinding.FragmentHomeBinding
+import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.ColorResourcesModel
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.models.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AdProvider
+import com.personal.accountantAssistant.ui.MainActivity
 import org.koin.android.ext.android.inject
 import java.math.BigDecimal
 
@@ -32,7 +35,7 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
 
     private var titleRes: TitleResourcesModel = TitleResourcesModel()
     private var colorRes: ColorResourcesModel = ColorResourcesModel()
-    private val adapter by lazy { HomeListAdapter() }
+    private val adapter by lazy { HomeListAdapter(::onItemClickListener) }
     private val adProvider: AdProvider? by inject()
 
     override fun onDestroy() {
@@ -156,6 +159,15 @@ class HomeFragment : BaseFragment<HomeViewModel>() {
         viewModel.apply {
             loadPeriodDates()
             loadAvailableMoney()
+        }
+    }
+
+    private fun onItemClickListener(@DrawableRes drawableRes: Int) {
+        val mainActivity = activity as? MainActivity?
+        when (drawableRes) {
+            R.drawable.ic_buys -> mainActivity?.navigateToTab(TabPositions.BUYS)
+            R.drawable.ic_bills -> mainActivity?.navigateToTab(TabPositions.BILLS)
+            else -> mainActivity?.navigateToTab(TabPositions.WALLET)
         }
     }
 
