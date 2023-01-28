@@ -5,6 +5,7 @@ import android.view.Menu
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseActivity
@@ -12,6 +13,7 @@ import com.personal.accountantAssistant.bases.adapters.ViewPagerAdapter
 import com.personal.accountantAssistant.data.mappers.toBill
 import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.databinding.ActivityMainBinding
+import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.closeApp
@@ -88,4 +90,7 @@ class MainActivity : BaseActivity<Nothing>() {
         closeApp()
     }
 
+    fun navigateToTab(tabPosition: TabPositions) {
+        tabLayout.apply { selectTab(getTabAt(tabPosition.position)) }
+    }
 }
