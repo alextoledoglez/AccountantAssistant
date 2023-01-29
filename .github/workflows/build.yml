@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ "dev", "master" ]
 
-# Include env.yml
 - include: env.yml
 
 jobs:

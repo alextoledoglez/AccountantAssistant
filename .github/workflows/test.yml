@@ -1,7 +1,6 @@
 name: Android Tests
 on: [ push ]
 
-# Include env.yml
 - include: env.yml
 
 jobs:
