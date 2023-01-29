@@ -6,14 +6,6 @@ on:
   pull_request:
     branches: [ "master" ]
 
-env:
-  ADMOB_UNIT_ID: ${{ secrets.ADMOB_UNIT_ID }}
-  ADMOB_TEST_DEVICE_ID: ${{ secrets.ADMOB_TEST_DEVICE_ID }}
-  STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-  KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-  STORE_FILE_NAME: ${{ secrets.STORE_FILE_NAME }}
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -27,14 +19,18 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup release keystore
+        run: |
+          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore.jks
+
       - name: Create local.properties
         run: |
-          echo "prop1=${{ env.ADMOB_UNIT_ID }}" > local.properties
-          echo "prop2=${{ env.ADMOB_TEST_DEVICE_ID }}" >> local.properties
-          echo "prop3=${{ env.STORE_PASSWORD }}" >> local.properties
-          echo "prop4=${{ env.KEY_PASSWORD }}" >> local.properties
-          echo "prop5=${{ env.KEY_ALIAS }}" >> local.properties
-          echo "prop6=${{ env.STORE_FILE_NAME }}" >> local.properties          
+          echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
+          echo "prop2=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop3=${{ secrets.STORE_PASSWORD }}" >> local.properties
+          echo "prop4=${{ secrets.KEY_PASSWORD }}" >> local.properties
+          echo "prop5=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "prop6=${{ secrets.STORE_FILE_NAME }}" >> local.properties
 
       - name: Gradle Release Assemble
         uses: gradle/gradle-build-action@v2
