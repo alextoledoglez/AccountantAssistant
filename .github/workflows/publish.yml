@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup release keystore
         run: |
-          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore.jks
+          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore
 
       - name: Create local.properties
         run: |
