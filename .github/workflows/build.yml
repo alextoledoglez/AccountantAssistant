@@ -1,4 +1,4 @@
-name: Android Build
+name: Android Debug Build
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
           echo "prop7=${{ env.KEY_ALIAS }}" >> local.properties
           echo "prop8=${{ env.STORE_FILE_NAME }}" >> local.properties          
 
-      - name: Gradle assemble
+      - name: Gradle Debug Assemble
         uses: gradle/gradle-build-action@v2
-      - name: Build app
-        run: ./gradlew assemble
+      - name: Build Debug app
+        run: ./gradlew assembleDebug
