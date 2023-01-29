@@ -6,12 +6,8 @@ on:
   pull_request:
     branches: [ "dev" ]
 
-env:
-  ADMOB_DEBUG_UNIT_ID: ${{ secrets.ADMOB_DEBUG_UNIT_ID }}
-  ADMOB_DEBUG_TEST_DEVICE_ID: ${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}
-
 jobs:
-  build:
+  debug:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,8 +21,8 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "prop1=${{ env.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
-          echo "prop2=${{ env.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
+          echo "prop1=${{ secrets.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
+          echo "prop2=${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
 
       - name: Gradle Debug Assemble
         uses: gradle/gradle-build-action@v2
