@@ -1,0 +1,58 @@
+name: Android Debug Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  ADMOB_UNIT_ID: ${{ secrets.ADMOB_UNIT_ID }}
+  ADMOB_TEST_DEVICE_ID: ${{ secrets.ADMOB_TEST_DEVICE_ID }}
+  ADMOB_DEBUG_UNIT_ID: ${{ secrets.ADMOB_DEBUG_UNIT_ID }}
+  ADMOB_DEBUG_TEST_DEVICE_ID: ${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}
+  STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+  KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+  STORE_FILE_NAME: ${{ secrets.STORE_FILE_NAME }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      #      - name: Include env.yml
+      #        uses: actions/checkout@v3
+      #        with:
+      #          ref: env.yml
+
+      - name: Create local.properties
+        run: |
+          echo "prop1=${{ env.ADMOB_UNIT_ID }}" > local.properties
+          echo "prop2=${{ env.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop3=${{ env.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
+          echo "prop4=${{ env.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop5=${{ env.STORE_PASSWORD }}" >> local.properties
+          echo "prop6=${{ env.KEY_PASSWORD }}" >> local.properties
+          echo "prop7=${{ env.KEY_ALIAS }}" >> local.properties
+          echo "prop8=${{ env.STORE_FILE_NAME }}" >> local.properties          
+
+      - name: Gradle Release Assemble
+        uses: gradle/gradle-build-action@v2
+      - name: Build Release app
+        run: ./gradlew assembleRelease
+
+      - name: Deploy to Google Play Store
+        uses: actions/google-play-deploy@v1
+        with:
+          service-account-key: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          apk-files: app/build/outputs/apk/release/*.apk
+          track: production
