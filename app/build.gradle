@@ -8,7 +8,7 @@ plugins {
 }
 
 def localProperties = new Properties()
-localProperties.load(new FileInputStream(file(localPropertiesFileName)))
+localProperties.load(new FileInputStream(new File(rootProject.projectDir, localPropertiesFileName)))
 
 android {
     compileSdkVersion 33
