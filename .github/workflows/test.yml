@@ -23,11 +23,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-#      - name: Include env.yml
-#        uses: actions/checkout@v3
-#        with:
-#          ref: env.yml
-
       - name: Create local.properties
         run: |
           echo "prop1=${{ env.ADMOB_UNIT_ID }}" > local.properties

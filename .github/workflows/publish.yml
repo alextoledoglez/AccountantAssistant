@@ -1,10 +1,10 @@
-name: Android Release Build
+name: Android APK Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "production" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "production" ]
 
 env:
   ADMOB_UNIT_ID: ${{ secrets.ADMOB_UNIT_ID }}
@@ -40,3 +40,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Release app
         run: ./gradlew assembleRelease
+
+      - name: Deploy to Google Play Store
+        uses: actions/google-play-deploy@v1
+        with:
+          service-account-key: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          apk-files: app/build/outputs/apk/release/*.apk
+          track: production
