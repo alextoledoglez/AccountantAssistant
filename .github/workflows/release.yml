@@ -15,7 +15,7 @@ env:
   STORE_FILE_NAME: ${{ secrets.STORE_FILE_NAME }}
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:

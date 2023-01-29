@@ -1,4 +1,4 @@
-name: Android APK Deploy
+name: Android Google Play Store Publish
 
 on:
   push:
@@ -15,7 +15,7 @@ env:
   STORE_FILE_NAME: ${{ secrets.STORE_FILE_NAME }}
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
