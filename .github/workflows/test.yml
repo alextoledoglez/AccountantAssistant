@@ -1,6 +1,16 @@
 name: Android Tests
 on: [ push ]
 
+env:
+  ADMOB_UNIT_ID: ${{ secrets.ADMOB_UNIT_ID }}
+  ADMOB_TEST_DEVICE_ID: ${{ secrets.ADMOB_TEST_DEVICE_ID }}
+  ADMOB_DEBUG_UNIT_ID: ${{ secrets.ADMOB_DEBUG_UNIT_ID }}
+  ADMOB_DEBUG_TEST_DEVICE_ID: ${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}
+  STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+  KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+  STORE_FILE_NAME: ${{ secrets.STORE_FILE_NAME }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -12,6 +22,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
+
+      - name: Create local.properties
+        run: |
+          echo "prop1=${{ env.ADMOB_UNIT_ID }}" > local.properties
+          echo "prop2=${{ env.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop3=${{ env.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
+          echo "prop4=${{ env.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop5=${{ env.STORE_PASSWORD }}" >> local.properties
+          echo "prop6=${{ env.KEY_PASSWORD }}" >> local.properties
+          echo "prop7=${{ env.KEY_ALIAS }}" >> local.properties
+          echo "prop8=${{ env.STORE_FILE_NAME }}" >> local.properties
 
       - name: Unit Test
         run: ./gradlew testDebugUnitTest
