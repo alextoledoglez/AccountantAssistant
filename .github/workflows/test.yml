@@ -31,4 +31,4 @@ jobs:
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }}
 
-- include: env.yml
+  - include: env.yml
