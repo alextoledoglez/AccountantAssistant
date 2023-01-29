@@ -1,8 +1,6 @@
 name: Android Tests
 on: [ push ]
 
-- include: env.yml
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -32,3 +30,5 @@ jobs:
       - name: Android Test Report
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }}
+
+- include: env.yml
