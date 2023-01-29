@@ -35,5 +35,4 @@ jobs:
       - name: Build app
         run: ./gradlew assemble
 
-# Include env.yml
 - include: env.yml
