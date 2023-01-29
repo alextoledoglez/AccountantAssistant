@@ -22,7 +22,7 @@ jobs:
           echo "prop5=${{ secrets.STORE_PASSWORD }}" >> local.properties
           echo "prop6=${{ secrets.KEY_PASSWORD }}" >> local.properties
           echo "prop7=${{ secrets.KEY_ALIAS }}" >> local.properties
-          echo "prop8=${{ env.STORE_FILE_NAME }}" >> local.properties
+          echo "prop8=${{ secrets.STORE_FILE_NAME }}" >> local.properties
 
       - name: Unit Test
         run: ./gradlew testDebugUnitTest
