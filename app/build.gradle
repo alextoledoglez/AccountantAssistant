@@ -14,7 +14,7 @@ android {
     compileSdkVersion 33
     signingConfigs {
         release {
-            storeFile file(localProperties['storeFileName'])
+            storeFile file(localProperties['storeFileName'].toString())
             storePassword localProperties["storePassword"]
             keyAlias localProperties["keyAlias"]
             keyPassword localProperties["keyPassword"]
