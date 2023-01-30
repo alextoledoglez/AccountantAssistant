@@ -28,12 +28,12 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
-          echo "prop2=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
-          echo "prop3=${{ secrets.STORE_PASSWORD }}" >> local.properties
-          echo "prop4=${{ secrets.KEY_PASSWORD }}" >> local.properties
-          echo "prop5=${{ secrets.KEY_ALIAS }}" >> local.properties
-          echo "prop6=${{ secrets.STORE_FILE_NAME }}" >> local.properties
+          echo "admobUnitId=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
+          echo "admobTestDeviceId=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> local.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> local.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "storeFileName=${{ secrets.STORE_FILE_NAME }}" >> local.properties
 
       - name: Gradle Release Assemble
         uses: gradle/gradle-build-action@v2
