@@ -19,6 +19,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Decode Release Keystore
+        id: write_file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "release.keystore"
+          encodedString: ${{ secrets.STORE_FILE_BODY }}
+
       - name: Create local.properties
         run: |
           echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
