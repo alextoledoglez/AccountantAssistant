@@ -19,12 +19,9 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Decode Release Keystore
-        id: write_file
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: "release.keystore"
-          encodedString: ${{ secrets.STORE_FILE_BODY }}
+      - name: Setup release keystore
+        run: |
+          echo "${{ secrets.STORE_FILE_BODY }}" | base64 --decode > release.keystore
 
       - name: Create local.properties
         run: |
@@ -51,13 +48,13 @@ jobs:
           #run: ./gradlew bundleRelease
 
           #- name: Upload APK
-          #uses: actions/upload-artifact@v2
-          #with:
-          #name: app-release.apk
-          #path: app/build/outputs/apk/release/app-release.apk
+        #uses: actions/upload-artifact@v2
+        #with:
+        #name: app-release.apk
+        #path: app/build/outputs/apk/release/app-release.apk
 
-          #- name: Sign AAB
-          #uses: r0adkll/sign-android-release@v1
+        #- name: Sign AAB
+        #uses: r0adkll/sign-android-release@v1
         #with:
         #releaseDirectory: app/build/outputs/bundle/release
         #signingKeyBase64: ${{ secrets.SIGN_KEY }}
