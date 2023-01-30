@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup release keystore
         run: |
-          echo "${{ secrets.STORE_FILE_BODY }}" | base64 --decode > release.keystore
+          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore
           echo "Keystore generated successfully"
 
       - name: Create local.properties
@@ -37,6 +37,12 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Release app
         run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
 
       - name: Deploy to Google Play Store
         uses: actions/google-play-deploy@v1
