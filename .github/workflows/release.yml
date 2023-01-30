@@ -20,11 +20,11 @@ jobs:
           cache: gradle
 
       - name: Setup release keystore
+        id: write_file
         uses: timheuer/base64-to-file@v1
-        run: chmod +x release.keystore
         with:
-          encodedString: ${{ secrets.STORE_FILE_BODY }}
           fileName: release.keystore
+          encodedString: ${{ secrets.STORE_FILE_BODY }}
 
       - name: Create local.properties
         run: |
