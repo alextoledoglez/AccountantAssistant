@@ -21,7 +21,7 @@ jobs:
 
       - name: Generate release keystore
         run: |
-          keytool -genkeypair -alias ${{ secrets.KEY_ALIAS }} -keyalg RSA -keysize 2048 -validity 10000 -keystore release.keystore -storepass ${{ secrets.STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} -dname "CN=Company Name, OU=Organization Unit, O=Organization, L=Location, S=State, C=Country Code"
+          keytool -genkeypair -alias ${{ secrets.KEY_ALIAS }} -keyalg RSA -keysize 2048 -validity 10000 -keystore ${{ secrets.STORE_FILE_NAME }} -storepass ${{ secrets.STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} -dname "CN=Company Name, OU=Organization Unit, O=Organization, L=Location, S=State, C=Country Code"
 
       - name: Create local.properties
         run: |
