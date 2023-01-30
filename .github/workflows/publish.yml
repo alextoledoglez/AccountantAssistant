@@ -19,6 +19,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Decode Release Keystore
+        id: write_file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "release.keystore"
+          encodedString: ${{ secrets.STORE_FILE_BODY }}
+
       - name: Create local.properties
         run: |
           echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
@@ -33,23 +40,23 @@ jobs:
       - name: Build Release app
         run: ./gradlew assembleRelease
 
-      #- name: Build Release AAB
-        #run: ./gradlew bundleRelease
+          #- name: Build Release AAB
+          #run: ./gradlew bundleRelease
 
-      #- name: Upload APK
-        #uses: actions/upload-artifact@v2
-        #with:
+          #- name: Upload APK
+          #uses: actions/upload-artifact@v2
+          #with:
           #name: app-release.apk
           #path: app/build/outputs/apk/release/app-release.apk
 
-      #- name: Sign AAB
-        #uses: r0adkll/sign-android-release@v1
-        #with:
+          #- name: Sign AAB
+          #uses: r0adkll/sign-android-release@v1
+          #with:
           #releaseDirectory: app/build/outputs/bundle/release
           #signingKeyBase64: ${{ secrets.SIGN_KEY }}
-          #alias: ${{ secrets.ALIAS }}
-          #keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
-          #keyPassword: ${{ secrets.KEY_PASSWORD }}
+        #alias: ${{ secrets.ALIAS }}
+        #keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
+        #keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Deploy to Google Play Store
         uses: actions/google-play-deploy@v1
@@ -62,8 +69,8 @@ jobs:
           apk-files: app/build/outputs/apk/release/*.apk
           track: production
 
-      #- name: Sign and Align APK
-        #run: |
+          #- name: Sign and Align APK
+          #run: |
           #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
           #-keystore release.keystore \
           #-storepass ${{ secrets.STORE_PASSWORD }} \
@@ -75,9 +82,9 @@ jobs:
           #-v 4 app/build/outputs/apk/release/app-release.apk \
           #app/build/outputs/apk/release/app-release-aligned.apk
 
-      #- name: Upload to Google Play Store
-        #uses: actions/upload-to-google-play@v1
-        #with:
+          #- name: Upload to Google Play Store
+          #uses: actions/upload-to-google-play@v1
+          #with:
           #key-file: release.keystore
           #key-password: ${{ secrets.STORE_PASSWORD }}
           #key-alias: ${{ secrets.KEY_ALIAS }}
