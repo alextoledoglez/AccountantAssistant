@@ -19,11 +19,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Setup release keystore
-        run: |
-          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore
-          echo "Keystore generated successfully"
-
       - name: Create local.properties
         run: |
           echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
@@ -37,9 +32,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Release app
         run: ./gradlew assembleRelease
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-release.apk
-          path: app/build/outputs/apk/release/app-release.apk
