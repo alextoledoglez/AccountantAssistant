@@ -21,6 +21,7 @@ jobs:
 
       - name: Setup release keystore
         uses: timheuer/base64-to-file@v1
+        run: chmod +x release.keystore
         with:
           encodedString: ${{ secrets.STORE_FILE_BODY }}
           fileName: release.keystore
