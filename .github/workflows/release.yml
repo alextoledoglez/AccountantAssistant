@@ -19,11 +19,9 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Setup release keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: release.keystore
-          encodedString: ${{ secrets.STORE_FILE_BODY }}
+      - name: Generate release keystore
+        run: |
+          keytool -genkeypair -alias AndroidReleaseKey -keyalg RSA -keysize 2048 -validity 10000 -keystore release.keystore -storepass ${{ secrets.STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }}
 
       - name: Create local.properties
         run: |
@@ -34,9 +32,9 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> local.properties
           echo "storeFileName=${{ secrets.STORE_FILE_NAME }}" >> local.properties
 
-      - name: Verify keystore file exists
+      - name: Verify keystore and local.properties files exists
         run: |
-          ls -la          
+          ls -la
 
       - name: Gradle Release Assemble
         uses: gradle/gradle-build-action@v2
