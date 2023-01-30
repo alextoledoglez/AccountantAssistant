@@ -5,6 +5,14 @@ on:
     branches: [ "production" ]
   pull_request:
     branches: [ "production" ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.1.1)'
+        required: true
+      message:
+        description: 'Tag message'
+        required: true
 
 jobs:
   publish:
@@ -13,22 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get current version
-        id: get_version
-        uses: actions/increment-version@latest
-        with:
-          version: v1.1.1
-
       - name: Create Release Tag
-        uses: actions/create-tag@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        uses: negz/create-tag@v1
         with:
-          ref: refs/heads/production
-          tag: ${{ steps.get_version.outputs.version }}
-          tag_name: ${{ steps.get_version.outputs.version }}
-          message: Release ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
+          version: ${{ github.event.inputs.version }}
+          message: ${{ github.event.inputs.message }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -80,18 +78,12 @@ jobs:
         #keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
         #keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Get release notes from tags
-        run: |
-          NOTES=$(git tag -l --format='%(contents)' $(git describe --tags --abbrev=0))
-          echo "::set-output name=notes::$NOTES"        
-
       - name: Deploy to Google Play Store
-        uses: actions/google-play-deploy@latest
+        uses: r0adkll/upload-google-play@v1
         with:
-          release_notes: ${{ steps.get_notes.outputs.notes }}
-        env:
-          SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
-          PACKAGE_NAME: com.personal.accountantAssistant
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          packageName: com.personal.accountantAssistant
+          track: production
 
           #- name: Sign and Align APK
           #run: |
