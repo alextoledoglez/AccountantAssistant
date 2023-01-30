@@ -1,0 +1,34 @@
+name: Android Release Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Create local.properties
+        run: |
+          echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
+          echo "prop2=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop3=${{ secrets.STORE_PASSWORD }}" >> local.properties
+          echo "prop4=${{ secrets.KEY_PASSWORD }}" >> local.properties
+          echo "prop5=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "prop6=${{ secrets.STORE_FILE_NAME }}" >> local.properties
+
+      - name: Gradle Release Assemble
+        uses: gradle/gradle-build-action@v2
+      - name: Build Release app
+        run: ./gradlew assembleRelease

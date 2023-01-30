@@ -1,0 +1,86 @@
+name: Android Publish Build
+
+on:
+  push:
+    branches: [ "production" ]
+  pull_request:
+    branches: [ "production" ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Create local.properties
+        run: |
+          echo "prop1=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
+          echo "prop2=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
+          echo "prop3=${{ secrets.STORE_PASSWORD }}" >> local.properties
+          echo "prop4=${{ secrets.KEY_PASSWORD }}" >> local.properties
+          echo "prop5=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "prop6=${{ secrets.STORE_FILE_NAME }}" >> local.properties          
+
+      - name: Gradle Release Assemble
+        uses: gradle/gradle-build-action@v2
+      - name: Build Release app
+        run: ./gradlew assembleRelease
+
+      #- name: Build Release AAB
+        #run: ./gradlew bundleRelease
+
+      #- name: Upload APK
+        #uses: actions/upload-artifact@v2
+        #with:
+          #name: app-release.apk
+          #path: app/build/outputs/apk/release/app-release.apk
+
+      #- name: Sign AAB
+        #uses: r0adkll/sign-android-release@v1
+        #with:
+          #releaseDirectory: app/build/outputs/bundle/release
+          #signingKeyBase64: ${{ secrets.SIGN_KEY }}
+          #alias: ${{ secrets.ALIAS }}
+          #keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
+          #keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Deploy to Google Play Store
+        uses: actions/google-play-deploy@v1
+        #uses: r0adkll/upload-google-play@v1
+        with:
+          service-account-key: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          #serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT}}
+          #packageName: com.personal.accountantAssistant
+          #releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          apk-files: app/build/outputs/apk/release/*.apk
+          track: production
+
+      #- name: Sign and Align APK
+        #run: |
+          #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+          #-keystore release.keystore \
+          #-storepass ${{ secrets.STORE_PASSWORD }} \
+          #-keypass ${{ secrets.KEY_PASSWORD }} \
+          #app/build/outputs/apk/release/app-release.apk \
+          #${{ secrets.KEY_ALIAS }}
+
+          #${ANDROID_HOME}/build-tools/${{ env.ANDROID_BUILD_TOOLS }}/zipalign \
+          #-v 4 app/build/outputs/apk/release/app-release.apk \
+          #app/build/outputs/apk/release/app-release-aligned.apk
+
+      #- name: Upload to Google Play Store
+        #uses: actions/upload-to-google-play@v1
+        #with:
+          #key-file: release.keystore
+          #key-password: ${{ secrets.STORE_PASSWORD }}
+          #key-alias: ${{ secrets.KEY_ALIAS }}
+          #apk-file: app/build/outputs/apk/release/app-release-aligned.apk
+          #package-name: com.personal.accountantAssistant
+          #track: alpha
