@@ -22,7 +22,7 @@ jobs:
       - name: Setup release keystore
         uses: timheuer/base64-to-file@v1
         with:
-          content: ${{ secrets.STORE_FILE_BODY }}
+          encodedString: ${{ secrets.STORE_FILE_BODY }}
           fileName: release.keystore
 
       - name: Create local.properties
