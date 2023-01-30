@@ -20,7 +20,7 @@ jobs:
           version: v1.1.1
 
       - name: Create Release Tag
-        uses: actions/create-release@latest
+        uses: actions/create-tag@latest
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         with:
