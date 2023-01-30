@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+/release.keystore
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
@@ -17,4 +18,5 @@ app/gradle/wrapper/gradle-wrapper.jar
 /app/release/app-release.apk
 /app/release/output-metadata.json
 /gradle/release.keystore.jks
+/app/release.keystore
 /app/release/app-release.aab

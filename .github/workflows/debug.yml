@@ -21,10 +21,17 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "prop1=${{ secrets.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
-          echo "prop2=${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
+          echo "admobDebugUnitId=${{ secrets.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
+          echo "admobDebugTestDeviceId=${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
 
       - name: Gradle Debug Assemble
         uses: gradle/gradle-build-action@v2
       - name: Build Debug app
         run: ./gradlew assembleDebug
+
+      - name: Unit Test
+        run: ./gradlew testDebugUnitTest
+
+      - name: Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }}
