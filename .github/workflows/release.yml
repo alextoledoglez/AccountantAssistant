@@ -21,7 +21,8 @@ jobs:
 
       - name: Setup release keystore
         run: |
-          echo "${{ secrets.STORE_FILE_BODY }}" > release.keystore
+          echo "${{ secrets.STORE_FILE_BODY }}" | base64 --decode > release.keystore
+          echo "Keystore generated successfully"
 
       - name: Create local.properties
         run: |
