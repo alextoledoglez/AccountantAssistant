@@ -20,7 +20,6 @@ jobs:
           cache: gradle
 
       - name: Setup release keystore
-        id: write_file
         uses: timheuer/base64-to-file@v1
         with:
           fileName: release.keystore
@@ -34,6 +33,10 @@ jobs:
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> local.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> local.properties
           echo "storeFileName=${{ secrets.STORE_FILE_NAME }}" >> local.properties       
+
+      - name: Verify keystore and local.properties files exists
+        run: |
+          ls -la          
 
       - name: Gradle Release Assemble
         uses: gradle/gradle-build-action@v2
