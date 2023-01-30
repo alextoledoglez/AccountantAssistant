@@ -20,7 +20,10 @@ jobs:
           cache: gradle
 
       - name: Setup release keystore
-        run: echo "${{ secrets.STORE_FILE_BODY }}" | base64 --decode > release.keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          content: ${{ secrets.STORE_FILE_BODY }}
+          fileName: release.keystore
 
       - name: Create local.properties
         run: |
