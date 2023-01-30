@@ -34,7 +34,7 @@ jobs:
 
       - name: Verify keystore and local.properties files exists
         run: |
-          ls -la          
+          ls -la
 
       - name: Gradle Release Assemble
         uses: gradle/gradle-build-action@v2
