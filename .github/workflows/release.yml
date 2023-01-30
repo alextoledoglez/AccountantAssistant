@@ -39,3 +39,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Release app
         run: ./gradlew assembleRelease
+
+      - name: Unit Test
+        run: ./gradlew testReleaseUnitTest
+
+      - name: Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }}
