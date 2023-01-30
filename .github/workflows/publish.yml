@@ -15,12 +15,12 @@ jobs:
 
       - name: Get current version
         id: get_version
-        uses: actions/increment-version@v1
+        uses: actions/increment-version@latest
         with:
           version: v1.1.1
 
       - name: Create Release Tag
-        uses: actions/create-tag@v2
+        uses: actions/create-tag@latest
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         with:
@@ -86,7 +86,7 @@ jobs:
           echo "::set-output name=notes::$NOTES"        
 
       - name: Deploy to Google Play Store
-        uses: actions/google-play-deploy@v1
+        uses: actions/google-play-deploy@latest
         with:
           release_notes: ${{ steps.get_notes.outputs.notes }}
         env:
