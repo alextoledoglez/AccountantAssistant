@@ -53,34 +53,14 @@ jobs:
       - name: Get release information
         id: get_info
         run: |
-          echo "::set-output name=ref::${{ GITHUB_REF }}"
+          echo "::set-output name=ref::${{ github.ref }}"
 
       - name: Get commit messages
         id: get_commits
         uses: actions/github-script@v3
         with:
           script: |
-            const ref = env.get_info.outputs.ref
-            const commits = await context.github.paginate(
-            context.github.repos.listCommits({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            sha: ref
-            })
-            )
-            let messages = ""
-            for (const commit of commits) {
-            messages += `- ${commit.commit.message} (${commit.sha.substr(0,7)})\\n`
-            }
-            console.log(`Commit messages:\n${messages}`)
-            return { messages: messages }          
-
-      - name: Get commit messages
-        id: get_commits
-        uses: actions/github-script@v3
-        with:
-          script: |
-            const ref = env.get_info.outputs.ref
+            const ref = steps.get_info.outputs.ref
             const commits = await context.github.paginate(
             context.github.repos.listCommits({
             owner: context.repo.owner,
