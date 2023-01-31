@@ -18,10 +18,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get last tag
+        id: get_latest_tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const refs = await github.git.listRefs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              namespace: 'tags'
+            });
+            
+            const latestTag = refs.data.sort((a, b) => {
+              const aCommit = a.object.sha;
+              const bCommit = b.object.sha;
+              return bCommit.localeCompare(aCommit);
+            })[0].ref;
+            
+            console.log(`Latest tag: ${latestTag}`);
+            core.setOutput('latest_tag', latestTag);          
+
       - name: Increment tag version number
         id: tag_version
         run: |
-          CURRENT_VERSION=$(echo ${{ GITHUB_REF#refs/tags/v }})
+          CURRENT_VERSION=$(echo ${{ steps.get_latest_tag.outputs.latest_tag }})
           
           NEW_VERSION="$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
           echo "New tag: $NEW_VERSION" 
@@ -54,14 +75,34 @@ jobs:
             console.log(`Commit messages:\n${messages}`)
             return { messages: messages }          
 
+      - name: Get commit messages
+        id: get_commits
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const ref = env.get_info.outputs.ref
+            const commits = await context.github.paginate(
+            context.github.repos.listCommits({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            sha: ref
+            })
+            )
+            let messages = ""
+            for (const commit of commits) {
+            messages += `- ${commit.commit.message} (${commit.sha.substr(0,7)})\\n`
+            }
+            console.log(`Commit messages:\n${messages}`)
+            return { messages: messages }
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.tag_version.outputs.tag }}
-          release_name: Release v${{ env.tag_version.outputs.tag }}
+          tag_name: v${{ steps.tag_version.outputs.tag }}
+          release_name: Release v${{ steps.tag_version.outputs.tag }}
           body: |
             Commit messages:
             ${{ steps.get_commits.outputs.messages }}
