@@ -21,7 +21,6 @@ jobs:
       - name: Increment tag version number
         id: tag_version
         run: |
-          # echo "Current tag: ${GITHUB_REF#refs/tags/v}"
           CURRENT_VERSION=$(echo ${{ GITHUB_REF#refs/tags/v }})
           
           NEW_VERSION="$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
