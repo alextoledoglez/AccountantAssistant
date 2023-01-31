@@ -18,21 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract tag version number
-        id: extract_version
+      - name: Increment tag version number
+        id: tag_version
         run: |
-          echo "Current version: ${GITHUB_REF#refs/tags/v}"
+          # echo "Current tag: ${GITHUB_REF#refs/tags/v}"
+          CURRENT_VERSION=$(echo ${{ GITHUB_REF#refs/tags/v }})
+          
+          NEW_VERSION="$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
+          echo "New tag: $NEW_VERSION" 
+          echo "::set-output name=tag::$NEW_VERSION"
         env:
           GITHUB_REF: ${{ github.ref }}
-
-      - name: Increment tag version number
-        run: |
-          # Obter o número da versão atual
-          CURRENT_VERSION=$(echo ${{ steps.extract_version.outputs.GITHUB_REF#refs/tags/v }})
-          
-          # Incrementar o número da versão
-          NEW_VERSION="$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')"
-          echo "New version: $NEW_VERSION"
 
       - name: Get release information
         id: get_info
@@ -65,8 +61,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ $NEW_VERSION }}
-          release_name: Release v${{ $NEW_VERSION }}
+          tag_name: v${{ env.tag_version.outputs.tag }}
+          release_name: Release v${{ env.tag_version.outputs.tag }}
           body: |
             Commit messages:
             ${{ steps.get_commits.outputs.messages }}
