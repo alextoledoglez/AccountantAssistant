@@ -74,7 +74,6 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           releaseFiles: app/build/outputs/apk/release/app-release.apk
           packageName: com.personal.accountantAssistant
-          track: alpha
 
           #- name: Sign and Align APK
           #run: |
