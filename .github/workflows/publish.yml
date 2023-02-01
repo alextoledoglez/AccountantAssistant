@@ -33,11 +33,6 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> local.properties
           echo "storeFileName=${{ secrets.STORE_FILE_NAME }}" >> local.properties       
 
-      - name: Gradle Release Assemble
-        uses: gradle/gradle-build-action@v2
-      - name: Build Release app
-        run: ./gradlew assembleRelease
-
       - name: Unit Test
         run: ./gradlew testReleaseUnitTest
 
@@ -45,11 +40,23 @@ jobs:
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }}
 
+      - name: Build AAB Release
+        run: ./gradlew bundleRelease
+
+      - name: Sign AAB Release
+        uses: r0adkll/sign-android-action@v1
+        with:
+          keystore-file: ${{ secrets.STORE_FILE_NAME }}
+          keystore-password: ${{ secrets.STORE_PASSWORD }}
+          key-alias: ${{ secrets.KEY_ALIAS }}
+          key-password: ${{ secrets.KEY_PASSWORD }}
+          bundle-file: "app/build/outputs/bundle/release/app-release.aab"
+
       - name: Deploy to Google Play Store
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
-          releaseFiles: app/build/outputs/apk/release/app-release.apk
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
           packageName: com.personal.accountantAssistant
 
       - name: Create Release
