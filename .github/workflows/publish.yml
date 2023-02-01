@@ -40,17 +40,14 @@ jobs:
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }}
 
-      - name: Build AAB Release
+      - name: Build AAB bundle
         run: ./gradlew bundleRelease
 
-      - name: Sign AAB Release
-        uses: r0adkll/sign-android-action@v1
-        with:
-          keystore-file: ${{ secrets.STORE_FILE_NAME }}
-          keystore-password: ${{ secrets.STORE_PASSWORD }}
-          key-alias: ${{ secrets.KEY_ALIAS }}
-          key-password: ${{ secrets.KEY_PASSWORD }}
-          bundle-file: "app/build/outputs/bundle/release/app-release.aab"
+      - name: Sign AAB bundle
+        run: |
+          jarsigner -keystore ${{ secrets.STORE_FILE_NAME }} \
+          -storepass ${{ secrets.STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
+          app/build/outputs/bundle/release/app-release.aab ${{ secrets.KEY_ALIAS }}          
 
       - name: Deploy to Google Play Store
         uses: r0adkll/upload-google-play@v1
