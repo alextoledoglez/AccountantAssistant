@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [ "production" ]
 
-env:
-  ANDROID_COMPILE_SDK: "30"
-  ANDROID_BUILD_TOOLS: "30.0.3"
-  ANDROID_SDK_TOOLS: "6758059"
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -50,53 +45,12 @@ jobs:
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }}
 
-        #- name: Build Release AAB
-        #run: ./gradlew bundleRelease
-
-        #- name: Upload APK
-        #uses: actions/upload-artifact@v2
-        #with:
-        #name: app-release.apk
-        #path: app/build/outputs/apk/release/app-release.apk
-
-        #- name: Sign AAB
-        #uses: r0adkll/sign-android-release@v1
-        #with:
-        #releaseDirectory: app/build/outputs/bundle/release
-        #signingKeyBase64: ${{ secrets.SIGN_KEY }}
-        #alias: ${{ secrets.ALIAS }}
-        #keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
-        #keyPassword: ${{ secrets.KEY_PASSWORD }}
-
       - name: Deploy to Google Play Store
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           releaseFiles: app/build/outputs/apk/release/app-release.apk
           packageName: com.personal.accountantAssistant
-
-          #- name: Sign and Align APK
-          #run: |
-          #jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
-          #-keystore release.keystore \
-          #-storepass ${{ secrets.STORE_PASSWORD }} \
-          #-keypass ${{ secrets.KEY_PASSWORD }} \
-          #app/build/outputs/apk/release/app-release.apk \
-          #${{ secrets.KEY_ALIAS }}
-
-          #${ANDROID_HOME}/build-tools/${{ env.ANDROID_BUILD_TOOLS }}/zipalign \
-          #-v 4 app/build/outputs/apk/release/app-release.apk \
-          #app/build/outputs/apk/release/app-release-aligned.apk
-
-          #- name: Upload to Google Play Store
-          #uses: actions/upload-to-google-play@v1
-          #with:
-          #key-file: release.keystore
-          #key-password: ${{ secrets.STORE_PASSWORD }}
-          #key-alias: ${{ secrets.KEY_ALIAS }}
-          #apk-file: app/build/outputs/apk/release/app-release-aligned.apk
-          #package-name: com.personal.accountantAssistant
-          #track: alpha
 
       - name: Create Release
         id: create_release
