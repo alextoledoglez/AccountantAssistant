@@ -54,6 +54,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           packageName: com.personal.accountantAssistant
+          status: draft
 
       - name: Create Release
         id: create_release
