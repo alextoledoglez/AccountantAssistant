@@ -1,0 +1,38 @@
+name: Android Debug Build
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Create local.properties
+        run: |
+          echo "admobDebugUnitId=${{ secrets.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
+          echo "admobDebugTestDeviceId=${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
+
+      - name: Gradle Debug Assemble
+        uses: gradle/gradle-build-action@v2
+      - name: Build Debug app
+        run: ./gradlew assembleDebug
+
+      - name: Unit Test
+        run: ./gradlew testDebugUnitTest
+
+      - name: Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }}
