@@ -7,14 +7,14 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
-Properties localProperties = new Properties()
-localProperties.load(project.rootProject.file(localPropertiesFileName).newDataInputStream())
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(new File(rootProject.projectDir, localPropertiesFileName)))
 
 android {
     compileSdkVersion 33
     signingConfigs {
         release {
-            storeFile file("${project.projectDir.getAbsolutePath()}/${localProperties['storeFileName']}")
+            storeFile file("${rootProject.projectDir.getAbsolutePath()}/${localProperties['storeFileName']}")
             storePassword localProperties["storePassword"]
             keyAlias localProperties["keyAlias"]
             keyPassword localProperties["keyPassword"]
@@ -24,8 +24,8 @@ android {
         applicationId "com.personal.accountantAssistant"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 6
-        versionName "1.1"
+        versionCode 7
+        versionName "1.1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
