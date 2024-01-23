@@ -35,19 +35,19 @@ abstract class BaseTableMigration {
         dropTable: String,
         renameTable: String
     ) = object : Migration(startVersion, endVersion) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL(createTable)
-            database.execSQL(insertTable)
-            database.execSQL(dropTable)
-            database.execSQL(renameTable)
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(createTable)
+            db.execSQL(insertTable)
+            db.execSQL(dropTable)
+            db.execSQL(renameTable)
         }
     }
 
     fun renameTableMigration(
         startVersion: Int, endVersion: Int, oldTable: String, newTable: String
     ) = object : Migration(startVersion, endVersion) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL(renameTableTo(oldTable, newTable))
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(renameTableTo(oldTable, newTable))
         }
     }
 
