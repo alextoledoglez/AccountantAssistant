@@ -21,9 +21,9 @@ android {
         register("release") {
             storeFile =
                 file("${rootProject.projectDir.absolutePath}/${localProperties["storeFileName"]}")
-            storePassword = localProperties["storePassword"] as String
-            keyAlias = localProperties["keyAlias"] as String
-            keyPassword = localProperties["keyPassword"] as String
+            storePassword = localProperties["storePassword"]?.toString() ?: ""
+            keyAlias = localProperties["keyAlias"]?.toString() ?: ""
+            keyPassword = localProperties["keyPassword"]?.toString() ?: ""
         }
     }
     defaultConfig {
