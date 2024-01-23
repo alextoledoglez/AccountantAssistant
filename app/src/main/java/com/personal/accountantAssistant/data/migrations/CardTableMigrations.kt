@@ -67,11 +67,11 @@ object CardTableMigrations : BaseTableMigration() {
     )
 
     val MIGRATION_5_6 = object : Migration(5, 6) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL(renameColumnTo(CARDS_TABLE_NAME, VALUE, AVAILABLE_VALUE))
-            database.execSQL(addColumn(CARDS_TABLE_NAME, DATE, TEXT_TYPE))
-            database.execSQL(addColumn(CARDS_TABLE_NAME, USED_VALUE, REAL_TYPE))
-            database.execSQL(addColumn(CARDS_TABLE_NAME, LIMIT_VALUE, REAL_TYPE))
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(renameColumnTo(CARDS_TABLE_NAME, VALUE, AVAILABLE_VALUE))
+            db.execSQL(addColumn(CARDS_TABLE_NAME, DATE, TEXT_TYPE))
+            db.execSQL(addColumn(CARDS_TABLE_NAME, USED_VALUE, REAL_TYPE))
+            db.execSQL(addColumn(CARDS_TABLE_NAME, LIMIT_VALUE, REAL_TYPE))
         }
     }
 }
