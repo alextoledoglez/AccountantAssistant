@@ -10,12 +10,7 @@ on:
       notes:
         description: 'Input release notes:'
         required: true
-        default: '<en-US>
-</en-US>
-<es-ES>
-</es-ES>
-<pt-BR>
-</pt-BR>'
+        default: '<en-US></en-US><es-ES></es-ES><pt-BR></pt-BR>'
 
 jobs:
   publish:
