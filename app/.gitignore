@@ -15,4 +15,5 @@ app/gradle/wrapper/gradle-wrapper.jar
 .idea/modules.xml
 .idea/
 /gradle/wrapper/gradle-wrapper.jar
-/gradle/wrapper/gradle-wrapper.properties
+/gradle/wrapper/gradle-wrapper.properties!
+/google-services.json

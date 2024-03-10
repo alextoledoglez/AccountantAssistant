@@ -20,8 +20,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Create google-services
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+
       - name: Create local.properties
         run: |
+          echo "admobDebugAppId=${{ secrets.ADMOB_DEBUG_APP_ID }}" >> local.properties
           echo "admobDebugUnitId=${{ secrets.ADMOB_DEBUG_UNIT_ID }}" >> local.properties
           echo "admobDebugTestDeviceId=${{ secrets.ADMOB_DEBUG_TEST_DEVICE_ID }}" >> local.properties        
 

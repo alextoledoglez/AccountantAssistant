@@ -1,5 +1,4 @@
 <resources>
-    <string name="ad_mob_app_id" translatable="false">ca-app-pub-5126697230667487~5993695533</string>
     <string name="app_name">Accountant assistant</string>
     <string name="app_version">Version: %1$s</string>
     <string name="open_action">Open</string>

@@ -38,6 +38,7 @@ android {
         named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            manifestPlaceholders["ADMOB_APP_ID"] = "${localProperties["admobAppId"]}"
             buildConfigField(
                 type = "String",
                 name = "admobUnitId",
@@ -57,6 +58,7 @@ android {
             signingConfig = signingConfigs.getByName(name = "release")
         }
         named("debug") {
+            manifestPlaceholders["ADMOB_APP_ID"] = "${localProperties["admobDebugAppId"]}"
             buildConfigField(
                 type = "String",
                 name = "admobUnitId",

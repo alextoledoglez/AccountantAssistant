@@ -26,11 +26,16 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Create google-services
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+
       - name: Generate release keystore
         run: echo ${{ secrets.RELEASE_KEYSTORE_BODY }} | base64 --decode > release.keystore
 
       - name: Create local.properties
         run: |
+          echo "admobAppId=${{ secrets.ADMOB_APP_ID }}" > local.properties
           echo "admobUnitId=${{ secrets.ADMOB_UNIT_ID }}" > local.properties
           echo "admobTestDeviceId=${{ secrets.ADMOB_TEST_DEVICE_ID }}" >> local.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> local.properties
