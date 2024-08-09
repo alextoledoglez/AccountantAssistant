@@ -15,9 +15,11 @@ app/.idea/
 app/gradle/wrapper/gradle-wrapper.jar
 .idea/modules.xml
 .idea/
+/app/debug/
 /app/release/app-release.apk
 /app/release/output-metadata.json
 /gradle/release.keystore.jks
 /app/release.keystore
 /app/release/app-release.aab
 /app/google-services.json
+/app/debug/google-services.json

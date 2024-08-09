@@ -11,9 +11,11 @@
 .externalNativeBuild
 .idea/vcs.xml
 app/.idea/
+/src/debug/
 app/gradle/wrapper/gradle-wrapper.jar
 .idea/modules.xml
 .idea/
 /gradle/wrapper/gradle-wrapper.jar
 /gradle/wrapper/gradle-wrapper.properties!
 /google-services.json
+/src/debug/google-services.json
