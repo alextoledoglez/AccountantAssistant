@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.personal.accountantAssistant">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions required by GoogleAuthUtil -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -64,12 +64,8 @@
             android:screenOrientation="portrait" />
 
         <meta-data
-            android:name="firebase_performance_logcat_enabled"
-            android:value="true" />
-
-        <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ad_mob_app_id" />
+            android:value="${ADMOB_APP_ID}" />
 
         <meta-data
             android:name="com.google.android.gsm.version"
@@ -78,6 +74,11 @@
         <meta-data
             android:name="com.google.android.gsm.version.DEPENDENCIES"
             android:value="barcode" />
+
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            android:resource="@xml/gma_ad_services_config"
+            tools:replace="android:resource" />
 
     </application>
 
