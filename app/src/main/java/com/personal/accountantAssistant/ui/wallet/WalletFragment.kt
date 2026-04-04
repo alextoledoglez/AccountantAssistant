@@ -14,11 +14,12 @@ import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class WalletFragment : BaseFragment<WalletViewModel>(), MenuInterface {
+class WalletFragment : BaseFragment(), MenuInterface {
 
     override val binding by viewBinding(FragmentWalletBinding::inflate)
-
+    private val viewModel: WalletViewModel by viewModel()
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     private val srlContent by lazy { lytContent.srlContent }

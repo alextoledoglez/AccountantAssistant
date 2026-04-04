@@ -15,7 +15,7 @@ import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.*
 import java.util.*
 
-class WalletDetailsFragment : BottomSheetDialogFragment<Nothing>() {
+class WalletDetailsFragment : BottomSheetDialogFragment() {
 
     override val binding by viewBinding(FragmentWalletDetailsBinding::inflate)
 

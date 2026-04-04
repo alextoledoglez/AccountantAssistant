@@ -18,7 +18,7 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 import java.util.*
 
-class ExpenseDetailsFragment : BottomSheetDialogFragment<Nothing>() {
+class ExpenseDetailsFragment : BottomSheetDialogFragment() {
 
     override val binding by viewBinding(FragmentExpensesDetailsBinding::inflate)
 

@@ -7,13 +7,14 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
 
-class BillsFragment : ExpensesFragment<BillsViewModel>() {
+class BillsFragment : ExpensesFragment() {
 
     override val binding by viewBinding(FragmentBillsBinding::inflate)
-
+    private val viewModel: BillsViewModel by viewModel()
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     private val srlContent by lazy { lytContent.srlContent }

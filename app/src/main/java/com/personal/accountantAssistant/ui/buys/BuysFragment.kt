@@ -9,11 +9,12 @@ import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class BuysFragment : ExpensesFragment<BuysViewModel>() {
+class BuysFragment : ExpensesFragment() {
 
     override val binding by viewBinding(FragmentBuysBinding::inflate)
-
+    private val viewModel: BuysViewModel by viewModel()
     private val lytSummary by lazy { binding.lytSummary }
     private val lytContent by lazy { binding.lytContent }
     private val srlContent by lazy { lytContent.srlContent }

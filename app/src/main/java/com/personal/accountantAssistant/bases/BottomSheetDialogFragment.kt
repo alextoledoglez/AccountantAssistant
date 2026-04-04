@@ -7,18 +7,15 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.personal.accountantAssistant.extensions.viewModelClass
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.getViewModel
 
-abstract class BottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogFragment() {
+abstract class BottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     abstract val binding: ViewBinding
     abstract fun initComponents()
     abstract fun initObservers()
 
-    val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
     private val analytics: AnalyticsProvider? by inject()
 
@@ -45,5 +42,4 @@ abstract class BottomSheetDialogFragment<V : BaseViewModel> : BottomSheetDialogF
             state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
-
 }

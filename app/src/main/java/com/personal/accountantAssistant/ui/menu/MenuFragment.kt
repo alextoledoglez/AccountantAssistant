@@ -11,11 +11,13 @@ import com.personal.accountantAssistant.databinding.FragmentMenuBinding
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.services.SignInService
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.android.ext.android.inject
 
-class MenuFragment : BaseFragment<MenuViewModel>() {
+class MenuFragment : BaseFragment() {
 
     override val binding by viewBinding(FragmentMenuBinding::inflate)
+    private val viewModel: MenuViewModel by viewModel()
     private val signInService: SignInService? by inject()
     private val lytUser by lazy { binding.lytUser }
     private val lytContent by lazy { binding.lytContent }

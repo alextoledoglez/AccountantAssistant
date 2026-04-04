@@ -8,18 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
-import com.personal.accountantAssistant.extensions.viewModelClass
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
-import org.koin.android.viewmodel.ext.android.getViewModel
 
-abstract class BaseFragment<V : BaseViewModel> : Fragment() {
+abstract class BaseFragment : Fragment() {
 
     abstract val binding: ViewBinding
     abstract fun initComponents()
     abstract fun initObservers()
-
-    val viewModel: V by lazy { getViewModel(clazz = viewModelClass()) }
     private val analytics: AnalyticsProvider? by inject()
     private val toolbarTitle = MutableLiveData<String>()
 
@@ -42,5 +38,4 @@ abstract class BaseFragment<V : BaseViewModel> : Fragment() {
     fun onTitleChanged(): LiveData<String> = toolbarTitle
 
     fun setTitle(title: String) = toolbarTitle.postValue(title)
-
 }

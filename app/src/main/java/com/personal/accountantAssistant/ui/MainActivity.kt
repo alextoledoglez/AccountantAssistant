@@ -5,7 +5,6 @@ import android.view.Menu
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseActivity
@@ -25,7 +24,7 @@ import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.menu.MenuFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
 
-class MainActivity : BaseActivity<Nothing>() {
+class MainActivity : BaseActivity() {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
     private val tabLayout by lazy { binding.tabLayout }

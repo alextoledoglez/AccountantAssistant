@@ -12,10 +12,12 @@ import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
 import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginActivity : BaseActivity<LoginViewModel>() {
+class LoginActivity : BaseActivity() {
 
     override val binding by viewBinding(ActivityLoginBinding::inflate)
+    private val viewModel: LoginViewModel by viewModel()
     private val analytics: AnalyticsProvider? by inject()
     private val service: SignInService? by inject()
 

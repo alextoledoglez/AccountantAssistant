@@ -6,7 +6,7 @@ import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 object ViewModelsModule {

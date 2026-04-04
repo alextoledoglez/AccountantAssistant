@@ -6,13 +6,6 @@ import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.domain.useCases.home.*
 import com.personal.accountantAssistant.domain.useCases.login.*
 import com.personal.accountantAssistant.domain.useCases.wallet.*
-import com.personal.accountantAssistant.ui.bills.BillsViewModel
-import com.personal.accountantAssistant.ui.buys.BuysViewModel
-import com.personal.accountantAssistant.ui.home.HomeViewModel
-import com.personal.accountantAssistant.ui.login.LoginViewModel
-import com.personal.accountantAssistant.ui.menu.MenuViewModel
-import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 object UseCasesModule {

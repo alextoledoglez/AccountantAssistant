@@ -2,71 +2,71 @@
 
 #Build variables
 android-minSdk = "26"
-android-compileSdk = "34"
-android-targetSdk = "34"
+android-compileSdk = "36"
+android-targetSdk = "36"
 versionCode = "9"
 versionName = "1.1.3"
 
 #Gradle
-agpVersion = "8.4.2"
-kspVersion = "1.9.20-1.0.13"
+agpVersion = "9.1.0"
+kspVersion = "2.1.10-1.0.29"
 
 #Kotlin
-kotlinVersion = "1.9.20"
-kotlinxCoroutinesPlayServices = "1.7.3"
+kotlinVersion = "2.1.10"
+kotlinxCoroutinesPlayServices = "1.10.2"
 
 #Koin
-koinCore = "2.2.3"
+koinCore = "4.2.0"
 
 #AndroidX - Core - Framework
-androidx-coreKtx = "1.6.1"
-annotation = "1.8.2"
-appcompat = "1.7.0"
-lifecycle = "2.8.4"
-constraintlayout = "2.1.4"
-fragmentKtx = "1.8.2"
-recyclerview = "1.3.2"
+androidx-coreKtx = "1.7.0"
+annotation = "1.9.1"
+appcompat = "1.7.1"
+lifecycle = "2.10.0"
+constraintlayout = "2.2.1"
+fragmentKtx = "1.8.9"
+recyclerview = "1.4.0"
 legacySupportV4 = "1.0.0"
 lifecycleExtensions = "2.2.0"
-navigationFragmentKtx = "2.7.7"
+navigationFragmentKtx = "2.9.7"
 
 #Room Database
-roomRuntime = "2.6.1"
+roomRuntime = "2.8.4"
 
 #WorkManager
-workRuntimeKtx = "2.9.1"
+workRuntimeKtx = "2.11.2"
 
 #Google
-material = "1.12.0"
-googleApiClientAndroid = "1.26.0"
+material = "1.13.0"
+googleApiClientAndroid = "2.9.0"
 googleApiServicesDrive = "v3-rev136-1.25.0"
-googleHttpClientGson = "1.42.3"
-googleServices = "4.4.2"
-playServicesAds = "23.2.0"
-playServicesAuth = "21.2.0"
+googleHttpClientGson = "2.1.0"
+googleServices = "4.4.4"
+playServicesAds = "25.1.0"
+playServicesAuth = "21.5.1"
 playServicesVision = "20.1.3"
 
 #Firebase
-firebaseAnalytics = "22.0.2"
-firebasePerfKtx = "21.0.1"
-firebaseCrashlyticsGradle = "3.0.2"
-firebaseCrashlyticsKtx = "19.0.3"
-firebaseMessagingDirectboot = "24.0.0"
+firebaseAnalytics = "22.5.0"
+firebasePerfKtx = "21.0.5"
+firebaseCrashlyticsGradle = "3.0.6"
+firebaseCrashlyticsKtx = "19.4.4"
+firebaseMessagingDirectboot = "25.0.1"
 
 #Glide
-glide = "4.12.0"
+glide = "5.0.5"
 
 #Others
 jxl = "2.4.2"
-javaxMailApi = "1.6.0"
+javaxMailApi = "1.6.2"
 mpAndroidChart = "v3.1.0"
 
 #Tests
-mockk = "1.12.0"
-coreKtx = "1.13.1"
+mockk = "1.14.9"
+coreKtx = "1.18.0"
 coreTesting = "2.2.0"
-espressoCore = "3.6.1"
-junit = "1.2.1"
+espressoCore = "3.7.0"
+junit = "1.3.0"
 junit-junit = "4.13.2"
 
 [libraries] #----------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 #Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koinCore" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinCore" }
-koin-android-viewmodel = { group = "io.insert-koin", name = "koin-android-viewmodel", version.ref = "koinCore" }
+koin-android-compat = { group = "io.insert-koin", name = "koin-android-compat", version.ref = "koinCore" }
 koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koinCore" }
 koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koinCore" }
 

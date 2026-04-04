@@ -2,8 +2,8 @@ import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.services)
@@ -11,7 +11,10 @@ plugins {
 }
 
 val localProperties = Properties().apply {
-    load(File(rootProject.projectDir, "local.properties").inputStream())
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
 }
 
 android {
@@ -38,7 +41,7 @@ android {
         named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            manifestPlaceholders["ADMOB_APP_ID"] = "${localProperties["admobAppId"]}"
+            manifestPlaceholders += mapOf("ADMOB_APP_ID" to "${localProperties["admobAppId"]}")
             buildConfigField(
                 type = "String",
                 name = "admobUnitId",
@@ -73,23 +76,31 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    packagingOptions {
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/license.txt")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/NOTICE.txt")
-        exclude("META-INF/notice.txt")
-        exclude("META-INF/ASL2.0")
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
@@ -111,7 +122,7 @@ dependencies {
     //Koin for dependency injection
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.viewmodel)
+    implementation(libs.koin.android.compat)
     implementation(libs.koin.androidx.workmanager)
     testImplementation(libs.koin.test)
 

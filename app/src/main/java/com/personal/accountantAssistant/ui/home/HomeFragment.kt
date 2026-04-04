@@ -17,13 +17,15 @@ import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AdProvider
 import com.personal.accountantAssistant.ui.MainActivity
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.math.BigDecimal
 
 
-class HomeFragment : BaseFragment<HomeViewModel>() {
+class HomeFragment : BaseFragment() {
 
     override val binding by viewBinding(FragmentHomeBinding::inflate)
 
+    private val viewModel: HomeViewModel by viewModel()
     private val lytHeader by lazy { binding.lytHeader }
     private val ibDateRangePicker by lazy { lytHeader.ibDateRangePicker }
     private val tvPeriodValue by lazy { lytHeader.tvPeriodValue }
