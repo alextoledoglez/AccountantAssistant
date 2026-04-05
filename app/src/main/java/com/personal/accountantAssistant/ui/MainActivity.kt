@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.ui
 import android.os.Bundle
 import android.view.Menu
 import androidx.core.content.res.getResourceIdOrThrow
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -16,23 +17,29 @@ import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.closeApp
+import com.personal.accountantAssistant.extensions.getSystemBars
 import com.personal.accountantAssistant.extensions.hideMenuOptions
+import com.personal.accountantAssistant.extensions.setBottomPadding
+import com.personal.accountantAssistant.extensions.setTopPadding
 import com.personal.accountantAssistant.extensions.viewBinding
 import com.personal.accountantAssistant.ui.bills.BillsFragment
 import com.personal.accountantAssistant.ui.buys.BuysFragment
 import com.personal.accountantAssistant.ui.home.HomeFragment
 import com.personal.accountantAssistant.ui.menu.MenuFragment
 import com.personal.accountantAssistant.ui.wallet.WalletFragment
+import kotlin.collections.listOf
 
 class MainActivity : BaseActivity() {
 
     override val binding by viewBinding(ActivityMainBinding::inflate)
-    private val tabLayout by lazy { binding.tabLayout }
     private val vpContent by lazy { binding.vpContent }
+    private val fabAdd by lazy { binding.fabAdd }
+    private val tabLayout by lazy { binding.tabLayout }
     private var tlMediator: TabLayoutMediator? = null
     private val pagerAdapter: ViewPagerAdapter? by lazy {
         ViewPagerAdapter(
-            this@MainActivity, listOf(
+            frag = this@MainActivity,
+            fragments = listOf(
                 HomeFragment.newInstance(),
                 WalletFragment.newInstance(),
                 BuysFragment.newInstance(),
@@ -45,7 +52,7 @@ class MainActivity : BaseActivity() {
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             val page = pagerAdapter?.fragments?.get(position)
-            binding.fabAdd.apply {
+            fabAdd.apply {
                 isVisible = true
                 when (page) {
                     is WalletFragment -> setOnClickListener { page.onEditCard(CardModel()) }
@@ -57,26 +64,11 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        vpContent.unregisterOnPageChangeCallback(pageChangeCallback)
-        tlMediator?.detach()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        vpContent.registerOnPageChangeCallback(pageChangeCallback)
-        vpContent.adapter = pagerAdapter
-
-        val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
-        tlMediator = TabLayoutMediator(tabLayout, vpContent) { tab, index ->
-            tab.setIcon(tabIcons.getResourceIdOrThrow(index))
-        }.apply {
-            attach()
-            tabIcons.recycle()
-        }
+        setViewPagerContent()
+        setTabLayoutContent()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,7 +81,37 @@ class MainActivity : BaseActivity() {
         closeApp()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        vpContent.unregisterOnPageChangeCallback(pageChangeCallback)
+        tlMediator?.detach()
+        tlMediator = null
+    }
+
+    private fun setViewPagerContent() {
+        vpContent.registerOnPageChangeCallback(pageChangeCallback)
+        vpContent.adapter = pagerAdapter
+        ViewCompat.setOnApplyWindowInsetsListener(vpContent) { view, insets ->
+            view.setTopPadding(topPadding = insets.getSystemBars().top)
+            insets
+        }
+    }
+
+    private fun setTabLayoutContent() {
+        val tabIcons = resources.obtainTypedArray(R.array.tabs_icons)
+        tlMediator = TabLayoutMediator(tabLayout, vpContent) { tab, index ->
+            tab.setIcon(tabIcons.getResourceIdOrThrow(index))
+        }.apply {
+            attach()
+            tabIcons.recycle()
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(tabLayout) { view, insets ->
+            view.setBottomPadding(bottomPadding = insets.getSystemBars().bottom)
+            insets
+        }
+    }
+
     fun navigateToTab(tabPosition: TabPositions) {
-        tabLayout.apply { selectTab(getTabAt(tabPosition.position)) }
+        tabLayout.selectTab(tabLayout.getTabAt(tabPosition.position))
     }
 }

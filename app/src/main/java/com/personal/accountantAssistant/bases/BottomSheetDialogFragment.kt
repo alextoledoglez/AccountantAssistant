@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.personal.accountantAssistant.databinding.OptionsFooterBarBinding
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import org.koin.android.ext.android.inject
 
@@ -14,6 +16,10 @@ abstract class BottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     abstract val binding: ViewBinding
     abstract fun initComponents()
+    @StringRes
+    abstract fun getActionBarTitle(): Int
+    abstract fun cancel()
+    abstract fun save()
     abstract fun initObservers()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
@@ -32,6 +38,11 @@ abstract class BottomSheetDialogFragment : BottomSheetDialogFragment() {
         analytics?.trackScreenViewEvent(this::class.simpleName)
         initComponents()
         initObservers()
+    }
+
+    protected fun OptionsFooterBarBinding.setFooterLayout() {
+        mbCancel.setOnClickListener { cancel() }
+        mbSave.setOnClickListener { save() }
     }
 
     protected fun setFullScreen() {

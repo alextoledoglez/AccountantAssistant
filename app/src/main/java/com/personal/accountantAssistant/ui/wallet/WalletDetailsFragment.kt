@@ -18,72 +18,71 @@ import java.util.*
 class WalletDetailsFragment : BottomSheetDialogFragment() {
 
     override val binding by viewBinding(FragmentWalletDetailsBinding::inflate)
+    val cardModel by lazy { arguments?.getParcelable<CardModel>(String.ENTITY) }
 
     var onEditListener: ((model: CardModel) -> Unit)? = null
 
     override fun initComponents() {
-        val model = getCard()
         with(binding) {
             //Title
-            tvTitle.setText(R.string.wallet_details)
+            tvTitle.setText(getActionBarTitle())
             //Company
             etCompany.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.company.orEmpty())
+                setText(cardModel?.company.orEmpty())
             }
             //Name
             etName.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.name.orEmpty())
+                setText(cardModel?.name.orEmpty())
             }
             //Available Value
             etAvailableValue.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.availableValue.toString())
+                setText(cardModel?.availableValue.toString())
             }
             //Limit Value
             etLimitValue.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.limitValue.toString())
+                setText(cardModel?.limitValue.toString())
             }
             //Password
             etPassword.apply {
                 filters = arrayOf<InputFilter>(AllCaps())
-                setText(model?.password.orEmpty())
+                setText(cardModel?.password.orEmpty())
             }
             //Payment date
             etPaymentDate.apply {
                 inputType = InputType.TYPE_NULL
-                setText(model?.date.toDateStr())
+                setText(cardModel?.date.toDateStr())
                 val dialog = AlertDialogBuilder(context)
                 val listener = DatePickerDialog.OnDateSetListener { _, y: Int, m: Int, d: Int ->
                     setText(Calendar.getInstance().also { it[y, m] = d }.time.toDateStr())
                 }
-                setOnClickListener { dialog.showDatePickerFrom(model?.date, listener) }
+                setOnClickListener { dialog.showDatePickerFrom(cardModel?.date, listener) }
                 onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus: Boolean ->
                     if (hasFocus) {
-                        dialog.showDatePickerFrom(model?.date, listener)
+                        dialog.showDatePickerFrom(cardModel?.date, listener)
                     }
                 }
             }
             //Value and switch
-            scActive.isChecked = model?.isActive.orFalse()
+            scActive.isChecked = cardModel?.isActive.orFalse()
             //Footer
-            lytFooter.apply {
-                mbCancel.setOnClickListener { dismiss() }
-                mbSave.setOnClickListener { saveCard(model) }
-            }
+            lytFooter.setFooterLayout()
         }
         setFullScreen()
     }
 
-    override fun initObservers() {}
+    override fun getActionBarTitle() = R.string.wallet_details
 
-    private fun getCard() = arguments?.getParcelable<CardModel>(String.ENTITY)
+    override fun cancel() {
+        dismiss()
+    }
 
-    private fun saveCard(model: CardModel?) {
+    override fun save() {
         binding.apply {
-            model?.update(
+            cardModel?.update(
                 etCompany.text,
                 etName.text,
                 etPaymentDate.text,
@@ -96,6 +95,8 @@ class WalletDetailsFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
+    override fun initObservers() {}
 
     companion object {
         fun showDialogFragment(
