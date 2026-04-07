@@ -28,6 +28,15 @@ class BillsViewModel(
     private var _bills = MutableLiveData<MutableList<ExpenseModel>?>()
     var bills: LiveData<MutableList<ExpenseModel>?> = _bills
 
+    fun loadSummary() {
+        launch {
+            getBillsSummaryUseCase()
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect { _summary.postValue(it) }
+        }
+    }
+
     fun loadBills() {
         launch {
             getBillsUseCase()
@@ -35,15 +44,6 @@ class BillsViewModel(
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
                 .collect { _bills.postValue(it) }
-        }
-    }
-
-    fun loadSummary() {
-        launch {
-            getBillsSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
         }
     }
 

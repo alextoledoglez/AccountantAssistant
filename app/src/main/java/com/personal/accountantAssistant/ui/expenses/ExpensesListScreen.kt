@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.expenses
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,60 +26,43 @@ import com.personal.accountantAssistant.extensions.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpensesListScreen(
+    modifier: Modifier = Modifier,
     isLoading: Boolean,
     flipper: FlipperViews?,
     items: List<ExpenseModel>,
-    summary: SummaryModel,
-    searchQuery: String,
-    onSearch: (String) -> Unit,
-    onToggleAll: (Boolean) -> Unit,
     onRefresh: () -> Unit,
     onEdit: (ExpenseModel) -> Unit,
     onActive: (ExpenseModel) -> Unit,
     onDelete: (ExpenseModel) -> Unit,
     showDate: Boolean
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.backgroundColor))
-    ) {
-        ListSummaryCard(
-            summary = summary,
-            itemCount = items.size,
-            searchQuery = searchQuery,
-            onSearch = onSearch,
-            onToggleAll = onToggleAll
-        )
+    when (flipper) {
+        FlipperViews.LOADER -> Box(
+            modifier = modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
 
-        when (flipper) {
-            FlipperViews.LOADER -> Box(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
-
-            else -> PullToRefreshBox(
-                isRefreshing = isLoading,
-                onRefresh = onRefresh,
-                modifier = Modifier.weight(1f)
+        else -> PullToRefreshBox(
+            isRefreshing = isLoading,
+            onRefresh = onRefresh,
+            modifier = modifier
+        ) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    horizontal = dimensionResource(R.dimen.default_material_margin),
+                    vertical = dimensionResource(R.dimen.small_material_margin)
+                ),
+                modifier = Modifier.fillMaxSize()
             ) {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        horizontal = dimensionResource(R.dimen.default_material_margin),
-                        vertical = dimensionResource(R.dimen.small_material_margin)
-                    ),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(items, key = { it.id }) { expense ->
-                        ExpenseListItem(
-                            model = expense,
-                            showDate = showDate,
-                            onEdit = { onEdit(expense) },
-                            onActive = { onActive(expense.copy(isActive = !expense.isActive)) },
-                            onDelete = { onDelete(expense) }
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
+                items(items, key = { it.id }) { expense ->
+                    ExpenseListItem(
+                        model = expense,
+                        showDate = showDate,
+                        onEdit = { onEdit(expense) },
+                        onActive = { onActive(expense.copy(isActive = !expense.isActive)) },
+                        onDelete = { onDelete(expense) }
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
             }
         }
@@ -100,17 +82,11 @@ fun ListSummaryCard(
     val accentColor = if (isAnyActive) colorResource(R.color.redColor) else colorResource(R.color.primaryColor)
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.half_material_margin)),
+        modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.half_material_margin)),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.card_view_content_padding))
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.card_view_content_padding))) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -119,9 +95,7 @@ fun ListSummaryCard(
                     painter = painterResource(R.drawable.ic_money),
                     contentDescription = null,
                     tint = accentColor,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .weight(1f)
+                    modifier = Modifier.size(48.dp).weight(1f)
                 )
                 Text(
                     text = summary.total.toCurrencyMaskedStr(),
@@ -144,9 +118,7 @@ fun ListSummaryCard(
                 value = searchQuery,
                 onValueChange = onSearch,
                 placeholder = { Text(stringResource(R.string.search_view_hint_message)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = dimensionResource(R.dimen.small_material_margin)),
+                modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.small_material_margin)),
                 singleLine = true
             )
         }

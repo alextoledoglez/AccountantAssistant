@@ -1,16 +1,21 @@
 package com.personal.accountantAssistant.ui.bills
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
+import com.personal.accountantAssistant.ui.expenses.ListSummaryCard
 
 @Composable
 fun BillsScreen(
@@ -34,20 +39,30 @@ fun BillsScreen(
             bills?.filter { it.name.containStr(searchQuery) }.orEmpty()
     }
 
-    ExpensesListScreen(
-        isLoading = isLoading,
-        flipper = flipper,
-        items = filteredBills,
-        summary = summary,
-        searchQuery = searchQuery,
-        onSearch = { searchQuery = it },
-        onToggleAll = { viewModel.setAllBillsActive(it) },
-        onRefresh = { viewModel.loadBills() },
-        onEdit = onEdit,
-        onActive = onActive,
-        onDelete = { pendingDelete = it },
-        showDate = true
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.backgroundColor))
+    ) {
+        ListSummaryCard(
+            summary = summary,
+            itemCount = filteredBills.size,
+            searchQuery = searchQuery,
+            onSearch = { searchQuery = it },
+            onToggleAll = { viewModel.setAllBillsActive(it) }
+        )
+        ExpensesListScreen(
+            modifier = Modifier.weight(1f),
+            isLoading = isLoading,
+            flipper = flipper,
+            items = filteredBills,
+            onRefresh = { viewModel.loadBills() },
+            onEdit = onEdit,
+            onActive = onActive,
+            onDelete = { pendingDelete = it },
+            showDate = true
+        )
+    }
 
     pendingDelete?.let { model ->
         AlertDialog(

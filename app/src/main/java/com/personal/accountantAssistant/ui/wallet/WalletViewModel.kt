@@ -31,6 +31,15 @@ class WalletViewModel(
     private var _cards = MutableLiveData<MutableList<CardModel>?>()
     var cards: LiveData<MutableList<CardModel>?> = _cards
 
+    fun loadSummary() {
+        launch {
+            getCardsSummaryUseCase()
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect { _summary.postValue(it) }
+        }
+    }
+
     fun loadCards() {
         launch {
             getCardsUseCase()
@@ -38,15 +47,6 @@ class WalletViewModel(
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
                 .collect { _cards.postValue(it) }
-        }
-    }
-
-    fun loadSummary() {
-        launch {
-            getCardsSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
         }
     }
 
@@ -104,5 +104,4 @@ class WalletViewModel(
                 .collect { _cards.postValue(it) }
         }
     }
-
 }

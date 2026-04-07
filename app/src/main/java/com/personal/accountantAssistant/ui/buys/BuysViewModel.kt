@@ -28,6 +28,15 @@ class BuysViewModel(
     private var _buys = MutableLiveData<MutableList<ExpenseModel>?>()
     var buys: LiveData<MutableList<ExpenseModel>?> = _buys
 
+    fun loadSummary() {
+        launch {
+            getBuysSummaryUseCase()
+                .onError { setMessage(it.message) }
+                .onCompletion { setData() }
+                .collect { _summary.postValue(it) }
+        }
+    }
+
     fun loadBuys() {
         launch {
             getBuysUseCase()
@@ -35,15 +44,6 @@ class BuysViewModel(
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
                 .collect { _buys.postValue(it) }
-        }
-    }
-
-    fun loadSummary() {
-        launch {
-            getBuysSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
         }
     }
 
