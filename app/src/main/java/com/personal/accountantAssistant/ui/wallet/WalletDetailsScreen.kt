@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.text.SpannableStringBuilder
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,8 +37,8 @@ fun WalletDetailsScreen(
 
     var company by remember { mutableStateOf(cardModel?.company.orEmpty()) }
     var name by remember { mutableStateOf(cardModel?.name.orEmpty()) }
-    var availableValueStr by remember { mutableStateOf(cardModel?.availableValue.toString()) }
-    var limitValueStr by remember { mutableStateOf(cardModel?.limitValue.toString()) }
+    var availableRawDigits by remember { mutableStateOf(cardModel?.availableValue.toRawCurrencyDigits()) }
+    var limitRawDigits by remember { mutableStateOf(cardModel?.limitValue.toRawCurrencyDigits()) }
     var password by remember { mutableStateOf(cardModel?.password.orEmpty()) }
     var dateStr by remember { mutableStateOf(cardModel?.date.toDateStr()) }
     var isActive by remember { mutableStateOf(cardModel?.isActive.orFalse()) }
@@ -94,23 +95,23 @@ fun WalletDetailsScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = availableValueStr,
-            onValueChange = { availableValueStr = it },
+            value = availableRawDigits.toCurrencyMaskedStr().trim(),
+            onValueChange = { availableRawDigits = it.filter { c -> c.isDigit() } },
             label = { Text(stringResource(R.string.available_card_value)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = limitValueStr,
-            onValueChange = { limitValueStr = it },
+            value = limitRawDigits.toCurrencyMaskedStr().trim(),
+            onValueChange = { limitRawDigits = it.filter { c -> c.isDigit() } },
             label = { Text(stringResource(R.string.limit_card_value)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -125,7 +126,7 @@ fun WalletDetailsScreen(
                 label = { Text(stringResource(R.string.card_password)) },
                 modifier = Modifier.weight(1f),
                 singleLine = true,
-                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -179,8 +180,8 @@ fun WalletDetailsScreen(
                         SpannableStringBuilder(name.uppercase()),
                         SpannableStringBuilder(dateStr),
                         SpannableStringBuilder(password),
-                        SpannableStringBuilder(availableValueStr),
-                        SpannableStringBuilder(limitValueStr),
+                        SpannableStringBuilder(availableRawDigits.toCurrencyMaskedStr()),
+                        SpannableStringBuilder(limitRawDigits.toCurrencyMaskedStr()),
                         isActive
                     )?.let { onSave(it) }
                 },

@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +40,9 @@ fun ExpenseDetailsScreen(
     val context = LocalContext.current
 
     var name by remember { mutableStateOf(expenseModel?.name.orEmpty()) }
-    var quantity by remember { mutableIntStateOf(expenseModel?.quantity.orZero()) }
+    var quantity by remember { mutableIntStateOf(AlertDialogBuilder.toCurrentOrMinValue(expenseModel?.quantity.orZero())) }
     var dateStr by remember { mutableStateOf(expenseModel?.date.toDateStr()) }
-    var valueStr by remember { mutableStateOf(expenseModel?.unitaryValue.toString()) }
+    var valueRawDigits by remember { mutableStateOf(expenseModel?.unitaryValue.toRawCurrencyDigits()) }
     var isActive by remember { mutableStateOf(expenseModel?.isActive.orFalse()) }
 
     val isBillType = isBill(expenseModel?.type)
@@ -108,14 +110,12 @@ fun ExpenseDetailsScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = valueStr,
-            onValueChange = { valueStr = it },
+            value = valueRawDigits.toCurrencyMaskedStr().trim(),
+            onValueChange = { valueRawDigits = it.filter { c -> c.isDigit() } },
             label = { Text(stringResource(R.string.value)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
-            )
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         if (isBillType) {
@@ -177,7 +177,7 @@ fun ExpenseDetailsScreen(
                         SpannableStringBuilder(name),
                         SpannableStringBuilder(quantity.toString()),
                         SpannableStringBuilder(dateStr),
-                        SpannableStringBuilder(valueStr),
+                        SpannableStringBuilder(valueRawDigits.toCurrencyMaskedStr()),
                         isActive
                     )?.let { onSave(it) }
                 },

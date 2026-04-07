@@ -81,3 +81,9 @@ fun BigDecimal?.isMoreThanOrEqualToZero() = (isMoreThanZero() || isEqualToZero()
 fun BigDecimal?.isMoreThan(value: BigDecimal?) = (value.orZero() < this.orZero())
 
 fun BigDecimal?.isLessThan(value: BigDecimal?) = !isMoreThan(value)
+
+fun BigDecimal?.toRawCurrencyDigits(): String = this.orZero()
+    .multiply(BigDecimal(100))
+    .setScale(0, RoundingMode.HALF_UP)
+    .toLong()
+    .toString()
