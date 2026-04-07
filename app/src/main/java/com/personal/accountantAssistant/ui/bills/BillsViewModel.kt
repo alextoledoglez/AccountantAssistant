@@ -12,29 +12,29 @@ import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class BillsViewModel(
     private val getBillsUseCase: GetBillsUseCase,
-    private val getBillsSummaryUseCase: GetBillsSummaryUseCase,
     private val saveBillUseCase: SaveBillUseCase,
     private val activeBillsUseCase: ActiveBillsUseCase,
     private val deleteBillsUseCase: DeleteBillsUseCase,
     analytics: AnalyticsProvider? = null
 ) : BaseViewModel(analytics) {
 
-    private var _summary = MutableLiveData<SummaryModel>()
-    var summary: LiveData<SummaryModel> = _summary
+    private val _summary = MutableLiveData<SummaryModel>()
+    val summary: LiveData<SummaryModel> = _summary
 
-    private var _bills = MutableLiveData<MutableList<ExpenseModel>?>()
-    var bills: LiveData<MutableList<ExpenseModel>?> = _bills
+    private val _bills = MutableLiveData<MutableList<ExpenseModel>?>()
+    val bills: LiveData<MutableList<ExpenseModel>?> = _bills
 
-    fun loadSummary() {
-        launch {
-            getBillsSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
+    private fun postBills(list: MutableList<ExpenseModel>?) {
+        _bills.postValue(list)
+        val activeItems = list?.filter { it.isActive }.orEmpty()
+        val activeItemsAmount = activeItems.fold(BigDecimal.ZERO) { acc, item ->
+            acc.add(item.calculateTotalValue())
         }
+        _summary.postValue(SummaryModel(activeCount = activeItems.size, total = activeItemsAmount))
     }
 
     fun loadBills() {
@@ -43,7 +43,7 @@ class BillsViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 
@@ -53,7 +53,7 @@ class BillsViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 
@@ -62,7 +62,7 @@ class BillsViewModel(
             activeBillsUseCase.setAllBillsActive(isActive)
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 
@@ -71,7 +71,7 @@ class BillsViewModel(
             activeBillsUseCase.switchActiveBill(model.toBill())
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 
@@ -80,7 +80,7 @@ class BillsViewModel(
             deleteBillsUseCase.deleteBill(model.toBill())
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 
@@ -89,7 +89,7 @@ class BillsViewModel(
             deleteBillsUseCase.deleteAllBills()
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _bills.postValue(it) }
+                .collect { postBills(list = it) }
         }
     }
 }

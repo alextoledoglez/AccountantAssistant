@@ -62,7 +62,7 @@ fun WalletScreen(
     ) {
         ListSummaryCard(
             summary = summary,
-            itemCount = filteredCards.size,
+            itemCount = cards?.size.orZero(),
             searchQuery = searchQuery,
             onSearch = { searchQuery = it },
             onToggleAll = { viewModel.setAllCardsActive(it) }

@@ -12,29 +12,29 @@ import com.personal.accountantAssistant.providers.AnalyticsProvider
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class BuysViewModel(
     private val getBuysUseCase: GetBuysUseCase,
-    private val getBuysSummaryUseCase: GetBuysSummaryUseCase,
     private val saveBuyUseCase: SaveBuyUseCase,
     private val activeBuysUseCase: ActiveBuysUseCase,
     private val deleteBuysUseCase: DeleteBuysUseCase,
-    analytics: AnalyticsProvider? = null,
+    analytics: AnalyticsProvider? = null
 ) : BaseViewModel(analytics) {
 
-    private var _summary = MutableLiveData<SummaryModel>()
-    var summary: LiveData<SummaryModel> = _summary
+    private val _summary = MutableLiveData<SummaryModel>()
+    val summary: LiveData<SummaryModel> = _summary
 
-    private var _buys = MutableLiveData<MutableList<ExpenseModel>?>()
-    var buys: LiveData<MutableList<ExpenseModel>?> = _buys
+    private val _buys = MutableLiveData<MutableList<ExpenseModel>?>()
+    val buys: LiveData<MutableList<ExpenseModel>?> = _buys
 
-    fun loadSummary() {
-        launch {
-            getBuysSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
+    private fun postBuys(list: MutableList<ExpenseModel>?) {
+        _buys.postValue(list)
+        val activeItems = list?.filter { it.isActive }.orEmpty()
+        val activeItemsAmount = activeItems.fold(BigDecimal.ZERO) { acc, item ->
+            acc.add(item.calculateTotalValue())
         }
+        _summary.postValue(SummaryModel(activeCount = activeItems.size, total = activeItemsAmount))
     }
 
     fun loadBuys() {
@@ -43,7 +43,7 @@ class BuysViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 
@@ -53,7 +53,7 @@ class BuysViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 
@@ -62,7 +62,7 @@ class BuysViewModel(
             activeBuysUseCase.setAllBuysActive(isActive)
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 
@@ -71,7 +71,7 @@ class BuysViewModel(
             activeBuysUseCase.switchActiveBuy(model.toBuy())
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 
@@ -80,7 +80,7 @@ class BuysViewModel(
             deleteBuysUseCase.deleteBuy(model.toBuy())
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 
@@ -89,7 +89,7 @@ class BuysViewModel(
             deleteBuysUseCase.deleteAllBuys()
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _buys.postValue(it) }
+                .collect { postBuys(list = it) }
         }
     }
 }

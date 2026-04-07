@@ -35,7 +35,6 @@ object ViewModelsModule {
         viewModel {
             WalletViewModel(
                 getCardsUseCase = get(),
-                getCardsSummaryUseCase = get(),
                 setAvailableMoneyUseCase = get(),
                 saveCardUseCase = get(),
                 activeCardsUseCase = get(),
@@ -46,7 +45,6 @@ object ViewModelsModule {
         viewModel {
             BuysViewModel(
                 getBuysUseCase = get(),
-                getBuysSummaryUseCase = get(),
                 saveBuyUseCase = get(),
                 activeBuysUseCase = get(),
                 deleteBuysUseCase = get(),
@@ -56,7 +54,6 @@ object ViewModelsModule {
         viewModel {
             BillsViewModel(
                 getBillsUseCase = get(),
-                getBillsSummaryUseCase = get(),
                 saveBillUseCase = get(),
                 activeBillsUseCase = get(),
                 deleteBillsUseCase = get(),

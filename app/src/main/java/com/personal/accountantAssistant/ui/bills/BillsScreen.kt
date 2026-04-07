@@ -14,6 +14,7 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
 import com.personal.accountantAssistant.ui.expenses.ListSummaryCard
 
@@ -46,7 +47,7 @@ fun BillsScreen(
     ) {
         ListSummaryCard(
             summary = summary,
-            itemCount = filteredBills.size,
+            itemCount = bills?.size.orZero(),
             searchQuery = searchQuery,
             onSearch = { searchQuery = it },
             onToggleAll = { viewModel.setAllBillsActive(it) }
