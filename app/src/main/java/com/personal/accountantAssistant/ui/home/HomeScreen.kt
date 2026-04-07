@@ -16,17 +16,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
@@ -68,10 +65,8 @@ fun HomeScreen(
         periodDates?.let { period -> viewModel.loadExpenses(period, availableMoney) }
     }
 
-    val context = LocalContext.current
-    val primaryColorInt = ContextCompat.getColor(context, R.color.primaryColor)
-    val successColorInt = ContextCompat.getColor(context, R.color.successColor)
-    val errorColorInt = ContextCompat.getColor(context, R.color.errorColor)
+    val successColorInt = MaterialTheme.colorScheme.primary.toArgb()
+    val errorColorInt = MaterialTheme.colorScheme.error.toArgb()
 
     val buysText = stringResource(R.string.menu_buys)
     val billsText = stringResource(R.string.menu_bills)
@@ -109,7 +104,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.backgroundColor))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         HomeHeader(
             periodDates = periodDates,
@@ -123,7 +118,7 @@ fun HomeScreen(
             FlipperViews.LOADER -> Box(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
+            ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
 
             else -> {
                 androidx.compose.material3.pulltorefresh.PullToRefreshBox(
@@ -190,8 +185,8 @@ fun HomeHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(dimensionResource(R.dimen.default_material_margin)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
     ) {
         Row(
             modifier = Modifier
@@ -203,7 +198,7 @@ fun HomeHeader(
                 painter = painterResource(R.drawable.ic_wallet),
                 contentDescription = null,
                 tint = walletIconColor,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
             )
             Column(
                 modifier = Modifier
@@ -212,7 +207,7 @@ fun HomeHeader(
             ) {
                 Text(
                     text = stringResource(R.string.period_to_expense).uppercase(),
-                    color = colorResource(R.color.primaryColor),
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -232,8 +227,8 @@ fun HomeHeader(
                 Icon(
                     painter = painterResource(R.drawable.ic_today),
                     contentDescription = null,
-                    tint = colorResource(R.color.primaryColor),
-                    modifier = Modifier.size(48.dp)
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
                 )
             }
         }
@@ -246,8 +241,8 @@ fun HomeGridItem(item: DashboardItemModel, onClick: () -> Unit) {
         modifier = Modifier
             .padding(dimensionResource(R.dimen.small_material_margin))
             .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
     ) {
         Column(
             modifier = Modifier
@@ -261,7 +256,7 @@ fun HomeGridItem(item: DashboardItemModel, onClick: () -> Unit) {
                 tint = Color(item.color),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(dimensionResource(R.dimen.image_button_size))
                     .padding(top = dimensionResource(R.dimen.small_material_margin))
             )
             Text(

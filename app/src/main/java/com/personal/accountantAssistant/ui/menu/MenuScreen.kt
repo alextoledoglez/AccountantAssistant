@@ -11,7 +11,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -50,7 +49,7 @@ fun MenuScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.backgroundColor))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         UserDataSection(
             user = user,
@@ -59,9 +58,11 @@ fun MenuScreen(
 
         when (flipper) {
             FlipperViews.LOADER -> Box(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
+            ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
 
             else -> PullToRefreshBox(
                 isRefreshing = isLoading,
@@ -97,13 +98,13 @@ fun MenuScreen(
                 .fillMaxWidth(0.9f)
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = dimensionResource(R.dimen.default_material_margin))
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primaryColor))
+                .height(dimensionResource(R.dimen.image_button_size)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_logout),
                 contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = dimensionResource(R.dimen.half_material_margin))
             )
             Text(text = stringResource(R.string.logout_action))
         }
@@ -146,7 +147,7 @@ fun UserDataSection(user: UserModel?, modifier: Modifier = Modifier) {
                 text = user?.name.orEmpty().uppercase(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = user?.email.orEmpty(),
@@ -160,9 +161,8 @@ fun UserDataSection(user: UserModel?, modifier: Modifier = Modifier) {
 @Composable
 fun MenuGridItem(item: MenuItemModel) {
     Card(
-        modifier = Modifier
-            .padding(dimensionResource(R.dimen.small_material_margin)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier.padding(dimensionResource(R.dimen.small_material_margin)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(

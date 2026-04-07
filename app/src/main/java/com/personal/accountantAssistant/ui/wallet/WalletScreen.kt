@@ -11,20 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.ui.expenses.ListSummaryCard
+import com.personal.accountantAssistant.ui.common.ListSummaryCard
+import com.personal.accountantAssistant.ui.theme.extendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +57,11 @@ fun WalletScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.backgroundColor))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         ListSummaryCard(
             summary = summary,
-            itemCount = cards?.size.orZero(),
+            itemCount = filteredCards.size.orZero(),
             searchQuery = searchQuery,
             onSearch = { searchQuery = it },
             onToggleAll = { viewModel.setAllCardsActive(it) }
@@ -70,9 +69,11 @@ fun WalletScreen(
 
         when (flipper) {
             FlipperViews.LOADER -> Box(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
-            ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
+            ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
 
             else -> PullToRefreshBox(
                 isRefreshing = isLoading,
@@ -93,7 +94,7 @@ fun WalletScreen(
                             onActive = { onActive(card.copy(isActive = !card.isActive)) },
                             onDelete = { pendingDelete = card }
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.small_material_margin)))
                     }
                 }
             }
@@ -128,15 +129,23 @@ fun CardListItem(
     onDelete: () -> Unit
 ) {
     val isActive = model.isActive
-    val textColor = if (isActive) colorResource(R.color.fontColor) else colorResource(R.color.disableFontColor)
-    val chipColor = if (isActive) colorResource(R.color.chipColor) else colorResource(R.color.disableChipColor)
+
+    val textColor = if (isActive)
+        MaterialTheme.colorScheme.onSurface
+    else
+        MaterialTheme.extendedColors.onSurfaceDisabled
+
+    val chipIconTint = if (isActive)
+        MaterialTheme.extendedColors.inherit
+    else
+        MaterialTheme.extendedColors.onSurfaceDisabled
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onEdit),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation)),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
@@ -157,7 +166,7 @@ fun CardListItem(
                     color = textColor,
                     fontSize = 12.sp,
                     modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    textAlign = TextAlign.End
                 )
             }
             Row(
@@ -167,8 +176,8 @@ fun CardListItem(
                 Icon(
                     painter = painterResource(R.drawable.ic_chip),
                     contentDescription = null,
-                    tint = chipColor,
-                    modifier = Modifier.size(48.dp)
+                    tint = chipIconTint,
+                    modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
                 )
                 Text(
                     text = model.availableValue.toCurrencyMaskedStr(),
@@ -176,8 +185,8 @@ fun CardListItem(
                     fontSize = 20.sp,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 48.dp),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        .padding(end = dimensionResource(R.dimen.image_button_size)),
+                    textAlign = TextAlign.Center
                 )
             }
             Row(
@@ -189,15 +198,15 @@ fun CardListItem(
                     checked = isActive,
                     onCheckedChange = { onActive() },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = colorResource(R.color.primaryColor),
-                        checkedTrackColor = colorResource(R.color.primaryColor).copy(alpha = 0.5f)
+                        checkedThumbColor = MaterialTheme.extendedColors.switchCheckedThumbColor,
+                        checkedTrackColor = MaterialTheme.extendedColors.switchCheckedTrackColor
                     )
                 )
                 IconButton(onClick = onDelete) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete_red),
                         contentDescription = stringResource(R.string.delete),
-                        tint = Color.Unspecified
+                        tint = MaterialTheme.extendedColors.inherit
                     )
                 }
             }

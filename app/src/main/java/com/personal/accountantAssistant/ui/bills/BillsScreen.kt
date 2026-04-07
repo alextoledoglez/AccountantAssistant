@@ -8,7 +8,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.ExpenseModel
@@ -16,7 +16,7 @@ import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
-import com.personal.accountantAssistant.ui.expenses.ListSummaryCard
+import com.personal.accountantAssistant.ui.common.ListSummaryCard
 
 @Composable
 fun BillsScreen(
@@ -43,11 +43,11 @@ fun BillsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.backgroundColor))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         ListSummaryCard(
             summary = summary,
-            itemCount = bills?.size.orZero(),
+            itemCount = filteredBills.size.orZero(),
             searchQuery = searchQuery,
             onSearch = { searchQuery = it },
             onToggleAll = { viewModel.setAllBillsActive(it) }

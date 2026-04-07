@@ -26,8 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
@@ -99,8 +97,8 @@ fun MainScreen(
                 title = { Text(stringResource(currentTab.titleRes)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White,
-                    actionIconContentColor = Color.White
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 actions = {
                     if (hasDeleteAllAction) {
@@ -116,7 +114,7 @@ fun MainScreen(
         },
         bottomBar = {
             NavigationBar(
-                containerColor = colorResource(R.color.backgroundColor)
+                containerColor = MaterialTheme.colorScheme.background
             ) {
                 tabs.forEach { tab ->
                     NavigationBarItem(
@@ -129,9 +127,9 @@ fun MainScreen(
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = colorResource(R.color.primaryColor),
-                            unselectedIconColor = colorResource(R.color.silverColor),
-                            indicatorColor = colorResource(R.color.backgroundColor)
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.background
                         )
                     )
                 }
@@ -269,7 +267,7 @@ private fun MainFab(onClick: () -> Unit) {
         Icon(
             painter = painterResource(R.drawable.ic_add_white),
             contentDescription = stringResource(R.string.add_action),
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

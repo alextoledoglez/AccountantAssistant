@@ -10,18 +10,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.theme.extendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +38,7 @@ fun ExpensesListScreen(
         FlipperViews.LOADER -> Box(
             modifier = modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
-        ) { CircularProgressIndicator(color = colorResource(R.color.primaryColor)) }
+        ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
 
         else -> PullToRefreshBox(
             isRefreshing = isLoading,
@@ -62,65 +60,9 @@ fun ExpensesListScreen(
                         onActive = { onActive(expense.copy(isActive = !expense.isActive)) },
                         onDelete = { onDelete(expense) }
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.small_material_margin)))
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ListSummaryCard(
-    summary: SummaryModel,
-    itemCount: Int,
-    searchQuery: String,
-    onSearch: (String) -> Unit,
-    onToggleAll: (Boolean) -> Unit
-) {
-    val isAnyActive = summary.isAnyActive()
-    val isAllActive = summary.isActiveCountEqualTo(itemCount)
-    val accentColor = if (isAnyActive) colorResource(R.color.redColor) else colorResource(R.color.primaryColor)
-
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.half_material_margin)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-    ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(dimensionResource(R.dimen.card_view_content_padding))) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_money),
-                    contentDescription = null,
-                    tint = accentColor,
-                    modifier = Modifier.size(48.dp).weight(1f)
-                )
-                Text(
-                    text = summary.total.toCurrencyMaskedStr(),
-                    color = accentColor,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.weight(0.5f)
-                )
-                Switch(
-                    checked = isAllActive,
-                    onCheckedChange = onToggleAll,
-                    modifier = Modifier.weight(1f),
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = colorResource(R.color.primaryColor),
-                        checkedTrackColor = colorResource(R.color.primaryColor).copy(alpha = 0.5f)
-                    )
-                )
-            }
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = onSearch,
-                placeholder = { Text(stringResource(R.string.search_view_hint_message)) },
-                modifier = Modifier.fillMaxWidth().padding(top = dimensionResource(R.dimen.small_material_margin)),
-                singleLine = true
-            )
         }
     }
 }
@@ -133,14 +75,17 @@ fun ExpenseListItem(
     onActive: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val textColor = if (model.isActive) colorResource(R.color.fontColor) else colorResource(R.color.disableFontColor)
+    val textColor = if (model.isActive)
+        MaterialTheme.colorScheme.onSurface
+    else
+        MaterialTheme.extendedColors.onSurfaceDisabled
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onEdit),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
     ) {
         Row(
             modifier = Modifier
@@ -154,21 +99,27 @@ fun ExpenseListItem(
                     color = textColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    modifier = Modifier.height(30.dp).wrapContentHeight()
+                    modifier = Modifier
+                        .height(dimensionResource(R.dimen.text_field_height))
+                        .wrapContentHeight()
                 )
                 if (showDate) {
                     Text(
                         text = model.date.toDateStr(),
                         color = textColor,
                         fontSize = 12.sp,
-                        modifier = Modifier.height(30.dp).wrapContentHeight()
+                        modifier = Modifier
+                            .height(dimensionResource(R.dimen.text_field_height))
+                            .wrapContentHeight()
                     )
                 }
                 Text(
-                    text = formatExpenseValue(model, showDate),
+                    text = model.toFormatExpenseValue(showDate),
                     color = textColor,
                     fontSize = 12.sp,
-                    modifier = Modifier.height(30.dp).wrapContentHeight()
+                    modifier = Modifier
+                        .height(dimensionResource(R.dimen.text_field_height))
+                        .wrapContentHeight()
                 )
             }
             Row(
@@ -180,30 +131,18 @@ fun ExpenseListItem(
                     checked = model.isActive,
                     onCheckedChange = { onActive() },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = colorResource(R.color.primaryColor),
-                        checkedTrackColor = colorResource(R.color.primaryColor).copy(alpha = 0.5f)
+                        checkedThumbColor = MaterialTheme.extendedColors.switchCheckedThumbColor,
+                        checkedTrackColor = MaterialTheme.extendedColors.switchCheckedTrackColor
                     )
                 )
                 IconButton(onClick = onDelete) {
                     Icon(
                         painter = painterResource(R.drawable.ic_delete_red),
                         contentDescription = stringResource(R.string.delete),
-                        tint = Color.Unspecified
+                        tint = MaterialTheme.extendedColors.inherit
                     )
                 }
             }
         }
-    }
-}
-
-private fun formatExpenseValue(model: ExpenseModel, isBill: Boolean): String {
-    val unitaryPriceStr = model.unitaryValue.toCurrencyMaskedStr()
-    val totalPriceStr = model.calculateTotalValue().toCurrencyMaskedStr()
-    return if (isBill) {
-        val quantityStr = model.quantity.toString() + String.TIMES
-        "$quantityStr${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
-    } else {
-        val quantityStr = model.quantity.toString() + String.UNITY
-        "$quantityStr${String.MULTIPLY_OPERATOR}${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
     }
 }

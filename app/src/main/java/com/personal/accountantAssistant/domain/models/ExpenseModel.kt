@@ -40,4 +40,16 @@ data class ExpenseModel(
 
     fun calculateTotalValue(): BigDecimal = unitaryValue.multiply(quantity.toBigDecimal())
 
+    fun toFormatExpenseValue(showDate: Boolean): String {
+        val unitaryPriceStr = unitaryValue.toCurrencyMaskedStr()
+        val totalPriceStr = calculateTotalValue().toCurrencyMaskedStr()
+        return if (showDate) {
+            val quantityStr = quantity.toString() + String.TIMES
+            "$quantityStr${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
+        } else {
+            val quantityStr = quantity.toString() + String.UNITY
+            "$quantityStr${String.MULTIPLY_OPERATOR}${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
+        }
+    }
+
 }

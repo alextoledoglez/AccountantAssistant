@@ -7,7 +7,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.common.SignInButton
@@ -22,7 +22,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(R.color.primaryColor)),
+            .background(MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -39,7 +39,7 @@ fun LoginScreen(
 
             if (isProcessing) {
                 CircularProgressIndicator(
-                    color = colorResource(R.color.whiteColor),
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(48.dp)
                 )
             }

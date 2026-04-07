@@ -13,9 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +27,7 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.theme.extendedColors
 import java.util.*
 
 @Composable
@@ -67,13 +66,13 @@ fun ExpenseDetailsScreen(
         ) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = colorResource(R.color.primaryColor),
+                color = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.extraSmall
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Text(
                         text = stringResource(titleResId).uppercase(),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center
@@ -142,15 +141,15 @@ fun ExpenseDetailsScreen(
         ) {
             Text(
                 text = stringResource(R.string.active),
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(end = 8.dp)
             )
             Switch(
                 checked = isActive,
                 onCheckedChange = { isActive = it },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = colorResource(R.color.primaryColor),
-                    checkedTrackColor = colorResource(R.color.primaryColor).copy(alpha = 0.5f)
+                    checkedThumbColor = MaterialTheme.extendedColors.switchCheckedThumbColor,
+                    checkedTrackColor = MaterialTheme.extendedColors.switchCheckedTrackColor
                 )
             )
         }
@@ -168,8 +167,8 @@ fun ExpenseDetailsScreen(
                     .weight(1f)
                     .height(48.dp)
                     .padding(end = dimensionResource(R.dimen.half_material_margin)),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.redColor))
-            ) { Text(stringResource(R.string.cancel), color = Color.White) }
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) { Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onError) }
 
             Button(
                 onClick = {
@@ -185,8 +184,8 @@ fun ExpenseDetailsScreen(
                     .weight(1f)
                     .height(48.dp)
                     .padding(start = dimensionResource(R.dimen.half_material_margin)),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primaryColor))
-            ) { Text(stringResource(R.string.save), color = Color.White) }
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) { Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onPrimary) }
         }
     }
 }
