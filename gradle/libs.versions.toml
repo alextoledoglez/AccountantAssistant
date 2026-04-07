@@ -7,6 +7,10 @@ android-targetSdk = "36"
 versionCode = "9"
 versionName = "1.1.3"
 
+#Compose
+composeBomVersion = "2025.05.01"
+composeActivityVersion = "1.10.1"
+
 #Gradle
 agpVersion = "9.1.0"
 kspVersion = "2.1.10-1.0.29"
@@ -92,6 +96,16 @@ androidx-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = 
 androidx-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "coreTesting" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
+#Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBomVersion" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivityVersion" }
+
 #Kotlin
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlinVersion" }
 kotlin-stdlib-jdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlinVersion" }
@@ -145,6 +159,9 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 #Android
 android-library = { id = "com.android.library", version.ref = "agpVersion" }
 android-application = { id = "com.android.application", version.ref = "agpVersion" }
+
+#Compose
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
 
 #Google-services
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }

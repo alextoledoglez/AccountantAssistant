@@ -4,18 +4,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.viewbinding.ViewBinding
 import com.personal.accountantAssistant.providers.AnalyticsProvider
+import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import org.koin.android.ext.android.inject
 
 abstract class BaseFragment : Fragment() {
 
-    abstract val binding: ViewBinding
     abstract fun initComponents()
     abstract fun initObservers()
+
+    @Composable
+    abstract fun ScreenContent()
+
     private val analytics: AnalyticsProvider? by inject()
     private val toolbarTitle = MutableLiveData<String>()
 
@@ -23,9 +29,9 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return binding.root
+    ): View = ComposeView(requireContext()).apply {
+        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        setContent { AccountantTheme { this@BaseFragment.ScreenContent() } }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

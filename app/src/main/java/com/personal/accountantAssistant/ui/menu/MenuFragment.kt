@@ -2,31 +2,18 @@ package com.personal.accountantAssistant.ui.menu
 
 import android.view.Menu
 import android.view.MenuInflater
-import androidx.core.net.toUri
-import com.bumptech.glide.Glide
-import com.personal.accountantAssistant.R
+import androidx.compose.runtime.Composable
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
-import com.personal.accountantAssistant.databinding.FragmentMenuBinding
-import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.services.SignInService
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MenuFragment : BaseFragment() {
 
-    override val binding by viewBinding(FragmentMenuBinding::inflate)
     private val viewModel: MenuViewModel by viewModel()
     private val signInService: SignInService? by inject()
-    private val lytUser by lazy { binding.lytUser }
-    private val lytContent by lazy { binding.lytContent }
-    private val adapter by lazy { MenuListAdapter() }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lytContent.rvContent.destroyAdapter()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.hideMenuOptions()
@@ -34,42 +21,25 @@ class MenuFragment : BaseFragment() {
     }
 
     override fun initComponents() {
-        with(lytContent) {
-            srlContent.setOnRefreshListener { viewModel.loadUser() }
-            rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
-        }
-        binding.ibLogout.setOnClickListener { logOutConfirmation() }
+        setHasOptionsMenu(true)
     }
 
     override fun initObservers() {
-        with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) {
-                lytContent.srlContent.updateRefreshing(it.orFalse())
-            }
-            flipper.observe(viewLifecycleOwner) {
-                lytContent.vfContent.updateDisplayedChild(it.ordinal)
-            }
-            user.observe(viewLifecycleOwner) { setupUserLayout(it) }
-            isLoggedOut.observe(viewLifecycleOwner) { if (it.orFalse()) activity?.closeApp() }
-            loadUser()
-        }
+        viewModel.loadUser()
     }
 
-    private fun setupUserLayout(user: UserModel?) {
-        with(lytUser) {
-            Glide.with(requireContext()).load(user?.photoPath?.toUri())
-                .placeholder(R.drawable.ic_account)
-                .error(R.drawable.ic_account)
-                .into(ivPhoto)
-            tvUser.text = user?.name.orEmpty()
-            tvEmail.text = user?.email.orEmpty()
-        }
+    @Composable
+    override fun ScreenContent() {
+        MenuScreen(
+            viewModel = viewModel,
+            onLogout = ::logOutConfirmation
+        )
     }
 
     private fun logOutConfirmation() {
         AlertDialogBuilder(requireContext()).showConfirmationFrom(
-            R.string.logout_confirmation_title,
-            R.string.logout_confirmation_message,
+            com.personal.accountantAssistant.R.string.logout_confirmation_title,
+            com.personal.accountantAssistant.R.string.logout_confirmation_message,
             ::logOut
         ) {}
     }

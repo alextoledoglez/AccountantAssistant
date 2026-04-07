@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.FrameLayout
 import com.google.android.gms.ads.*
 import com.personal.accountantAssistant.BuildConfig
+import com.personal.accountantAssistant.extensions.asViewGroup
 
 class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
 
@@ -58,7 +59,9 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
     }
 
     fun loadAdOn(container: FrameLayout) {
-        if (!adView.isShown) {
+        val parentViewGroup = adView.parent?.asViewGroup()
+        if (parentViewGroup != container) {
+            parentViewGroup?.removeView(adView)
             with(container) {
                 removeAllViews()
                 addView(adView)

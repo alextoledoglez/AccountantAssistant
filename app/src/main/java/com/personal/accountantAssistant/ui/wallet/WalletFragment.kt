@@ -3,38 +3,36 @@ package com.personal.accountantAssistant.ui.wallet
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.appcompat.widget.SearchView
+import androidx.compose.runtime.Composable
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.bases.BaseFragment
-import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.bases.interfaces.MenuInterface
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.databinding.FragmentWalletBinding
 import com.personal.accountantAssistant.domain.models.CardModel
-import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WalletFragment : BaseFragment(), MenuInterface {
 
-    override val binding by viewBinding(FragmentWalletBinding::inflate)
     private val viewModel: WalletViewModel by viewModel()
-    private val lytSummary by lazy { binding.lytSummary }
-    private val lytContent by lazy { binding.lytContent }
-    private val srlContent by lazy { lytContent.srlContent }
-    private val vfContent by lazy { lytContent.vfContent }
-    private val rvContent by lazy { lytContent.rvContent }
 
-    private val adapterChanges by lazy {
-        ListAdapterChanges(::onEditCard, viewModel::switchActiveCard, ::onDeleteCard)
+    override fun initComponents() {
+        setHasOptionsMenu(true)
     }
 
-    private val adapter by lazy { CardsListAdapter(adapterChanges) }
+    override fun initObservers() {
+        viewModel.loadCards()
+    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        rvContent.destroyAdapter()
+    @Composable
+    override fun ScreenContent() {
+        WalletScreen(
+            viewModel = viewModel,
+            onEdit = ::onEditCard,
+            onActive = viewModel::switchActiveCard,
+            onDelete = ::onDeleteCard
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -50,84 +48,14 @@ class WalletFragment : BaseFragment(), MenuInterface {
         return super.onOptionsItemSelected(menuItem)
     }
 
-    override fun initComponents() {
-        setHasOptionsMenu(true)
-        initLayoutSummary()
-        srlContent.setOnRefreshListener { viewModel.loadCards() }
-        rvContent.setGridLayoutAdapter(adapter)
-    }
-
-    override fun initObservers() {
-        with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
-            flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
-            summary.observe(viewLifecycleOwner) {
-                updateLayoutSummary(it)
-                setAvailableMoney(it.total)
-                srlContent.stopRefreshing()
-            }
-            cards.observe(viewLifecycleOwner) {
-                adapter.submitList(it) {
-                    loadSummary()
-                    srlContent.stopRefreshing()
-                }
-            }
-            loadCards()
-        }
-    }
-
     override fun import() {
         context?.xlsImport(ExpensesType.BUY)
     }
 
-    override fun export() {
-        //context?.xlsExport(appDatabase, ExpensesType.BUY)
-    }
+    override fun export() {}
 
     override fun deleteAll() {
         viewModel.deleteAllCards()
-    }
-
-    private fun initLayoutSummary() {
-        with(lytSummary) {
-            tvTitle.text = getString(R.string.menu_wallet)
-            ivMoney.setImageResource(R.drawable.ic_money)
-            tvSubtitle.text = String.STR_DEFAULT_MONETARY_VALUE
-            tvSubtitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 24f)
-            scActive.setOnClickListener { viewModel.setAllCardsActive(scActive.isChecked) }
-            svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(queryStr: String): Boolean {
-                    listAdapterFilterBy(queryStr)
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    listAdapterFilterBy(newText)
-                    return false
-                }
-            })
-        }
-    }
-
-    private fun updateLayoutSummary(model: SummaryModel) {
-        val isAnyActive = model.isAnyActive()
-        val totalStr = model.total.toCurrencyMaskedStr()
-        val isAllActive = model.isActiveCountEqualTo(adapter.itemCount)
-        with(lytSummary) {
-            context?.getCompatColor(isAnyActive, R.color.redColor, R.color.primaryColor)?.let {
-                ivMoney.setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN)
-                tvSubtitle.setTextColor(it)
-            }
-            tvSubtitle.text = totalStr
-            scActive.isChecked = isAllActive
-        }
-    }
-
-    private fun listAdapterFilterBy(queryStr: String) {
-        if (queryStr.isNotBlank())
-            adapter.filter.filter(queryStr)
-        else
-            viewModel.loadCards()
     }
 
     private fun importExportMenuItemClickListener() =
@@ -161,5 +89,4 @@ class WalletFragment : BaseFragment(), MenuInterface {
     companion object {
         fun newInstance() = WalletFragment()
     }
-
 }

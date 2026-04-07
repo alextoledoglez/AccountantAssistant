@@ -20,3 +20,5 @@ fun View.setBottomPadding(bottomPadding: Int) {
 }
 
 fun View.asMarginLayoutParams() = layoutParams as? ViewGroup.MarginLayoutParams
+
+fun View.asViewGroup() = this as? ViewGroup

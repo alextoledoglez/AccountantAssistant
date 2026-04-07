@@ -1,77 +1,42 @@
 package com.personal.accountantAssistant.ui.bills
 
+import androidx.compose.runtime.Composable
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
-import com.personal.accountantAssistant.bases.adapters.ListAdapterChanges
 import com.personal.accountantAssistant.data.enums.ExpensesType
-import com.personal.accountantAssistant.databinding.FragmentBillsBinding
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BillsFragment : ExpensesFragment() {
 
-    override val binding by viewBinding(FragmentBillsBinding::inflate)
     private val viewModel: BillsViewModel by viewModel()
-    private val lytSummary by lazy { binding.lytSummary }
-    private val lytContent by lazy { binding.lytContent }
-    private val srlContent by lazy { lytContent.srlContent }
-    private val vfContent by lazy { lytContent.vfContent }
-    private val rvContent by lazy { lytContent.rvContent }
-
-    override val adapterChanges by lazy {
-        ListAdapterChanges(::onEditBill, viewModel::switchActiveBill, ::onDeleteBill)
-    }
-
-    override val adapter by lazy { BillsListAdapter(adapterChanges) }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        rvContent.destroyAdapter()
-    }
 
     override fun initComponents() {
         super.initComponents()
-        with(lytSummary) {
-            initLayoutSummary(binding = this, stringRes = R.string.menu_bills)
-            scActive.setOnClickListener { viewModel.setAllBillsActive(scActive.isChecked) }
-        }
-        srlContent.setOnRefreshListener { viewModel.loadBills() }
-        rvContent.setGridLayoutAdapter(adapter)
     }
 
     override fun initObservers() {
-        with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
-            flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
-            summary.observe(viewLifecycleOwner) {
-                updateLayoutSummary(lytSummary, it)
-                srlContent.stopRefreshing()
-            }
-            bills.observe(viewLifecycleOwner) {
-                adapter.submitList(it) { loadSummary() }
-                srlContent.stopRefreshing()
-            }
-            loadBills()
-        }
+        viewModel.loadBills()
+    }
+
+    @Composable
+    override fun ScreenContent() {
+        BillsScreen(
+            viewModel = viewModel,
+            onEdit = ::onEditBill,
+            onActive = viewModel::switchActiveBill,
+            onDelete = ::onDeleteBill
+        )
     }
 
     override fun import() {
         context?.xlsImport(ExpensesType.BILL)
     }
 
-    override fun export() {
-        //context?.xlsExport(appDatabase, ExpensesType.BILL)
-    }
-
-    override fun listAdapterFilterBy(queryStr: String) {
-        if (queryStr.isNotBlank())
-            adapter.filter.filter(queryStr)
-        else
-            viewModel.loadBills()
-    }
+    override fun export() {}
 
     override fun deleteAll() {
         viewModel.deleteAllBills()
@@ -94,5 +59,4 @@ class BillsFragment : ExpensesFragment() {
     companion object {
         fun newInstance() = BillsFragment()
     }
-
 }

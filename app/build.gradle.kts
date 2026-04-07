@@ -4,6 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.services)
@@ -77,6 +78,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -180,6 +182,16 @@ dependencies {
     implementation(libs.jxl)
     implementation(libs.javax.mail.api)
     implementation(libs.mpAndroidChart)
+
+    //----------Compose dependencies----------------------
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime.livedata)
+    implementation(libs.compose.foundation)
+    implementation(libs.activity.compose)
+    debugImplementation(libs.compose.ui.tooling)
 
     //-----Test dependencies---------------
     testImplementation(libs.junit.junit)

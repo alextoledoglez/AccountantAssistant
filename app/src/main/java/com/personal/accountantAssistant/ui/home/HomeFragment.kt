@@ -2,48 +2,25 @@ package com.personal.accountantAssistant.ui.home
 
 import android.view.Menu
 import android.view.MenuInflater
-import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Composable
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.BaseFragment
-import com.personal.accountantAssistant.databinding.FragmentHomeBinding
 import com.personal.accountantAssistant.domain.enums.TabPositions
-import com.personal.accountantAssistant.domain.models.ColorResourcesModel
-import com.personal.accountantAssistant.domain.models.DashboardItemModel
-import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
-import com.personal.accountantAssistant.domain.models.TitleResourcesModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AdProvider
 import com.personal.accountantAssistant.ui.MainActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.math.BigDecimal
-
 
 class HomeFragment : BaseFragment() {
 
-    override val binding by viewBinding(FragmentHomeBinding::inflate)
-
     private val viewModel: HomeViewModel by viewModel()
-    private val lytHeader by lazy { binding.lytHeader }
-    private val ibDateRangePicker by lazy { lytHeader.ibDateRangePicker }
-    private val tvPeriodValue by lazy { lytHeader.tvPeriodValue }
-    private val lytContent by lazy { binding.lytContent }
-    private val tvVersion by lazy { binding.tvVersion }
-    private val srlContent by lazy { lytContent.srlContent }
-    private val vfContent by lazy { lytContent.vfContent }
-    private val rvContent by lazy { lytContent.rvContent }
-
-    private var titleRes: TitleResourcesModel = TitleResourcesModel()
-    private var colorRes: ColorResourcesModel = ColorResourcesModel()
-    private val adapter by lazy { HomeListAdapter(::onItemClickListener) }
     private val adProvider: AdProvider? by inject()
 
     override fun onDestroy() {
         super.onDestroy()
         adProvider?.destroyAd()
-        rvContent.destroyAdapter()
     }
 
     override fun onPause() {
@@ -62,32 +39,22 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun initComponents() {
-        ibDateRangePicker.setOnClickListener { showRangePicker() }
-        srlContent.setOnRefreshListener { loadData() }
-        rvContent.setGridLayoutAdapter(adapter, spanCount = 2)
-        adProvider?.loadAdOn(binding.flAds)
-        tvVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
+        setHasOptionsMenu(true)
     }
 
     override fun initObservers() {
-        with(viewModel) {
-            isLoading.observe(viewLifecycleOwner) { srlContent.updateRefreshing(it.orFalse()) }
-            flipper.observe(viewLifecycleOwner) { vfContent.updateDisplayedChild(it.ordinal) }
-            periodDates.observe(viewLifecycleOwner) {
-                tvPeriodValue.text = it.toPeriodDateStr()
-                loadExpenses(it, availableMoney.value)
-            }
-            availableMoney.observe(viewLifecycleOwner) {
-                periodDates.value?.let { period -> loadExpenses(period, it) }
-            }
-            expensesValues.observe(viewLifecycleOwner, ::settingDashboardItems)
-            dashboardValues.observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-                srlContent.stopRefreshing()
-                rvContent.scrollToTop()
-            }
-        }
-        loadData()
+        viewModel.loadPeriodDates()
+        viewModel.loadAvailableMoney()
+    }
+
+    @Composable
+    override fun ScreenContent() {
+        HomeScreen(
+            viewModel = viewModel,
+            adProvider = adProvider,
+            onShowDatePicker = ::showRangePicker,
+            onItemClick = ::onItemClickListener
+        )
     }
 
     private fun showRangePicker() {
@@ -98,74 +65,15 @@ class HomeFragment : BaseFragment() {
             .apply {
                 addOnPositiveButtonClickListener { period ->
                     viewModel.savePeriodDates(period)
-                    loadData()
+                    viewModel.loadPeriodDates()
+                    viewModel.loadAvailableMoney()
                 }
             }
             .show(requireActivity().supportFragmentManager, String.EMPTY)
     }
 
-    private fun settingDashboardItems(values: ExpensesValuesModel?) {
-
-        //Values
-        val buys = values?.buys.orZero()
-        val bills = values?.bills.orZero()
-        val total = values?.total.orZero().rounded()
-        val available = values?.available.orZero()
-        val balance = values?.balance.orZero()
-        val availableColor = getColorResourceBy(values?.isTotalLessThanAvailable)
-
-        //Available money
-        binding.lytHeader.apply {
-            ivAvailable.setColorFilter(availableColor, android.graphics.PorterDuff.Mode.SRC_IN)
-            tvAvailable.apply {
-                text = getString(R.string.available_value, available.abs().toCurrencyMaskedStr())
-                setTextColor(availableColor)
-            }
-        }
-
-        //Expenses texts
-        val buysText = getString(titleRes.buys)
-        val billsText = getString(titleRes.bills)
-        val totalText = getString(titleRes.total)
-
-        //Expenses colors
-        val buysColor = getExpensesColorResourceBy(buys)
-        val billsColor = getExpensesColorResourceBy(bills)
-        val totalColor = getExpensesColorResourceBy(total)
-
-        //Balance
-        val isBalanceMoreThanOrEqualToZero = balance.isMoreThanOrEqualToZero()
-        val balanceTextRes = if (isBalanceMoreThanOrEqualToZero) titleRes.gain else titleRes.missing
-        val balanceText = getString(balanceTextRes)
-        val balanceColor = getColorResourceBy(isBalanceMoreThanOrEqualToZero)
-
-        viewModel.postDashboardValues(
-            listOf(
-                DashboardItemModel(R.drawable.ic_buys, buysText, buysColor, buys),
-                DashboardItemModel(R.drawable.ic_bills, billsText, billsColor, bills),
-                DashboardItemModel(R.drawable.ic_money, balanceText, balanceColor, balance),
-                DashboardItemModel(R.drawable.ic_total, totalText, totalColor, total)
-            )
-        )
-    }
-
-    private fun getColorResourceBy(condition: Boolean?) = requireContext().getCompatColor(
-        condition, colorRes.success, colorRes.error
-    )
-
-    private fun getExpensesColorResourceBy(expenses: BigDecimal) = requireContext().getCompatColor(
-        expenses.isMoreThan(viewModel.availableMoney.value), colorRes.error, colorRes.success
-    )
-
-    private fun loadData() {
-        viewModel.apply {
-            loadPeriodDates()
-            loadAvailableMoney()
-        }
-    }
-
-    private fun onItemClickListener(@DrawableRes drawableRes: Int) {
-        val mainActivity = activity as? MainActivity?
+    private fun onItemClickListener(drawableRes: Int) {
+        val mainActivity = activity as? MainActivity
         when (drawableRes) {
             R.drawable.ic_buys -> mainActivity?.navigateToTab(TabPositions.BUYS)
             R.drawable.ic_bills -> mainActivity?.navigateToTab(TabPositions.BILLS)
