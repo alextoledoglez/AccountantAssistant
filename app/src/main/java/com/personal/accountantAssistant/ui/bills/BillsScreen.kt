@@ -1,7 +1,12 @@
 package com.personal.accountantAssistant.ui.bills
 
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.res.stringResource
+import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
@@ -20,6 +25,7 @@ fun BillsScreen(
     val summary by viewModel.summary.observeAsState(SummaryModel())
 
     var searchQuery by remember { mutableStateOf("") }
+    var pendingDelete by remember { mutableStateOf<ExpenseModel?>(null) }
 
     val filteredBills = remember(bills, searchQuery) {
         if (searchQuery.isBlank())
@@ -29,7 +35,6 @@ fun BillsScreen(
     }
 
     ExpensesListScreen(
-        titleRes = com.personal.accountantAssistant.R.string.menu_bills,
         isLoading = isLoading,
         flipper = flipper,
         items = filteredBills,
@@ -40,7 +45,26 @@ fun BillsScreen(
         onRefresh = { viewModel.loadBills() },
         onEdit = onEdit,
         onActive = onActive,
-        onDelete = onDelete,
+        onDelete = { pendingDelete = it },
         showDate = true
     )
+
+    pendingDelete?.let { model ->
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text(stringResource(R.string.delete_record_title)) },
+            text = { Text(stringResource(R.string.delete_record_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete(model)
+                    pendingDelete = null
+                }) { Text(stringResource(R.string.ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 }

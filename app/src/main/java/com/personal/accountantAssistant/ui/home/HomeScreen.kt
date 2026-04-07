@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +49,20 @@ fun HomeScreen(
     val periodDates by viewModel.periodDates.observeAsState()
     val availableMoney by viewModel.availableMoney.observeAsState()
     val expensesValues by viewModel.expensesValues.observeAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> adProvider?.resumeAd()
+                Lifecycle.Event.ON_PAUSE -> adProvider?.pauseAd()
+                Lifecycle.Event.ON_DESTROY -> adProvider?.destroyAd()
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LaunchedEffect(periodDates, availableMoney) {
         periodDates?.let { period -> viewModel.loadExpenses(period, availableMoney) }

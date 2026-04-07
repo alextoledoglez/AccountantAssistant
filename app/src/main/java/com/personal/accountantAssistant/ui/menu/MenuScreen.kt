@@ -34,15 +34,17 @@ import com.personal.accountantAssistant.extensions.orFalse
 @Composable
 fun MenuScreen(
     viewModel: MenuViewModel,
-    onLogout: () -> Unit
+    onLogoutClick: () -> Unit,
+    onLoggedOut: () -> Unit
 ) {
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val user by viewModel.user.observeAsState()
     val isLoggedOut by viewModel.isLoggedOut.observeAsState(false)
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(isLoggedOut) {
-        if (isLoggedOut.orFalse()) onLogout()
+        if (isLoggedOut.orFalse()) onLoggedOut()
     }
 
     Column(
@@ -70,8 +72,27 @@ fun MenuScreen(
             }
         }
 
+        if (showLogoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                title = { Text(stringResource(R.string.logout_confirmation_title)) },
+                text = { Text(stringResource(R.string.logout_confirmation_message)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showLogoutDialog = false
+                        onLogoutClick()
+                    }) { Text(stringResource(R.string.ok)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showLogoutDialog = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
+        }
+
         Button(
-            onClick = onLogout,
+            onClick = { showLogoutDialog = true },
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .align(Alignment.CenterHorizontally)

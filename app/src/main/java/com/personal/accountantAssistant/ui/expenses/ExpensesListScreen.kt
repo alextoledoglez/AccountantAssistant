@@ -1,13 +1,10 @@
 package com.personal.accountantAssistant.ui.expenses
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -30,7 +27,6 @@ import com.personal.accountantAssistant.extensions.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpensesListScreen(
-    @StringRes titleRes: Int,
     isLoading: Boolean,
     flipper: FlipperViews?,
     items: List<ExpenseModel>,
@@ -50,7 +46,6 @@ fun ExpensesListScreen(
             .background(colorResource(R.color.backgroundColor))
     ) {
         ListSummaryCard(
-            title = stringResource(titleRes),
             summary = summary,
             itemCount = items.size,
             searchQuery = searchQuery,
@@ -94,7 +89,6 @@ fun ExpensesListScreen(
 
 @Composable
 fun ListSummaryCard(
-    title: String,
     summary: SummaryModel,
     itemCount: Int,
     searchQuery: String,
@@ -117,13 +111,6 @@ fun ListSummaryCard(
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.card_view_content_padding))
         ) {
-            Text(
-                text = title.uppercase(),
-                modifier = Modifier.fillMaxWidth(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.Black
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically

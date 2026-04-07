@@ -13,12 +13,10 @@
     <application
         android:name=".AccountantAssistant"
         android:allowBackup="true"
-        android:configChanges="orientation|keyboardHidden"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -51,10 +49,7 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:configChanges="orientation"
-            android:hardwareAccelerated="true"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:hardwareAccelerated="true" />
 
         <activity
             android:name="com.personal.accountantAssistant.bases.barcode.BarcodeScanActivity"

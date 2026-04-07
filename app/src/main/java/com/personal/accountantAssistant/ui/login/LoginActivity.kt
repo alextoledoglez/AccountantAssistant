@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.ui.login
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AppCompatActivity
@@ -26,11 +27,18 @@ class LoginActivity : AppCompatActivity() {
     private var isProcessing by mutableStateOf(false)
     private var isSignInVisible by mutableStateOf(false)
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            closeApp()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this@LoginActivity
         NotificationWorker.setupPeriodicWork(context)
         supportActionBar?.hide()
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         analytics?.trackScreenViewEvent(this::class.simpleName)
 
         setContent {
@@ -57,10 +65,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         setLoginProcessing(false)
-    }
-
-    override fun onBackPressed() {
-        closeApp()
     }
 
     private fun setLoginProcessing(processing: Boolean = true) {

@@ -40,6 +40,7 @@ fun WalletScreen(
     val summary by viewModel.summary.observeAsState(SummaryModel())
 
     var searchQuery by remember { mutableStateOf("") }
+    var pendingDelete by remember { mutableStateOf<CardModel?>(null) }
 
     val filteredCards = remember(cards, searchQuery) {
         if (searchQuery.isBlank())
@@ -60,7 +61,6 @@ fun WalletScreen(
             .background(colorResource(R.color.backgroundColor))
     ) {
         ListSummaryCard(
-            title = stringResource(R.string.menu_wallet),
             summary = summary,
             itemCount = filteredCards.size,
             searchQuery = searchQuery,
@@ -91,13 +91,32 @@ fun WalletScreen(
                             model = card,
                             onEdit = { onEdit(card) },
                             onActive = { onActive(card.copy(isActive = !card.isActive)) },
-                            onDelete = { onDelete(card) }
+                            onDelete = { pendingDelete = card }
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
             }
         }
+    }
+
+    pendingDelete?.let { model ->
+        AlertDialog(
+            onDismissRequest = { pendingDelete = null },
+            title = { Text(stringResource(R.string.delete_record_title)) },
+            text = { Text(stringResource(R.string.delete_record_message)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDelete(model)
+                    pendingDelete = null
+                }) { Text(stringResource(R.string.ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 
