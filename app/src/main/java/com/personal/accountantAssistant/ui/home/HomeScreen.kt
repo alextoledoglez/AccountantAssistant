@@ -16,12 +16,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.personal.accountantAssistant.BuildConfig
@@ -29,6 +27,7 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.providers.AdProvider
 import java.math.BigDecimal
 import java.util.*
@@ -132,8 +131,8 @@ fun HomeScreen(
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(
-                            horizontal = dimensionResource(R.dimen.default_material_margin),
-                            vertical = dimensionResource(R.dimen.default_material_margin)
+                            horizontal = Dimens.spacingMd,
+                            vertical = Dimens.spacingMd
                         ),
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -153,7 +152,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.3f)
-                            .padding(horizontal = dimensionResource(R.dimen.default_material_margin))
+                            .padding(horizontal = Dimens.spacingMd)
                     )
                 }
 
@@ -162,11 +161,11 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            horizontal = dimensionResource(R.dimen.default_material_margin),
-                            vertical = dimensionResource(R.dimen.small_material_margin)
+                            horizontal = Dimens.spacingMd,
+                            vertical = Dimens.spacingXs
                         ),
                     textAlign = TextAlign.Center,
-                    fontSize = 14.sp
+                    fontSize = Dimens.textMd
                 )
             }
         }
@@ -184,42 +183,42 @@ fun HomeHeader(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.default_material_margin)),
+            .padding(Dimens.spacingMd),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.half_material_margin)),
+                .padding(Dimens.spacingSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_wallet),
                 contentDescription = null,
                 tint = walletIconColor,
-                modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
+                modifier = Modifier.size(Dimens.iconSize)
             )
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = dimensionResource(R.dimen.half_material_margin))
+                    .padding(horizontal = Dimens.spacingSm)
             ) {
                 Text(
                     text = stringResource(R.string.period_to_expense).uppercase(),
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
+                    fontSize = Dimens.textMd,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = periodDates?.toPeriodDateStr().orEmpty(),
-                    fontSize = 14.sp,
+                    fontSize = Dimens.textMd,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = availableText.uppercase(),
                     color = availableColor,
-                    fontSize = 14.sp,
+                    fontSize = Dimens.textMd,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -228,7 +227,7 @@ fun HomeHeader(
                     painter = painterResource(R.drawable.ic_today),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
+                    modifier = Modifier.size(Dimens.iconSize)
                 )
             }
         }
@@ -239,15 +238,15 @@ fun HomeHeader(
 fun HomeGridItem(item: DashboardItemModel, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .padding(dimensionResource(R.dimen.small_material_margin))
+            .padding(Dimens.spacingXs)
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.card_view_content_padding)),
+                .padding(Dimens.cardContentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
@@ -256,28 +255,28 @@ fun HomeGridItem(item: DashboardItemModel, onClick: () -> Unit) {
                 tint = Color(item.color),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.image_button_size))
-                    .padding(top = dimensionResource(R.dimen.small_material_margin))
+                    .height(Dimens.iconSize)
+                    .padding(top = Dimens.spacingXs)
             )
             Text(
                 text = item.text,
                 color = Color(item.color),
-                fontSize = 12.sp,
+                fontSize = Dimens.textSm,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimensionResource(R.dimen.small_material_margin))
+                    .padding(vertical = Dimens.spacingXs)
             )
             Text(
                 text = item.value.abs().toCurrencyMaskedStr(),
                 color = Color(item.color),
-                fontSize = 14.sp,
+                fontSize = Dimens.textMd,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = dimensionResource(R.dimen.small_material_margin))
+                    .padding(bottom = Dimens.spacingXs)
             )
         }
     }

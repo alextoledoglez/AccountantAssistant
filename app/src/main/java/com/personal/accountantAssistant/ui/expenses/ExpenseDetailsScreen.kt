@@ -13,12 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
@@ -26,6 +23,7 @@ import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.common.CurrencyTextField
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
 import java.util.*
 
@@ -56,12 +54,12 @@ fun ExpenseDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(dimensionResource(R.dimen.default_material_margin))
+            .padding(Dimens.spacingMd)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(Dimens.buttonHeight),
             contentAlignment = Alignment.Center
         ) {
             Surface(
@@ -74,14 +72,14 @@ fun ExpenseDetailsScreen(
                         text = stringResource(titleResId).uppercase(),
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = Dimens.textLg,
                         textAlign = TextAlign.Center
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         OutlinedTextField(
             value = name,
@@ -98,7 +96,7 @@ fun ExpenseDetailsScreen(
             } else null
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         ClickableReadOnlyField(
             value = AlertDialogBuilder.toCurrentOrMinValue(quantity).toString(),
@@ -113,7 +111,7 @@ fun ExpenseDetailsScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         CurrencyTextField(
             rawDigits = valueRawDigits,
@@ -123,7 +121,7 @@ fun ExpenseDetailsScreen(
         )
 
         if (isBillType) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
             ClickableReadOnlyField(
                 value = dateStr,
@@ -137,7 +135,7 @@ fun ExpenseDetailsScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -148,7 +146,7 @@ fun ExpenseDetailsScreen(
                 text = stringResource(R.string.active),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Normal,
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = Dimens.spacingSm)
             )
             Switch(
                 checked = isActive,
@@ -165,14 +163,14 @@ fun ExpenseDetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.half_material_margin))
+                .padding(top = Dimens.spacingSm)
         ) {
             Button(
                 onClick = onCancel,
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp)
-                    .padding(end = dimensionResource(R.dimen.half_material_margin)),
+                    .height(Dimens.buttonHeight)
+                    .padding(end = Dimens.spacingSm),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) { Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onError) }
 
@@ -192,8 +190,8 @@ fun ExpenseDetailsScreen(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp)
-                    .padding(start = dimensionResource(R.dimen.half_material_margin)),
+                    .height(Dimens.buttonHeight)
+                    .padding(start = Dimens.spacingSm),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) { Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onPrimary) }
         }

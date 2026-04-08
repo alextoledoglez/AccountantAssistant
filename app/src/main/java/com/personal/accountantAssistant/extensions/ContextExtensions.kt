@@ -12,8 +12,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.vision.barcode.Barcode
-import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.AppDatabase
 import com.personal.accountantAssistant.data.enums.ExpensesType
@@ -259,17 +257,3 @@ fun Context.exportDBFrom(): File? {
     return null
 }
 
-fun Context.scan(): String {
-    val result = String.EMPTY
-    val detector = BarcodeDetector.Builder(this)
-        .setBarcodeFormats(Barcode.DATA_MATRIX or Barcode.CODABAR or Barcode.QR_CODE)
-        .build()
-    if (!detector.isOperational) {
-        this.showToastShortText(R.string.fail_bar_code_detector)
-    } else {
-        /*           final SparseArray<Barcode> barCodes = detector.detect(new Frame());
-        final Barcode thisCode = barCodes.valueAt(0);
-        result = thisCode.rawValue;*/
-    }
-    return result
-}

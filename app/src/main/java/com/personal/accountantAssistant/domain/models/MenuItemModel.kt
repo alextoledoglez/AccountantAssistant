@@ -7,7 +7,7 @@ import com.personal.accountantAssistant.R
 
 data class MenuItemModel(
     val id: Int,
-    @DrawableRes val icon: Int,
-    @StringRes val text: Int,
-    @ColorRes var color: Int = R.color.blackColor,
+    @field:DrawableRes val icon: Int,
+    @field:StringRes val text: Int,
+    @field:ColorRes var color: Int = R.color.blackColor,
 )

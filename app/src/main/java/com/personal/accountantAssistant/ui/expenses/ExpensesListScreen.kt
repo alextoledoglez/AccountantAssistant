@@ -9,16 +9,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,8 +45,8 @@ fun ExpensesListScreen(
         ) {
             LazyColumn(
                 contentPadding = PaddingValues(
-                    horizontal = dimensionResource(R.dimen.default_material_margin),
-                    vertical = dimensionResource(R.dimen.small_material_margin)
+                    horizontal = Dimens.spacingMd,
+                    vertical = Dimens.spacingXs
                 ),
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -60,7 +58,7 @@ fun ExpensesListScreen(
                         onActive = { onActive(expense.copy(isActive = !expense.isActive)) },
                         onDelete = { onDelete(expense) }
                     )
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.small_material_margin)))
+                    Spacer(modifier = Modifier.height(Dimens.spacingXs))
                 }
             }
         }
@@ -85,12 +83,12 @@ fun ExpenseListItem(
             .fillMaxWidth()
             .clickable(onClick = onEdit),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.half_material_margin)),
+                .padding(Dimens.spacingSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(0.7f)) {
@@ -98,27 +96,27 @@ fun ExpenseListItem(
                     text = model.name.orEmpty(),
                     color = textColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
+                    fontSize = Dimens.textSm,
                     modifier = Modifier
-                        .height(dimensionResource(R.dimen.text_field_height))
+                        .height(Dimens.textRowHeight)
                         .wrapContentHeight()
                 )
                 if (showDate) {
                     Text(
                         text = model.date.toDateStr(),
                         color = textColor,
-                        fontSize = 12.sp,
+                        fontSize = Dimens.textSm,
                         modifier = Modifier
-                            .height(dimensionResource(R.dimen.text_field_height))
+                            .height(Dimens.textRowHeight)
                             .wrapContentHeight()
                     )
                 }
                 Text(
                     text = model.toFormatExpenseValue(showDate),
                     color = textColor,
-                    fontSize = 12.sp,
+                    fontSize = Dimens.textSm,
                     modifier = Modifier
-                        .height(dimensionResource(R.dimen.text_field_height))
+                        .height(Dimens.textRowHeight)
                         .wrapContentHeight()
                 )
             }

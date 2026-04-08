@@ -9,16 +9,15 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,8 +45,8 @@ fun WalletListScreen(
         ) {
             LazyColumn(
                 contentPadding = PaddingValues(
-                    horizontal = dimensionResource(R.dimen.default_material_margin),
-                    vertical = dimensionResource(R.dimen.small_material_margin)
+                    horizontal = Dimens.spacingMd,
+                    vertical = Dimens.spacingXs
                 ),
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -58,7 +57,7 @@ fun WalletListScreen(
                         onActive = { onActive(card.copy(isActive = !card.isActive)) },
                         onDelete = { onDelete(card) }
                     )
-                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.small_material_margin)))
+                    Spacer(modifier = Modifier.height(Dimens.spacingXs))
                 }
             }
         }
@@ -89,26 +88,26 @@ fun CardListItem(
             .fillMaxWidth()
             .clickable(onClick = onEdit),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation)),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.default_material_margin))
+                .padding(Dimens.spacingMd)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = model.company,
                     color = textColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = Dimens.textMd,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = model.name,
                     color = textColor,
-                    fontSize = 12.sp,
+                    fontSize = Dimens.textSm,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.End
                 )
@@ -121,15 +120,15 @@ fun CardListItem(
                     painter = painterResource(R.drawable.ic_chip),
                     contentDescription = null,
                     tint = chipIconTint,
-                    modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
+                    modifier = Modifier.size(Dimens.iconSize)
                 )
                 Text(
                     text = model.availableValue.toCurrencyMaskedStr(),
                     color = textColor,
-                    fontSize = 20.sp,
+                    fontSize = Dimens.textXl,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = dimensionResource(R.dimen.image_button_size)),
+                        .padding(end = Dimens.iconSize),
                     textAlign = TextAlign.Center
                 )
             }

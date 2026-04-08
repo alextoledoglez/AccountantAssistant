@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.common.SignInButton
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.ui.theme.Dimens
 
 @Composable
 fun LoginScreen(
@@ -32,19 +32,19 @@ fun LoginScreen(
                         setImageResource(R.mipmap.ic_launcher_round)
                     }
                 },
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(Dimens.logoSize)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.spacingXl))
 
             if (isProcessing) {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(Dimens.iconSize)
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.spacingXl))
 
             if (isSignInVisible) {
                 AndroidView(

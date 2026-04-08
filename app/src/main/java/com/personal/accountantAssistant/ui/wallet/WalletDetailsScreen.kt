@@ -11,19 +11,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.common.CurrencyTextField
 import com.personal.accountantAssistant.ui.expenses.ClickableReadOnlyField
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
 import java.util.*
 
@@ -48,12 +46,12 @@ fun WalletDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(dimensionResource(R.dimen.default_material_margin))
+            .padding(Dimens.spacingMd)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(Dimens.buttonHeight),
             contentAlignment = Alignment.Center
         ) {
             Surface(
@@ -66,14 +64,14 @@ fun WalletDetailsScreen(
                         text = stringResource(R.string.wallet_details).uppercase(),
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = Dimens.textLg,
                         textAlign = TextAlign.Center
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         OutlinedTextField(
             value = company,
@@ -90,7 +88,7 @@ fun WalletDetailsScreen(
             } else null
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         OutlinedTextField(
             value = name,
@@ -100,7 +98,7 @@ fun WalletDetailsScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         CurrencyTextField(
             rawDigits = availableRawDigits,
@@ -109,7 +107,7 @@ fun WalletDetailsScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         CurrencyTextField(
             rawDigits = limitRawDigits,
@@ -118,7 +116,7 @@ fun WalletDetailsScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -133,7 +131,7 @@ fun WalletDetailsScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(Dimens.spacingSm))
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
@@ -152,7 +150,7 @@ fun WalletDetailsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingSm))
 
         ClickableReadOnlyField(
             value = dateStr,
@@ -170,14 +168,14 @@ fun WalletDetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.half_material_margin))
+                .padding(top = Dimens.spacingSm)
         ) {
             Button(
                 onClick = onCancel,
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp)
-                    .padding(end = dimensionResource(R.dimen.half_material_margin)),
+                    .height(Dimens.buttonHeight)
+                    .padding(end = Dimens.spacingSm),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) { Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onError) }
 
@@ -199,8 +197,8 @@ fun WalletDetailsScreen(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(48.dp)
-                    .padding(start = dimensionResource(R.dimen.half_material_margin)),
+                    .height(Dimens.buttonHeight)
+                    .padding(start = Dimens.spacingSm),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) { Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onPrimary) }
         }

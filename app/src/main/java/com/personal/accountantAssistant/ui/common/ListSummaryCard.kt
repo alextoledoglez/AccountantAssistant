@@ -5,14 +5,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
+import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
 
 @Composable
@@ -31,14 +30,14 @@ fun ListSummaryCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.half_material_margin)),
+            .padding(Dimens.spacingSm),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(R.dimen.card_view_elevation))
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.half_material_margin))
+                .padding(Dimens.spacingSm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -48,13 +47,13 @@ fun ListSummaryCard(
                     painter = painterResource(R.drawable.ic_money),
                     contentDescription = null,
                     tint = accentColor,
-                    modifier = Modifier.size(dimensionResource(R.dimen.image_button_size))
+                    modifier = Modifier.size(Dimens.iconSize)
                 )
                 Text(
                     text = summary.total.toCurrencyMaskedStr(),
                     color = accentColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
+                    fontSize = Dimens.textXxl,
                     modifier = Modifier.weight(1f)
                 )
                 Switch(
@@ -72,7 +71,7 @@ fun ListSummaryCard(
                 placeholder = { Text(stringResource(R.string.search_view_hint_message)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = dimensionResource(R.dimen.small_material_margin)),
+                    .padding(top = Dimens.spacingXs),
                 singleLine = true
             )
         }
