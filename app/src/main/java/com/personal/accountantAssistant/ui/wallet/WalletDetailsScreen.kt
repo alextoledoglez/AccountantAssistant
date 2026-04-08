@@ -22,6 +22,7 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.common.CurrencyTextField
 import com.personal.accountantAssistant.ui.expenses.ClickableReadOnlyField
 import com.personal.accountantAssistant.ui.theme.extendedColors
 import java.util.*
@@ -35,6 +36,7 @@ fun WalletDetailsScreen(
     val context = LocalContext.current
 
     var company by remember { mutableStateOf(cardModel?.company.orEmpty()) }
+    var companyError by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf(cardModel?.name.orEmpty()) }
     var availableRawDigits by remember { mutableStateOf(cardModel?.availableValue.toRawCurrencyDigits()) }
     var limitRawDigits by remember { mutableStateOf(cardModel?.limitValue.toRawCurrencyDigits()) }
@@ -75,10 +77,17 @@ fun WalletDetailsScreen(
 
         OutlinedTextField(
             value = company,
-            onValueChange = { company = it.uppercase() },
+            onValueChange = {
+                company = it.uppercase()
+                if (companyError && it.isNotBlank()) companyError = false
+            },
             label = { Text(stringResource(R.string.card_company)) },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = companyError,
+            supportingText = if (companyError) {
+                { Text(stringResource(R.string.field_required)) }
+            } else null
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -93,24 +102,20 @@ fun WalletDetailsScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = availableRawDigits.toCurrencyMaskedStr().trim(),
-            onValueChange = { availableRawDigits = it.filter { c -> c.isDigit() } },
-            label = { Text(stringResource(R.string.available_card_value)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        CurrencyTextField(
+            rawDigits = availableRawDigits,
+            onValueChange = { availableRawDigits = it },
+            label = stringResource(R.string.available_card_value),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = limitRawDigits.toCurrencyMaskedStr().trim(),
-            onValueChange = { limitRawDigits = it.filter { c -> c.isDigit() } },
-            label = { Text(stringResource(R.string.limit_card_value)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        CurrencyTextField(
+            rawDigits = limitRawDigits,
+            onValueChange = { limitRawDigits = it },
+            label = stringResource(R.string.limit_card_value),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -174,6 +179,10 @@ fun WalletDetailsScreen(
 
             Button(
                 onClick = {
+                    if (company.isBlank()) {
+                        companyError = true
+                        return@Button
+                    }
                     cardModel?.update(
                         SpannableStringBuilder(company.uppercase()),
                         SpannableStringBuilder(name.uppercase()),

@@ -47,6 +47,7 @@
     <string name="add_action">Add</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="field_required">This field is required</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="food_product">Food Product</string>

@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +25,7 @@ import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.ui.common.CurrencyTextField
 import com.personal.accountantAssistant.ui.theme.extendedColors
 import java.util.*
 
@@ -39,6 +38,7 @@ fun ExpenseDetailsScreen(
     val context = LocalContext.current
 
     var name by remember { mutableStateOf(expenseModel?.name.orEmpty()) }
+    var nameError by remember { mutableStateOf(false) }
     var quantity by remember { mutableIntStateOf(AlertDialogBuilder.toCurrentOrMinValue(expenseModel?.quantity.orZero())) }
     var dateStr by remember { mutableStateOf(expenseModel?.date.toDateStr()) }
     var valueRawDigits by remember { mutableStateOf(expenseModel?.unitaryValue.toRawCurrencyDigits()) }
@@ -85,10 +85,17 @@ fun ExpenseDetailsScreen(
 
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it.uppercase() },
+            onValueChange = {
+                name = it.uppercase()
+                if (nameError && it.isNotBlank()) nameError = false
+            },
             label = { Text(stringResource(R.string.name)) },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = nameError,
+            supportingText = if (nameError) {
+                { Text(stringResource(R.string.field_required)) }
+            } else null
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -108,13 +115,11 @@ fun ExpenseDetailsScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = valueRawDigits.toCurrencyMaskedStr().trim(),
-            onValueChange = { valueRawDigits = it.filter { c -> c.isDigit() } },
-            label = { Text(stringResource(R.string.value)) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        CurrencyTextField(
+            rawDigits = valueRawDigits,
+            onValueChange = { valueRawDigits = it },
+            label = stringResource(R.string.value),
+            modifier = Modifier.fillMaxWidth()
         )
 
         if (isBillType) {
@@ -172,6 +177,10 @@ fun ExpenseDetailsScreen(
 
             Button(
                 onClick = {
+                    if (name.isBlank()) {
+                        nameError = true
+                        return@Button
+                    }
                     expenseModel?.update(
                         SpannableStringBuilder(name),
                         SpannableStringBuilder(quantity.toString()),

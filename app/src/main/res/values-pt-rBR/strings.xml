@@ -48,6 +48,7 @@
     <string name="add_action">Adicionar</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Salvar</string>
+    <string name="field_required">Este campo é obrigatório</string>
     <string name="edit">Editar</string>
     <string name="delete">Excluir</string>
     <string name="food_product">Produto Alimentar</string>
