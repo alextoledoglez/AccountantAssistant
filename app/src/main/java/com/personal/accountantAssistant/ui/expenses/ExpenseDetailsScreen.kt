@@ -146,6 +146,7 @@ fun ExpenseDetailsScreen(
         ) {
             Text(
                 text = stringResource(R.string.active),
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.padding(end = 8.dp)
             )

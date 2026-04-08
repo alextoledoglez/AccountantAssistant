@@ -136,7 +136,11 @@ fun WalletDetailsScreen(
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(R.string.active), fontWeight = FontWeight.Normal)
+                Text(
+                    text = stringResource(R.string.active),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Normal
+                )
                 Switch(
                     checked = isActive,
                     onCheckedChange = { isActive = it },
