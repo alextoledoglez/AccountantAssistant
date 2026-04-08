@@ -25,23 +25,30 @@ import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.models.MenuItemModel
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.services.SignInService
+import com.personal.accountantAssistant.ui.login.LoginActivity
 import com.personal.accountantAssistant.ui.theme.Dimens
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(
-    viewModel: MenuViewModel,
-    onLogoutClick: () -> Unit,
-    onLoggedOut: () -> Unit
-) {
+fun MenuScreen() {
+    val context = LocalContext.current
+    val viewModel: MenuViewModel = koinViewModel()
+    val signInService: SignInService? = koinInject()
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val user by viewModel.user.observeAsState()
     val isLoggedOut by viewModel.isLoggedOut.observeAsState(false)
+
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) { viewModel.loadUser() }
+
     LaunchedEffect(isLoggedOut) {
-        if (isLoggedOut.orFalse()) onLoggedOut()
+        if (isLoggedOut.orFalse()) LoginActivity.startActivity(context)
     }
 
     Column(
@@ -79,7 +86,7 @@ fun MenuScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         showLogoutDialog = false
-                        onLogoutClick()
+                        signInService?.signOut(viewModel::clearUser)
                     }) { Text(stringResource(R.string.ok)) }
                 },
                 dismissButton = {

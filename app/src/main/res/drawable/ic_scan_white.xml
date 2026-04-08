@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/icon_resource_size"
+    android:height="@dimen/icon_resource_size"
+    android:tint="@color/whiteColor"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+    <!-- Top-left corner -->
+    <path
+        android:fillColor="@color/blackColor"
+        android:pathData="M3,3h4v2H5v2H3V3z" />
+    <!-- Top-right corner -->
+    <path
+        android:fillColor="@color/blackColor"
+        android:pathData="M21,3v4h-2V5h-2V3h4z" />
+    <!-- Bottom-left corner -->
+    <path
+        android:fillColor="@color/blackColor"
+        android:pathData="M3,21v-4h2v2h2v2H3z" />
+    <!-- Bottom-right corner -->
+    <path
+        android:fillColor="@color/blackColor"
+        android:pathData="M21,21h-4v-2h2v-2h2v4z" />
+    <!-- Center scan line -->
+    <path
+        android:fillColor="@color/blackColor"
+        android:pathData="M3,11h18v2H3z" />
+</vector>

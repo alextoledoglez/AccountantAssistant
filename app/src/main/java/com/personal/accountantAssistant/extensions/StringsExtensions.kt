@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.extensions
 
+import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.NumberFormat
@@ -64,7 +65,11 @@ fun String?.toDate(): Date? = takeIfNotBlank()?.let {
 
 fun String?.takeIfNotBlank() = takeIf { it?.isNotBlank().orFalse() }
 
-fun String.toRoundedBigDecimal() = this.trim().toBigDecimal().rounded()
+fun String.toRoundedBigDecimal(): BigDecimal = try {
+    this.trim().toBigDecimal().rounded()
+} catch (e: Exception) {
+    BigDecimal.ZERO
+}
 
 fun String.isNotEmptyAndLengthEqualTo(value: Int) = (isNotEmpty() && length == value)
 
@@ -102,3 +107,5 @@ fun String.toCurrencyMaskedStr(): String {
     } else this
     return result ?: this
 }
+
+fun String.toCurrencyOrZeroBigDecimal() = takeIfNotBlank()?.toCurrencyBigDecimal().orZero()

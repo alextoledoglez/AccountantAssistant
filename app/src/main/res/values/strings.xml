@@ -91,6 +91,14 @@
     <string name="payment_complete_message">Payment completed</string>
     <string name="payment_failed_message">Payment failed</string>
 
+    <!--Scanner-->
+    <string name="scan_action">Scan</string>
+    <string name="scan_product_hint">Point at a product barcode</string>
+    <string name="scan_bill_hint">Point at a bill or invoice</string>
+    <string name="scan_card_hint">Point the camera at the front of your card</string>
+    <string name="scan_manual_entry">Enter manually</string>
+    <string name="camera_permission_denied">Camera permission is required to use the scanner</string>
+
     <string name="search_view_hint_message">Type an item to search</string>
     <string name="sign_in_action_text">Sign In</string>
     <string name="sign_in_canceled">Sign In canceled</string>

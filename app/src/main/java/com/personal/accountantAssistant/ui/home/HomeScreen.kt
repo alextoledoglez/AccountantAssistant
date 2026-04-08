@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.ui.home
 
 import android.widget.FrameLayout
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,29 +23,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.FragmentActivity
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
+import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.extensions.*
-import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.providers.AdProvider
+import com.personal.accountantAssistant.ui.theme.Dimens
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import java.math.BigDecimal
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel,
-    adProvider: AdProvider?,
-    onShowDatePicker: () -> Unit,
-    onItemClick: (Int) -> Unit
-) {
+fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
+    val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
+    val viewModel: HomeViewModel = koinViewModel()
+    val adProvider: AdProvider? = koinInject()
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val periodDates by viewModel.periodDates.observeAsState()
     val availableMoney by viewModel.availableMoney.observeAsState()
     val expensesValues by viewModel.expensesValues.observeAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadPeriodDates()
+        viewModel.loadAvailableMoney()
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -67,16 +77,22 @@ fun HomeScreen(
     val successColorInt = MaterialTheme.colorScheme.primary.toArgb()
     val errorColorInt = MaterialTheme.colorScheme.error.toArgb()
 
+    val selectPeriodText = stringResource(R.string.select_period)
     val buysText = stringResource(R.string.menu_buys)
     val billsText = stringResource(R.string.menu_bills)
     val totalText = stringResource(R.string.total)
     val gainText = stringResource(R.string.gain)
     val missingText = stringResource(R.string.missing)
-    val availableText = stringResource(R.string.available_value,
-        expensesValues?.available.orZero().abs().toCurrencyMaskedStr())
+    val availableText = stringResource(
+        R.string.available_value,
+        expensesValues?.available.orZero().abs().toCurrencyMaskedStr()
+    )
 
-    fun expenseColor(expense: BigDecimal) =
-        if (expense.isMoreThan(availableMoney)) errorColorInt else successColorInt
+    fun expenseColor(expense: BigDecimal) = if (expense.isMoreThan(availableMoney))
+        errorColorInt
+    else
+        successColorInt
+
     fun conditionColor(cond: Boolean) = if (cond) successColorInt else errorColorInt
 
     val buysVal = expensesValues?.buys.orZero()
@@ -110,12 +126,29 @@ fun HomeScreen(
             availableText = availableText,
             availableColor = Color(availableColor),
             walletIconColor = Color(availableColor),
-            onDatePickerClick = onShowDatePicker
+            onDatePickerClick = {
+                fragmentManager?.let {
+                    MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText(selectPeriodText)
+                        .setSelection(viewModel.getSelectedPeriod())
+                        .build()
+                        .apply {
+                            addOnPositiveButtonClickListener { period ->
+                                viewModel.savePeriodDates(period)
+                                viewModel.loadPeriodDates()
+                                viewModel.loadAvailableMoney()
+                            }
+                        }
+                        .show(it, String.EMPTY)
+                }
+            }
         )
 
         when (flipper) {
             FlipperViews.LOADER -> Box(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) }
 
@@ -137,7 +170,18 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(dashboardItems) { item ->
-                            HomeGridItem(item = item, onClick = { onItemClick(item.drawableRes) })
+                            HomeGridItem(
+                                item = item,
+                                onClick = {
+                                    navigateTo(
+                                        when (item.drawableRes) {
+                                            R.drawable.ic_buys -> TabPositions.BUYS
+                                            R.drawable.ic_bills -> TabPositions.BILLS
+                                            else -> TabPositions.WALLET
+                                        }
+                                    )
+                                }
+                            )
                         }
                     }
                 }

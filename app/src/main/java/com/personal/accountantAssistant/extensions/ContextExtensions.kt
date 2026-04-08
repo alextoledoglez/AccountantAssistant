@@ -19,7 +19,6 @@ import com.personal.accountantAssistant.data.enums.LocaleTypes
 import com.personal.accountantAssistant.data.mappers.isBill
 import com.personal.accountantAssistant.data.mappers.toCalendarSelectionArgs
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.ui.MainActivity
 import jxl.Workbook
 import jxl.WorkbookSettings
 import java.io.File
@@ -36,20 +35,11 @@ private fun Context.hasPermissionGranted(
     permission: String
 ) = ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
-fun Context.startMainActivity() {
-    Intent(this, MainActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(this)
-    }
-}
-
 fun Context.startActivity(activityClass: Class<*>?) {
     Intent(this, activityClass).apply { startActivity(this) }
 }
 
-fun Context.toActivity() = this as Activity
-
-fun Context.toMainActivity() = this as MainActivity
+fun Context.asActivity() = this as? Activity
 
 fun Context.getCompatColor(@ColorRes resColor: Int) = ContextCompat.getColor(this, resColor)
 
@@ -86,9 +76,12 @@ fun Context.isCalendarWritePermissionGranted() = hasPermissionGranted(
 )
 
 fun Context.requestStoragePermissions() {
-    ActivityCompat.requestPermissions(
-        toActivity(), Manifest::class.STORAGE_PERMISSIONS, Int.STORAGE_PERMISSION_CODE
-    )
+    val activity = asActivity()
+    if (activity != null) {
+        ActivityCompat.requestPermissions(
+            activity, Manifest::class.STORAGE_PERMISSIONS, Int.STORAGE_PERMISSION_CODE
+        )
+    }
 }
 
 fun Context.deleteCalendarEvents(model: ExpenseModel?) {

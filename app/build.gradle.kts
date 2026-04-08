@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.android.compat)
+    implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.workmanager)
     testImplementation(libs.koin.test)
 
@@ -153,7 +154,13 @@ dependencies {
     //-------------Google dependencies-------------------------
     implementation(libs.material)
     implementation(libs.play.services.ads)
-    implementation(libs.play.services.vision)
+    // CameraX
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
+    // ML Kit
+    implementation(libs.mlkit.barcode.scanning)
+    implementation(libs.mlkit.text.recognition)
     implementation(libs.play.services.auth)
     implementation(libs.google.http.client.gson)
     implementation(libs.google.api.client.android) {

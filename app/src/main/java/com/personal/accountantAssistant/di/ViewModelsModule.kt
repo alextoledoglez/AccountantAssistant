@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.di
 
+import com.personal.accountantAssistant.ui.MainViewModel
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.home.HomeViewModel
@@ -12,6 +13,8 @@ import org.koin.dsl.module
 object ViewModelsModule {
 
     fun getViewModels() = module {
+
+        viewModel { MainViewModel() }
 
         viewModel {
             LoginViewModel(

@@ -91,6 +91,14 @@
     <string name="payment_complete_message">Pago completo</string>
     <string name="payment_failed_message">Pago fallido</string>
 
+    <!--Scanner-->
+    <string name="scan_action">Escanear</string>
+    <string name="scan_product_hint">Apunte al código de barras del producto</string>
+    <string name="scan_bill_hint">Apunte a la factura o boleta</string>
+    <string name="scan_card_hint">Apunte la cámara al frente de su tarjeta</string>
+    <string name="scan_manual_entry">Ingresar manualmente</string>
+    <string name="camera_permission_denied">Se requiere permiso de cámara para usar el escáner</string>
+
     <string name="search_view_hint_message">Ingrese un elemento para buscar</string>
     <string name="sign_in_action_text">Iniciar sesión</string>
     <string name="sign_in_canceled">Iniciar de sesión cancelado</string>

@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.buys
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
@@ -10,21 +11,23 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.FragmentActivity
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.orZero
-import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
+import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
+import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun BuysScreen(
-    viewModel: BuysViewModel,
-    onEdit: (ExpenseModel) -> Unit,
-    onActive: (ExpenseModel) -> Unit,
-    onDelete: (ExpenseModel) -> Unit
-) {
+fun BuysScreen() {
+
+    val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
+    val viewModel: BuysViewModel = koinViewModel()
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val buys by viewModel.buys.observeAsState(emptyList())
@@ -32,7 +35,6 @@ fun BuysScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var pendingDelete by remember { mutableStateOf<ExpenseModel?>(null) }
-
     val filteredBuys = remember(buys, searchQuery) {
         if (searchQuery.isBlank())
             buys.orEmpty()
@@ -40,9 +42,13 @@ fun BuysScreen(
             buys?.filter { it.name.containStr(searchQuery) }.orEmpty()
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    LaunchedEffect(Unit) { viewModel.loadBuys() }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         ListSummaryCard(
             summary = summary,
             itemCount = filteredBuys.size.orZero(),
@@ -56,8 +62,16 @@ fun BuysScreen(
             flipper = flipper,
             items = filteredBuys,
             onRefresh = { viewModel.loadBuys() },
-            onEdit = onEdit,
-            onActive = onActive,
+            onEdit = { model ->
+                fragmentManager?.let {
+                    ExpenseDetailsFragment.showDialogFragment(
+                        model = model,
+                        onEdit = viewModel::saveBuy,
+                        manager = it
+                    )
+                }
+            },
+            onActive = viewModel::switchActiveBuy,
             onDelete = { pendingDelete = it },
             showDate = false
         )
@@ -70,7 +84,7 @@ fun BuysScreen(
             text = { Text(stringResource(R.string.delete_record_message)) },
             confirmButton = {
                 TextButton(onClick = {
-                    onDelete(model)
+                    viewModel.deleteBuy(model)
                     pendingDelete = null
                 }) { Text(stringResource(R.string.ok)) }
             },

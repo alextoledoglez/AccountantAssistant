@@ -10,7 +10,7 @@ import com.personal.accountantAssistant.extensions.*
 
 class WalletDetailsFragment : BottomSheetDialogFragment() {
 
-    val cardModel by lazy { arguments?.getParcelable<CardModel>(String.ENTITY) }
+    val cardModel by lazy { arguments?.getParcelableCompat<CardModel>(String.ENTITY) }
 
     var onEditListener: ((model: CardModel) -> Unit)? = null
 

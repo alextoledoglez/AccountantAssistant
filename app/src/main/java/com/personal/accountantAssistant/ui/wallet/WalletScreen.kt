@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.ui.wallet
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,19 +8,19 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.FragmentActivity
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun WalletScreen(
-    viewModel: WalletViewModel,
-    onEdit: (CardModel) -> Unit,
-    onActive: (CardModel) -> Unit,
-    onDelete: (CardModel) -> Unit
-) {
+fun WalletScreen() {
+    val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
+    val viewModel: WalletViewModel = koinViewModel()
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val cards by viewModel.cards.observeAsState(emptyList())
@@ -27,7 +28,6 @@ fun WalletScreen(
 
     var searchQuery by remember { mutableStateOf("") }
     var pendingDelete by remember { mutableStateOf<CardModel?>(null) }
-
     val filteredCards = remember(cards, searchQuery) {
         if (searchQuery.isBlank())
             cards.orEmpty()
@@ -40,6 +40,8 @@ fun WalletScreen(
                     it.name.containStr(searchQuery)
         }.orEmpty()
     }
+
+    LaunchedEffect(Unit) { viewModel.loadCards() }
 
     Column(
         modifier = Modifier
@@ -59,8 +61,16 @@ fun WalletScreen(
             flipper = flipper,
             items = filteredCards,
             onRefresh = { viewModel.loadCards() },
-            onEdit = onEdit,
-            onActive = onActive,
+            onEdit = { card ->
+                fragmentManager?.let {
+                    WalletDetailsFragment.showDialogFragment(
+                        model = card,
+                        onEdit = viewModel::saveCard,
+                        manager = it
+                    )
+                }
+            },
+            onActive = viewModel::switchActiveCard,
             onDelete = { pendingDelete = it }
         )
     }
@@ -72,7 +82,7 @@ fun WalletScreen(
             text = { Text(stringResource(R.string.delete_record_message)) },
             confirmButton = {
                 TextButton(onClick = {
-                    onDelete(model)
+                    viewModel.deleteCard(model)
                     pendingDelete = null
                 }) { Text(stringResource(R.string.ok)) }
             },

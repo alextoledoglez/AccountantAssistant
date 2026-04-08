@@ -10,6 +10,12 @@ object Dimens {
     val spacingMd = 16.dp
     val spacingXl = 32.dp
 
+    //Padding
+    val paddingXs = 4.dp
+    val paddingSm = 8.dp
+    val paddingMd = 16.dp
+    val paddingXl = 32.dp
+
     // Sizes
     val logoSize = 100.dp
     val iconSize = 48.dp

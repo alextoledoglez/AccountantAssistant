@@ -1,8 +1,10 @@
 package com.personal.accountantAssistant.ui.login
 
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,7 @@ import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
+import com.personal.accountantAssistant.ui.MainActivity
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.ext.android.inject
@@ -54,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
         with(viewModel) {
             isProcessing.observe(context) { setLoginProcessing(it) }
             isNotificationTokenLoaded.observe(context) { if (it.orFalse()) getUser() }
-            isLogged.observe(context) { if (it.orFalse()) startMainActivity() }
+            isLogged.observe(context) { if (it.orFalse()) MainActivity.startActivity(context) }
             errorMessage.observe(context) { context.showToastLongText(it) }
             notificationToken.observe(context) { saveNotificationToken(it) }
             userEmail.observe(context) { signIn(it, isLogged.value) }
@@ -96,7 +99,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onSignInResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             service?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
                 ?: run { onSignInFail() }
         } else {
@@ -119,5 +122,12 @@ class LoginActivity : AppCompatActivity() {
 
     companion object {
         const val LOGIN_CANCELLED = "LOGIN_CANCELLED"
+
+        fun startActivity(context: Context) {
+            Intent(context, LocalActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(this)
+            }
+        }
     }
 }
