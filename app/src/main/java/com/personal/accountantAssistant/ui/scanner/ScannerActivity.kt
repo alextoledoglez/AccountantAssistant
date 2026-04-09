@@ -13,7 +13,14 @@ class ScannerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
 
-        val scanMode = ScanMode.valueOf(intent.getStringExtra(EXTRA_MODE).orEmpty())
+        val scanMode = runCatching {
+            ScanMode.valueOf(intent.getStringExtra(EXTRA_MODE).orEmpty())
+        }.getOrNull()
+
+        if (scanMode == null) {
+            finish()
+            return
+        }
 
         setContent {
             AccountantTheme {

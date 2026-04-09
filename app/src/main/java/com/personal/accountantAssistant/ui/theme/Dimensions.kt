@@ -8,12 +8,14 @@ object Dimens {
     val spacingXs = 4.dp
     val spacingSm = 8.dp
     val spacingMd = 16.dp
+    val spacingLg = 24.dp
     val spacingXl = 32.dp
 
     //Padding
     val paddingXs = 4.dp
     val paddingSm = 8.dp
     val paddingMd = 16.dp
+    val paddingLg = 24.dp
     val paddingXl = 32.dp
 
     // Sizes

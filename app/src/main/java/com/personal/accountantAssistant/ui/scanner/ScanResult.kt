@@ -6,26 +6,28 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 sealed class ScanResult : Parcelable {
 
-    /** Barcode/QR scan + optional OCR from price label */
     @Parcelize
-    data class Product(
-        val name: String = "",   // extracted from price label OCR
-        val price: String = ""   // e.g. "12,99" — extracted from price label OCR
+    data class Buy(
+        val barcode: String = "",
+        val name: String = "",
+        val price: String = "",
+        val confidence: Float = 0f,
+        val rawText: String = ""
     ) : ScanResult()
 
-    /** OCR from bill/invoice — raw strings extracted by regex */
     @Parcelize
     data class Bill(
-        val name: String,
-        val value: String,   // e.g. "123,45"
-        val date: String     // e.g. "28/05/2025"
+        val name: String = "",
+        val value: String = "",
+        val date: String = "",
+        val confidence: Float = 0f,
+        val rawText: String = ""
     ) : ScanResult()
 
-    /** OCR from card face */
     @Parcelize
     data class Card(
         val company: String,
-        val lastDigits: String,  // last 4 digits
-        val expiry: String       // MM/YY
+        val lastDigits: String,
+        val expiry: String
     ) : ScanResult()
 }

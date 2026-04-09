@@ -42,7 +42,7 @@ internal fun FragmentManager.onScannerActivityResult(
         val scanResult =
             activityResult.data?.getParcelableExtraCompat<ScanResult>(ScannerActivity.EXTRA_RESULT)
         when (scanResult) {
-            is ScanResult.Product -> ExpenseDetailsFragment.showDialogFragment(
+            is ScanResult.Buy -> ExpenseDetailsFragment.showDialogFragment(
                 model = ExpenseModel(
                     name = scanResult.name,
                     quantity = 1,
