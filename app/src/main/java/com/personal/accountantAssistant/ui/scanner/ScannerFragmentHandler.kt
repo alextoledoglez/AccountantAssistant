@@ -11,7 +11,9 @@ import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.getParcelableExtraCompat
+import com.personal.accountantAssistant.extensions.toCurrencyOrZeroBigDecimal
+import com.personal.accountantAssistant.extensions.toDate
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
@@ -29,6 +31,15 @@ internal fun ManagedActivityResultLauncher<Intent, ActivityResult>.launchScanner
         return
     }
     this.launch(input = ScannerActivity.newIntent(context, scanMode))
+}
+
+fun ActivityResult.onScannerActivityResult(onScannerResult: (scanResult: ScanResult?) -> Unit) {
+    val scanResult = if (resultCode == Activity.RESULT_OK) {
+        data?.getParcelableExtraCompat<ScanResult>(ScannerActivity.EXTRA_RESULT)
+    } else {
+        null
+    }
+    onScannerResult(scanResult)
 }
 
 internal fun FragmentManager.onScannerActivityResult(
@@ -59,12 +70,6 @@ internal fun FragmentManager.onScannerActivityResult(
                     date = scanResult.date.toDate()
                 ).toBill(),
                 onEdit = billsViewModel::saveBill,
-                manager = this
-            )
-
-            is ScanResult.Card -> WalletDetailsFragment.showDialogFragment(
-                model = CardModel(company = scanResult.company, name = scanResult.lastDigits),
-                onEdit = walletViewModel::saveCard,
                 manager = this
             )
 

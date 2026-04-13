@@ -142,6 +142,7 @@ dependencies {
     //----Navigation------------------------------------------------
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.navigation.compose)
 
     //----Room------------------------------------------------
     implementation(libs.androidx.room.runtime)

@@ -29,7 +29,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.extensions.isCameraPermissionGranted
 import com.personal.accountantAssistant.ui.scanner.camera.CameraImageAnalyzer
-import com.personal.accountantAssistant.ui.scanner.camera.CameraPreview
+import com.personal.accountantAssistant.ui.scanner.camera.buildCameraPreview
 import com.personal.accountantAssistant.ui.theme.Dimens
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -69,17 +69,18 @@ fun ScannerScreen(
         if (hasCameraPermission) {
             AndroidView(
                 factory = { ctx ->
-                    CameraPreview.buildPreview(
+                    buildCameraPreview(
                         context = ctx,
                         setAnalyzer = { analysis ->
-                            val analyzer = CameraImageAnalyzer.buildAnalyzer(
-                                context = context,
-                                mode = mode,
-                                configuration = configuration,
-                                hasDetected = hasDetected,
-                                onResult = onResult
+                            analysis.setAnalyzer(
+                                analysisExecutor,
+                                CameraImageAnalyzer(
+                                    mode = mode,
+                                    configuration = configuration,
+                                    hasDetected = hasDetected,
+                                    onResult = onResult
+                                )
                             )
-                            analysis.setAnalyzer(analysisExecutor, analyzer)
                         },
                         lifecycleOwner = lifecycleOwner
                     )

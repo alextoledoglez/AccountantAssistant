@@ -1,30 +1,56 @@
 package com.personal.accountantAssistant.ui.buys
 
+import android.content.Intent
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.data.mappers.toBuy
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
 import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.toCurrencyOrZeroBigDecimal
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
+import com.personal.accountantAssistant.ui.common.PrimaryFabButton
+import com.personal.accountantAssistant.ui.common.SmallPrimaryFabButton
 import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsFragment
 import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
+import com.personal.accountantAssistant.ui.scanner.ScanMode
+import com.personal.accountantAssistant.ui.scanner.launchScannerActivity
+import com.personal.accountantAssistant.ui.scanner.onScannerActivityResult
+import com.personal.accountantAssistant.ui.theme.Dimens
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun BuysScreen() {
-
+fun BuysScreen(
+    onSetFab: ((@Composable () -> Unit)?) -> Unit = {},
+    onSetDeleteAll: ((() -> Unit)?) -> Unit = {}
+) {
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
     val viewModel: BuysViewModel = koinViewModel()
 
@@ -41,8 +67,31 @@ fun BuysScreen() {
         else
             buys?.filter { it.name.containStr(searchQuery) }.orEmpty()
     }
+    val scanLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it.onScannerActivityResult { scanResult ->
+                val buy = scanResult?.asBuy()
+                fragmentManager?.let {
+                    ExpenseDetailsFragment.showDialogFragment(
+                        model = ExpenseModel(
+                            name = buy?.name,
+                            quantity = 1,
+                            unitaryValue = buy?.price?.toCurrencyOrZeroBigDecimal().orZero()
+                        ).toBuy(),
+                        onEdit = viewModel::saveBuy,
+                        manager = fragmentManager
+                    )
+                }
+            }
+        }
 
     LaunchedEffect(Unit) { viewModel.loadBuys() }
+
+    DisposableEffect(Unit) {
+        onSetFab { BuysFabs(scanLauncher, fragmentManager, viewModel) }
+        onSetDeleteAll(viewModel::deleteAllBuys)
+        onDispose {}
+    }
 
     Column(
         modifier = Modifier
@@ -91,6 +140,40 @@ fun BuysScreen() {
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
                     Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+internal fun BuysFabs(
+    scanLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    fragmentManager: FragmentManager?,
+    viewModel: BuysViewModel
+) {
+    val context = LocalContext.current
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(Dimens.spacingMd)
+    ) {
+        SmallPrimaryFabButton(
+            isVisible = true,
+            painterResourceId = R.drawable.ic_scan_white,
+            stringResourceId = R.string.scan_action,
+            onClick = { scanLauncher.launchScannerActivity(context, ScanMode.PRODUCT_BARCODE) }
+        )
+        PrimaryFabButton(
+            isVisible = true,
+            painterResourceId = R.drawable.ic_add_white,
+            stringResourceId = R.string.add_action,
+            onClick = {
+                fragmentManager?.let {
+                    ExpenseDetailsFragment.showDialogFragment(
+                        model = ExpenseModel().toBuy(),
+                        onEdit = viewModel::saveBuy,
+                        manager = it
+                    )
                 }
             }
         )

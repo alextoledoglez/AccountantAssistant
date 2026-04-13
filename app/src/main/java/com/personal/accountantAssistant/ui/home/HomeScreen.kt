@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -37,11 +38,14 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.math.BigDecimal
 import java.util.*
+import kotlin.getValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
+    val context = LocalContext.current
+    val frameLayout by lazy { FrameLayout(context) }
     val viewModel: HomeViewModel = koinViewModel()
     val adProvider: AdProvider? = koinInject()
 
@@ -188,11 +192,7 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
 
                 if (adProvider != null) {
                     AndroidView(
-                        factory = { ctx ->
-                            FrameLayout(ctx).also { container ->
-                                adProvider.loadAdOn(container)
-                            }
-                        },
+                        factory = { frameLayout.also { adProvider.loadAdOn(container = it) } },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.3f)

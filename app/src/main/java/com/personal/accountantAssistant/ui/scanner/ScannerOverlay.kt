@@ -42,13 +42,10 @@ import com.personal.accountantAssistant.ui.theme.Dimens
 @Composable
 internal fun ScannerOverlay(mode: ScanMode, onSkip: () -> Unit, modifier: Modifier = Modifier) {
 
-    //Normalized (widthFraction, heightFraction) of the scan area, centered on screen.
+    // Normalized (widthFraction, heightFraction) of the scan area, centered on screen.
     // Drives both the visual overlay and the ROI crop in the image analyzer.
-    val (wf, hf) = when (mode) {
-        ScanMode.PRODUCT_BARCODE -> 0.85f to 0.28f   // wide & short — 1-D/2-D barcodes
-        ScanMode.BILL_TEXT -> 0.85f to 0.58f   // tall — invoice/bill text region
-        ScanMode.CARD_TEXT -> 0.85f to 0.535f  // credit-card ratio ≈ 85.6 × 54 mm
-    }
+    val wf = mode.windowWidthFraction
+    val hf = mode.windowHeightFraction
 
     val infiniteTransition = rememberInfiniteTransition(label = "scanner_overlay")
 

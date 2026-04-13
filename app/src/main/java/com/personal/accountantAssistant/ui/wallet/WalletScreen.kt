@@ -2,22 +2,41 @@ package com.personal.accountantAssistant.ui.wallet
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.containStr
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
+import com.personal.accountantAssistant.ui.common.PrimaryFabButton
+import com.personal.accountantAssistant.ui.theme.Dimens
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun WalletScreen() {
+fun WalletScreen(
+    onSetFab: ((@Composable () -> Unit)?) -> Unit = {},
+    onSetDeleteAll: ((() -> Unit)?) -> Unit = {}
+) {
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
     val viewModel: WalletViewModel = koinViewModel()
 
@@ -42,6 +61,12 @@ fun WalletScreen() {
     }
 
     LaunchedEffect(Unit) { viewModel.loadCards() }
+
+    DisposableEffect(Unit) {
+        onSetFab { WalletFabs(fragmentManager, viewModel) }
+        onSetDeleteAll(viewModel::deleteAllCards)
+        onDispose {}
+    }
 
     Column(
         modifier = Modifier
@@ -89,6 +114,29 @@ fun WalletScreen() {
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
                     Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+internal fun WalletFabs(fragmentManager: FragmentManager?, viewModel: WalletViewModel) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(Dimens.spacingMd)
+    ) {
+        PrimaryFabButton(
+            isVisible = true,
+            painterResourceId = R.drawable.ic_add_white,
+            stringResourceId = R.string.add_action,
+            onClick = {
+                fragmentManager?.let {
+                    WalletDetailsFragment.showDialogFragment(
+                        model = CardModel(),
+                        onEdit = viewModel::saveCard,
+                        manager = it
+                    )
                 }
             }
         )
