@@ -38,45 +38,21 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.math.BigDecimal
 import java.util.*
-import kotlin.getValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
-    val context = LocalContext.current
-    val frameLayout by lazy { FrameLayout(context) }
+    val lifecycleOwner = LocalLifecycleOwner.current
     val viewModel: HomeViewModel = koinViewModel()
     val adProvider: AdProvider? = koinInject()
+    val context = LocalContext.current
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
     val periodDates by viewModel.periodDates.observeAsState()
     val availableMoney by viewModel.availableMoney.observeAsState()
     val expensesValues by viewModel.expensesValues.observeAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadPeriodDates()
-        viewModel.loadAvailableMoney()
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> adProvider?.resumeAd()
-                Lifecycle.Event.ON_PAUSE -> adProvider?.pauseAd()
-                Lifecycle.Event.ON_DESTROY -> adProvider?.destroyAd()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
-    LaunchedEffect(periodDates, availableMoney) {
-        periodDates?.let { period -> viewModel.loadExpenses(period, availableMoney) }
-    }
 
     val successColorInt = MaterialTheme.colorScheme.primary.toArgb()
     val errorColorInt = MaterialTheme.colorScheme.error.toArgb()
@@ -118,6 +94,30 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
             ),
             DashboardItemModel(R.drawable.ic_total, totalText, expenseColor(totalVal), totalVal)
         )
+    }
+    val frameLayout = remember { FrameLayout(context) }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadPeriodDates()
+        viewModel.loadAvailableMoney()
+    }
+
+    LaunchedEffect(periodDates, availableMoney) {
+        val period = periodDates ?: return@LaunchedEffect
+        viewModel.loadExpenses(period, availableMoney)
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> adProvider?.resumeAd()
+                Lifecycle.Event.ON_PAUSE -> adProvider?.pauseAd()
+                Lifecycle.Event.ON_DESTROY -> adProvider?.destroyAd()
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     Column(
@@ -192,7 +192,8 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
 
                 if (adProvider != null) {
                     AndroidView(
-                        factory = { frameLayout.also { adProvider.loadAdOn(container = it) } },
+                        factory = { frameLayout },
+                        update = { container -> adProvider.loadAdOn(container) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.3f)

@@ -1,7 +1,10 @@
 package com.personal.accountantAssistant.ui
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,8 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -62,15 +63,17 @@ internal fun MainScreen() {
             )
         },
         bottomBar = { MainBottomBar(currentTab = currentTab, onTabSelected = navigateTo) },
-        floatingActionButton = { fabSlot?.invoke() }
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = fabSlot != null,
+                enter = scaleIn() + fadeIn(),
+                exit = scaleOut() + fadeOut()
+            ) {
+                fabSlot?.invoke()
+            }
+        }
     ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = TabPositions.HOME.route,
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
+        MainNavHost(paddingValues, navController, TabPositions.entries) {
             composable(TabPositions.HOME.route) { HomeScreen(navigateTo) }
             composable(TabPositions.WALLET.route) {
                 WalletScreen(
