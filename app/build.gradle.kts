@@ -178,6 +178,7 @@ dependencies {
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.firebase.messaging.directboot)
+    implementation(libs.firebase.database.ktx)
 
     // WorkManager Android Job
     implementation(libs.androidx.work.runtime.ktx)

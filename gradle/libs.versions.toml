@@ -58,6 +58,7 @@ firebasePerfKtx = "21.0.5"
 firebaseCrashlyticsGradle = "3.0.6"
 firebaseCrashlyticsKtx = "19.4.4"
 firebaseMessagingDirectboot = "25.0.1"
+firebaseDatabase = "21.0.0"
 
 #Glide
 glide = "5.0.5"
@@ -143,6 +144,7 @@ firebase-perf-ktx = { group = "com.google.firebase", name = "firebase-perf-ktx",
 firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebaseCrashlyticsKtx" }
 firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
 firebase-messaging-directboot = { group = "com.google.firebase", name = "firebase-messaging-directboot", version.ref = "firebaseMessagingDirectboot" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" }
 
 #Glide
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }

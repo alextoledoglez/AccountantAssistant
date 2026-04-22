@@ -5,6 +5,7 @@ import com.personal.accountantAssistant.data.remote.BarcodeProductRemoteDataSour
 import com.personal.accountantAssistant.data.remote.BillsRemoteDataSource
 import com.personal.accountantAssistant.data.remote.BuysRemoteDataSource
 import com.personal.accountantAssistant.data.remote.CardsRemoteDataSource
+import com.google.firebase.database.FirebaseDatabase
 import com.personal.accountantAssistant.data.remote.CompanyRemoteDataSource
 import com.personal.accountantAssistant.data.remote.ExpensesRemoteDataSource
 import com.personal.accountantAssistant.data.remote.UserRemoteDataSource
@@ -37,6 +38,7 @@ object DataModule {
         single { BillsRemoteDataSource(get()) }
         single { ExpensesRemoteDataSource(get()) }
         single { UserRemoteDataSource(get()) }
+        single { FirebaseDatabase.getInstance() }
         single { CompanyRemoteDataSource(get()) }
         single { BarcodeProductRemoteDataSource() }
         single<CardsRepository> { CardsDataRepository(get()) }

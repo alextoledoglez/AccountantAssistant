@@ -1,14 +1,19 @@
 package com.personal.accountantAssistant.data.remote
 
-import android.content.Context
-import com.google.gson.reflect.TypeToken
+import com.google.firebase.database.FirebaseDatabase
 import com.personal.accountantAssistant.data.response.CompanyResponse
-import com.personal.accountantAssistant.extensions.fromJson
+import kotlinx.coroutines.tasks.await
 
-class CompanyRemoteDataSource(private val context: Context) {
-    fun loadCompanies(): List<CompanyResponse> = runCatching {
-        val fileName = "catalogs/br/febraban_published_codes.json"
-        val raw = context.assets.open(fileName).bufferedReader().use { it.readText() }
-        raw.fromJson(typeOfT = object : TypeToken<List<CompanyResponse>>() {})
-    }.getOrDefault(defaultValue = emptyList())
+class CompanyRemoteDataSource(private val database: FirebaseDatabase) {
+    suspend fun loadCompanies(): List<CompanyResponse> = runCatching {
+        database.getReference("febraban_published_codes").get().await().children.mapNotNull {
+            CompanyResponse(
+                segmentCode = it.child("segmentCode").getValue(String::class.java).orEmpty(),
+                segmentName = it.child("segmentName").getValue(String::class.java).orEmpty(),
+                companyCode = it.child("companyCode").getValue(String::class.java).orEmpty(),
+                providerName = it.child("providerName").getValue(String::class.java).orEmpty(),
+                uf = it.child("uf").getValue(String::class.java).orEmpty()
+            )
+        }
+    }.getOrDefault(emptyList())
 }

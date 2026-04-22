@@ -7,7 +7,6 @@ import com.personal.accountantAssistant.domain.repository.CompanyRepository
 
 class CompanyDataRepository(private val dataSource: CompanyRemoteDataSource) : CompanyRepository {
 
-    override fun getCompanies(): List<CompanyModel> {
-        return dataSource.loadCompanies().map { it.toCompanyModel() }
-    }
+    override suspend fun getCompanies(): List<CompanyModel> =
+        dataSource.loadCompanies().map { it.toCompanyModel() }
 }
