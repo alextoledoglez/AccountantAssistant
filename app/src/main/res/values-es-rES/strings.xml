@@ -3,6 +3,7 @@
     <string name="app_name">Accountant assistant</string>
     <string name="app_version">Versión: %1$s</string>
     <string name="open_action">Abrir</string>
+    <string name="back_action">Regresar</string>
     <string name="logout_action">Cerrar sesión</string>
     <string name="logout_confirmation_title">@string/logout_action</string>
     <string name="logout_confirmation_message">¿Está seguro de que desea cerrar la sesión y salir?</string>
@@ -93,10 +94,11 @@
 
     <!--Scanner-->
     <string name="scan_action">Escanear</string>
-    <string name="scan_product_hint">Apunte al código de barras del producto</string>
-    <string name="scan_bill_hint">Apunte a la factura o boleta</string>
-    <string name="scan_card_hint">Apunte la cámara al frente de su tarjeta</string>
-    <string name="scan_manual_entry">Ingresar manualmente</string>
+    <string name="scan_buy_hint">Apunte al código de la compra</string>
+    <string name="scan_bill_hint">Apunte al código de la factura o cuenta</string>
+    <string name="scan_qr_code_text">QR Code</string>
+    <string name="scan_barcode_text">Barcode</string>
+    <string name="scan_manual_entry_text">Ingresar manualmente</string>
     <string name="camera_permission_denied">Se requiere permiso de cámara para usar el escáner</string>
 
     <string name="search_view_hint_message">Ingrese un elemento para buscar</string>

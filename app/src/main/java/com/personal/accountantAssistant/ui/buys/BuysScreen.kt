@@ -161,7 +161,7 @@ internal fun BuysFabs(
             isVisible = true,
             painterResourceId = R.drawable.ic_scan_white,
             stringResourceId = R.string.scan_action,
-            onClick = { scanLauncher.launchScannerActivity(context, ScanMode.PRODUCT_BARCODE) }
+            onClick = { scanLauncher.launchScannerActivity(context, ScanMode.BUY) }
         )
         PrimaryFabButton(
             isVisible = true,

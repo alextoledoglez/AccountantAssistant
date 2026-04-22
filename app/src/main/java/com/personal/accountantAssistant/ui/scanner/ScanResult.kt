@@ -18,6 +18,7 @@ sealed class ScanResult : Parcelable {
 
     @Parcelize
     data class Bill(
+        val barcode: String = "",
         val name: String = "",
         val value: String = "",
         val date: String = "",

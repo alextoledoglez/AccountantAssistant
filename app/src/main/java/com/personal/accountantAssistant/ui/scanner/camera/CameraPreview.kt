@@ -14,7 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 
 fun buildCameraPreview(
     context: Context,
-    setAnalyzer: (analysis: ImageAnalysis) -> Unit,
+    setAnalyzer: (analysis: ImageAnalysis, previewView: PreviewView) -> Unit,
     lifecycleOwner: LifecycleOwner
 ): PreviewView {
 
@@ -41,7 +41,7 @@ fun buildCameraPreview(
             .setResolutionSelector(resolutionSelector)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
-            .also { analysis -> setAnalyzer(analysis) }
+            .also { analysis -> setAnalyzer(analysis, previewView) }
 
         runCatching {
             cameraProvider?.unbindAll()

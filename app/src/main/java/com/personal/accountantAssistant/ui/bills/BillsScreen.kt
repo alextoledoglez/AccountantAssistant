@@ -162,7 +162,7 @@ internal fun BillsFabs(
             isVisible = true,
             painterResourceId = R.drawable.ic_scan_white,
             stringResourceId = R.string.scan_action,
-            onClick = { scanLauncher.launchScannerActivity(context, ScanMode.BILL_TEXT) }
+            onClick = { scanLauncher.launchScannerActivity(context, ScanMode.BILL) }
         )
         PrimaryFabButton(
             isVisible = true,
