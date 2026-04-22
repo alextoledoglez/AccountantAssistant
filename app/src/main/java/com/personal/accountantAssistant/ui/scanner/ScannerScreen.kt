@@ -27,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,11 +43,9 @@ import com.personal.accountantAssistant.ui.common.RoundedTextButton
 import com.personal.accountantAssistant.ui.scanner.barcode.BarcodeScanningBuilder
 import com.personal.accountantAssistant.ui.scanner.camera.ImageScanAnalyzer
 import com.personal.accountantAssistant.ui.scanner.camera.buildCameraPreview
-import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser
 import com.personal.accountantAssistant.ui.theme.Dimens
-import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
 
 @Composable
 fun ScannerScreen(
@@ -58,13 +55,12 @@ fun ScannerScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
+    val viewModel: ScannerViewModel = koinViewModel()
 
     var hasCameraPermission by remember { mutableStateOf(context.isCameraPermissionGranted()) }
     var codeType by remember { mutableStateOf(ScanCodeType.QR_CODE) }
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val scanner = remember(codeType) { BarcodeScanningBuilder.buildScanner(codeType) }
-    val hasDetected = remember { AtomicBoolean(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -80,7 +76,8 @@ fun ScannerScreen(
         onDispose { analysisExecutor.shutdown() }
     }
 
-    LaunchedEffect(codeType) { hasDetected.set(false) }
+    LaunchedEffect(Unit) { viewModel.scanResult.collect { result -> onResult(result) } }
+    LaunchedEffect(codeType) { viewModel.resetDetection() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (hasCameraPermission) {
@@ -97,15 +94,7 @@ fun ScannerScreen(
                                         scanner = scanner,
                                         previewWidthProvider = { previewView.width.toFloat() },
                                         previewHeightProvider = { previewView.height.toFloat() }
-                                    ) { barcode ->
-                                        if (!hasDetected.compareAndSet(false, true))
-                                            return@ImageScanAnalyzer
-                                        scope.launch {
-                                            BarcodeParser.parse(mode, barcode)
-                                                ?.let { result -> onResult(result) }
-                                                ?: hasDetected.set(false)
-                                        }
-                                    }
+                                    ) { barcode -> viewModel.onBarcodeDetected(mode, barcode) }
                                 )
                             },
                             lifecycleOwner = lifecycleOwner

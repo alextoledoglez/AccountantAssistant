@@ -4,6 +4,8 @@ import com.personal.accountantAssistant.ui.scanner.ScanResult
 
 data class ScannedCodeData(
     val barcode: String = "",
+    val segment: String = "",
+    val company: String = "",
     val name: String = "",
     val value: String = "",
     val date: String = "",

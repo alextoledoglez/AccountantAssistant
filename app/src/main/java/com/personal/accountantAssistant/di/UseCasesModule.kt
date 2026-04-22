@@ -26,6 +26,8 @@ object UseCasesModule {
         single<SaveBillUseCase> { SaveBillUseCaseImpl(get()) }
         single<ActiveBillsUseCase> { ActiveBillsUseCaseImpl(get()) }
         single<DeleteBillsUseCase> { DeleteBillsUseCaseImpl(get()) }
+        single<GetCompanyNameUseCase> { GetCompanyNameUseCaseImpl(get()) }
+        single<GetBarcodeProductNameUseCase> { GetBarcodeProductNameUseCaseImpl(get()) }
         single<SetFirstDateUseCase> { SetFirstDateUseCaseImpl(get()) }
         single<GetPeriodDatesUseCase> { GetPeriodDatesUseCaseImpl(get()) }
         single<SetLastDateUseCase> { SetLastDateUseCaseImpl(get()) }

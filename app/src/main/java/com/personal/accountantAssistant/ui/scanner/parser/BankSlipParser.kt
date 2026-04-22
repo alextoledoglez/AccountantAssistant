@@ -1,6 +1,7 @@
 package com.personal.accountantAssistant.ui.scanner.parser
 
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.personal.accountantAssistant.ui.scanner.mappers.BankCodeMapper
 
 /**
  * Parses FEBRABAN-compliant bank slip barcodes and typeable lines into [ScannedCodeData].
@@ -70,38 +71,11 @@ object BankSlipParser {
     private const val COLLECTION_SLIP_PREFIX = "8"
     private const val AMOUNT_FORMAT = "%.2f"
 
-    private fun mapSegmentName(segment: String): String = when (segment) {
-        "1" -> "Prefeitura"
-        "2" -> "Saneamento"
-        "3" -> "Energia elétrica e gás"
-        "4" -> "Telefone"
-        "5" -> "Órgãos governamentais"
-        "6" -> "Carnês e assemelhados"
-        "7" -> "Multas de trânsito"
-        "9" -> "Uso exclusivo bancário"
-        else -> "Desconhecido"
-    }
-
-    private fun mapCompanyFieldName(companyField: String): String = when (companyField) {
-        "0001" -> "Banco do Brasil"
-        "0033" -> "Santander"
-        "0109" -> "Vivo / Telefônica"
-        "0156" -> "Sicoob"
-        "0237" -> "Bradesco"
-        "0341" -> "Itaú"
-        "0422" -> "Safra"
-        "0745" -> "Citibank"
-        "6274" -> "BV Financeira"
-        "0021" -> "Banestes"
-        else -> "Desconhecido"
-    }
-
     private fun parseBankSlip(barcode44: String, line47: String?): BankSlipData.BankSlip {
         val bankCode = barcode44.substring(BANK_CODE_START, BANK_CODE_END)
         return BankSlipData.BankSlip(
             barcode44 = barcode44,
-            line47 = line47,
-            bankCode = bankCode,
+            bankName = line47 ?: BankCodeMapper.map(bankCode),
             currencyCode = barcode44.substring(CURRENCY_CODE_START, CURRENCY_CODE_END),
             dueDateFactor = barcode44.substring(DUE_DATE_FACTOR_START, DUE_DATE_FACTOR_END),
             amount = parseAmount(barcode44.substring(AMOUNT_START, AMOUNT_END)),
@@ -110,15 +84,15 @@ object BankSlipParser {
     }
 
     private fun parseCollectionSlip(barcode44: String, line48: String?): BankSlipData {
-        val segment = barcode44.substring(COLLECTION_SEGMENT_START, COLLECTION_SEGMENT_END)
-        val companyField =
-            barcode44.substring(COLLECTION_COMPANY_FIELD_START, COLLECTION_COMPANY_FIELD_END)
         return BankSlipData.CollectionSlip(
             barcode44 = barcode44,
             line48 = line48,
-            segment = mapSegmentName(segment),
+            segment = barcode44.substring(COLLECTION_SEGMENT_START, COLLECTION_SEGMENT_END),
             amount = parseAmountForCollection(barcode44),
-            companyField = mapCompanyFieldName(companyField),
+            companyField = barcode44.substring(
+                COLLECTION_COMPANY_FIELD_START,
+                COLLECTION_COMPANY_FIELD_END
+            ),
             reference = barcode44.substring(COLLECTION_REFERENCE_START, COLLECTION_REFERENCE_END)
         )
     }
@@ -193,13 +167,15 @@ object BankSlipParser {
         }
         return when (bankSlipData) {
             is BankSlipData.BankSlip -> base.copy(
-                name = bankSlipData.line47 ?: bankSlipData.bankCode,
+                name = bankSlipData.bankName,
                 value = bankSlipData.amount.orEmpty(),
                 date = bankSlipData.dueDateFactor.orEmpty()
             )
 
             is BankSlipData.CollectionSlip -> base.copy(
-                name = bankSlipData.line48 ?: bankSlipData.segment,
+                segment = bankSlipData.segment,
+                company = bankSlipData.companyField,
+                name = bankSlipData.line48.orEmpty(),
                 value = bankSlipData.amount.orEmpty()
             )
 

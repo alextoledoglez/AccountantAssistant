@@ -6,6 +6,7 @@ import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
+import com.personal.accountantAssistant.ui.scanner.ScannerViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -67,6 +68,13 @@ object ViewModelsModule {
             MenuViewModel(
                 getSignedUser = get(),
                 setSignedUser = get(),
+                analytics = get()
+            )
+        }
+        viewModel {
+            ScannerViewModel(
+                getBarcodeProductNameUseCase = get(),
+                getCompanyNameUseCase = get(),
                 analytics = get()
             )
         }

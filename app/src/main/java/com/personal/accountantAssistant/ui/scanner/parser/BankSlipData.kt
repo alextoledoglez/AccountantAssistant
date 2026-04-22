@@ -3,8 +3,7 @@ package com.personal.accountantAssistant.ui.scanner.parser
 sealed class BankSlipData {
     data class BankSlip(
         val barcode44: String,
-        val line47: String?,
-        val bankCode: String,
+        val bankName: String,
         val currencyCode: String,
         val amount: String?,
         val dueDateFactor: String?,
