@@ -34,7 +34,13 @@ internal class ImageScanAnalyzer(
             return
         }
 
-        val image = InputImage.fromMediaImage(mediaImage, proxy.imageInfo.rotationDegrees)
+        // Capture metadata before the async block — proxy may be closed by then.
+        val rotationDegrees = proxy.imageInfo.rotationDegrees
+        val isPortraitRotation = rotationDegrees == 90 || rotationDegrees == 270
+        val proxyWidth = proxy.width
+        val proxyHeight = proxy.height
+
+        val image = InputImage.fromMediaImage(mediaImage, rotationDegrees)
 
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
@@ -43,7 +49,14 @@ internal class ImageScanAnalyzer(
 
                 if (previewWidth <= 0f || previewHeight <= 0f) return@addOnSuccessListener
 
-                val scanWindow = ScanWindow.calculateScanWindow(type, previewWidth, previewHeight)
+                // MLKit bounding boxes are in the image's rotated (upright) coordinate space.
+                // Swap proxy dimensions when the sensor is rotated 90°/270° relative to the display.
+                val imageWidth = if (isPortraitRotation) proxyHeight.toFloat() else proxyWidth.toFloat()
+                val imageHeight = if (isPortraitRotation) proxyWidth.toFloat() else proxyHeight.toFloat()
+
+                val scanWindow = ScanWindow.calculateScanWindowInImageSpace(
+                    type, imageWidth, imageHeight, previewWidth, previewHeight
+                )
 
                 val bestCandidate = barcodes
                     .asSequence()
@@ -94,9 +107,7 @@ internal class ImageScanAnalyzer(
         val scanCenterX = (scanWindow.left + scanWindow.right) / 2f
         val scanCenterY = (scanWindow.top + scanWindow.bottom) / 2f
 
-        val distancePenalty = (
-                abs(centerX - scanCenterX) + abs(centerY - scanCenterY)
-                ).toInt()
+        val distancePenalty = (abs(centerX - scanCenterX) + abs(centerY - scanCenterY)).toInt()
 
         val sizeScore = box.width() * box.height()
 
