@@ -12,7 +12,7 @@ sealed class BankSlipData {
 
     data class CollectionSlip(
         val barcode44: String,
-        val line48: String?,
+        val providerName: String?,
         val segment: String,
         val amount: String?,
         val companyField: String,

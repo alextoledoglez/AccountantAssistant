@@ -2,6 +2,7 @@ package com.personal.accountantAssistant.ui.scanner.parser
 
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.personal.accountantAssistant.ui.scanner.mappers.BankCodeMapper
+import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.normalizeLinearCode
 
 /**
  * Parses FEBRABAN-compliant bank slip barcodes and typeable lines into [ScannedCodeData].
@@ -17,7 +18,7 @@ import com.personal.accountantAssistant.ui.scanner.mappers.BankCodeMapper
  * Collection slip barcode layout (44 digits, starts with "8"):
  *   `[product 1][segment 1][real-value-id 1][check 1][amount 11][company 4][free-field 25]`
  */
-object BankSlipParser {
+object BankSlipBarcodeParser {
 
     // ── 44-digit barcode field ranges (0-based, exclusive end) ────────────────
     private const val BANK_CODE_START = 0
@@ -71,11 +72,11 @@ object BankSlipParser {
     private const val COLLECTION_SLIP_PREFIX = "8"
     private const val AMOUNT_FORMAT = "%.2f"
 
-    private fun parseBankSlip(barcode44: String, line47: String?): BankSlipData.BankSlip {
+    private fun parseBankSlip(barcode44: String): BankSlipData.BankSlip {
         val bankCode = barcode44.substring(BANK_CODE_START, BANK_CODE_END)
         return BankSlipData.BankSlip(
             barcode44 = barcode44,
-            bankName = line47 ?: BankCodeMapper.map(bankCode),
+            bankName = BankCodeMapper.map(bankCode),
             currencyCode = barcode44.substring(CURRENCY_CODE_START, CURRENCY_CODE_END),
             dueDateFactor = barcode44.substring(DUE_DATE_FACTOR_START, DUE_DATE_FACTOR_END),
             amount = parseAmount(barcode44.substring(AMOUNT_START, AMOUNT_END)),
@@ -83,10 +84,10 @@ object BankSlipParser {
         )
     }
 
-    private fun parseCollectionSlip(barcode44: String, line48: String?): BankSlipData {
+    private fun parseCollectionSlip(barcode44: String): BankSlipData {
         return BankSlipData.CollectionSlip(
             barcode44 = barcode44,
-            line48 = line48,
+            providerName = "",
             segment = barcode44.substring(COLLECTION_SEGMENT_START, COLLECTION_SEGMENT_END),
             amount = parseAmountForCollection(barcode44),
             companyField = barcode44.substring(
@@ -98,12 +99,8 @@ object BankSlipParser {
     }
 
     private fun parseBarcode44(barcode44: String): BankSlipData = when {
-        barcode44.startsWith(COLLECTION_SLIP_PREFIX) -> parseCollectionSlip(
-            barcode44 = barcode44,
-            line48 = null
-        )
-
-        else -> parseBankSlip(barcode44 = barcode44, line47 = null)
+        barcode44.startsWith(COLLECTION_SLIP_PREFIX) -> parseCollectionSlip(barcode44)
+        else -> parseBankSlip(barcode44)
     }
 
     private fun parseAmount(raw: String): String? {
@@ -143,25 +140,13 @@ object BankSlipParser {
         append(line48.substring(COLLECTION_SEG4_START, COLLECTION_SEG4_END))
     }
 
-    private fun normalizeLinearCode(rawValue: String): String {
-        return rawValue.filter(Char::isDigit)
-    }
-
     fun parse(barcode: Barcode): ScannedCodeData {
         val rawValue = barcode.rawValue.orEmpty()
-        val base = ScannedCodeData(barcode = rawValue, confidence = 1f, rawText = rawValue)
-        val digits = normalizeLinearCode(rawValue)
+        val base = ScannedCodeData(barcode = rawValue, confidence = 0f, rawText = rawValue)
+        val digits = barcode.normalizeLinearCode()
         val bankSlipData = when (digits.length) {
-            BANK_SLIP_LINE_LENGTH -> {
-                val barcode44 = bankSlipLineToBarcode(line47 = digits)
-                parseBankSlip(barcode44 = barcode44, line47 = digits)
-            }
-
-            COLLECTION_LINE_LENGTH -> {
-                val barcode44 = collectionLineToBarcode(line48 = digits)
-                parseCollectionSlip(barcode44 = barcode44, line48 = digits)
-            }
-
+            BANK_SLIP_LINE_LENGTH -> parseBankSlip(barcode44 = bankSlipLineToBarcode(line47 = digits))
+            COLLECTION_LINE_LENGTH -> parseCollectionSlip(barcode44 = collectionLineToBarcode(line48 = digits))
             BARCODE_LENGTH -> parseBarcode44(digits)
             else -> BankSlipData.Unknown(digits)
         }
@@ -175,7 +160,7 @@ object BankSlipParser {
             is BankSlipData.CollectionSlip -> base.copy(
                 segment = bankSlipData.segment,
                 company = bankSlipData.companyField,
-                name = bankSlipData.line48.orEmpty(),
+                name = bankSlipData.providerName.orEmpty(),
                 value = bankSlipData.amount.orEmpty()
             )
 
