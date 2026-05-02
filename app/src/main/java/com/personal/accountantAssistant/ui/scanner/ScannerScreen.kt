@@ -1,6 +1,8 @@
 package com.personal.accountantAssistant.ui.scanner
 
 import android.Manifest
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -51,8 +53,9 @@ import java.util.concurrent.Executors
 fun ScannerScreen(
     mode: ScanMode,
     onResult: (ScanResult) -> Unit,
-    onSkip: () -> Unit
+    onManuallyEnterClick: () -> Unit
 ) {
+    val activity = LocalActivity.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val viewModel: ScannerViewModel = koinViewModel()
@@ -132,7 +135,7 @@ fun ScannerScreen(
                     CircleIconButton(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         stringResourceId = R.string.back_action,
-                        onClick = onSkip
+                        onClick = { activity?.finish() }
                     )
 
                     RoundedTextButton(
@@ -158,7 +161,7 @@ fun ScannerScreen(
             }
 
             Button(
-                onClick = onSkip,
+                onClick = onManuallyEnterClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Dimens.buttonHeight),

@@ -72,17 +72,15 @@ fun BillsScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             it.onScannerActivityResult { scanResult ->
                 val bill = scanResult?.asBill()
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = ExpenseModel(
-                            name = bill?.name,
-                            date = bill?.date.toDate(),
-                            unitaryValue = bill?.value?.toCurrencyOrZeroBigDecimal().orZero()
-                        ).toBill(),
-                        onEdit = viewModel::saveBill,
-                        manager = fragmentManager
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = ExpenseModel(
+                        name = bill?.name,
+                        date = bill?.date.toDate(),
+                        unitaryValue = bill?.value?.toCurrencyOrZeroBigDecimal().orZero()
+                    ).toBill(),
+                    onEdit = viewModel::saveBill
+                )
             }
         }
 
@@ -113,13 +111,11 @@ fun BillsScreen(
             items = filteredBills,
             onRefresh = { viewModel.loadBills() },
             onEdit = { model ->
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = model,
-                        onEdit = viewModel::saveBill,
-                        manager = it
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = model,
+                    onEdit = viewModel::saveBill
+                )
             },
             onActive = viewModel::switchActiveBill,
             onDelete = { pendingDelete = it },
@@ -169,13 +165,11 @@ internal fun BillsFabs(
             painterResourceId = R.drawable.ic_add_white,
             stringResourceId = R.string.add_action,
             onClick = {
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = ExpenseModel().toBill(),
-                        onEdit = viewModel::saveBill,
-                        manager = it
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = ExpenseModel().toBill(),
+                    onEdit = viewModel::saveBill
+                )
             }
         )
     }

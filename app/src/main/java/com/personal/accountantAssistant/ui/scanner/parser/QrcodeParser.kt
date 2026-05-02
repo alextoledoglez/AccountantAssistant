@@ -45,14 +45,14 @@ object QrcodeParser {
     }
 
     fun parse(barcode: Barcode): ScannedCodeData {
-        val rawValue     = barcode.rawValue.orEmpty()
+        val rawValue = barcode.rawValue.orEmpty()
         val displayValue = barcode.displayValue.orEmpty()
-        val base         = ScannedCodeData(barcode = rawValue, confidence = 1f, rawText = rawValue)
+        val base = ScannedCodeData(barcode = rawValue, confidence = 1f, rawText = rawValue)
         return if (rawValue.startsWith(PIX_PREFIX)) {
             val (name, value, date) = parsePixEmv(rawValue)
             base.copy(name = name, value = value, date = date)
         } else {
-            val name  = displayValue.ifBlank { rawValue }.take(MAX_DISPLAY_NAME_LENGTH)
+            val name = displayValue.ifBlank { rawValue }.take(MAX_DISPLAY_NAME_LENGTH)
             val value = Regex(MONETARY_VALUE_PATTERN).find(rawValue)?.groupValues?.getOrNull(1)
             base.copy(name = name, value = value.orEmpty())
         }

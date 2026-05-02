@@ -71,17 +71,15 @@ fun BuysScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             it.onScannerActivityResult { scanResult ->
                 val buy = scanResult?.asBuy()
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = ExpenseModel(
-                            name = buy?.name,
-                            quantity = 1,
-                            unitaryValue = buy?.price?.toCurrencyOrZeroBigDecimal().orZero()
-                        ).toBuy(),
-                        onEdit = viewModel::saveBuy,
-                        manager = fragmentManager
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = ExpenseModel(
+                        name = buy?.name,
+                        quantity = 1,
+                        unitaryValue = buy?.price?.toCurrencyOrZeroBigDecimal().orZero()
+                    ).toBuy(),
+                    onEdit = viewModel::saveBuy
+                )
             }
         }
 
@@ -112,13 +110,11 @@ fun BuysScreen(
             items = filteredBuys,
             onRefresh = { viewModel.loadBuys() },
             onEdit = { model ->
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = model,
-                        onEdit = viewModel::saveBuy,
-                        manager = it
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = model,
+                    onEdit = viewModel::saveBuy
+                )
             },
             onActive = viewModel::switchActiveBuy,
             onDelete = { pendingDelete = it },
@@ -168,13 +164,11 @@ internal fun BuysFabs(
             painterResourceId = R.drawable.ic_add_white,
             stringResourceId = R.string.add_action,
             onClick = {
-                fragmentManager?.let {
-                    ExpenseDetailsFragment.showDialogFragment(
-                        model = ExpenseModel().toBuy(),
-                        onEdit = viewModel::saveBuy,
-                        manager = it
-                    )
-                }
+                ExpenseDetailsFragment.showDialogFragment(
+                    fragmentManager = fragmentManager,
+                    model = ExpenseModel().toBuy(),
+                    onEdit = viewModel::saveBuy
+                )
             }
         )
     }

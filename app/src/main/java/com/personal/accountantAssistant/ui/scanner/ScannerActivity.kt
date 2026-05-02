@@ -31,7 +31,7 @@ class ScannerActivity : AppCompatActivity() {
                         setResult(RESULT_OK, data)
                         finish()
                     },
-                    onSkip = { finish() }
+                    onManuallyEnterClick = { finish() }
                 )
             }
         }

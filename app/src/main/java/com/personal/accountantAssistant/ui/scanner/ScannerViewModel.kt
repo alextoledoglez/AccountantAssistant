@@ -8,6 +8,7 @@ import com.personal.accountantAssistant.domain.useCases.buys.GetBarcodeProductNa
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.isBarcodeFormat
 import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.toScannedCodeData
+import com.personal.accountantAssistant.ui.scanner.parser.ScannedCodeData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -24,6 +25,11 @@ class ScannerViewModel(
 
     private val _scanResult = MutableSharedFlow<ScanResult>(extraBufferCapacity = 1)
     val scanResult: SharedFlow<ScanResult> = _scanResult.asSharedFlow()
+
+    private fun ScannedCodeData.toScanResult(scanMode: ScanMode): ScanResult = when (scanMode) {
+        ScanMode.BUY -> ScanResult.Buy(barcode, name, value, confidence, rawText)
+        ScanMode.BILL -> ScanResult.Bill(barcode, name, value, date, confidence, rawText)
+    }
 
     fun onBarcodeDetected(scanMode: ScanMode, barcode: Barcode) {
         if (!_isParsing.compareAndSet(false, true)) return
@@ -44,10 +50,7 @@ class ScannerViewModel(
                 else -> scannedData
             }
 
-            val result = when (scanMode) {
-                ScanMode.BUY -> enrichedScannedData.toBuyScanResult()
-                ScanMode.BILL -> enrichedScannedData.toBillScanResult()
-            }
+            val result = enrichedScannedData.toScanResult(scanMode)
 
             if (result != null) {
                 _scanResult.emit(result)
