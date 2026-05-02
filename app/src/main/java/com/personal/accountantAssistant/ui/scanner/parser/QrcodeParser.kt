@@ -1,6 +1,9 @@
 package com.personal.accountantAssistant.ui.scanner.parser
 
-import com.google.mlkit.vision.barcode.common.Barcode
+import com.personal.accountantAssistant.ui.scanner.parser.QrcodeParser.EMV_TAG_MERCHANT_NAME
+import com.personal.accountantAssistant.ui.scanner.parser.QrcodeParser.EMV_TAG_TRANSACTION_AMOUNT
+import com.personal.accountantAssistant.ui.scanner.parser.QrcodeParser.MONETARY_VALUE_PATTERN
+import com.personal.accountantAssistant.ui.scanner.parser.QrcodeParser.PIX_PREFIX
 
 /**
  * Parses QR code barcodes into [ScannedCodeData].
@@ -44,17 +47,19 @@ object QrcodeParser {
         )
     }
 
-    fun parse(barcode: Barcode): ScannedCodeData {
-        val rawValue = barcode.rawValue.orEmpty()
-        val displayValue = barcode.displayValue.orEmpty()
-        val base = ScannedCodeData(barcode = rawValue, confidence = 1f, rawText = rawValue)
+    fun parse(data: ScannedCodeData): ScannedCodeData {
+        val rawValue = data.rawText
+        val displayValue = data.displayText
         return if (rawValue.startsWith(PIX_PREFIX)) {
             val (name, value, date) = parsePixEmv(rawValue)
-            base.copy(name = name, value = value, date = date)
+            data.copy(name = name, value = value, date = date, confidence = 1f)
         } else {
-            val name = displayValue.ifBlank { rawValue }.take(MAX_DISPLAY_NAME_LENGTH)
-            val value = Regex(MONETARY_VALUE_PATTERN).find(rawValue)?.groupValues?.getOrNull(1)
-            base.copy(name = name, value = value.orEmpty())
+            val name = displayValue.ifBlank { rawValue }.take(n = MAX_DISPLAY_NAME_LENGTH)
+            val value = Regex(MONETARY_VALUE_PATTERN)
+                .find(input = rawValue)
+                ?.groupValues
+                ?.getOrNull(index = 1)
+            data.copy(name = name, value = value.orEmpty(), confidence = 1f)
         }
     }
 }

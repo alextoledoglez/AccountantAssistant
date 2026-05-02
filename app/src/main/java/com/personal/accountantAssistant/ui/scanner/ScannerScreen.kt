@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.ui.scanner
 
 import android.Manifest
 import androidx.activity.compose.LocalActivity
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -45,13 +44,14 @@ import com.personal.accountantAssistant.ui.common.RoundedTextButton
 import com.personal.accountantAssistant.ui.scanner.barcode.BarcodeScanningBuilder
 import com.personal.accountantAssistant.ui.scanner.camera.ImageScanAnalyzer
 import com.personal.accountantAssistant.ui.scanner.camera.buildCameraPreview
+import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.toScannedCodeData
 import com.personal.accountantAssistant.ui.theme.Dimens
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 
 @Composable
 fun ScannerScreen(
-    mode: ScanMode,
+    scanMode: ScanMode,
     onResult: (ScanResult) -> Unit,
     onManuallyEnterClick: () -> Unit
 ) {
@@ -97,7 +97,10 @@ fun ScannerScreen(
                                         scanner = scanner,
                                         previewWidthProvider = { previewView.width.toFloat() },
                                         previewHeightProvider = { previewView.height.toFloat() }
-                                    ) { barcode -> viewModel.onBarcodeDetected(mode, barcode) }
+                                    ) { barcode ->
+                                        val scannedData = barcode.toScannedCodeData(scanMode)
+                                        viewModel.onBarcodeDetected(scannedData)
+                                    }
                                 )
                             },
                             lifecycleOwner = lifecycleOwner
@@ -152,7 +155,7 @@ fun ScannerScreen(
                 }
 
                 Text(
-                    text = stringResource(id = mode.hintRes),
+                    text = stringResource(id = scanMode.hintRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.White,
                     textAlign = TextAlign.Center,
@@ -165,7 +168,7 @@ fun ScannerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(Dimens.buttonHeight),
-                shape = RoundedCornerShape(50),
+                shape = RoundedCornerShape(percent = 50),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )

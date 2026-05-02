@@ -5,5 +5,7 @@ import com.personal.accountantAssistant.domain.repository.BarcodeProductReposito
 class GetBarcodeProductNameUseCaseImpl(
     val repository: BarcodeProductRepository
 ) : GetBarcodeProductNameUseCase {
-    override suspend fun invoke(barcode: String): String? = repository.getProduct(barcode)?.name
+    override suspend fun invoke(barcode: String): String {
+        return repository.getProduct(barcode)?.name.orEmpty()
+    }
 }

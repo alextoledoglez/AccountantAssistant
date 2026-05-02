@@ -1,13 +1,11 @@
 package com.personal.accountantAssistant.ui.scanner
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.google.mlkit.vision.barcode.common.Barcode
 import com.personal.accountantAssistant.bases.BaseViewModel
 import com.personal.accountantAssistant.domain.useCases.bills.GetCompanyNameUseCase
 import com.personal.accountantAssistant.domain.useCases.buys.GetBarcodeProductNameUseCase
 import com.personal.accountantAssistant.providers.AnalyticsProvider
-import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.isBarcodeFormat
-import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.toScannedCodeData
 import com.personal.accountantAssistant.ui.scanner.parser.ScannedCodeData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,31 +24,34 @@ class ScannerViewModel(
     private val _scanResult = MutableSharedFlow<ScanResult>(extraBufferCapacity = 1)
     val scanResult: SharedFlow<ScanResult> = _scanResult.asSharedFlow()
 
-    private fun ScannedCodeData.toScanResult(scanMode: ScanMode): ScanResult = when (scanMode) {
+    private fun ScannedCodeData.toScanResult(): ScanResult? = when (this.scanMode) {
         ScanMode.BUY -> ScanResult.Buy(barcode, name, value, confidence, rawText)
         ScanMode.BILL -> ScanResult.Bill(barcode, name, value, date, confidence, rawText)
     }
 
-    fun onBarcodeDetected(scanMode: ScanMode, barcode: Barcode) {
+    fun onBarcodeDetected(scannedData: ScannedCodeData?) {
         if (!_isParsing.compareAndSet(false, true)) return
         viewModelScope.launch {
-            val scannedData = barcode.toScannedCodeData()
-            val isBarcodeWitBlankName = barcode.isBarcodeFormat() && scannedData.name.isBlank()
-            val enrichedScannedData = when (scanMode) {
-                ScanMode.BUY if isBarcodeWitBlankName -> {
-                    val productName = getBarcodeProductNameUseCase(scannedData.barcode)
-                    scannedData.copy(name = productName.orEmpty())
+            val enrichedScannedData = when (scannedData?.scanMode) {
+                ScanMode.BUY -> {
+                    val productName = scannedData.name.ifBlank {
+                        getBarcodeProductNameUseCase(scannedData.barcode)
+                    }
+                    scannedData.copy(name = productName)
                 }
 
-                ScanMode.BILL if isBarcodeWitBlankName -> {
-                    val billName = getCompanyNameUseCase(scannedData.segment, scannedData.company)
+                ScanMode.BILL -> {
+                    val billName = scannedData.name.ifBlank {
+                        getCompanyNameUseCase(scannedData.segment, scannedData.company)
+                    }
                     scannedData.copy(name = billName)
                 }
 
-                else -> scannedData
+                else -> null
             }
 
-            val result = enrichedScannedData.toScanResult(scanMode)
+            Log.i(TAG, "enrichedScannedData: $enrichedScannedData")
+            val result = enrichedScannedData?.toScanResult()
 
             if (result != null) {
                 _scanResult.emit(result)
@@ -62,5 +63,9 @@ class ScannerViewModel(
 
     fun resetDetection() {
         _isParsing.set(false)
+    }
+
+    companion object {
+        private val TAG = ScannerViewModel::class.java.simpleName
     }
 }

@@ -1,6 +1,9 @@
 package com.personal.accountantAssistant.ui.scanner.parser
 
+import android.util.Log
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.personal.accountantAssistant.extensions.toDigitsStr
+import com.personal.accountantAssistant.ui.scanner.ScanMode
 
 object BarcodeParser {
 
@@ -27,25 +30,35 @@ object BarcodeParser {
     }
 
     fun Barcode.isValidProductBarcode(): Boolean {
-        val isValidProductCodeLength = normalizeLinearCode().length in setOf(8, 12, 13, 14)
-        return isProductBarcodeFormat() && isValidProductCodeLength
+        val isValidProductCodeLength = rawValue.toDigitsStr().length in setOf(8, 12, 13, 14)
+        val isValidProductBarcode = isProductBarcodeFormat() && isValidProductCodeLength
+        Log.i(TAG, "isValidProductBarcode: $isValidProductBarcode")
+        return isValidProductBarcode
     }
 
     fun Barcode.isValidBankSlipBarcode(): Boolean {
-        val isValidBankSlipCodeLength = normalizeLinearCode().length in setOf(44, 47, 48)
-        return isBankSlipBarcodeFormat() && isValidBankSlipCodeLength
+        val isValidBankSlipCodeLength = rawValue.toDigitsStr().length in setOf(44, 47, 48)
+        val isValidBankSlipBarcode = isBankSlipBarcodeFormat() && isValidBankSlipCodeLength
+        Log.i(TAG, "isValidBankSlipBarcode: $isValidBankSlipBarcode")
+        return isValidBankSlipBarcode
     }
 
-    fun Barcode.normalizeLinearCode(): String = rawValue.orEmpty().filter(predicate = Char::isDigit)
-
-    fun Barcode.toScannedCodeData(): ScannedCodeData = when {
-        isQrCodeFormat() -> QrcodeParser.parse(barcode = this)
-        isValidProductBarcode() -> ProductBarcodeParser.parse(barcode = this)
-        isValidBankSlipBarcode() -> BankSlipBarcodeParser.parse(barcode = this)
-        else -> ScannedCodeData(
+    fun Barcode.toScannedCodeData(scanMode: ScanMode): ScannedCodeData? {
+        val data = ScannedCodeData(
+            scanMode = scanMode,
             barcode = rawValue.orEmpty(),
+            displayText = displayValue.orEmpty(),
             confidence = 0f,
             rawText = rawValue.orEmpty()
         )
+        Log.i(TAG, "scannedData: $data")
+        return when {
+            isQrCodeFormat() -> QrcodeParser.parse(data)
+            isValidProductBarcode() && scanMode.isBuyScanMode() -> ProductBarcodeParser.parse(data)
+            isValidBankSlipBarcode() && scanMode.isBillScanMode() -> BankSlipBarcodeParser.parse(data)
+            else -> null
+        }
     }
+
+    val TAG: String = BarcodeParser.javaClass.simpleName
 }

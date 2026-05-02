@@ -25,7 +25,7 @@ class ScannerActivity : AppCompatActivity() {
         setContent {
             AccountantTheme {
                 ScannerScreen(
-                    mode = scanMode,
+                    scanMode = scanMode,
                     onResult = { result ->
                         val data = Intent().putExtra(EXTRA_RESULT, result)
                         setResult(RESULT_OK, data)

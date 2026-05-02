@@ -46,6 +46,8 @@ val String.Companion.FILE_DIRECTORY_TYPE: String get() = String.EMPTY
 val String.Companion.STR_DECIMAL_SEPARATOR: String
     get() = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
 
+fun String?.toDigitsStr(): String = orEmpty().filter(predicate = Char::isDigit)
+
 fun String?.toNormalizedStr() = Normalizer.normalize(this, Normalizer.Form.NFD).replace(
     "[^\\p{ASCII}]".toRegex(), String.EMPTY
 )

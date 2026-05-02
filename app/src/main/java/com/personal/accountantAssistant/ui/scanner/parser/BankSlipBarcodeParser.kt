@@ -1,8 +1,9 @@
 package com.personal.accountantAssistant.ui.scanner.parser
 
-import com.google.mlkit.vision.barcode.common.Barcode
+import android.util.Log
+import com.personal.accountantAssistant.extensions.toDigitsStr
 import com.personal.accountantAssistant.ui.scanner.mappers.BankCodeMapper
-import com.personal.accountantAssistant.ui.scanner.parser.BarcodeParser.normalizeLinearCode
+import java.util.Locale
 
 /**
  * Parses FEBRABAN-compliant bank slip barcodes and typeable lines into [ScannedCodeData].
@@ -106,14 +107,14 @@ object BankSlipBarcodeParser {
     private fun parseAmount(raw: String): String? {
         if (raw.all { it == '0' }) return null
         val cents = raw.toLongOrNull() ?: return null
-        return AMOUNT_FORMAT.format(java.util.Locale.US, cents / 100.0)
+        return AMOUNT_FORMAT.format(Locale.US, cents / 100.0)
     }
 
     private fun parseAmountForCollection(barcode44: String): String? {
         val valueBlock = barcode44.substring(COLLECTION_AMOUNT_START, COLLECTION_AMOUNT_END)
         if (valueBlock.all { it == '0' }) return null
         val cents = valueBlock.toLongOrNull() ?: return null
-        return AMOUNT_FORMAT.format(java.util.Locale.US, cents / 100.0)
+        return AMOUNT_FORMAT.format(Locale.US, cents / 100.0)
     }
 
     private fun bankSlipLineToBarcode(line47: String): String {
@@ -140,31 +141,34 @@ object BankSlipBarcodeParser {
         append(line48.substring(COLLECTION_SEG4_START, COLLECTION_SEG4_END))
     }
 
-    fun parse(barcode: Barcode): ScannedCodeData {
-        val rawValue = barcode.rawValue.orEmpty()
-        val base = ScannedCodeData(barcode = rawValue, confidence = 0f, rawText = rawValue)
-        val digits = barcode.normalizeLinearCode()
+    fun parse(data: ScannedCodeData): ScannedCodeData? {
+        val digits = data.rawText.toDigitsStr()
         val bankSlipData = when (digits.length) {
             BANK_SLIP_LINE_LENGTH -> parseBankSlip(barcode44 = bankSlipLineToBarcode(line47 = digits))
             COLLECTION_LINE_LENGTH -> parseCollectionSlip(barcode44 = collectionLineToBarcode(line48 = digits))
             BARCODE_LENGTH -> parseBarcode44(digits)
             else -> BankSlipData.Unknown(digits)
         }
+        Log.i(TAG, "bankSlipData: $bankSlipData")
         return when (bankSlipData) {
-            is BankSlipData.BankSlip -> base.copy(
+            is BankSlipData.BankSlip -> data.copy(
                 name = bankSlipData.bankName,
                 value = bankSlipData.amount.orEmpty(),
-                date = bankSlipData.dueDateFactor.orEmpty()
+                date = bankSlipData.dueDateFactor.orEmpty(),
+                confidence = 1f
             )
 
-            is BankSlipData.CollectionSlip -> base.copy(
+            is BankSlipData.CollectionSlip -> data.copy(
                 segment = bankSlipData.segment,
                 company = bankSlipData.companyField,
                 name = bankSlipData.providerName.orEmpty(),
-                value = bankSlipData.amount.orEmpty()
+                value = bankSlipData.amount.orEmpty(),
+                confidence = 1f
             )
 
-            else -> base.copy(name = "", value = "")
+            else -> null
         }
     }
+
+    val TAG: String = BankSlipBarcodeParser.javaClass.simpleName
 }
