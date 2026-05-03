@@ -1,10 +1,10 @@
 ## Intro
 
 <p align="center">
-  <img width = "250" src="app/screenshots/Accountant Assistant - Home.png"/>
-  <img width = "250" src="app/screenshots/Accountant Assistant - Wallet.png"/>
-  <img width = "250" src="app/screenshots/Accountant Assistant - Buys.png"/>
-  <img width = "250" src="app/screenshots/Accountant Assistant - Bills.png"/>
+  <img width = "200" src="app/screenshots/Accountant Assistant - Home.png" alt="Home"/>
+  <img width = "200" src="app/screenshots/Accountant Assistant - Wallet.png" alt="Wallet"/>
+  <img width = "200" src="app/screenshots/Accountant Assistant - Buys.png" alt="Buys"/>
+  <img width = "200" src="app/screenshots/Accountant Assistant - Bills.png" alt="Bills"/>
 </p>
 
 All do you need to organize your finances: cards, purchases, bills to pay...etc.
@@ -13,7 +13,7 @@ This project is built using **Jetpack Compose**, providing a modern, reactive, a
 ## Home feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshots/Accountant Assistant - Home.png"/>
+  <img width = "489" src="app/screenshots/Accountant Assistant - Home.png" alt="Home"/>
 </p>
 
 Financial state summary: you can consult simples stats (but useful) based on: your incomes,
@@ -23,7 +23,7 @@ expenses (purchases, bills,...), according to the chosen period.
 ## Wallet feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshots/Accountant Assistant - Wallet.png"/>
+  <img width = "394" src="app/screenshots/Accountant Assistant - Wallet.png" alt="Wallet"/>
 </p>
 
 Digital wallet: where you define your credit/debit cards or your incoming in general. Saving your
@@ -32,7 +32,7 @@ available budget to show an assertive financial state summary at Home screen.
 ## Buys feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshots/Accountant Assistant - Buys.png"/>
+  <img width = "433" src="app/screenshots/Accountant Assistant - Buys.png" alt="Buys"/>
 </p>
 
 When the person goes to the market to buy, they usually carry a paper list with the things they
@@ -56,7 +56,7 @@ add items manually.
 ## Bills feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshots/Accountant Assistant - Bills.png"/>
+  <img width = "467" src="app/screenshots/Accountant Assistant - Bills.png" alt="Bills"/>
 </p>
 
 Periodically bills: water bills, electricity, internet ...This functionality is very similar to
@@ -70,7 +70,7 @@ details, or the **+** button to add bills manually.
 ## Scanner Flow Feature
 
 <p align="center"> 
-  <img width = "250" src="app/screenshots/Accountant Assistant - Scanner.png"/>
+  <img width = "809" src="app/screenshots/Accountant Assistant - Scanner.png" alt="Scanner"/>
 </p>
 
 A powerful tool to streamline data entry for both **Buys** and **Bills**.
