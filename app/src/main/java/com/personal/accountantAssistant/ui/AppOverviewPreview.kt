@@ -16,7 +16,7 @@ import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.wallet.WalletPreviewContent
 
-@Preview(widthDp = 1600, heightDp = 900)
+@Preview(widthDp = 2560, heightDp = 1440)
 @Composable
 fun AppOverviewPreview() {
     AccountantTheme {

@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.expenses
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

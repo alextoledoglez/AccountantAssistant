@@ -38,6 +38,7 @@ Instantly see whether your budget covers your purchases and bills for the select
 
 <p align="center">
   <img width="240" src="app/screenshots/Accountant Assistant - Wallet.png" alt="Wallet"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Wallet details.png" alt="Wallet Details"/>
 </p>
 
 Define your credit/debit cards or general income sources.
