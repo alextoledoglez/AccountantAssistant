@@ -6,12 +6,12 @@ import com.personal.accountantAssistant.domain.useCases.SetAvailableMoneyUseCase
 import com.personal.accountantAssistant.domain.useCases.wallet.*
 import com.personal.accountantAssistant.extensions.flowEmit
 import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedAllCardsActiveFlow
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedAllCardsInactiveFlow
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedAvailableValue
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedCard
-import com.personal.accountantAssistant.providers.MockCardsProviders.mockedCardSummaryFlow
 import com.personal.accountantAssistant.providers.MockCardsProviders.mockedCardsFlow
 import com.personal.accountantAssistant.providers.MockErrorProvider
 import io.mockk.coEvery
@@ -23,7 +23,6 @@ class WalletViewModelTest : BaseTest() {
 
     private lateinit var viewModel: WalletViewModel
     private val getCardsUseCase = mockk<GetCardsUseCase>(relaxed = true)
-    private val getCardsSummaryUseCase = mockk<GetCardsSummaryUseCase>(relaxed = true)
     private val setAvailableMoneyUseCase = mockk<SetAvailableMoneyUseCase>(relaxed = true)
     private val saveCardUseCase = mockk<SaveCardUseCase>(relaxed = true)
     private val activeCardsUseCase = mockk<ActiveCardsUseCase>(relaxed = true)
@@ -34,7 +33,6 @@ class WalletViewModelTest : BaseTest() {
         super.setup()
         viewModel = WalletViewModel(
             getCardsUseCase = getCardsUseCase,
-            getCardsSummaryUseCase = getCardsSummaryUseCase,
             setAvailableMoneyUseCase = setAvailableMoneyUseCase,
             saveCardUseCase = saveCardUseCase,
             activeCardsUseCase = activeCardsUseCase,
@@ -64,22 +62,12 @@ class WalletViewModelTest : BaseTest() {
     }
 
     @Test
-    fun shouldLoadSummary() {
+    fun shouldSummaryReflectActiveCards() {
         viewModel.run {
-            coEvery { getCardsSummaryUseCase() } returns mockedCardSummaryFlow()
-            loadSummary()
-            coVerify { getCardsSummaryUseCase() }
-            assertNotNull(summary.value)
-        }
-    }
-
-    @Test
-    fun shouldNotLoadSummary() {
-        viewModel.run {
-            coEvery { getCardsSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
-            loadSummary()
-            coVerify { getCardsSummaryUseCase() }
-            assertNotNull(errorMessage.value)
+            coEvery { getCardsUseCase() } returns mockedAllCardsActiveFlow()
+            loadCards()
+            coVerify { getCardsUseCase() }
+            assertTrue(summary.value?.activeCount.orZero() > 0)
         }
     }
 

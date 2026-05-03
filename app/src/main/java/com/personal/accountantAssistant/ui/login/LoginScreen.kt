@@ -1,0 +1,62 @@
+package com.personal.accountantAssistant.ui.login
+
+import android.widget.FrameLayout
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.common.SignInButton
+import com.personal.accountantAssistant.R
+import com.personal.accountantAssistant.ui.theme.Dimens
+
+@Composable
+fun LoginScreen(
+    isProcessing: Boolean,
+    isSignInVisible: Boolean,
+    onSignInClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            AndroidView(
+                factory = { ctx ->
+                    android.widget.ImageView(ctx).apply {
+                        setImageResource(R.mipmap.ic_launcher_round)
+                    }
+                },
+                modifier = Modifier.size(Dimens.logoSize)
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.spacingXl))
+
+            if (isProcessing) {
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(Dimens.iconSize)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(Dimens.spacingXl))
+
+            if (isSignInVisible) {
+                AndroidView(
+                    factory = { ctx ->
+                        SignInButton(ctx).apply {
+                            setSize(SignInButton.SIZE_STANDARD)
+                            setOnClickListener { onSignInClick() }
+                        }
+                    },
+                    modifier = Modifier.wrapContentSize()
+                )
+            }
+        }
+    }
+}

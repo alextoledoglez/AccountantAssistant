@@ -3,6 +3,7 @@
     <string name="app_name">Accountant assistant</string>
     <string name="app_version">Versão: %1$s</string>
     <string name="open_action">Abrir</string>
+    <string name="back_action">Voltar</string>
     <string name="logout_action">Encerrar sessão</string>
     <string name="logout_confirmation_title">@string/logout_action</string>
     <string name="logout_confirmation_message">Tem certeza que deseja encerrar a sessão e sair?</string>
@@ -48,6 +49,7 @@
     <string name="add_action">Adicionar</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Salvar</string>
+    <string name="field_required">Este campo é obrigatório</string>
     <string name="edit">Editar</string>
     <string name="delete">Excluir</string>
     <string name="food_product">Produto Alimentar</string>
@@ -87,25 +89,17 @@
     <string name="delete_all_records_message">Tem certeza de que deseja excluir todos os registros?\n\nVocê vai perder todos os registros atuais!</string>
     <string name="import_export_title">Importar / Exportar</string>
     <string name="import_export_message">Escolha uma opção para prosseguir:</string>
-    <string name="barcode_scan_action">Leitura de código de barras</string>
-    <string name="fail_bar_code_detector">Não foi possível configurar o detector!</string>
-    <string name="none_barcode_found">Nenhum código de barras encontrado</string>
-    <string name="bar_code_number">Número do código de barras</string>
-    <string name="barcode_scanner">Leitor de códigos de barra</string>
-    <string name="exit">Saída</string>
-    <string name="permission_camera_rationale">O acesso à câmera é necessário para detecção</string>
-    <string name="no_camera_permission">Este aplicativo não pode ser executado porque não tem permissão de câmera. O aplicativo será encerrado agora.</string>
-    <string name="low_storage_error">Dependências do detector facial não podem ser baixadas devido ao baixo armazenamento do dispositivo</string>
-    <string name="title_activity_main">Amostra de leitor de código de barras</string>
-    <string name="barcode_header">Clique em "Ler código de barras" para ler um código de barras</string>
-    <string name="read_barcode">Leia o código de barras</string>
-    <string name="auto_focus">Auto-foco</string>
-    <string name="use_flash">Use Flash</string>
-    <string name="barcode_success">Código de barras lido com sucesso</string>
-    <string name="barcode_failure">Nenhum código de barras capturado</string>
-    <string name="barcode_error">"Erro ao ler código de barras: %1$s"</string>
     <string name="payment_complete_message">Pagamento completo</string>
     <string name="payment_failed_message">Pagamento falhou</string>
+
+    <!--Scanner-->
+    <string name="scan_action">Escanear</string>
+    <string name="scan_buy_hint">Aponte para o código da compra</string>
+    <string name="scan_bill_hint">Aponte para o código do boleto ou fatura</string>
+    <string name="scan_qr_code_text">QR Code</string>
+    <string name="scan_barcode_text">Barcode</string>
+    <string name="scan_manual_entry_text">Inserir manualmente</string>
+    <string name="camera_permission_denied">Permissão de câmera necessária para usar o scanner</string>
 
     <string name="search_view_hint_message">Digite um item para pesquisar</string>
     <string name="sign_in_action_text">Login</string>

@@ -1,5 +1,6 @@
 package com.personal.accountantAssistant.extensions
 
+import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import java.text.Normalizer
 import java.text.NumberFormat
@@ -45,6 +46,8 @@ val String.Companion.FILE_DIRECTORY_TYPE: String get() = String.EMPTY
 val String.Companion.STR_DECIMAL_SEPARATOR: String
     get() = DecimalFormatSymbols.getInstance().decimalSeparator.toString()
 
+fun String?.toDigitsStr(): String = orEmpty().filter(predicate = Char::isDigit)
+
 fun String?.toNormalizedStr() = Normalizer.normalize(this, Normalizer.Form.NFD).replace(
     "[^\\p{ASCII}]".toRegex(), String.EMPTY
 )
@@ -64,7 +67,11 @@ fun String?.toDate(): Date? = takeIfNotBlank()?.let {
 
 fun String?.takeIfNotBlank() = takeIf { it?.isNotBlank().orFalse() }
 
-fun String.toRoundedBigDecimal() = this.trim().toBigDecimal().rounded()
+fun String.toRoundedBigDecimal(): BigDecimal = try {
+    this.trim().toBigDecimal().rounded()
+} catch (e: Exception) {
+    BigDecimal.ZERO
+}
 
 fun String.isNotEmptyAndLengthEqualTo(value: Int) = (isNotEmpty() && length == value)
 
@@ -102,3 +109,5 @@ fun String.toCurrencyMaskedStr(): String {
     } else this
     return result ?: this
 }
+
+fun String.toCurrencyOrZeroBigDecimal() = takeIfNotBlank()?.toCurrencyBigDecimal().orZero()

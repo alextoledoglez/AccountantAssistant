@@ -17,19 +17,27 @@ import java.math.BigDecimal
 
 class WalletViewModel(
     private val getCardsUseCase: GetCardsUseCase,
-    private val getCardsSummaryUseCase: GetCardsSummaryUseCase,
     private val setAvailableMoneyUseCase: SetAvailableMoneyUseCase,
     private val saveCardUseCase: SaveCardUseCase,
     private val activeCardsUseCase: ActiveCardsUseCase,
     private val deleteCardsUseCase: DeleteCardsUseCase,
-    analytics: AnalyticsProvider? = null,
+    analytics: AnalyticsProvider? = null
 ) : BaseViewModel(analytics) {
 
-    private var _summary = MutableLiveData<SummaryModel>()
-    var summary: LiveData<SummaryModel> = _summary
+    private val _summary = MutableLiveData<SummaryModel>()
+    val summary: LiveData<SummaryModel> = _summary
 
-    private var _cards = MutableLiveData<MutableList<CardModel>?>()
-    var cards: LiveData<MutableList<CardModel>?> = _cards
+    private val _cards = MutableLiveData<MutableList<CardModel>?>()
+    val cards: LiveData<MutableList<CardModel>?> = _cards
+
+    private fun postCards(list: MutableList<CardModel>?) {
+        _cards.postValue(list)
+        val activeItems = list?.filter { it.isActive }.orEmpty()
+        val activeItemsAmount = activeItems.fold(BigDecimal.ZERO) { acc, card ->
+            acc.add(card.availableValue)
+        }
+        _summary.postValue(SummaryModel(activeCount = activeItems.size, total = activeItemsAmount))
+    }
 
     fun loadCards() {
         launch {
@@ -37,16 +45,7 @@ class WalletViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
-        }
-    }
-
-    fun loadSummary() {
-        launch {
-            getCardsSummaryUseCase()
-                .onError { setMessage(it.message) }
-                .onCompletion { setData() }
-                .collect { _summary.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
 
@@ -65,7 +64,7 @@ class WalletViewModel(
                 .onStart { setLoading() }
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
 
@@ -74,7 +73,7 @@ class WalletViewModel(
             activeCardsUseCase.setAllCardsActive(isActive)
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
 
@@ -83,7 +82,7 @@ class WalletViewModel(
             activeCardsUseCase.switchActiveCard(model)
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
 
@@ -92,7 +91,7 @@ class WalletViewModel(
             deleteCardsUseCase.deleteCard(model)
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
 
@@ -101,8 +100,7 @@ class WalletViewModel(
             deleteCardsUseCase.deleteAllCards()
                 .onError { setMessage(it.message) }
                 .onCompletion { setData() }
-                .collect { _cards.postValue(it) }
+                .collect { postCards(list = it) }
         }
     }
-
 }

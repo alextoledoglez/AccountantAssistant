@@ -1,36 +1,63 @@
 package com.personal.accountantAssistant.ui.login
 
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
-import androidx.core.view.isVisible
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.personal.accountantAssistant.R
-import com.personal.accountantAssistant.bases.BaseActivity
-import com.personal.accountantAssistant.databinding.ActivityLoginBinding
 import com.personal.accountantAssistant.extensions.*
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.services.SignInService
+import com.personal.accountantAssistant.ui.MainActivity
+import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.workers.NotificationWorker
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginActivity : BaseActivity<LoginViewModel>() {
+class LoginActivity : AppCompatActivity() {
 
-    override val binding by viewBinding(ActivityLoginBinding::inflate)
+    private val viewModel: LoginViewModel by viewModel()
     private val analytics: AnalyticsProvider? by inject()
     private val service: SignInService? by inject()
+
+    private var isProcessing by mutableStateOf(false)
+    private var isSignInVisible by mutableStateOf(false)
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            closeApp()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this@LoginActivity
         NotificationWorker.setupPeriodicWork(context)
-        setContentView(binding.root)
         supportActionBar?.hide()
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         analytics?.trackScreenViewEvent(this::class.simpleName)
-        binding.signInButton.setOnClickListener { signInPicker() }
+
+        setContent {
+            AccountantTheme {
+                LoginScreen(
+                    isProcessing = isProcessing,
+                    isSignInVisible = isSignInVisible,
+                    onSignInClick = ::signInPicker
+                )
+            }
+        }
+
         with(viewModel) {
-            isProcessing.observe(context) { setProcessing(it) }
+            isProcessing.observe(context) { setLoginProcessing(it) }
             isNotificationTokenLoaded.observe(context) { if (it.orFalse()) getUser() }
-            isLogged.observe(context) { if (it.orFalse()) startMainActivity() }
+            isLogged.observe(context) { if (it.orFalse()) MainActivity.startActivity(context) }
             errorMessage.observe(context) { context.showToastLongText(it) }
             notificationToken.observe(context) { saveNotificationToken(it) }
             userEmail.observe(context) { signIn(it, isLogged.value) }
@@ -40,25 +67,21 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        setProcessing(false)
+        setLoginProcessing(false)
     }
 
-    override fun onBackPressed() {
-        closeApp()
+    private fun setLoginProcessing(processing: Boolean = true) {
+        isProcessing = processing
+        if (processing) isSignInVisible = false
     }
 
-    private fun setProcessing(isProcessing: Boolean = true) {
-        if (isProcessing)
-            setLoginActionVisible(false)
-        binding.progressBar.isVisible = isProcessing
-    }
-
-    private fun setLoginActionVisible(isVisible: Boolean = true) {
-        binding.signInButton.isVisible = isVisible
+    private fun setLoginActionVisible(visible: Boolean = true) {
+        isSignInVisible = visible
+        if (visible) isProcessing = false
     }
 
     private fun signInPicker() {
-        setProcessing()
+        setLoginProcessing()
         service?.getSignInClient()?.signInIntent
             ?.let { loginPickerLauncher.launch(it) }
             ?: run { onSignInFail() }
@@ -66,24 +89,26 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
 
     private fun signIn(email: String?, isLogged: Boolean?) {
         if (email?.isNotBlank().orFalse() && !isLogged.orFalse()) {
-            setProcessing()
+            setLoginProcessing()
             service?.getSignInClientBy(email)?.signInIntent
                 ?.let { loginAccountLauncher.launch(it) }
                 ?: run { onSignInFail() }
-        } else
+        } else {
             setLoginActionVisible()
+        }
     }
 
     private fun onSignInResult(result: ActivityResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             service?.handleSignInResult(result.data, viewModel::saveAccount, ::onSignInFail)
                 ?: run { onSignInFail() }
-        } else
+        } else {
             onSignInFail()
+        }
     }
 
     private fun onSignInFail() {
-        setProcessing(false)
+        setLoginProcessing(false)
         setLoginActionVisible()
         analytics?.trackEvent(
             LOGIN_CANCELLED,
@@ -92,11 +117,17 @@ class LoginActivity : BaseActivity<LoginViewModel>() {
         )
     }
 
-    private var loginPickerLauncher = setActivityForResult(this::onSignInResult)
-
-    private var loginAccountLauncher = setActivityForResult(this::onSignInResult)
+    private val loginPickerLauncher = setActivityForResult(this::onSignInResult)
+    private val loginAccountLauncher = setActivityForResult(this::onSignInResult)
 
     companion object {
         const val LOGIN_CANCELLED = "LOGIN_CANCELLED"
+
+        fun startActivity(context: Context) {
+            Intent(context, LocalActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(this)
+            }
+        }
     }
 }

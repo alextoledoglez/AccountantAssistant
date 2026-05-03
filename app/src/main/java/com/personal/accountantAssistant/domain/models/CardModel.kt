@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.domain.models
 
 import android.os.Parcelable
 import android.text.Editable
-import androidx.recyclerview.widget.DiffUtil
 import com.personal.accountantAssistant.extensions.EMPTY
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
@@ -45,19 +44,4 @@ data class CardModel(
 
     private fun getUsedCardValue() = limitValue.minus(availableValue)
 
-    companion object {
-        val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<CardModel>() {
-            override fun areItemsTheSame(oldItem: CardModel, newItem: CardModel) =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: CardModel, newItem: CardModel) =
-                oldItem.company == newItem.company &&
-                        oldItem.name == newItem.name &&
-                        oldItem.password == newItem.password &&
-                        oldItem.usedValue == newItem.usedValue &&
-                        oldItem.availableValue == newItem.availableValue &&
-                        oldItem.limitValue == newItem.limitValue &&
-                        oldItem.isActive == newItem.isActive
-        }
-    }
 }

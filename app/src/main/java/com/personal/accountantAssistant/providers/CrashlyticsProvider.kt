@@ -1,7 +1,7 @@
 package com.personal.accountantAssistant.providers
 
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.Firebase
 
 class CrashlyticsProvider {
 

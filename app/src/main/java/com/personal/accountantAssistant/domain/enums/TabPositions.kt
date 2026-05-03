@@ -1,9 +1,17 @@
 package com.personal.accountantAssistant.domain.enums
 
-enum class TabPositions(val position: Int) {
-    HOME(position = 0),
-    WALLET(position = 1),
-    BUYS(position = 2),
-    BILLS(position = 3),
-    PROFILE(position = 4)
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.personal.accountantAssistant.R
+
+enum class TabPositions(
+    val route: String,
+    @field:StringRes val titleRes: Int,
+    @field:DrawableRes val iconRes: Int
+) {
+    HOME("home", R.string.menu_home, R.drawable.ic_home),
+    WALLET("wallet", R.string.menu_wallet, R.drawable.ic_wallet),
+    BUYS("buys", R.string.menu_buys, R.drawable.ic_buys),
+    BILLS("bills", R.string.menu_bills, R.drawable.ic_bills),
+    PROFILE("profile", R.string.menu_profile, R.drawable.ic_profile)
 }
