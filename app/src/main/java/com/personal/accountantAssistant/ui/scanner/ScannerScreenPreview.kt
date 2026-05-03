@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.ui.common.CircleIconButton
@@ -100,13 +101,13 @@ internal fun ScannerPreviewContent(scanCodeType: ScanCodeType = ScanCodeType.QR_
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun ScannerQrPreview() {
     AccountantTheme { ScannerPreviewContent(ScanCodeType.QR_CODE) }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun ScannerBarcodePreview() {
     AccountantTheme { ScannerPreviewContent(ScanCodeType.BARCODE) }

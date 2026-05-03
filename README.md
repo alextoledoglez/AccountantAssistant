@@ -15,10 +15,7 @@
 ---
 
 <p align="center">
-  <img width="190" src="app/screenshots/Accountant Assistant - Home.png" alt="Home"/>
-  <img width="190" src="app/screenshots/Accountant Assistant - Wallet.png" alt="Wallet"/>
-  <img width="190" src="app/screenshots/Accountant Assistant - Buys.png" alt="Buys"/>
-  <img width="190" src="app/screenshots/Accountant Assistant - Bills.png" alt="Bills"/>
+  <img width="800" src="app/screenshots/Accountant Assistant - Overview.png" alt="Overview"/>
 </p>
 
 ---
@@ -53,6 +50,7 @@ overview.
 
 <p align="center">
   <img width="240" src="app/screenshots/Accountant Assistant - Buys.png" alt="Buys"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Buys details.png" alt="Buys Details"/>
 </p>
 
 Stop writing shopping lists on paper or editing notes by hand.
@@ -69,6 +67,7 @@ Adjust quantities on the fly to stay within budget.
 
 <p align="center">
   <img width="240" src="app/screenshots/Accountant Assistant - Bills.png" alt="Bills"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Bills details.png" alt="Bills Details"/>
 </p>
 
 Track recurring bills (water, electricity, internet, etc.) with expiration dates.
@@ -84,7 +83,8 @@ Toggle bills on/off to mark them as paid or defer them to a future date.
 ### Scanner — Barcode & QR Reader
 
 <p align="center">
-  <img width="440" src="app/screenshots/Accountant Assistant - Scanner.png" alt="Scanner"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Scanner QR.png" alt="QR Scanner"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Scanner Barcode.png" alt="Barcode Scanner"/>
 </p>
 
 Powered by **ML Kit**
@@ -121,7 +121,7 @@ Both code types are supported in both contexts:
 
 ### Prerequisites
 
-- Android Studio Ladybug (2024.2) or later
+- Android Studio Panda 2 | 2025.3.2 or later
 - JDK 17
 - Android device or emulator running API 26+
 
