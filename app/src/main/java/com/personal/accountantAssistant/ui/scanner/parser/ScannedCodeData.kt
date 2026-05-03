@@ -9,8 +9,7 @@ data class ScannedCodeData(
     val segment: String = "",
     val company: String = "",
     val name: String = "",
-    val value: String = "",
+    val amount: String = "",
     val date: String = "",
-    val confidence: Float = 0f,
     val rawText: String = ""
 )

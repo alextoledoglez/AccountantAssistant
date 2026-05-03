@@ -30,14 +30,14 @@ object QrcodeParser {
     const val PIX_PREFIX = "000201"
     const val MONETARY_VALUE_PATTERN = """(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})"""
 
-    private fun parsePixEmv(raw: String): Triple<String, String, String> {
+    private fun parsePixEmv(qrCode: String): Triple<String, String, String> {
         val fields = mutableMapOf<String, String>()
         var pos = 0
-        while (pos + EMV_TLV_HEADER_SIZE <= raw.length) {
-            val tag = raw.substring(pos, pos + 2)
-            val len = raw.substring(pos + 2, pos + 4).toIntOrNull() ?: break
-            val end = minOf(pos + EMV_TLV_HEADER_SIZE + len, raw.length)
-            fields[tag] = raw.substring(pos + EMV_TLV_HEADER_SIZE, end)
+        while (pos + EMV_TLV_HEADER_SIZE <= qrCode.length) {
+            val tag = qrCode.substring(pos, pos + 2)
+            val len = qrCode.substring(pos + 2, pos + 4).toIntOrNull() ?: break
+            val end = minOf(a = pos + EMV_TLV_HEADER_SIZE + len, b = qrCode.length)
+            fields[tag] = qrCode.substring(pos + EMV_TLV_HEADER_SIZE, end)
             pos += EMV_TLV_HEADER_SIZE + len
         }
         return Triple(
@@ -48,18 +48,17 @@ object QrcodeParser {
     }
 
     fun parse(data: ScannedCodeData): ScannedCodeData {
-        val rawValue = data.rawText
-        val displayValue = data.displayText
-        return if (rawValue.startsWith(PIX_PREFIX)) {
-            val (name, value, date) = parsePixEmv(rawValue)
-            data.copy(name = name, value = value, date = date, confidence = 1f)
+        val rawText = data.rawText
+        return if (rawText.startsWith(PIX_PREFIX)) {
+            val (name, amount, date) = parsePixEmv(rawText)
+            data.copy(name = name, amount = amount, date = date)
         } else {
-            val name = displayValue.ifBlank { rawValue }.take(n = MAX_DISPLAY_NAME_LENGTH)
-            val value = Regex(MONETARY_VALUE_PATTERN)
-                .find(input = rawValue)
+            val name = data.displayText.take(n = MAX_DISPLAY_NAME_LENGTH)
+            val amount = Regex(MONETARY_VALUE_PATTERN)
+                .find(input = rawText)
                 ?.groupValues
                 ?.getOrNull(index = 1)
-            data.copy(name = name, value = value.orEmpty(), confidence = 1f)
+            data.copy(name = name, amount = amount.orEmpty())
         }
     }
 }

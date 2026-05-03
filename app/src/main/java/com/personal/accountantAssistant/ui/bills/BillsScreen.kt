@@ -77,7 +77,7 @@ fun BillsScreen(
                     model = ExpenseModel(
                         name = bill?.name,
                         date = bill?.date.toDate(),
-                        unitaryValue = bill?.value?.toCurrencyOrZeroBigDecimal().orZero()
+                        unitaryValue = bill?.amount?.toCurrencyOrZeroBigDecimal().orZero()
                     ).toBill(),
                     onEdit = viewModel::saveBill
                 )

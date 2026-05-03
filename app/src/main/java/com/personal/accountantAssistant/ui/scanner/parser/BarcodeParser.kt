@@ -46,16 +46,15 @@ object BarcodeParser {
     fun Barcode.toScannedCodeData(scanMode: ScanMode): ScannedCodeData? {
         val data = ScannedCodeData(
             scanMode = scanMode,
-            barcode = rawValue.orEmpty(),
-            displayText = displayValue.orEmpty(),
-            confidence = 0f,
+            barcode = rawValue.toDigitsStr(),
+            displayText = displayValue?.takeIf { it.isNotBlank() } ?: rawValue.orEmpty(),
             rawText = rawValue.orEmpty()
         )
         Log.i(TAG, "scannedData: $data")
         return when {
             isQrCodeFormat() -> QrcodeParser.parse(data)
-            isValidProductBarcode() && scanMode.isBuyScanMode() -> ProductBarcodeParser.parse(data)
-            isValidBankSlipBarcode() && scanMode.isBillScanMode() -> BankSlipBarcodeParser.parse(data)
+            isValidProductBarcode() && scanMode.isBuy() -> ProductBarcodeParser.parse(data)
+            isValidBankSlipBarcode() && scanMode.isBill() -> BankSlipBarcodeParser.parse(data)
             else -> null
         }
     }

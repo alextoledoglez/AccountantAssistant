@@ -6,24 +6,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 sealed class ScanResult : Parcelable {
     @Parcelize
-    data class Buy(
-        val barcode: String = "",
-        val name: String = "",
-        val price: String = "",
-        val confidence: Float = 0f,
-        val rawText: String = ""
-    ) : ScanResult()
+    data class Buy(val name: String = "", val amount: String = "") : ScanResult()
 
     fun asBuy(): Buy? = this as? Buy
 
     @Parcelize
     data class Bill(
-        val barcode: String = "",
         val name: String = "",
-        val value: String = "",
-        val date: String = "",
-        val confidence: Float = 0f,
-        val rawText: String = ""
+        val amount: String = "",
+        val date: String = ""
     ) : ScanResult()
 
     fun asBill(): Bill? = this as? Bill

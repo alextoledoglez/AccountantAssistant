@@ -76,7 +76,7 @@ fun BuysScreen(
                     model = ExpenseModel(
                         name = buy?.name,
                         quantity = 1,
-                        unitaryValue = buy?.price?.toCurrencyOrZeroBigDecimal().orZero()
+                        unitaryValue = buy?.amount?.toCurrencyOrZeroBigDecimal().orZero()
                     ).toBuy(),
                     onEdit = viewModel::saveBuy
                 )

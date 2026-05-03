@@ -7,7 +7,7 @@ enum class ScanMode(@field:StringRes val hintRes: Int) {
     BUY(hintRes = R.string.scan_buy_hint),
     BILL(hintRes = R.string.scan_bill_hint);
 
-    fun isBuyScanMode() = this == BUY
+    fun isBuy() = this == BUY
 
-    fun isBillScanMode() = this == BILL
+    fun isBill() = this == BILL
 }

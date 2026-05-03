@@ -25,8 +25,8 @@ class ScannerViewModel(
     val scanResult: SharedFlow<ScanResult> = _scanResult.asSharedFlow()
 
     private fun ScannedCodeData.toScanResult(): ScanResult? = when (this.scanMode) {
-        ScanMode.BUY -> ScanResult.Buy(barcode, name, value, confidence, rawText)
-        ScanMode.BILL -> ScanResult.Bill(barcode, name, value, date, confidence, rawText)
+        ScanMode.BUY -> ScanResult.Buy(name, amount)
+        ScanMode.BILL -> ScanResult.Bill(name, amount, date)
     }
 
     fun onBarcodeDetected(scannedData: ScannedCodeData?) {
