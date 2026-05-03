@@ -4,8 +4,8 @@
 android-minSdk = "26"
 android-compileSdk = "36"
 android-targetSdk = "36"
-versionCode = "9"
-versionName = "1.1.3"
+versionCode = "10"
+versionName = "1.1.4"
 
 #Compose
 composeBomVersion = "2025.05.01"
