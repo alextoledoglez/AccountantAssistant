@@ -1,7 +1,10 @@
 ## Intro
 
-<p align="center"> 
-  <img src="app/screenshots/Accountant assistant - Overview.png"/>
+<p align="center">
+  <img width = "250" src="app/screenshots/Accountant Assistant - Home.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Wallet.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Buys.png"/>
+  <img width = "250" src="app/screenshots/Accountant Assistant - Bills.png"/>
 </p>
 
 All do you need to organize your finances: cards, purchases, bills to pay...etc.
@@ -33,7 +36,7 @@ available budget to show an assertive financial state summary at Home screen.
 </p>
 
 When the person goes to the market to buy, they usually carry a paper list with the things they
-needed and that list, most of times, is very similar, it does not vary much, so, he always has to
+needed and that list, most of the time, is very similar, it does not vary much, so, he always has to
 write everything on a piece of paper and then, as he picks up the products at the market, he
 crosses off the items from the paper to calculate the sum with the smartphone calculator.
 
@@ -47,7 +50,7 @@ the sum and thus, at the end of marking the desired, you get the total to pay. Y
 the quantities of products according to the money you have at that time, you prioritize what
 product you carry and what not.
 
-Use the **scan** button to read a product barcode and auto-fill its name, or the **+** button to
+Use the **scan** button to read a product barcode and autofill its name, or the **+** button to
 add items manually.
 
 ## Bills feature
@@ -61,7 +64,7 @@ the shopping list, with smalls differences, since bills have an expiration date 
 forget them, the app notify to you before the expiration of a bill. You can switch on/off bills
 according to your plan to pay them and leave saved for next month or desired date.
 
-Use the **scan** button to read a QR code from a bill slip and auto-fill company and payment
+Use the **scan** button to read a QR code from a bill slip and autofill company and payment
 details, or the **+** button to add bills manually.
 
 ## Scanner Flow Feature
