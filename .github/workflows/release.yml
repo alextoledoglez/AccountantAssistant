@@ -40,7 +40,7 @@ jobs:
           echo "storeFileName=${{ secrets.STORE_FILE_NAME }}" >> local.properties
 
       - name: Run unit tests
-        run: ./gradlew testReleaseUnitTest
+        run: ./gradlew :app:testDebugUnitTest
 
       - name: Test report
         uses: asadmansr/android-test-report-action@v1.2.0
