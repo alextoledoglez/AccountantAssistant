@@ -60,8 +60,9 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           packageName: com.personal.accountantAssistant
-          track: internal
+          tracks: internal
           status: draft
+          changesNotSentForReview: true
           releaseName: ${{ github.event.inputs.tag }}
 
       - name: Create GitHub release
