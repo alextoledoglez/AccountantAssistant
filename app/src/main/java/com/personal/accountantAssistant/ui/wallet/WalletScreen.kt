@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,13 +59,16 @@ fun WalletScreen(
                     it.name.containStr(searchQuery)
         }.orEmpty()
     }
+    val deleteAllContent: () -> Unit = remember(viewModel) { viewModel::deleteAllCards }
+    val fabContent: @Composable () -> Unit = remember(fragmentManager) {
+        { WalletFabs(fragmentManager, viewModel) }
+    }
 
     LaunchedEffect(Unit) { viewModel.loadCards() }
 
-    DisposableEffect(Unit) {
-        onSetFab { WalletFabs(fragmentManager, viewModel) }
-        onSetDeleteAll(viewModel::deleteAllCards)
-        onDispose {}
+    SideEffect {
+        onSetFab(fabContent)
+        onSetDeleteAll(deleteAllContent)
     }
 
     Column(

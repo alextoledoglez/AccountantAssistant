@@ -15,7 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -82,13 +82,16 @@ fun BuysScreen(
                 )
             }
         }
+    val deleteAllContent: () -> Unit = remember(viewModel) { viewModel::deleteAllBuys }
+    val fabContent: @Composable () -> Unit = remember(scanLauncher, fragmentManager) {
+        { BuysFabs(scanLauncher, fragmentManager, viewModel) }
+    }
 
     LaunchedEffect(Unit) { viewModel.loadBuys() }
 
-    DisposableEffect(Unit) {
-        onSetFab { BuysFabs(scanLauncher, fragmentManager, viewModel) }
-        onSetDeleteAll(viewModel::deleteAllBuys)
-        onDispose {}
+    SideEffect {
+        onSetFab(fabContent)
+        onSetDeleteAll(deleteAllContent)
     }
 
     Column(
