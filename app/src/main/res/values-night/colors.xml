@@ -1,0 +1,21 @@
+<resources>
+
+    <color name="backgroundColor">#0F1115</color>
+    <color name="cardSurfaceColor">#171A1F</color>
+    <color name="fontColor">#E6EAF0</color>
+    <color name="secondaryFontColor">#ADB5BD</color>
+    <color name="disableFontColor">#6C727C</color>
+    <color name="outlineColor">#3A404A</color>
+
+    <color name="tabSelectedTextColor">#66BB6A</color>
+    <color name="tabTextColor">#7E8794</color>
+
+    <color name="semantic_error">#FF6B6B</color>
+    <color name="semantic_success">#66BB6A</color>
+
+    <!-- Legacy aliases: dark-mode overrides for styles, themes, drawables and non-Compose layouts -->
+    <color name="primaryColor">#66BB6A</color>
+    <color name="primaryDarkColor">#43A047</color>
+    <color name="redColor">#FF6B6B</color>
+
+</resources>

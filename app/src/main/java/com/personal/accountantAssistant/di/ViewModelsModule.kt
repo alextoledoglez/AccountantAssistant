@@ -1,17 +1,21 @@
 package com.personal.accountantAssistant.di
 
+import com.personal.accountantAssistant.ui.MainViewModel
 import com.personal.accountantAssistant.ui.bills.BillsViewModel
 import com.personal.accountantAssistant.ui.buys.BuysViewModel
 import com.personal.accountantAssistant.ui.home.HomeViewModel
 import com.personal.accountantAssistant.ui.login.LoginViewModel
 import com.personal.accountantAssistant.ui.menu.MenuViewModel
+import com.personal.accountantAssistant.ui.scanner.ScannerViewModel
 import com.personal.accountantAssistant.ui.wallet.WalletViewModel
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 object ViewModelsModule {
 
     fun getViewModels() = module {
+
+        viewModel { MainViewModel() }
 
         viewModel {
             LoginViewModel(
@@ -35,7 +39,6 @@ object ViewModelsModule {
         viewModel {
             WalletViewModel(
                 getCardsUseCase = get(),
-                getCardsSummaryUseCase = get(),
                 setAvailableMoneyUseCase = get(),
                 saveCardUseCase = get(),
                 activeCardsUseCase = get(),
@@ -46,7 +49,6 @@ object ViewModelsModule {
         viewModel {
             BuysViewModel(
                 getBuysUseCase = get(),
-                getBuysSummaryUseCase = get(),
                 saveBuyUseCase = get(),
                 activeBuysUseCase = get(),
                 deleteBuysUseCase = get(),
@@ -56,7 +58,6 @@ object ViewModelsModule {
         viewModel {
             BillsViewModel(
                 getBillsUseCase = get(),
-                getBillsSummaryUseCase = get(),
                 saveBillUseCase = get(),
                 activeBillsUseCase = get(),
                 deleteBillsUseCase = get(),
@@ -67,6 +68,13 @@ object ViewModelsModule {
             MenuViewModel(
                 getSignedUser = get(),
                 setSignedUser = get(),
+                analytics = get()
+            )
+        }
+        viewModel {
+            ScannerViewModel(
+                getBarcodeProductNameUseCase = get(),
+                getCompanyNameUseCase = get(),
                 analytics = get()
             )
         }

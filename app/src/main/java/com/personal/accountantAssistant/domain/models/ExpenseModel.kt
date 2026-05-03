@@ -2,7 +2,6 @@ package com.personal.accountantAssistant.domain.models
 
 import android.os.Parcelable
 import android.text.Editable
-import androidx.recyclerview.widget.DiffUtil
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.extensions.*
 import kotlinx.parcelize.Parcelize
@@ -41,19 +40,16 @@ data class ExpenseModel(
 
     fun calculateTotalValue(): BigDecimal = unitaryValue.multiply(quantity.toBigDecimal())
 
-    companion object {
-        val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<ExpenseModel>() {
-            override fun areItemsTheSame(oldItem: ExpenseModel, newItem: ExpenseModel) =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: ExpenseModel, newItem: ExpenseModel) =
-                oldItem.name == newItem.name &&
-                        oldItem.quantity == newItem.quantity &&
-                        oldItem.date == newItem.date &&
-                        oldItem.unitaryValue == newItem.unitaryValue &&
-                        oldItem.totalValue == newItem.totalValue &&
-                        oldItem.type == newItem.type &&
-                        oldItem.isActive == newItem.isActive
+    fun toFormatExpenseValue(showDate: Boolean): String {
+        val unitaryPriceStr = unitaryValue.toCurrencyMaskedStr()
+        val totalPriceStr = calculateTotalValue().toCurrencyMaskedStr()
+        return if (showDate) {
+            val quantityStr = quantity.toString() + String.TIMES
+            "$quantityStr${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
+        } else {
+            val quantityStr = quantity.toString() + String.UNITY
+            "$quantityStr${String.MULTIPLY_OPERATOR}${unitaryPriceStr}${String.EQUAL_OPERATOR}${totalPriceStr}"
         }
     }
+
 }

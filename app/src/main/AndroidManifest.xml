@@ -10,15 +10,17 @@
     <!-- Permissions required by Ads -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
+    <!-- Camera for scanner -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
         android:name=".AccountantAssistant"
         android:allowBackup="true"
-        android:configChanges="orientation|keyboardHidden"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
-        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -51,16 +53,10 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:configChanges="orientation"
-            android:hardwareAccelerated="true"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:hardwareAccelerated="true" />
 
         <activity
-            android:name="com.personal.accountantAssistant.bases.barcode.BarcodeScanActivity"
-            android:configChanges="orientation"
-            android:hardwareAccelerated="false"
-            android:label="Barcode Scan"
+            android:name=".ui.scanner.ScannerActivity"
             android:screenOrientation="portrait" />
 
         <meta-data
@@ -70,10 +66,6 @@
         <meta-data
             android:name="com.google.android.gsm.version"
             android:value="@integer/google_play_services_version" />
-
-        <meta-data
-            android:name="com.google.android.gsm.version.DEPENDENCIES"
-            android:value="barcode" />
 
         <property
             android:name="android.adservices.AD_SERVICES_CONFIG"

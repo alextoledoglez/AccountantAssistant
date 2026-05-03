@@ -3,12 +3,12 @@ package com.personal.accountantAssistant.ui.bills
 import com.personal.accountantAssistant.base.BaseTest
 import com.personal.accountantAssistant.domain.useCases.bills.*
 import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockBillsProviders.mockedAllBillsActiveFlow
 import com.personal.accountantAssistant.providers.MockBillsProviders.mockedAllBillsInactiveFlow
 import com.personal.accountantAssistant.providers.MockBillsProviders.mockedBill
 import com.personal.accountantAssistant.providers.MockBillsProviders.mockedBillsFlow
-import com.personal.accountantAssistant.providers.MockBillsProviders.mockedBillsSummaryFlow
 import com.personal.accountantAssistant.providers.MockErrorProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,7 +19,6 @@ class BillsViewModelTest : BaseTest() {
 
     private lateinit var viewModel: BillsViewModel
     private val getBillsUseCase = mockk<GetBillsUseCase>(relaxed = true)
-    private val getBillsSummaryUseCase = mockk<GetBillsSummaryUseCase>(relaxed = true)
     private val saveBillUseCase = mockk<SaveBillUseCase>(relaxed = true)
     private val activeBillsUseCase = mockk<ActiveBillsUseCase>(relaxed = true)
     private val deleteBillsUseCase = mockk<DeleteBillsUseCase>(relaxed = true)
@@ -29,7 +28,6 @@ class BillsViewModelTest : BaseTest() {
         super.setup()
         viewModel = BillsViewModel(
             getBillsUseCase = getBillsUseCase,
-            getBillsSummaryUseCase = getBillsSummaryUseCase,
             saveBillUseCase = saveBillUseCase,
             activeBillsUseCase = activeBillsUseCase,
             deleteBillsUseCase = deleteBillsUseCase,
@@ -58,22 +56,12 @@ class BillsViewModelTest : BaseTest() {
     }
 
     @Test
-    fun shouldLoadSummary() {
+    fun shouldSummaryReflectActiveBills() {
         viewModel.run {
-            coEvery { getBillsSummaryUseCase() } returns mockedBillsSummaryFlow()
-            loadSummary()
-            coVerify { getBillsSummaryUseCase() }
-            assertNotNull(summary.value)
-        }
-    }
-
-    @Test
-    fun shouldNotLoadSummary() {
-        viewModel.run {
-            coEvery { getBillsSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
-            loadSummary()
-            coVerify { getBillsSummaryUseCase() }
-            assertNotNull(errorMessage.value)
+            coEvery { getBillsUseCase() } returns mockedAllBillsActiveFlow()
+            loadBills()
+            coVerify { getBillsUseCase() }
+            assertTrue(summary.value?.activeCount.orZero() > 0)
         }
     }
 

@@ -8,12 +8,10 @@ import com.personal.accountantAssistant.domain.useCases.GetBillsDueTodayUseCase
 import com.personal.accountantAssistant.extensions.isMoreThanZero
 import com.personal.accountantAssistant.services.NotificationService
 import kotlinx.coroutines.flow.singleOrNull
-import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
-@OptIn(KoinApiExtension::class)
 class NotificationWorker(
     val context: Context, workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams), KoinComponent {

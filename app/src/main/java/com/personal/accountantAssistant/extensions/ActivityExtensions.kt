@@ -29,7 +29,7 @@ fun ComponentActivity.setActivityForResult(
     callback: ActivityResultCallback<ActivityResult>
 ): ActivityResultLauncher<Intent?> = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(), callback
-)
+) as ActivityResultLauncher<Intent?>
 
 fun Activity.closeApp() {
     finishAffinity()

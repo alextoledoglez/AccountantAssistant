@@ -2,8 +2,9 @@ import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.services)
@@ -11,7 +12,10 @@ plugins {
 }
 
 val localProperties = Properties().apply {
-    load(File(rootProject.projectDir, "local.properties").inputStream())
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
 }
 
 android {
@@ -38,7 +42,7 @@ android {
         named("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            manifestPlaceholders["ADMOB_APP_ID"] = "${localProperties["admobAppId"]}"
+            manifestPlaceholders += mapOf("ADMOB_APP_ID" to "${localProperties["admobAppId"]}")
             buildConfigField(
                 type = "String",
                 name = "admobUnitId",
@@ -73,23 +77,32 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    packagingOptions {
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/license.txt")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/NOTICE.txt")
-        exclude("META-INF/notice.txt")
-        exclude("META-INF/ASL2.0")
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
@@ -111,7 +124,8 @@ dependencies {
     //Koin for dependency injection
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    implementation(libs.koin.android.viewmodel)
+    implementation(libs.koin.android.compat)
+    implementation(libs.koin.androidx.compose)
     implementation(libs.koin.androidx.workmanager)
     testImplementation(libs.koin.test)
 
@@ -128,6 +142,7 @@ dependencies {
     //----Navigation------------------------------------------------
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.navigation.compose)
 
     //----Room------------------------------------------------
     implementation(libs.androidx.room.runtime)
@@ -140,7 +155,13 @@ dependencies {
     //-------------Google dependencies-------------------------
     implementation(libs.material)
     implementation(libs.play.services.ads)
-    implementation(libs.play.services.vision)
+    // CameraX
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
+    // ML Kit
+    implementation(libs.mlkit.barcode.scanning)
+    implementation(libs.mlkit.text.recognition)
     implementation(libs.play.services.auth)
     implementation(libs.google.http.client.gson)
     implementation(libs.google.api.client.android) {
@@ -157,6 +178,7 @@ dependencies {
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
     implementation(libs.firebase.messaging.directboot)
+    implementation(libs.firebase.database.ktx)
 
     // WorkManager Android Job
     implementation(libs.androidx.work.runtime.ktx)
@@ -169,6 +191,16 @@ dependencies {
     implementation(libs.jxl)
     implementation(libs.javax.mail.api)
     implementation(libs.mpAndroidChart)
+
+    //----------Compose dependencies----------------------
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime.livedata)
+    implementation(libs.compose.foundation)
+    implementation(libs.activity.compose)
+    debugImplementation(libs.compose.ui.tooling)
 
     //-----Test dependencies---------------
     testImplementation(libs.junit.junit)

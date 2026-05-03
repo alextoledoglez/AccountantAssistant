@@ -3,12 +3,12 @@ package com.personal.accountantAssistant.ui.buys
 import com.personal.accountantAssistant.base.BaseTest
 import com.personal.accountantAssistant.domain.useCases.buys.*
 import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.providers.AnalyticsProvider
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedAllBuysActiveFlow
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedAllBuysInactiveFlow
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedBuy
 import com.personal.accountantAssistant.providers.MockBuysProviders.mockedBuysFlow
-import com.personal.accountantAssistant.providers.MockBuysProviders.mockedBuysSummaryFlow
 import com.personal.accountantAssistant.providers.MockErrorProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,7 +19,6 @@ class BuysViewModelTest : BaseTest() {
 
     private lateinit var viewModel: BuysViewModel
     private val getBuysUseCase = mockk<GetBuysUseCase>(relaxed = true)
-    private val getBuysSummaryUseCase = mockk<GetBuysSummaryUseCase>(relaxed = true)
     private val saveBuyUseCase = mockk<SaveBuyUseCase>(relaxed = true)
     private val activeBuysUseCase = mockk<ActiveBuysUseCase>(relaxed = true)
     private val deleteBuysUseCase = mockk<DeleteBuysUseCase>(relaxed = true)
@@ -29,7 +28,6 @@ class BuysViewModelTest : BaseTest() {
         super.setup()
         viewModel = BuysViewModel(
             getBuysUseCase = getBuysUseCase,
-            getBuysSummaryUseCase = getBuysSummaryUseCase,
             saveBuyUseCase = saveBuyUseCase,
             activeBuysUseCase = activeBuysUseCase,
             deleteBuysUseCase = deleteBuysUseCase,
@@ -58,22 +56,12 @@ class BuysViewModelTest : BaseTest() {
     }
 
     @Test
-    fun shouldLoadSummary() {
+    fun shouldSummaryReflectActiveBuys() {
         viewModel.run {
-            coEvery { getBuysSummaryUseCase() } returns mockedBuysSummaryFlow()
-            loadSummary()
-            coVerify { getBuysSummaryUseCase() }
-            assertNotNull(summary.value)
-        }
-    }
-
-    @Test
-    fun shouldNotLoadSummary() {
-        viewModel.run {
-            coEvery { getBuysSummaryUseCase() } returns MockErrorProvider.mockErrorFlow()
-            loadSummary()
-            coVerify { getBuysSummaryUseCase() }
-            assertNotNull(errorMessage.value)
+            coEvery { getBuysUseCase() } returns mockedAllBuysActiveFlow()
+            loadBuys()
+            coVerify { getBuysUseCase() }
+            assertTrue(summary.value?.activeCount.orZero() > 0)
         }
     }
 

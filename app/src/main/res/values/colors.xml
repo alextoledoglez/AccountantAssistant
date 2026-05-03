@@ -1,34 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    //Base colors
-    <color name="primaryColor">#43A047</color>
-    <color name="primaryDarkColor">#388E3C</color>
+    <color name="brand_primary">#43A047</color>
+    <color name="brand_primary_dark">#388E3C</color>
 
-    //Utils color
-    <color name="redColor">#D50000</color>
-    <color name="greenColor">#2E7D32</color>
-    <color name="whiteColor">#FFFFFF</color>
-    <color name="blackColor">#000000</color>
+    <color name="semantic_error">#D32F2F</color>
+    <color name="semantic_success">#2E7D32</color>
 
-    <color name="fontColor">#424242</color>
-    <color name="backgroundColor">#F5F5F5</color>
-    <color name="disableFontColor">#42221f1f</color>
-    <!--<color name="disableThumbColor">#1c000000</color>-->
+    <color name="neutral_white">#FFFFFF</color>
+    <color name="neutral_black">#000000</color>
 
-    //Disable colors
-    <color name="silverColor">#DCDCDC</color>
+    <color name="backgroundColor">#F6F7F9</color>
+    <color name="cardSurfaceColor">#FFFFFF</color>
+    <color name="fontColor">#1C1C1C</color>
+    <color name="secondaryFontColor">#5F6368</color>
+    <color name="disableFontColor">#9AA0A6</color>
+    <color name="outlineColor">#D0D5DD</color>
 
-    //Error colors
-    <color name="errorColor">@color/redColor</color>
+    <color name="tabSelectedTextColor">@color/brand_primary</color>
+    <color name="tabTextColor">#9AA0A6</color>
 
-    //Success colors
-    <color name="successColor">#32C16E</color>
-
-    <color name="tabSelectedTextColor">@color/primaryColor</color>
-    <color name="tabTextColor">@color/silverColor</color>
-
-    <color name="chipColor">#e7c63d</color>
-    <color name="disableChipColor">#1c000000</color>
+    <!-- Legacy aliases: required by styles.xml, themes.xml, drawables and non-Compose layouts -->
+    <color name="primaryColor">@color/brand_primary</color>
+    <color name="primaryDarkColor">@color/brand_primary_dark</color>
+    <color name="whiteColor">@color/neutral_white</color>
+    <color name="blackColor">@color/neutral_black</color>
+    <color name="redColor">@color/semantic_error</color>
 
 </resources>
