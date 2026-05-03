@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
@@ -78,7 +79,7 @@ internal fun HomePreviewContent() {
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun HomeScreenPreview() {
     AccountantTheme { HomePreviewContent() }

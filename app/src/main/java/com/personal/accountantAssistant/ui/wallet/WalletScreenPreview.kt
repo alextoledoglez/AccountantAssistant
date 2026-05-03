@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
@@ -94,7 +95,7 @@ internal fun WalletPreviewContent() {
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
 @Composable
 fun WalletScreenPreview() {
     AccountantTheme { WalletPreviewContent() }
