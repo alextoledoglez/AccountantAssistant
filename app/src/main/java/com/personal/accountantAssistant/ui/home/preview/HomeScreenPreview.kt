@@ -1,13 +1,9 @@
-package com.personal.accountantAssistant.ui.home
+package com.personal.accountantAssistant.ui.home.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -20,13 +16,15 @@ import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.ui.common.MainBottomBar
 import com.personal.accountantAssistant.ui.common.MainTopBar
+import com.personal.accountantAssistant.ui.home.components.HomeHeader
+import com.personal.accountantAssistant.ui.home.components.HomeLandscapeContent
+import com.personal.accountantAssistant.ui.home.components.HomePortraitContent
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
-import com.personal.accountantAssistant.ui.theme.Dimens
 import java.math.BigDecimal
 import java.util.Calendar
 
 @Composable
-internal fun HomePreviewContent() {
+internal fun HomePreviewContent(isLandscape: Boolean = false) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val errorColor = MaterialTheme.colorScheme.error
 
@@ -35,8 +33,18 @@ internal fun HomePreviewContent() {
 
     val dashboardItems = listOf(
         DashboardItemModel(R.drawable.ic_buys, "Buys", primaryColor.toArgb(), BigDecimal("0.00")),
-        DashboardItemModel(R.drawable.ic_bills, "Bills", errorColor.toArgb(), BigDecimal("3428.50")),
-        DashboardItemModel(R.drawable.ic_money, "Missing", errorColor.toArgb(), BigDecimal("3428.50")),
+        DashboardItemModel(
+            R.drawable.ic_bills,
+            "Bills",
+            errorColor.toArgb(),
+            BigDecimal("3428.50")
+        ),
+        DashboardItemModel(
+            R.drawable.ic_money,
+            "Missing",
+            errorColor.toArgb(),
+            BigDecimal("3428.50")
+        ),
         DashboardItemModel(R.drawable.ic_total, "Total", errorColor.toArgb(), BigDecimal("3428.50"))
     )
 
@@ -56,24 +64,29 @@ internal fun HomePreviewContent() {
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            HomeHeader(
-                periodDates = Pair(startDate, endDate),
-                availableText = "AVAILABLE: \$ 1,500.00",
-                availableColor = primaryColor,
-                walletIconColor = primaryColor,
-                onDatePickerClick = {}
-            )
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(
-                    horizontal = Dimens.spacingMd,
-                    vertical = Dimens.spacingMd
-                ),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(dashboardItems) { item ->
-                    HomeGridItem(item = item, onClick = {})
-                }
+            if (isLandscape) {
+                HomeLandscapeContent(
+                    periodDates = Pair(startDate, endDate),
+                    availableText = "AVAILABLE: \$ 1,500.00",
+                    availableColor = primaryColor,
+                    walletIconColor = primaryColor,
+                    dashboardItems = dashboardItems,
+                    onDatePickerClick = {},
+                    navigateTo = {}
+                )
+            } else {
+                HomeHeader(
+                    periodDates = Pair(startDate, endDate),
+                    availableText = "AVAILABLE: \$ 1,500.00",
+                    availableColor = primaryColor,
+                    walletIconColor = primaryColor,
+                    onDatePickerClick = {}
+                )
+
+                HomePortraitContent(
+                    dashboardItems = dashboardItems,
+                    navigateTo = {}
+                )
             }
         }
     }
@@ -83,4 +96,10 @@ internal fun HomePreviewContent() {
 @Composable
 fun HomeScreenPreview() {
     AccountantTheme { HomePreviewContent() }
+}
+
+@Preview(showBackground = true, device = "spec:width=891dp,height=411dp,dpi=420")
+@Composable
+fun HomeScreenLandscapePreview() {
+    AccountantTheme { HomePreviewContent(isLandscape = true) }
 }

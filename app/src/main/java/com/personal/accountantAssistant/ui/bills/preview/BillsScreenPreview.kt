@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.bills
+package com.personal.accountantAssistant.ui.bills.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

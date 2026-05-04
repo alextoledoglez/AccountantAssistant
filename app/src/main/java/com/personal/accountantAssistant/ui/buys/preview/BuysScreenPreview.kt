@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.buys
+package com.personal.accountantAssistant.ui.buys.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

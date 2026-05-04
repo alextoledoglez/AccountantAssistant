@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.menu
+package com.personal.accountantAssistant.ui.menu.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,6 +25,7 @@ import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.ui.common.MainBottomBar
 import com.personal.accountantAssistant.ui.common.MainTopBar
+import com.personal.accountantAssistant.ui.menu.UserDataSection
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 

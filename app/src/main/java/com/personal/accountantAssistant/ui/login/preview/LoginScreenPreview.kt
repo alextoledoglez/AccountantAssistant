@@ -1,8 +1,9 @@
-package com.personal.accountantAssistant.ui.login
+package com.personal.accountantAssistant.ui.login.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import com.personal.accountantAssistant.ui.login.LoginScreen
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 
 @Composable

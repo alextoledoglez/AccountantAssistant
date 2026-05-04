@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.wallet
+package com.personal.accountantAssistant.ui.wallet.details
 
 import android.app.DatePickerDialog
 import android.text.SpannableStringBuilder

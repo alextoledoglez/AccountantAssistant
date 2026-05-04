@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.wallet
+package com.personal.accountantAssistant.ui.wallet.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,6 +19,7 @@ import com.personal.accountantAssistant.ui.common.MainBottomBar
 import com.personal.accountantAssistant.ui.common.MainTopBar
 import com.personal.accountantAssistant.ui.common.PrimaryFabButton
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
+import com.personal.accountantAssistant.ui.wallet.WalletListScreen
 import java.math.BigDecimal
 
 @Composable
