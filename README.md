@@ -15,7 +15,11 @@
 ---
 
 <p align="center">
-  <img width="800" src="app/screenshots/Accountant Assistant - Overview.png" alt="Overview"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Home.png" alt="Home"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Wallet.png" alt="Wallet"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Buys.png" alt="Buys"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Bills.png" alt="Bills"/>
+  <img width="240" src="app/screenshots/Accountant Assistant - Menu.png" alt="Menu"/>
 </p>
 
 ---
