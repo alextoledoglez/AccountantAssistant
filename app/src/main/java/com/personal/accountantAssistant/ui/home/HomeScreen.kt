@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -26,14 +25,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.enums.TabPositions
@@ -211,18 +208,6 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                             .padding(horizontal = Dimens.spacingMd)
                     )
                 }
-
-                Text(
-                    text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = Dimens.spacingMd,
-                            vertical = Dimens.spacingXs
-                        ),
-                    textAlign = TextAlign.Center,
-                    fontSize = Dimens.textMd
-                )
             }
         }
     }
