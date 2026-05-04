@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -35,12 +36,12 @@ fun ExpenseDetailsScreen(
 ) {
     val context = LocalContext.current
 
-    var name by remember { mutableStateOf(expenseModel?.name.orEmpty()) }
-    var nameError by remember { mutableStateOf(false) }
-    var quantity by remember { mutableIntStateOf(AlertDialogBuilder.toCurrentOrMinValue(expenseModel?.quantity.orZero())) }
-    var dateStr by remember { mutableStateOf(expenseModel?.date.toDateStr()) }
-    var valueRawDigits by remember { mutableStateOf(expenseModel?.unitaryValue.toRawCurrencyDigits()) }
-    var isActive by remember { mutableStateOf(expenseModel?.isActive.orFalse()) }
+    var name by rememberSaveable { mutableStateOf(expenseModel?.name.orEmpty()) }
+    var nameError by rememberSaveable { mutableStateOf(false) }
+    var quantity by rememberSaveable { mutableIntStateOf(AlertDialogBuilder.toCurrentOrMinValue(expenseModel?.quantity.orZero())) }
+    var dateStr by rememberSaveable { mutableStateOf(expenseModel?.date.toDateStr()) }
+    var valueRawDigits by rememberSaveable { mutableStateOf(expenseModel?.unitaryValue.toRawCurrencyDigits()) }
+    var isActive by rememberSaveable { mutableStateOf(expenseModel?.isActive.orFalse()) }
 
     val isBillType = isBill(expenseModel?.type)
 

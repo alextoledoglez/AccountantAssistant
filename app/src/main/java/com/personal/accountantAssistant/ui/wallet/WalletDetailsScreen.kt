@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,14 +34,14 @@ fun WalletDetailsScreen(
 ) {
     val context = LocalContext.current
 
-    var company by remember { mutableStateOf(cardModel?.company.orEmpty()) }
-    var companyError by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf(cardModel?.name.orEmpty()) }
-    var availableRawDigits by remember { mutableStateOf(cardModel?.availableValue.toRawCurrencyDigits()) }
-    var limitRawDigits by remember { mutableStateOf(cardModel?.limitValue.toRawCurrencyDigits()) }
-    var password by remember { mutableStateOf(cardModel?.password.orEmpty()) }
-    var dateStr by remember { mutableStateOf(cardModel?.date.toDateStr()) }
-    var isActive by remember { mutableStateOf(cardModel?.isActive.orFalse()) }
+    var company by rememberSaveable { mutableStateOf(cardModel?.company.orEmpty()) }
+    var companyError by rememberSaveable { mutableStateOf(false) }
+    var name by rememberSaveable { mutableStateOf(cardModel?.name.orEmpty()) }
+    var availableRawDigits by rememberSaveable { mutableStateOf(cardModel?.availableValue.toRawCurrencyDigits()) }
+    var limitRawDigits by rememberSaveable { mutableStateOf(cardModel?.limitValue.toRawCurrencyDigits()) }
+    var password by rememberSaveable { mutableStateOf(cardModel?.password.orEmpty()) }
+    var dateStr by rememberSaveable { mutableStateOf(cardModel?.date.toDateStr()) }
+    var isActive by rememberSaveable { mutableStateOf(cardModel?.isActive.orFalse()) }
 
     Column(
         modifier = Modifier

@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +61,7 @@ fun BillsScreen(
     val bills by viewModel.bills.observeAsState(emptyList())
     val summary by viewModel.summary.observeAsState(SummaryModel())
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
     var pendingDelete by remember { mutableStateOf<ExpenseModel?>(null) }
     val filteredBills = remember(bills, searchQuery) {
         if (searchQuery.isBlank())
