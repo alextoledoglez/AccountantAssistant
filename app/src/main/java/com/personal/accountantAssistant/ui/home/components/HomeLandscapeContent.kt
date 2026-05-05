@@ -41,7 +41,6 @@ internal fun HomeLandscapeContent(
             onDatePickerClick = onDatePickerClick,
             modifier = Modifier.weight(0.9f)
         )
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(count = 2),
             contentPadding = PaddingValues(all = Dimens.spacingXs),
@@ -50,10 +49,7 @@ internal fun HomeLandscapeContent(
                 .fillMaxHeight()
         ) {
             items(dashboardItems) { item ->
-                HomeGridItem(
-                    item = item,
-                    onClick = { navigateTo(item.toTabPosition()) }
-                )
+                HomeGridItem(item = item, onClick = { navigateTo(item.toTabPosition()) })
             }
         }
     }

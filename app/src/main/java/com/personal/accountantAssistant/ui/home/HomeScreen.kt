@@ -70,12 +70,6 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val successColorInt = MaterialTheme.colorScheme.primary.toArgb()
     val errorColorInt = MaterialTheme.colorScheme.error.toArgb()
 
-    val selectPeriodText = stringResource(R.string.select_period)
-    val buysText = stringResource(R.string.menu_buys)
-    val billsText = stringResource(R.string.menu_bills)
-    val totalText = stringResource(R.string.total)
-    val gainText = stringResource(R.string.gain)
-    val missingText = stringResource(R.string.missing)
     val availableText = stringResource(
         R.string.available_value,
         expensesValues?.available.orZero().abs().toCurrencyMaskedStr()
@@ -97,15 +91,30 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
 
     val dashboardItems = remember(expensesValues, availableMoney) {
         listOf(
-            DashboardItemModel(R.drawable.ic_buys, buysText, expenseColor(buysVal), buysVal),
-            DashboardItemModel(R.drawable.ic_bills, billsText, expenseColor(billsVal), billsVal),
+            DashboardItemModel(
+                R.drawable.ic_buys,
+                R.string.menu_buys,
+                expenseColor(buysVal),
+                buysVal
+            ),
+            DashboardItemModel(
+                R.drawable.ic_bills,
+                R.string.menu_bills,
+                expenseColor(billsVal),
+                billsVal
+            ),
             DashboardItemModel(
                 R.drawable.ic_money,
-                if (balanceVal.isMoreThanOrEqualToZero()) gainText else missingText,
+                if (balanceVal.isMoreThanOrEqualToZero()) R.string.gain else R.string.missing,
                 conditionColor(balanceVal.isMoreThanOrEqualToZero()),
                 balanceVal
             ),
-            DashboardItemModel(R.drawable.ic_total, totalText, expenseColor(totalVal), totalVal)
+            DashboardItemModel(
+                R.drawable.ic_total,
+                R.string.total,
+                expenseColor(totalVal),
+                totalVal
+            )
         )
     }
     val frameLayout = remember { FrameLayout(context) }
@@ -136,7 +145,7 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val onDatePickerClick: () -> Unit = {
         fragmentManager?.let {
             MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText(selectPeriodText)
+                .setTitleText(R.string.select_period)
                 .setSelection(viewModel.getSelectedPeriod())
                 .build()
                 .apply {
@@ -198,7 +207,7 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                     )
                 }
 
-                if (adProvider != null) {
+                if (adProvider != null && isPortrait) {
                     AndroidView(
                         factory = { frameLayout },
                         update = { container -> adProvider.loadAdOn(container) },

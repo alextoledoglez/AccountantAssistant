@@ -24,3 +24,5 @@ fun Calendar.toThreeDaysBefore(): Date = apply { add(DAY_OF_MONTH, DAY_OF_MONTH_
 fun Calendar.toNextMonthCalendar() = apply { add(MONTH, Int.ONE) }
 
 fun Calendar.toPrevMonthCalendar() = apply { add(MONTH, -Int.ONE) }
+
+fun Calendar.dateOf(year: Int, month: Int, day: Int) = apply { set(year, month - 1, day) }.time

@@ -10,13 +10,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.ExpenseModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
+import com.personal.accountantAssistant.extensions.dateOf
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
 import com.personal.accountantAssistant.ui.common.MainBottomBar
 import com.personal.accountantAssistant.ui.common.MainTopBar
@@ -28,8 +29,12 @@ import com.personal.accountantAssistant.ui.theme.Dimens
 import java.math.BigDecimal
 import java.util.Calendar
 
-private fun dateOf(year: Int, month: Int, day: Int) =
-    Calendar.getInstance().apply { set(year, month - 1, day) }.time
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+fun BillsScreenPreview() {
+    AccountantTheme { BillsPreviewContent() }
+}
 
 @Composable
 internal fun BillsPreviewContent() {
@@ -38,7 +43,7 @@ internal fun BillsPreviewContent() {
             id = 1,
             name = "RENT",
             quantity = 1,
-            date = dateOf(2024, 10, 9),
+            date = Calendar.getInstance().dateOf(2024, 10, 9),
             unitaryValue = BigDecimal("2000.00"),
             isActive = true,
             type = ExpensesType.BILL
@@ -47,7 +52,7 @@ internal fun BillsPreviewContent() {
             id = 2,
             name = "TELEPHONE",
             quantity = 1,
-            date = dateOf(2024, 10, 11),
+            date = Calendar.getInstance().dateOf(2024, 10, 11),
             unitaryValue = BigDecimal("50.00"),
             isActive = false,
             type = ExpensesType.BILL
@@ -56,7 +61,7 @@ internal fun BillsPreviewContent() {
             id = 3,
             name = "ELECTRICITY",
             quantity = 1,
-            date = dateOf(2024, 10, 13),
+            date = Calendar.getInstance().dateOf(2024, 10, 13),
             unitaryValue = BigDecimal("1100.00"),
             isActive = true,
             type = ExpensesType.BILL
@@ -65,7 +70,7 @@ internal fun BillsPreviewContent() {
             id = 4,
             name = "WATER",
             quantity = 1,
-            date = dateOf(2024, 10, 14),
+            date = Calendar.getInstance().dateOf(2024, 10, 14),
             unitaryValue = BigDecimal("350.00"),
             isActive = true,
             type = ExpensesType.BILL
@@ -128,10 +133,4 @@ internal fun BillsPreviewContent() {
             )
         }
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
-@Composable
-fun BillsScreenPreview() {
-    AccountantTheme { BillsPreviewContent() }
 }

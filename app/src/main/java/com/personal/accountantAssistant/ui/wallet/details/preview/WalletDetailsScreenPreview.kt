@@ -5,13 +5,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.wallet.details.WalletDetailsScreen
 import java.math.BigDecimal
 import java.util.Calendar
+
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+fun WalletDetailsScreenPreview() {
+    AccountantTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) { WalletDetailsPreviewContent() }
+    }
+}
 
 @Composable
 internal fun WalletDetailsPreviewContent() {
@@ -25,20 +37,5 @@ internal fun WalletDetailsPreviewContent() {
         date = Calendar.getInstance().apply { set(2024, 9, 10) }.time,
         isActive = true
     )
-    WalletDetailsScreen(
-        cardModel = mockCard,
-        onSave = {},
-        onCancel = {}
-    )
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
-@Composable
-fun WalletDetailsScreenPreview() {
-    AccountantTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) { WalletDetailsPreviewContent() }
-    }
+    WalletDetailsScreen(cardModel = mockCard, onSave = {}, onCancel = {})
 }

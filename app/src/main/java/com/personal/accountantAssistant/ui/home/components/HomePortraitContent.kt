@@ -18,17 +18,11 @@ internal fun HomePortraitContent(
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
-        contentPadding = PaddingValues(
-            horizontal = Dimens.spacingMd,
-            vertical = Dimens.spacingMd
-        ),
+        contentPadding = PaddingValues(horizontal = Dimens.spacingMd, vertical = Dimens.spacingMd),
         modifier = Modifier.fillMaxSize()
     ) {
         items(dashboardItems) { item ->
-            HomeGridItem(
-                item = item,
-                onClick = { navigateTo(item.toTabPosition()) }
-            )
+            HomeGridItem(item = item, onClick = { navigateTo(item.toTabPosition()) })
         }
     }
 }
