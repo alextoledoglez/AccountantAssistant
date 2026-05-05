@@ -2,17 +2,33 @@ package com.personal.accountantAssistant.ui.expenses
 
 import android.app.DatePickerDialog
 import android.text.SpannableStringBuilder
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,11 +38,18 @@ import com.personal.accountantAssistant.bases.AlertDialogBuilder
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.data.enums.ExpensesType.Companion.isBill
 import com.personal.accountantAssistant.domain.models.ExpenseModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.orFalse
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.setupNumberPickerFrom
+import com.personal.accountantAssistant.extensions.showDatePickerFrom
+import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
+import com.personal.accountantAssistant.extensions.toDateStr
+import com.personal.accountantAssistant.extensions.toRawCurrencyDigits
+import com.personal.accountantAssistant.ui.common.ClickableReadOnlyField
 import com.personal.accountantAssistant.ui.common.CurrencyTextField
 import com.personal.accountantAssistant.ui.theme.Dimens
 import com.personal.accountantAssistant.ui.theme.extendedColors
-import java.util.*
+import java.util.Calendar
 
 @Composable
 fun ExpenseDetailsScreen(
@@ -38,7 +61,13 @@ fun ExpenseDetailsScreen(
 
     var name by rememberSaveable { mutableStateOf(expenseModel?.name.orEmpty()) }
     var nameError by rememberSaveable { mutableStateOf(false) }
-    var quantity by rememberSaveable { mutableIntStateOf(AlertDialogBuilder.toCurrentOrMinValue(expenseModel?.quantity.orZero())) }
+    var quantity by rememberSaveable {
+        mutableIntStateOf(
+            AlertDialogBuilder.toCurrentOrMinValue(
+                expenseModel?.quantity.orZero()
+            )
+        )
+    }
     var dateStr by rememberSaveable { mutableStateOf(expenseModel?.date.toDateStr()) }
     var valueRawDigits by rememberSaveable { mutableStateOf(expenseModel?.unitaryValue.toRawCurrencyDigits()) }
     var isActive by rememberSaveable { mutableStateOf(expenseModel?.isActive.orFalse()) }
@@ -197,35 +226,4 @@ fun ExpenseDetailsScreen(
             ) { Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onPrimary) }
         }
     }
-}
-
-@Composable
-fun ClickableReadOnlyField(value: String, label: String, onClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = {},
-            label = { Text(label) },
-            readOnly = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clickableNoRipple(onClick = onClick)
-        )
-    }
-}
-
-private fun Modifier.clickableNoRipple(onClick: () -> Unit): Modifier =
-    this.then(
-        Modifier.noRippleClickable(onClick)
-    )
-
-private fun Modifier.noRippleClickable(onClick: () -> Unit) = composed {
-    clickable(
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() },
-        onClick = onClick
-    )
 }

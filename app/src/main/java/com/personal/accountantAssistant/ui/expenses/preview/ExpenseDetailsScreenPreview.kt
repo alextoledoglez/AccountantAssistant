@@ -1,13 +1,15 @@
-package com.personal.accountantAssistant.ui.expenses
+package com.personal.accountantAssistant.ui.expenses.preview
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.models.ExpenseModel
+import com.personal.accountantAssistant.ui.expenses.ExpenseDetailsScreen
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import java.math.BigDecimal
 import java.util.Calendar
@@ -54,7 +56,7 @@ internal fun ExpenseBillDetailsPreviewContent() {
 @Composable
 fun ExpenseBuyDetailsScreenPreview() {
     AccountantTheme {
-        androidx.compose.material3.Surface(
+        Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) { ExpenseBuyDetailsPreviewContent() }
@@ -65,7 +67,7 @@ fun ExpenseBuyDetailsScreenPreview() {
 @Composable
 fun ExpenseBillDetailsScreenPreview() {
     AccountantTheme {
-        androidx.compose.material3.Surface(
+        Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) { ExpenseBillDetailsPreviewContent() }

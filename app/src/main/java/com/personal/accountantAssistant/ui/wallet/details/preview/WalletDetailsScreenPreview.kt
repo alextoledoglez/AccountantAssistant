@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.wallet
+package com.personal.accountantAssistant.ui.wallet.details.preview
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
+import com.personal.accountantAssistant.ui.wallet.details.WalletDetailsScreen
 import java.math.BigDecimal
 import java.util.Calendar
 

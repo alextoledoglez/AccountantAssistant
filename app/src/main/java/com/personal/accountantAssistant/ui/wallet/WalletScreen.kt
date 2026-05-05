@@ -31,6 +31,7 @@ import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
 import com.personal.accountantAssistant.ui.common.PrimaryFabButton
 import com.personal.accountantAssistant.ui.theme.Dimens
+import com.personal.accountantAssistant.ui.wallet.details.WalletDetailsFragment
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.menu
+package com.personal.accountantAssistant.ui.menu.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,13 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.UserModel
 import com.personal.accountantAssistant.ui.common.MainBottomBar
 import com.personal.accountantAssistant.ui.common.MainTopBar
+import com.personal.accountantAssistant.ui.menu.components.UserDataSection
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 
@@ -51,12 +54,22 @@ internal fun MenuPreviewContent() {
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            UserDataSection(
-                user = mockUser,
-                modifier = Modifier.padding(Dimens.spacingMd)
+            UserDataSection(user = mockUser, modifier = Modifier.padding(Dimens.spacingMd))
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
             )
 
-            Box(modifier = Modifier.weight(1f).fillMaxSize())
+            Text(
+                text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.spacingMd, vertical = Dimens.spacingMd),
+                textAlign = TextAlign.Center,
+                fontSize = Dimens.textMd
+            )
 
             Button(
                 onClick = {},

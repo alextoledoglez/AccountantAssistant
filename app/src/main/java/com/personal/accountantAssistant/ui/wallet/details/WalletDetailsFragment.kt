@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.wallet
+package com.personal.accountantAssistant.ui.wallet.details
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable

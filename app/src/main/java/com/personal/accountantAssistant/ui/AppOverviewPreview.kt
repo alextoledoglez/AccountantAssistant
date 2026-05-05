@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.personal.accountantAssistant.ui.bills.BillsPreviewContent
-import com.personal.accountantAssistant.ui.buys.BuysPreviewContent
-import com.personal.accountantAssistant.ui.home.HomePreviewContent
-import com.personal.accountantAssistant.ui.menu.MenuPreviewContent
+import com.personal.accountantAssistant.ui.bills.preview.BillsPreviewContent
+import com.personal.accountantAssistant.ui.buys.preview.BuysPreviewContent
+import com.personal.accountantAssistant.ui.home.preview.HomePreviewContent
+import com.personal.accountantAssistant.ui.menu.preview.MenuPreviewContent
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
-import com.personal.accountantAssistant.ui.wallet.WalletPreviewContent
+import com.personal.accountantAssistant.ui.wallet.preview.WalletPreviewContent
 
 @Preview(widthDp = 2560, heightDp = 1440)
 @Composable

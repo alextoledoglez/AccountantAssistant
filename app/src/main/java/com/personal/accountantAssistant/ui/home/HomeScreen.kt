@@ -1,47 +1,60 @@
 package com.personal.accountantAssistant.ui.home
 
+import android.content.res.Configuration
 import android.widget.FrameLayout
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.DashboardItemModel
-import com.personal.accountantAssistant.extensions.*
+import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.isMoreThan
+import com.personal.accountantAssistant.extensions.isMoreThanOrEqualToZero
+import com.personal.accountantAssistant.extensions.orZero
+import com.personal.accountantAssistant.extensions.rounded
+import com.personal.accountantAssistant.extensions.toCurrencyMaskedStr
 import com.personal.accountantAssistant.providers.AdProvider
+import com.personal.accountantAssistant.ui.common.AdaptiveScreen
+import com.personal.accountantAssistant.ui.home.components.HomeHeader
+import com.personal.accountantAssistant.ui.home.components.HomeLandscapeContent
+import com.personal.accountantAssistant.ui.home.components.HomePortraitContent
 import com.personal.accountantAssistant.ui.theme.Dimens
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.math.BigDecimal
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
+    val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
     val lifecycleOwner = LocalLifecycleOwner.current
     val viewModel: HomeViewModel = koinViewModel()
@@ -120,33 +133,37 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    val onDatePickerClick: () -> Unit = {
+        fragmentManager?.let {
+            MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText(selectPeriodText)
+                .setSelection(viewModel.getSelectedPeriod())
+                .build()
+                .apply {
+                    addOnPositiveButtonClickListener { period ->
+                        viewModel.savePeriodDates(period)
+                        viewModel.loadPeriodDates()
+                        viewModel.loadAvailableMoney()
+                    }
+                }
+                .show(it, String.EMPTY)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        HomeHeader(
-            periodDates = periodDates,
-            availableText = availableText,
-            availableColor = Color(availableColor),
-            walletIconColor = Color(availableColor),
-            onDatePickerClick = {
-                fragmentManager?.let {
-                    MaterialDatePicker.Builder.dateRangePicker()
-                        .setTitleText(selectPeriodText)
-                        .setSelection(viewModel.getSelectedPeriod())
-                        .build()
-                        .apply {
-                            addOnPositiveButtonClickListener { period ->
-                                viewModel.savePeriodDates(period)
-                                viewModel.loadPeriodDates()
-                                viewModel.loadAvailableMoney()
-                            }
-                        }
-                        .show(it, String.EMPTY)
-                }
-            }
-        )
+        if (isPortrait) {
+            HomeHeader(
+                periodDates = periodDates,
+                availableText = availableText,
+                availableColor = Color(availableColor),
+                walletIconColor = Color(availableColor),
+                onDatePickerClick = onDatePickerClick
+            )
+        }
 
         when (flipper) {
             FlipperViews.LOADER -> Box(
@@ -165,29 +182,20 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                     },
                     modifier = Modifier.weight(0.7f)
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(
-                            horizontal = Dimens.spacingMd,
-                            vertical = Dimens.spacingMd
-                        ),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(dashboardItems) { item ->
-                            HomeGridItem(
-                                item = item,
-                                onClick = {
-                                    navigateTo(
-                                        when (item.drawableRes) {
-                                            R.drawable.ic_buys -> TabPositions.BUYS
-                                            R.drawable.ic_bills -> TabPositions.BILLS
-                                            else -> TabPositions.WALLET
-                                        }
-                                    )
-                                }
+                    AdaptiveScreen(
+                        portrait = { HomePortraitContent(dashboardItems, navigateTo) },
+                        landscape = {
+                            HomeLandscapeContent(
+                                periodDates = periodDates,
+                                availableText = availableText,
+                                availableColor = Color(availableColor),
+                                walletIconColor = Color(availableColor),
+                                dashboardItems = dashboardItems,
+                                onDatePickerClick = onDatePickerClick,
+                                navigateTo = navigateTo
                             )
                         }
-                    }
+                    )
                 }
 
                 if (adProvider != null) {
@@ -200,129 +208,7 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                             .padding(horizontal = Dimens.spacingMd)
                     )
                 }
-
-                Text(
-                    text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = Dimens.spacingMd,
-                            vertical = Dimens.spacingXs
-                        ),
-                    textAlign = TextAlign.Center,
-                    fontSize = Dimens.textMd
-                )
             }
-        }
-    }
-}
-
-@Composable
-fun HomeHeader(
-    periodDates: Pair<Date?, Date?>?,
-    availableText: String,
-    availableColor: Color,
-    walletIconColor: Color,
-    onDatePickerClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(Dimens.spacingMd),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.spacingSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_wallet),
-                contentDescription = null,
-                tint = walletIconColor,
-                modifier = Modifier.size(Dimens.iconSize)
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = Dimens.spacingSm)
-            ) {
-                Text(
-                    text = stringResource(R.string.period_to_expense).uppercase(),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = Dimens.textMd,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = periodDates?.toPeriodDateStr().orEmpty(),
-                    fontSize = Dimens.textMd,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = availableText.uppercase(),
-                    color = availableColor,
-                    fontSize = Dimens.textMd,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            IconButton(onClick = onDatePickerClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_today),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens.iconSize)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun HomeGridItem(item: DashboardItemModel, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .padding(Dimens.spacingXs)
-            .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.cardElevation)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.cardContentPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(item.drawableRes),
-                contentDescription = null,
-                tint = Color(item.color),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.iconSize)
-                    .padding(top = Dimens.spacingXs)
-            )
-            Text(
-                text = item.text,
-                color = Color(item.color),
-                fontSize = Dimens.textSm,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = Dimens.spacingXs)
-            )
-            Text(
-                text = item.value.abs().toCurrencyMaskedStr(),
-                color = Color(item.color),
-                fontSize = Dimens.textMd,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = Dimens.spacingXs)
-            )
         }
     }
 }

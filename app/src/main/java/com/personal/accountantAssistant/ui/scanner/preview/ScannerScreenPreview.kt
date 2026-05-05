@@ -1,4 +1,4 @@
-package com.personal.accountantAssistant.ui.scanner
+package com.personal.accountantAssistant.ui.scanner.preview
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.ui.common.CircleIconButton
 import com.personal.accountantAssistant.ui.common.RoundedTextButton
+import com.personal.accountantAssistant.ui.scanner.ScanCodeType
+import com.personal.accountantAssistant.ui.scanner.ScannerOverlay
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 
