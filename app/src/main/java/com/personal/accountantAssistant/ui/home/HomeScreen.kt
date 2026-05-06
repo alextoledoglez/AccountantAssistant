@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.home
 
 import android.content.res.Configuration
-import android.widget.FrameLayout
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,13 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
@@ -56,10 +50,8 @@ import java.math.BigDecimal
 fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
-    val lifecycleOwner = LocalLifecycleOwner.current
     val viewModel: HomeViewModel = koinViewModel()
     val adProvider: AdProvider? = koinInject()
-    val context = LocalContext.current
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
@@ -117,7 +109,6 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
             )
         )
     }
-    val frameLayout = remember { FrameLayout(context) }
 
     LaunchedEffect(Unit) {
         viewModel.loadPeriodDates()
@@ -127,19 +118,6 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     LaunchedEffect(periodDates, availableMoney) {
         val period = periodDates ?: return@LaunchedEffect
         viewModel.loadExpenses(period, availableMoney)
-    }
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> adProvider?.resumeAd()
-                Lifecycle.Event.ON_PAUSE -> adProvider?.pauseAd()
-                Lifecycle.Event.ON_DESTROY -> adProvider?.destroyAd()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     val onDatePickerClick: () -> Unit = {
@@ -208,6 +186,7 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                 }
 
                 if (adProvider != null && isPortrait) {
+                    val frameLayout = adProvider.rememberFrameLayoutWithLifecycle()
                     AndroidView(
                         factory = { frameLayout },
                         update = { container -> adProvider.loadAdOn(container) },

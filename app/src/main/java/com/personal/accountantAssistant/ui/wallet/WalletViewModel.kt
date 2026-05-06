@@ -36,6 +36,7 @@ class WalletViewModel(
         val activeItemsAmount = activeItems.fold(BigDecimal.ZERO) { acc, card ->
             acc.add(card.availableValue)
         }
+        setAvailableMoney(activeItemsAmount)
         _summary.postValue(SummaryModel(activeCount = activeItems.size, total = activeItemsAmount))
     }
 

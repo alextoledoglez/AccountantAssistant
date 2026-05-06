@@ -1,7 +1,10 @@
 package com.personal.accountantAssistant.extensions
 
-import java.util.*
-import java.util.Calendar.*
+import java.util.Calendar
+import java.util.Calendar.DAY_OF_MONTH
+import java.util.Calendar.MONTH
+import java.util.Calendar.YEAR
+import java.util.Date
 
 const val DAY_OF_MONTH_UNTIL_DATE = -3
 
@@ -26,3 +29,8 @@ fun Calendar.toNextMonthCalendar() = apply { add(MONTH, Int.ONE) }
 fun Calendar.toPrevMonthCalendar() = apply { add(MONTH, -Int.ONE) }
 
 fun Calendar.dateOf(year: Int, month: Int, day: Int) = apply { set(year, month - 1, day) }.time
+
+fun Calendar.getNextMonthDate() = run {
+    add(MONTH, Int.ONE)
+    time
+}
