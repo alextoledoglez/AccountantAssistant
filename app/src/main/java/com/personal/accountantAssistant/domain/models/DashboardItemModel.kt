@@ -2,13 +2,14 @@ package com.personal.accountantAssistant.domain.models
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import java.math.BigDecimal
 
 data class DashboardItemModel(
     @field:DrawableRes val drawableRes: Int,
-    val text: String,
+    @field:StringRes val textRes: Int,
     @field:ColorInt var color: Int,
     val value: BigDecimal
 ) {

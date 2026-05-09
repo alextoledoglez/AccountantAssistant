@@ -2,7 +2,20 @@ package com.personal.accountantAssistant.providers
 
 import android.content.Context
 import android.widget.FrameLayout
-import com.google.android.gms.ads.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.extensions.asViewGroup
 
@@ -58,6 +71,26 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
         analytics.trackEvent(key, AD_MESSAGE_KEY, event.orEmpty())
     }
 
+    @Composable
+    fun rememberFrameLayoutWithLifecycle(): FrameLayout {
+        val context = LocalContext.current
+        val frameLayout = remember { FrameLayout(context) }
+        val lifecycle = LocalLifecycleOwner.current.lifecycle
+        DisposableEffect(lifecycle, frameLayout) {
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> adView.resume()
+                    Lifecycle.Event.ON_PAUSE -> adView.pause()
+                    Lifecycle.Event.ON_DESTROY -> adView.destroy()
+                    else -> {}
+                }
+            }
+            lifecycle.addObserver(observer)
+            onDispose { lifecycle.removeObserver(observer) }
+        }
+        return frameLayout
+    }
+
     fun loadAdOn(container: FrameLayout) {
         val parentViewGroup = adView.parent?.asViewGroup()
         if (parentViewGroup != container) {
@@ -68,18 +101,6 @@ class AdProvider(val context: Context, val analytics: AnalyticsProvider) {
             }
             adView.loadAd(AdRequest.Builder().build())
         }
-    }
-
-    fun destroyAd() {
-        adView.destroy()
-    }
-
-    fun pauseAd() {
-        adView.pause()
-    }
-
-    fun resumeAd() {
-        adView.resume()
     }
 
     companion object {

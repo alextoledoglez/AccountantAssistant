@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
 import com.personal.accountantAssistant.domain.models.CardModel
@@ -21,6 +21,13 @@ import com.personal.accountantAssistant.ui.common.PrimaryFabButton
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.wallet.WalletListScreen
 import java.math.BigDecimal
+
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+fun WalletScreenPreview() {
+    AccountantTheme { WalletPreviewContent() }
+}
 
 @Composable
 internal fun WalletPreviewContent() {
@@ -94,10 +101,4 @@ internal fun WalletPreviewContent() {
             )
         }
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
-@Composable
-fun WalletScreenPreview() {
-    AccountantTheme { WalletPreviewContent() }
 }

@@ -3,6 +3,7 @@ package com.personal.accountantAssistant.domain.models
 import android.os.Parcelable
 import android.text.Editable
 import com.personal.accountantAssistant.extensions.EMPTY
+import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.orFalse
 import com.personal.accountantAssistant.extensions.toCurrencyBigDecimal
 import com.personal.accountantAssistant.extensions.toDate
@@ -23,6 +24,8 @@ data class CardModel(
     val isActive: Boolean = false
 ) : Parcelable {
 
+    private fun getUsedCardValue() = limitValue.minus(availableValue)
+
     fun update(
         company: Editable?,
         name: Editable?,
@@ -42,6 +45,13 @@ data class CardModel(
         isActive = isChecked.orFalse(),
     )
 
-    private fun getUsedCardValue() = limitValue.minus(availableValue)
+    fun matches(filter: String): Boolean {
+        return limitValue.toString().containStr(filter) ||
+                availableValue.toString().containStr(filter) ||
+                usedValue.toString().containStr(filter) ||
+                password.containStr(filter) ||
+                company.containStr(filter) ||
+                name.containStr(filter)
+    }
 
 }

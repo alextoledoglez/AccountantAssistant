@@ -3,7 +3,6 @@ package com.personal.accountantAssistant.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.personal.accountantAssistant.bases.BaseViewModel
-import com.personal.accountantAssistant.domain.models.DashboardItemModel
 import com.personal.accountantAssistant.domain.models.ExpensesValuesModel
 import com.personal.accountantAssistant.domain.useCases.home.GetAvailableMoneyUseCase
 import com.personal.accountantAssistant.domain.useCases.home.GetExpensesUseCase
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.util.*
+import java.util.Date
 
 class HomeViewModel(
     val getPeriodDates: GetPeriodDatesUseCase,
@@ -36,9 +35,6 @@ class HomeViewModel(
 
     private val _expensesValues = MutableLiveData<ExpensesValuesModel>()
     val expensesValues = _expensesValues
-
-    private val _dashboardValues = MutableLiveData<List<DashboardItemModel>>()
-    val dashboardValues = _dashboardValues
 
     fun loadPeriodDates() {
         launch {
@@ -82,9 +78,4 @@ class HomeViewModel(
                 .collect()
         }
     }
-
-    fun postDashboardValues(list: List<DashboardItemModel>) {
-        _dashboardValues.postValue(list)
-    }
-
 }

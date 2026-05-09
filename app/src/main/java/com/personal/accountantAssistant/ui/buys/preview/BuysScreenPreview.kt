@@ -10,8 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.ExpensesType
 import com.personal.accountantAssistant.domain.enums.TabPositions
@@ -26,6 +26,13 @@ import com.personal.accountantAssistant.ui.expenses.ExpensesListScreen
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 import java.math.BigDecimal
+
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+fun BuysScreenPreview() {
+    AccountantTheme { BuysPreviewContent() }
+}
 
 @Composable
 internal fun BuysPreviewContent() {
@@ -120,10 +127,4 @@ internal fun BuysPreviewContent() {
             )
         }
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
-@Composable
-fun BuysScreenPreview() {
-    AccountantTheme { BuysPreviewContent() }
 }

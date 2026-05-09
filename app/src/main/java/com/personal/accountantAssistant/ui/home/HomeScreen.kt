@@ -1,7 +1,6 @@
 package com.personal.accountantAssistant.ui.home
 
 import android.content.res.Configuration
-import android.widget.FrameLayout
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -23,13 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.data.enums.FlipperViews
@@ -56,10 +50,8 @@ import java.math.BigDecimal
 fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     val fragmentManager = (LocalActivity.current as? FragmentActivity)?.supportFragmentManager
-    val lifecycleOwner = LocalLifecycleOwner.current
     val viewModel: HomeViewModel = koinViewModel()
     val adProvider: AdProvider? = koinInject()
-    val context = LocalContext.current
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val flipper by viewModel.flipper.observeAsState()
@@ -70,12 +62,6 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
     val successColorInt = MaterialTheme.colorScheme.primary.toArgb()
     val errorColorInt = MaterialTheme.colorScheme.error.toArgb()
 
-    val selectPeriodText = stringResource(R.string.select_period)
-    val buysText = stringResource(R.string.menu_buys)
-    val billsText = stringResource(R.string.menu_bills)
-    val totalText = stringResource(R.string.total)
-    val gainText = stringResource(R.string.gain)
-    val missingText = stringResource(R.string.missing)
     val availableText = stringResource(
         R.string.available_value,
         expensesValues?.available.orZero().abs().toCurrencyMaskedStr()
@@ -97,18 +83,32 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
 
     val dashboardItems = remember(expensesValues, availableMoney) {
         listOf(
-            DashboardItemModel(R.drawable.ic_buys, buysText, expenseColor(buysVal), buysVal),
-            DashboardItemModel(R.drawable.ic_bills, billsText, expenseColor(billsVal), billsVal),
+            DashboardItemModel(
+                R.drawable.ic_buys,
+                R.string.menu_buys,
+                expenseColor(buysVal),
+                buysVal
+            ),
+            DashboardItemModel(
+                R.drawable.ic_bills,
+                R.string.menu_bills,
+                expenseColor(billsVal),
+                billsVal
+            ),
             DashboardItemModel(
                 R.drawable.ic_money,
-                if (balanceVal.isMoreThanOrEqualToZero()) gainText else missingText,
+                if (balanceVal.isMoreThanOrEqualToZero()) R.string.gain else R.string.missing,
                 conditionColor(balanceVal.isMoreThanOrEqualToZero()),
                 balanceVal
             ),
-            DashboardItemModel(R.drawable.ic_total, totalText, expenseColor(totalVal), totalVal)
+            DashboardItemModel(
+                R.drawable.ic_total,
+                R.string.total,
+                expenseColor(totalVal),
+                totalVal
+            )
         )
     }
-    val frameLayout = remember { FrameLayout(context) }
 
     LaunchedEffect(Unit) {
         viewModel.loadPeriodDates()
@@ -120,23 +120,10 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
         viewModel.loadExpenses(period, availableMoney)
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> adProvider?.resumeAd()
-                Lifecycle.Event.ON_PAUSE -> adProvider?.pauseAd()
-                Lifecycle.Event.ON_DESTROY -> adProvider?.destroyAd()
-                else -> {}
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-
     val onDatePickerClick: () -> Unit = {
         fragmentManager?.let {
             MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText(selectPeriodText)
+                .setTitleText(R.string.select_period)
                 .setSelection(viewModel.getSelectedPeriod())
                 .build()
                 .apply {
@@ -198,7 +185,8 @@ fun HomeScreen(navigateTo: (tab: TabPositions) -> Unit) {
                     )
                 }
 
-                if (adProvider != null) {
+                if (adProvider != null && isPortrait) {
+                    val frameLayout = adProvider.rememberFrameLayoutWithLifecycle()
                     AndroidView(
                         factory = { frameLayout },
                         update = { container -> adProvider.loadAdOn(container) },

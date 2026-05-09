@@ -10,8 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +26,6 @@ import androidx.fragment.app.FragmentManager
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.models.CardModel
 import com.personal.accountantAssistant.domain.models.SummaryModel
-import com.personal.accountantAssistant.extensions.containStr
 import com.personal.accountantAssistant.extensions.orZero
 import com.personal.accountantAssistant.ui.common.ListSummaryCard
 import com.personal.accountantAssistant.ui.common.PrimaryFabButton
@@ -52,14 +51,8 @@ fun WalletScreen(
     val filteredCards = remember(cards, searchQuery) {
         if (searchQuery.isBlank())
             cards.orEmpty()
-        else cards?.filter {
-            it.limitValue.toString().containStr(searchQuery) ||
-                    it.availableValue.toString().containStr(searchQuery) ||
-                    it.usedValue.toString().containStr(searchQuery) ||
-                    it.password.containStr(searchQuery) ||
-                    it.company.containStr(searchQuery) ||
-                    it.name.containStr(searchQuery)
-        }.orEmpty()
+        else
+            cards?.filter { it.matches(searchQuery) }.orEmpty()
     }
     val deleteAllContent: () -> Unit = remember(viewModel) { viewModel::deleteAllCards }
     val fabContent: @Composable () -> Unit = remember(fragmentManager) {

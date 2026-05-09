@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.personal.accountantAssistant.BuildConfig
 import com.personal.accountantAssistant.R
 import com.personal.accountantAssistant.domain.enums.TabPositions
@@ -31,13 +31,16 @@ import com.personal.accountantAssistant.ui.menu.components.UserDataSection
 import com.personal.accountantAssistant.ui.theme.AccountantTheme
 import com.personal.accountantAssistant.ui.theme.Dimens
 
+@PreviewScreenSizes
+@PreviewLightDark
+@Composable
+fun MenuScreenPreview() {
+    AccountantTheme { MenuPreviewContent() }
+}
+
 @Composable
 internal fun MenuPreviewContent() {
-    val mockUser = UserModel(
-        name = "John Doe",
-        email = "john.doe@gmail.com"
-    )
-
+    val mockUser = UserModel(name = "John Doe", email = "john.doe@gmail.com")
     Scaffold(
         topBar = {
             MainTopBar(
@@ -89,10 +92,4 @@ internal fun MenuPreviewContent() {
             }
         }
     }
-}
-
-@Preview(showBackground = true, device = Devices.PIXEL_9_PRO)
-@Composable
-fun MenuScreenPreview() {
-    AccountantTheme { MenuPreviewContent() }
 }
