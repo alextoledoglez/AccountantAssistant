@@ -6,6 +6,7 @@
 
 [![Release Build](https://github.com/alextoledoglez/AccountantAssistant/actions/workflows/release.yml/badge.svg)](https://github.com/alextoledoglez/AccountantAssistant/actions/workflows/release.yml)
 [![Version](https://img.shields.io/badge/version-1.1.4-blue)](https://github.com/alextoledoglez/AccountantAssistant/releases)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-26%2B-brightgreen)](https://developer.android.com/about/versions/oreo)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202025.05-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
@@ -176,3 +177,13 @@ Contact the project maintainer for access.
 Contributions are welcome.
 Please, open an issue first to discuss what you would like to change.
 Then, submit a pull request targeting the `dev` branch.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, and privacy guidance.
+
+---
+
+## License
+
+Copyright 2026 Alejandro Toledo González.
+
+Licensed under the [Apache License 2.0](LICENSE).

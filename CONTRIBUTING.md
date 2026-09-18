@@ -25,4 +25,4 @@ Never reuse the maintainer's production Firebase, AdMob, Google Play, or signing
 4. Remove generated files and inspect the diff for secrets or personal data.
 5. Open a pull request targeting `dev` and complete the template.
 
-By contributing, you agree that your contribution may be distributed under the repository's eventual license. Until a license is added, all rights remain with their respective copyright holders.
+By submitting a contribution, you agree that it may be distributed under the [Apache License 2.0](LICENSE).
