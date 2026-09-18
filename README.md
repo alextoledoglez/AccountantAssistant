@@ -159,16 +159,17 @@ Three groups of values are needed:
 
 ## CI/CD
 
-Three workflows automate the build and release pipeline:
+Three workflows separate public contribution checks from trusted release operations:
 
-| Workflow      | Trigger              | What it does                                                                                                         |
-|---------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
-| `debug.yml`   | Push / PR → `dev`    | Assembles debug build and runs unit tests                                                                            |
-| `release.yml` | Push / PR → `master` | Runs unit tests, assembles signed release APK, and uploads it as a build artifact                                    |
-| `publish.yml` | Manual dispatch      | Runs unit tests, builds a signed AAB, uploads to Google Play (internal track as draft), and creates a GitHub release |
+| Workflow      | Trigger                         | What it does                                                                                                      |
+|---------------|---------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `debug.yml`   | PR → `dev`/`master`, push → `dev` | Uses synthetic Firebase configuration and official AdMob test IDs to run unit tests and assemble a debug APK |
+| `release.yml` | Push → `master`, manual dispatch | Uses repository secrets to run tests, assemble a signed release APK, and upload it as a short-lived artifact    |
+| `publish.yml` | Manual dispatch                 | Builds a signed AAB, uploads a draft to Google Play's internal track, and creates a GitHub release                 |
 
-The workflows depend on GitHub Secrets for signing keys, service credentials, and ad configuration.
-Contact the project maintainer for access.
+Pull-request workflows do not receive or require production secrets. Contributors should use their own
+Firebase project and Google's test ad configuration for local development. Signing and publishing
+credentials remain restricted to trusted repository workflows.
 
 ---
 
