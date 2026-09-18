@@ -20,27 +20,25 @@ class SignInService(
     private var account: GoogleSignInAccount? = null
 
     private fun getGoogleSignInClient(): GoogleSignInClient? {
-        val accountName = options?.account?.name.orEmpty()
         val googleSignInClient = options?.let { GoogleSignIn.getClient(context, it) }
-        val signInIntent = googleSignInClient?.signInIntent.toString()
-        trackSignInEvent(value = "optionsAccountName: $accountName and clientSignInIntent: $signInIntent")
+        trackSignInEvent(value = "client_requested")
         return googleSignInClient
     }
 
     fun getSignInClientBy(email: String? = null): GoogleSignInClient? {
         options = email?.let { builder.setAccountName(it) }?.build()
-        trackSignInEvent(value = "Requesting sign-in AccountName: $email")
+        trackSignInEvent(value = "account_selected")
         return getGoogleSignInClient()
     }
 
     fun getSignInClient(): GoogleSignInClient? {
         options = builder.requestEmail().build()
-        trackSignInEvent(value = "Requesting sign-in client")
+        trackSignInEvent(value = "client_requested")
         return getGoogleSignInClient()
     }
 
     /**
-     * Handles the `result` of a completed sign-in activity initiated from [ ][.requestSignIn].
+     * Handles the result of a completed Google sign-in activity.
      */
     fun handleSignInResult(
         result: Intent?,
@@ -49,25 +47,25 @@ class SignInService(
     ) {
         GoogleSignIn.getSignedInAccountFromIntent(result).addOnSuccessListener {
             account = it
-            val email = it?.email.orEmpty()
-            crashlytics?.setUser(email)
-            trackSignInEvent(value = "Signed in as: '$email'.")
+            crashlytics?.clearUser()
+            trackSignInEvent(value = "success")
             onSuccess?.invoke(it)
-        }.addOnFailureListener { exception: Exception? ->
+        }.addOnFailureListener {
             onFailure?.invoke()
-            trackSigOutEvent(value = "Unable to sign in: ${exception?.message}")
+            trackSignInEvent(value = "failure")
         }
     }
 
     fun signOut(onSuccess: (() -> Unit)? = null) {
         getSignInClientBy(account?.email)?.signOut()?.addOnSuccessListener {
-            trackSigOutEvent(value = "Successfully logout of: '${account?.email}'.")
+            crashlytics?.clearUser()
+            trackSigOutEvent(value = "success")
             account = null
             onSuccess?.invoke()
-        }?.addOnFailureListener { exception: Exception? ->
-            trackSigOutEvent(value = "Unable to logout: ${exception?.message}.")
+        }?.addOnFailureListener {
+            trackSigOutEvent(value = "failure")
         } ?: run {
-            trackSigOutEvent(value = "Unable to logout: Null account client.")
+            trackSigOutEvent(value = "client_unavailable")
         }
     }
 

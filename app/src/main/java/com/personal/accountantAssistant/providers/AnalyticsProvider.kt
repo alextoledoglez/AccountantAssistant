@@ -1,10 +1,9 @@
 package com.personal.accountantAssistant.providers
 
 import android.os.Bundle
-import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
-import com.google.firebase.Firebase
 import com.personal.accountantAssistant.domain.models.UserModel
 
 class AnalyticsProvider {
@@ -12,9 +11,8 @@ class AnalyticsProvider {
     private val instance = Firebase.analytics
 
     private fun Map<String, Any?>?.toEventBundle() = Bundle().apply {
-        this@toEventBundle?.forEach {
-            putString(it.key, it.value.toString())
-            Log.d(it.key, it.value.toString())
+        this@toEventBundle?.forEach { (key, value) ->
+            putString(key, value?.toString().orEmpty())
         }
     }
 
@@ -22,16 +20,20 @@ class AnalyticsProvider {
         instance.logEvent(type, mapOf(key to value.orEmpty()).toEventBundle())
     }
 
+    /**
+     * Keeps analytics detached from personally identifiable account data.
+     *
+     * The parameter remains part of the API so callers do not need behavioral changes.
+     */
     fun setUserAccount(user: UserModel?) {
-        user?.apply {
-            instance.setUserProperty(UserModel.USER_DISPLAY_NAME_KEY, name)
-            instance.setUserProperty(UserModel.USER_FULL_NAME_KEY, fullName)
-            instance.setUserProperty(UserModel.USER_EMAIL_KEY, email)
+        if (user != null) {
+            instance.setUserId(null)
         }
     }
 
     fun trackErrorEvent(error: String?) {
-        trackEvent(ERROR_KEY, ERROR_MESSAGE_KEY, error.orEmpty())
+        val status = if (error.isNullOrBlank()) "unknown_error" else "reported_error"
+        trackEvent(ERROR_KEY, ERROR_MESSAGE_KEY, status)
     }
 
     fun trackScreenViewEvent(className: String?) {

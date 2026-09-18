@@ -1,0 +1,18 @@
+# Copy this file to local.properties and replace only the values required by your build.
+# Never commit local.properties, Firebase configuration, signing keys, or real credentials.
+
+# Debug AdMob configuration (use Google's test IDs while developing)
+admobDebugAppId=
+admobDebugUnitId=
+admobDebugTestDeviceId=
+
+# Release AdMob configuration
+admobAppId=
+admobUnitId=
+admobTestDeviceId=
+
+# Release signing (only required for a release build)
+storeFileName=
+storePassword=
+keyAlias=
+keyPassword=
