@@ -1,25 +1,33 @@
+# Android Studio / Gradle
 *.iml
-.gradle
-/local.properties
-/release.keystore
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/.idea
-/.gradle
-/captures
-.externalNativeBuild
-.idea/vcs.xml
-app/.idea/
-app/gradle/wrapper/gradle-wrapper.jar
-.idea/modules.xml
+.gradle/
+build/
+**/build/
 .idea/
-/app/debug/
-/app/release/app-release.apk
-/app/release/output-metadata.json
-/gradle/release.keystore.jks
-/app/release.keystore
-/app/release/app-release.aab
-/app/google-services.json
-/app/debug/google-services.json
+captures/
+.externalNativeBuild/
+.DS_Store
+
+# Local configuration
+local.properties
+.env
+.env.*
+!.env.example
+
+# Firebase and service credentials
+**/google-services.json
+**/firebase-adminsdk*.json
+**/service-account*.json
+
+# Signing material
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Generated release artifacts
+*.apk
+*.aab
+output-metadata.json

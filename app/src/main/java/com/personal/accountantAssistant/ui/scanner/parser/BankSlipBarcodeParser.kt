@@ -1,6 +1,5 @@
 package com.personal.accountantAssistant.ui.scanner.parser
 
-import android.util.Log
 import com.personal.accountantAssistant.ui.scanner.mappers.BankCodeMapper
 import java.util.Locale
 
@@ -20,7 +19,6 @@ import java.util.Locale
  */
 object BankSlipBarcodeParser {
 
-    // ── 44-digit barcode field ranges (0-based, exclusive end) ────────────────
     private const val BANK_CODE_START = 0
     private const val BANK_CODE_END = 3
     private const val CURRENCY_CODE_START = 3
@@ -31,7 +29,6 @@ object BankSlipBarcodeParser {
     private const val AMOUNT_END = 19
     private const val FREE_FIELD_START = 19
 
-    // ── Collection slip field ranges (within the 44-digit barcode) ────────────
     private const val COLLECTION_SEGMENT_START = 1
     private const val COLLECTION_SEGMENT_END = 2
     private const val COLLECTION_REFERENCE_START = 2
@@ -41,12 +38,10 @@ object BankSlipBarcodeParser {
     private const val COLLECTION_COMPANY_FIELD_START = 15
     private const val COLLECTION_COMPANY_FIELD_END = 19
 
-    // ── Input length discriminators ───────────────────────────────────────────
     private const val BARCODE_LENGTH = 44
     private const val BANK_SLIP_LINE_LENGTH = 47
     private const val COLLECTION_LINE_LENGTH = 48
 
-    // ── Bank Slip typeable line (47 digits) → barcode reconstruction offsets ─
     private const val BANK_LINE_FIELD1_END = 9
     private const val BANK_LINE_FIELD2_START = 10
     private const val BANK_LINE_FIELD2_END = 20
@@ -59,7 +54,6 @@ object BankSlipBarcodeParser {
     private const val BANK_LINE_BANK_CURRENCY_END = 4
     private const val BANK_LINE_FREE_PART_START = 4
 
-    // ── Collection typeable line (48 digits) → barcode reconstruction offsets ──
     private const val COLLECTION_SEG1_END = 11
     private const val COLLECTION_SEG2_START = 12
     private const val COLLECTION_SEG2_END = 23
@@ -68,7 +62,6 @@ object BankSlipBarcodeParser {
     private const val COLLECTION_SEG4_START = 36
     private const val COLLECTION_SEG4_END = 47
 
-    // ── Misc ──────────────────────────────────────────────────────────────────
     private const val COLLECTION_SLIP_PREFIX = "8"
     private const val AMOUNT_FORMAT = "%.2f"
 
@@ -143,7 +136,6 @@ object BankSlipBarcodeParser {
 
     fun parse(data: ScannedCodeData): ScannedCodeData? {
         val bankSlipData = getBankSlipData(data.barcode)
-        Log.i(TAG, "bankSlipData: $bankSlipData")
         return when (bankSlipData) {
             is BankSlipData.BankSlip -> data.copy(
                 name = bankSlipData.bankName,
@@ -161,6 +153,4 @@ object BankSlipBarcodeParser {
             else -> null
         }
     }
-
-    val TAG: String = BankSlipBarcodeParser.javaClass.simpleName
 }

@@ -22,17 +22,16 @@ class NotificationService : FirebaseMessagingService() {
     private val notificationManager: NotificationManager by inject()
 
     override fun onNewToken(token: String) {
-        trackNotificationEvent(event = "onNewToken", value = token)
         sendRegistrationToServer(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        trackNotificationEvent(event = "onMessageReceived", value = "${remoteMessage.from}")
+        trackNotificationEvent(event = "onMessageReceived", value = "received")
         remoteMessage.notification?.let { showNotification(it.title.orEmpty(), it.body.orEmpty()) }
     }
 
-    private fun sendRegistrationToServer(token: String?) {
-        trackNotificationEvent(event = "sendRegistrationTokenToServer", value = token.orEmpty())
+    private fun sendRegistrationToServer(@Suppress("UNUSED_PARAMETER") token: String?) {
+        trackNotificationEvent(event = "sendRegistrationTokenToServer", value = "requested")
     }
 
     private fun createChannel() {
@@ -76,7 +75,7 @@ class NotificationService : FirebaseMessagingService() {
     fun showNotification(title: String, text: String) {
         createChannel()
         val notification = notificationBuilder(title, text).build()
-        trackNotificationEvent(event = "showNotification", value = "title: $title and text: $text")
+        trackNotificationEvent(event = "showNotification", value = "displayed")
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
