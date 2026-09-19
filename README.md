@@ -93,10 +93,9 @@ Toggle bills on/off to mark them as paid or defer them to a future date.
   <img width="240" src="app/screenshots/Accountant Assistant - Scanner Barcode.png" alt="Barcode Scanner"/>
 </p>
 
-Powered by **ML Kit**
-The scanner handles both: QR code and Barcode in a single reactive flow
-Built with Compose and StateFlow.
-Both code types are supported in both contexts:
+Powered by **ML Kit**, the scanner handles QR codes and barcodes through a single reactive
+flow built with Compose and StateFlow.
+Both code types are supported in the following contexts:
 
 | Context | What gets filled               |
 |---------|--------------------------------|
